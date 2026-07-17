@@ -1,0 +1,30 @@
+# Build output
+build/
+build_log.txt
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+CMakeUserPresets.json
+
+# Compiled binaries / intermediates
+*.exe
+*.vst3
+*.dll
+*.pdb
+*.obj
+*.ilk
+*.lib
+*.exp
+*.o
+*.a
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# OS
+Thumbs.db
+.DS_Store

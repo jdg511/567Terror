@@ -1,0 +1,243 @@
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.10)
+
+## v0.10 changes — fixed voicing filters + PCB dirt decision
+
+**Jason's PCB dirt pick: Bazz Fuss** (the dropdown stays in the plugin for A/B-ing).
+
+Three always-on voicing filters were added (no knobs, hardwired):
+
+* Input, before everything: **24 dB/oct Butterworth low-cut @ 40 Hz** (two
+  cascaded 2nd-order high-pass sections) — subsonic rumble never reaches the
+  dirt or the 567.
+* Just before the output: **12 dB/oct low-cut @ 60 Hz** (tames the 567's
+  duty-cycle thumps) and a **+3 dB, Q 0.5 peaking bell @ 800 Hz** (mid presence).
+
+Measured response of the chain: −62 dB @ 10 Hz, −3 dB @ 60 Hz, flat 100–300 Hz,
+exactly +3.0 dB @ 800 Hz with broad shoulders (+1.9 dB at 400/1600), ~0 dB by 8 kHz.
+
+Hardware cost: two op-amp Sallen-Key HP sections + one SK HP + one gyrator/
+bridged-T bell — about one TL074's worth of the budget.
+
+---
+
+## v0.9 changes — always-on dirt in the dry path
+
+A dirt stage now lives permanently in the DRY branch (the 567 side is untouched):
+one **GAIN** knob (0 % = slightly dirty ×2, 50 % = OD/distortion ~×24, 100 % = wall
+of fuzz ×300, log taper), a **DIRT dropdown** with five models, and **Gain is a
+modulation target** for the LFOs, envelope follower, and CV buses.
+
+Each model maps to a genuinely tiny real circuit (pick one for the PCB):
+
+| Model | Hardware | Voice |
+|-------|----------|-------|
+| Electra Si | 1 Si transistor + 2 clipping diodes | immediate, crunchy, bright |
+| Fuzz Face Ge | 2 Ge transistors (bias sag modeled) | warm, woolly, sputters when pushed |
+| Bazz Fuss | 1 transistor + 1 diode | gated "velcro" rip, dies abruptly |
+| Op-Amp OD | spare TL074 half + 2 feedback diodes | smooth, tight lows (250 Hz HP in) |
+| Octave Fuzz | Green Ringer style rectifier | octave-up ring, chaotic with chords |
+
+Notes: asymmetric models generate DC — blocked at 15 Hz after the clipper (a
+coupling cap in hardware). The Octave Fuzz's rectifier is AC-coupled before the
+clip, same as the Green Ringer's output cap. With MIX at 100 % FX the dirt is
+inaudible (dry muted) — that's expected.
+
+---
+
+## v0.8 changes — the big simplification
+
+**New signal path:**
+
+```
+In ──── trim (+15 dB, fixed) ── 567 demodulator ──┐
+  │                                                ├── MIX ── Envelope Filter ── Gate ── Out
+  └───────────────────── Dry ─────────────────────┘
+```
+
+1. Envelope-follower panel title cleaned up; **filter Mode gets an "Off" option**
+   that bypasses the filter and greys out the whole envelope-filter block
+   (LPF, RES, GAIN, DRIVE, RANGE, target).
+2. **Filter ranges extended down**: Lo = 20 Hz … 4 kHz, Hi = 44 Hz … 8.8 kHz.
+3. **Players 1, 2, 3 removed.** CV 1 = Sidechain Left, CV 2 = Sidechain Right.
+4. **Dry>LPF removed, Input Trim knob removed** (trim is fixed at +15 dB and only
+   feeds the 567 branch), and there is now **one single LPF/RES filter** placed
+   AFTER the mix — the blended dry+FX signal goes through it together.
+5. **Grey-out rules**: setting CV 1's target to anything but Off greys out and
+   mutes LFO 1 (the CV takes over); same for CV 2 and LFO 2.
+6. The raw (unfiltered) 567 square now hits the mixer directly — at MIX > 50 %
+   with the filter Off you hear the pedal at its most feral.
+
+Dropdowns lost "Dry>LPF"; routing selections reset from v0.7 sessions.
+
+---
+
+## v0.7 changes — Mu-Tron III envelope + filter
+
+1. **The ADSR is gone; the envelope is now a Mu-Tron III style follower**: your
+   picking dynamics drive the sweep continuously. Controls, like the real unit:
+   **GAIN** (×0.125 … ×40 — how hard the envelope is driven; high gain pins the
+   sweep like a real Mu-tron), **DRIVE Up/Down** (sweep direction — Down starts
+   from wherever the LPF knob sits and pulls the filter shut as you dig in).
+   Follower ballistics are fixed (≈4 ms attack / 150 ms release), as on the III.
+   The target dropdown remains (default: LPF) so the follower can also drive
+   Freq/Res/Mix — something the original never dreamed of.
+2. **Filter ranges now match the Mu-Tron III**, selected by the new **RANGE**
+   switch: **Lo = 40 Hz … 4 kHz**, **Hi = 88 Hz … 8.8 kHz** (derived from the
+   III's 1.8 nF vs 1.8+2.2 nF integrator caps; Hi sits 2.21× above Lo). The LPF
+   knob readout shows both ranges ("Lo / Hi").
+3. **MODE switch: LP / BP / HP** — the III's filter modes, applied identically to
+   the FX filter and the Dry>LPF path. BP is where a lot of classic quack lives.
+4. LFO 2's "Env Amount" target is now **"Env Gain"** (bends the follower's gain
+   ±2 octaves — auto-wah sensitivity that wobbles).
+
+Instant Mu-Tron recipe: MIX 0 %, Dry>LPF 100 %, RANGE Lo, MODE BP or LP,
+LPF knob low, RES ~70 %, GAIN to taste (start ×4), DRIVE Up.
+
+---
+
+## v0.6 changes
+
+1. **DRY is now MIX**, a crossfade: 0 % = dry only, 50 % = dry AND 567 FX both at
+   100 %, 100 % = FX only. First half of the knob raises the FX, second half fades
+   the dry out. VOL remains the master level for the sum. The readout shows both
+   levels (e.g. "D100 / FX60").
+2. **"Dry" is renamed "Mix"** in every modulation target dropdown (same slot, so
+   saved routings keep working).
+3. Confirmed (no change needed): the **Dry>LPF filter always tracks the 567 FX
+   LPF exactly** — same cutoff and resonance values, computed after LFO 1/2, ADSR
+   and CV modulation are applied, in the same coefficient update.
+
+---
+
+## v0.5 changes (signal-flow fixes)
+
+1. **Input Trim only feeds the 567 demodulator branch.** The DRY signal is tapped
+   before the trim, so cranking trim to drive tracking no longer boosts (or clips)
+   your clean sound. (This was also why Dry>LPF was hard to hear — the boosted,
+   clipped dry drowned it out. Verified working: −43 dB on a 5 kHz tone with the
+   LPF dark and Dry>LPF at 100 %.)
+2. **OUT knob removed** — output level is fixed at 0 dB; the gate only attenuates.
+3. **DRY now passes through VOL** — VOL acts as a master for both wet and dry.
+4. **The gate also drags FREQ and the LPF down** while it fades the volume
+   (sinking pitch + darkening as the sound dies).
+5. **Gate threshold listens to the raw live input only** — before trim, players,
+   or anything else touches it.
+6. **FREQ/LPF snap back instantly** the moment the input crosses the threshold
+   again (volume reopens over ~0.25 s to avoid clicks).
+
+---
+
+## v0.4 changes
+
+1. **Vol and Input Trim removed** from every modulation target dropdown (the knobs
+   themselves are unchanged).
+2. **CV Slew knobs removed** — CV smoothing is fixed at 15 ms internally.
+3. **CV 1 & 2 dropdowns slimmed**: they can now only target the sound knobs
+   (Freq / LPF / Res / Dry / Dry>LPF), plus CV 2 keeps its "CV1 Strength" extra.
+   All LFO/Env entries are gone from the CV lists.
+4. **Noise LFO shapes**: LFO 1 and LFO 2 both gained White Noise and Pink Noise.
+   For noise shapes the RATE knob becomes a low-pass filter on the noise —
+   low rate = slow random drift, high rate = fizzy random jitter.
+5. **LFO 2 has the full shape list** (sine / triangle / square / S&H / white / pink).
+6. **Polarity switch on both LFOs**: Uni Up (0..+1), Bi (±1), Uni Down (0..−1).
+7. **LFO 2 target dropdown**: everything LFO 1 can hit (Freq, LPF, Res, Dry, Dry>LPF)
+   plus LFO1 Rate (the classic v0.2/0.3 wiring, still the default), LFO1 Depth, and
+   Env Amount (the ADSR's intensity).
+8. **OUTPUT GATE** (this kills the idle squeal): OUT is an independent master output
+   level after VOL. When the input stays below THRESH (0 … −96 dB) for longer than
+   HOLD (0.1 … 10 s), the output fades down to −96 dB over FADE (0.1 … 60 s). Play
+   again and it reopens in a quarter second. THRESH at −96 = gate effectively off.
+
+Note: because the routing dropdowns changed, mod-routing selections from v0.3
+sessions reset to defaults (knobs, players, and everything else still load fine).
+
+---
+
+## v0.3 changes (Jason's wishlist pass)
+
+* **FREQ** now spans **0.1 Hz … 18 kHz** (log). Below ~20 Hz the 567 chatter becomes
+  slow clicky gating; way up high it turns into harsh digital shimmer. (The stock
+  RT/CT network only did 304–1148 Hz — hardware in step 3 will need switched timing
+  caps to cover this.)
+* **FIZZ is renamed LPF**, now **200 Hz … 20 kHz** (log, up = brighter), and has a
+  **RES** knob: filter Q from **0.25 … 8** (log). Q > ~4 rings hard on the 567 square
+  edges — that's the fun part.
+* **Dry>LPF** knob: blends the DRY path through a matched copy of the LPF (same
+  cutoff + resonance). 0 % = classic untouched dry, 100 % = dry fully filtered.
+* The **envelope is now a real input-triggered ADSR**: Attack/Decay/Sustain/Release
+  sliders, a target dropdown (any knob, incl. LPF Q and Dry>LPF), and the bipolar
+  Amount knob. Gate opens around −34 dBFS input and closes around −42 dBFS.
+* **PPM meters**: input, output, and one per player (instant attack, ~40 dB/s fall).
+* CV/LFO target lists gained **LPF Q** and **Dry>LPF** (appended — old sessions load fine).
+
+---
+
+# v0.2 baseline docs
+
+Everything from the faithful v0.1 sim is unchanged — set all mod depths/strengths to 0 and
+you have the stock pedal. The mods are layered on top.
+
+## Modulation sources
+
+### LFO stack → any knob
+* **LFO 1**: Rate 0.05–20 Hz, Depth 0–1, Shape (Sine / Triangle / Square / Random S&H),
+  Target dropdown (Off / Freq / Fizz / Dry / Vol / Input Trim). Default target: Freq.
+  Depth 1 sweeps the target knob ±half its rotation around where the knob sits.
+* **LFO 2**: Rate 0.02–10 Hz, Depth 0–1. Hard-wired to **LFO 1's rate** — it bends LFO 1
+  up/down by up to ±2 octaves. This is the "LFO modulated by another LFO".
+
+### Envelope follower → FREQ
+* Follows how hard you play (live input + Player 1, before the circuit).
+  Attack ~3 ms, release ~200 ms.
+* **Env→Freq** knob is bipolar (−1…+1): positive = playing harder pushes the 567's lock
+  frequency up, negative = down. This is the "frequency controlled by input velocity/volume".
+
+### CV buses (sidechain + players)
+* **CV 1** source = Sidechain In 1 **+** Player 2 (summed).
+* **CV 2** source = Sidechain In 2 **+** Player 3 (summed).
+* Each CV bus: audio → rectify → smooth (Slew knob, 1–1000 ms) → 0..1 control signal.
+* Per bus: **Target dropdown** (Off / Freq / Fizz / Dry / Vol / Input Trim / LFO1 Rate /
+  LFO1 Depth / LFO2 Rate / LFO2 Depth / Env Amount) + mini **Strength** knob (bipolar
+  −1…+1) + mini **Slew** knob.
+* **CV 2 only** gets two extra dropdown targets: **CV1 Strength** and **CV1 Slew** —
+  CV 2 can modulate CV 1's own controls (modulation of modulation).
+* CV always **adds to** the knob's position (knobs stay live); result is clamped to the
+  knob's range. Modulated values update every 32 samples (~0.7 ms @ 48k).
+
+### Sidechain wiring
+One stereo sidechain bus: **Left = Sidechain In 1, Right = Sidechain In 2**. In your DAW,
+route any track into the plugin's sidechain input. (In the Standalone app there's no
+sidechain — use Players 2/3 as CV sources instead.)
+
+## Audio file players
+
+| Player | Route | Notes |
+|--------|-------|-------|
+| 1 | → circuit input, mixed with live audio | has a Level mini-knob (±dB) |
+| 2 | → CV 1 source | never audible |
+| 3 | → CV 2 source | never audible |
+
+* Each player: **LOAD** (file picker: wav/aiff/flac/ogg/mp3), **PLAY** (press again to
+  stop — the same button toggles), **LOOP** toggle (default: off for P1, on for P2/P3).
+* Play always restarts from the beginning. Non-looping players stop themselves at the end
+  of the file and the button resets.
+* PLAY states are plugin parameters, so a DAW can automate them.
+* Loaded file paths are saved with the plugin state and reload with your session.
+
+## Evaluation order (so the routing is predictable)
+
+1. CV 2 is computed first and applied (it may retune CV 1's strength/slew or any knob).
+2. LFO 2 bends LFO 1's rate.
+3. LFO 1 and the envelope follower apply to their targets.
+4. CV 1 applies to its target.
+5. Everything sums onto the knob positions, clamps to range, and feeds the circuit.
+
+## New parameters (all DAW-automatable)
+
+p1gain, playing1-3, loop1-3, lfo1rate, lfo1depth, lfo1shape, lfo1target, lfo2rate,
+lfo2depth, envamt, cv1target, cv1strength, cv1slew, cv2target, cv2strength, cv2slew.
+
+## Sim change from v0.1
+
+The circuit's internal pot smoothing was tightened from 25 ms to 5 ms so LFO/CV wobble is
+audible; the CV Slew knobs now own "how smooth" a modulation feels.
