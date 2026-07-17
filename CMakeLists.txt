@@ -13,12 +13,19 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(JUCE)
 
+# ---- Plugin formats: VST3 + Standalone everywhere, AU added on macOS only ----
+set(GW567_FORMATS VST3 Standalone)
+if(APPLE)
+    list(APPEND GW567_FORMATS AU)
+endif()
+
 # ---- Plugin ------------------------------------------------------------------
 juce_add_plugin(Glitchwave567
-    COMPANY_NAME "JasonDIY"
-    PLUGIN_MANUFACTURER_CODE Jdgw
+    COMPANY_NAME "Illicit Apothecary"
+    BUNDLE_ID "com.illicitapothecary.glitchwave567"
+    PLUGIN_MANUFACTURER_CODE Ilap
     PLUGIN_CODE Gw67
-    FORMATS VST3 Standalone
+    FORMATS ${GW567_FORMATS}
     PRODUCT_NAME "Glitchwave 567"
     IS_SYNTH FALSE
     NEEDS_MIDI_INPUT FALSE
