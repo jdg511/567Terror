@@ -1,8 +1,9 @@
 # Glitchwave 567 — JUCE Circuit Simulation
 
 A software simulation of the Glitchwave 567 guitar pedal (LM567 tone-decoder glitch
-pedal, schematic in `glitchwave.png`). Builds as a **Standalone app** and a **VST3**
-for Windows.
+pedal, schematic in `glitchwave.png`). Builds as a **Standalone app**, **VST3**, and
+(on macOS) **AU** — for Windows, Linux, and macOS. Vendor/manufacturer name in all
+builds: **Illicit Apothecary**.
 
 ## Project plan status
 
@@ -20,6 +21,16 @@ routes into the circuit like live input (with a Level knob), Players 2 and 3 are
 sources. CV 1 = Sidechain Left + Player 2; CV 2 = Sidechain Right + Player 3. Each CV bus
 has a target dropdown (any knob or the mod controls) plus mini Strength and Slew knobs —
 and CV 2 can also target CV 1's Strength and Slew. Knobs stay live; CV adds on top.
+
+## Downloads (Windows / Linux / macOS)
+
+Every push to `main` builds all three platforms automatically via GitHub Actions
+(see `.github/workflows/build.yml`): VST3 + Standalone for Windows and Linux, and
+VST3 + Standalone + AU for macOS. Grab the zipped builds from the **Actions** tab
+on the repo, under the latest workflow run's Artifacts section. Pushing a version
+tag (e.g. `v0.10.0`) also publishes a **GitHub Release** with all three zips
+attached. macOS/Linux builds from CI are unsigned — on macOS you may need to
+right-click > Open (or clear the quarantine flag) the first time.
 
 ## Building on Windows
 
