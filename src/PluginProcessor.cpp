@@ -33,13 +33,12 @@ namespace
     const juce::StringArray kModTargets  { "Off", "Freq", "LPF", "Res", "Mix", "Gain" };
     const juce::StringArray kLfo2Targets { "Off", "Freq", "LPF", "Res", "Mix", "Gain",
                                            "LFO1 Rate", "LFO1 Depth", "Env Gain" };
-    // v0.17: the full Electric Druid TAPLFO 3D waveform set — original set (8),
-    // alternate set (8) — in datasheet order, plus Jason's v0.4 noise LFOs.
-    const juce::StringArray kLfoShapes   { "Ramp Up", "Ramp Dn", "Pulse", "Tri",
-                                           "Sine", "Sweep", "Lumps", "Rand Lvls",
-                                           "Ramp+Oct", "Quad Ramp", "Quad Pulse", "Tri Step",
-                                           "Sine+Oct", "Sine+3rd", "Sine+4th", "Rand Slope",
-                                           "White Noise", "Pink Noise" };
+    // v0.18: Jason's two-bank plan — Bank A classics, Bank B fun stuff
+    // (White/Pink Noise hold Bank B's two open slots until auditioned).
+    const juce::StringArray kLfoShapes   { "Ramp Up", "Ramp Dn", "Square", "Triangle",
+                                           "Sine", "Sweep", "Rand Slope", "S&H",
+                                           "Lorenz", "Rossler", "Drunk Walk", "Perlin",
+                                           "Wobble", "Glitch", "White Noise", "Pink Noise" };
 
     // list index -> enum maps
     using MT = glitchwave::ModTarget;
@@ -48,10 +47,9 @@ namespace
     constexpr MT kLfo2Map[] = { MT::Off, MT::Freq, MT::Fizz, MT::LpfQ, MT::Dry, MT::Gain,
                                 MT::Lfo1Rate, MT::Lfo1Depth, MT::EnvAmount };
     constexpr LS kShapeMap[] = { LS::RampUp, LS::RampDown, LS::Square, LS::Triangle,
-                                 LS::Sine, LS::Sweep, LS::Lumps, LS::SampleHold,
-                                 LS::RampOct, LS::QuadRamp, LS::QuadPulse, LS::TriStep,
-                                 LS::SineOct, LS::Sine3rd, LS::Sine4th, LS::RandSlopes,
-                                 LS::WhiteNoise, LS::PinkNoise };
+                                 LS::Sine, LS::Sweep, LS::RandSlopes, LS::SampleHold,
+                                 LS::Lorenz, LS::Rossler, LS::DrunkWalk, LS::PerlinDrift,
+                                 LS::Wobble, LS::Glitch, LS::WhiteNoise, LS::PinkNoise };
 
     template <size_t N>
     int mapTarget (const MT (&table)[N], float rawIndex)
@@ -82,11 +80,11 @@ GlitchwaveAudioProcessor::GlitchwaveAudioProcessor()
     raw.dirtgain = apvts.getRawParameterValue ("dirtgain");
     raw.lfo1rate   = apvts.getRawParameterValue ("lfo1rate");
     raw.lfo1depth  = apvts.getRawParameterValue ("lfo1depth");
-    raw.lfo1shape  = apvts.getRawParameterValue ("lfo1shape4");
+    raw.lfo1shape  = apvts.getRawParameterValue ("lfo1shape5");
     raw.lfo1target = apvts.getRawParameterValue ("lfo1target4");
     raw.lfo2rate   = apvts.getRawParameterValue ("lfo2rate");
     raw.lfo2depth  = apvts.getRawParameterValue ("lfo2depth");
-    raw.lfo2shape  = apvts.getRawParameterValue ("lfo2shape3");
+    raw.lfo2shape  = apvts.getRawParameterValue ("lfo2shape4");
     raw.lfo2target = apvts.getRawParameterValue ("lfo2target3");
     raw.envtarget  = apvts.getRawParameterValue ("envtarget4");
     raw.envgain    = apvts.getRawParameterValue ("envgain");
@@ -146,15 +144,15 @@ GlitchwaveAudioProcessor::createParameterLayout()
         juce::NormalisableRange<float> (0.05f, 20.0f, 0.0f, 0.35f), 2.0f, hz2));
     layout.add (std::make_unique<PF> (juce::ParameterID { "lfo1depth", 1 }, "LFO1 Depth",
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.0f, pct));
-    layout.add (std::make_unique<PC> (juce::ParameterID { "lfo1shape4", 1 }, "LFO1 Shape",
-        kLfoShapes, 3));   // default: Tri
+    layout.add (std::make_unique<PC> (juce::ParameterID { "lfo1shape5", 1 }, "LFO1 Shape",
+        kLfoShapes, 3));   // default: Triangle
     layout.add (std::make_unique<PC> (juce::ParameterID { "lfo1target4", 1 }, "LFO1 Target",
         kModTargets, 1)); // default: Freq (LFO1 is always unipolar-up)
     layout.add (std::make_unique<PF> (juce::ParameterID { "lfo2rate", 1 }, "LFO2 Rate",
         juce::NormalisableRange<float> (0.02f, 10.0f, 0.0f, 0.35f), 0.25f, hz2));
     layout.add (std::make_unique<PF> (juce::ParameterID { "lfo2depth", 1 }, "LFO2 Depth",
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.0f, pct));
-    layout.add (std::make_unique<PC> (juce::ParameterID { "lfo2shape3", 1 }, "LFO2 Shape",
+    layout.add (std::make_unique<PC> (juce::ParameterID { "lfo2shape4", 1 }, "LFO2 Shape",
         kLfoShapes, 4));   // default: Sine
     layout.add (std::make_unique<PC> (juce::ParameterID { "lfo2target3", 1 }, "LFO2 Target",
         kLfo2Targets, 6)); // default: LFO1 Rate (LFO2 is always bipolar)
@@ -289,16 +287,19 @@ void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     glitchwave::ModSystem::Params mp;
     mp.lfo1RateHz  = raw.lfo1rate->load();
     mp.lfo1Depth   = raw.lfo1depth->load();
-    mp.lfo1Shape   = (int) kShapeMap[juce::jlimit (0, 17, (int) raw.lfo1shape->load())];
+    mp.lfo1Shape   = (int) kShapeMap[juce::jlimit (0, 15, (int) raw.lfo1shape->load())];
     mp.lfo1Target  = mapTarget (kModMap, raw.lfo1target->load());
     mp.lfo2RateHz  = raw.lfo2rate->load();
     mp.lfo2Depth   = raw.lfo2depth->load();
-    mp.lfo2Shape   = (int) kShapeMap[juce::jlimit (0, 17, (int) raw.lfo2shape->load())];
+    mp.lfo2Shape   = (int) kShapeMap[juce::jlimit (0, 15, (int) raw.lfo2shape->load())];
     mp.lfo2Target  = mapTarget (kLfo2Map, raw.lfo2target->load());
     mp.envTarget   = mapTarget (kModMap, raw.envtarget->load());
     // filter Mode Off also disables the envelope follower section
     mp.envGain     = lpfModeIdx == 0 ? 0.0f : raw.envgain->load();
     mp.envDriveUp  = raw.envdrive->load() < 0.5f;
+    if (lfo2Retrig.exchange (false, std::memory_order_relaxed))
+        mod.retriggerLfo2();     // tempo tap re-seeds chaos/drift generators
+
     mod.setParams (mp);
 
     glitchwave::ModSystem::KnobSet base;

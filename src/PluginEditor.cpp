@@ -74,12 +74,12 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     lfo2ValueLabel.setFont (juce::FontOptions (12.0f));
     lfo2ValueLabel.setColour (juce::Label::textColourId, kText);
     addAndMakeVisible (lfo2ValueLabel);
-    lfo1Shape.bind  (apvts, "lfo1shape4");
+    lfo1Shape.bind  (apvts, "lfo1shape5");
     lfo1Target.bind (apvts, "lfo1target4");
-    lfo2Shape.bind  (apvts, "lfo2shape3");
+    lfo2Shape.bind  (apvts, "lfo2shape4");
     lfo2Target.bind (apvts, "lfo2target3");
-    lfo1Shape.setRowHeight (12);     // 18 TAPLFO waveforms need tight rows
-    lfo2Shape.setRowHeight (12);
+    lfo1Shape.setRowHeight (13);     // 16 waveforms (Bank A + Bank B)
+    lfo2Shape.setRowHeight (13);
     for (auto* s : { &lfo1Shape, &lfo1Target, &lfo2Shape, &lfo2Target })
     {
         s->setInteractive (false);   // v0.14: LED columns are indicators only
@@ -91,9 +91,9 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     addAndMakeVisible (lfo2Led);
 
     // one button per LFO: tap = shape, hold = cycle target
-    lfo1Btn.onTap      = [this] { cycleChoice ("lfo1shape4"); };
+    lfo1Btn.onTap      = [this] { cycleChoice ("lfo1shape5"); };
     lfo1Btn.onHoldTick = [this] { cycleChoice ("lfo1target4"); };
-    lfo2Btn.onTap      = [this] { cycleChoice ("lfo2shape3"); };
+    lfo2Btn.onTap      = [this] { cycleChoice ("lfo2shape4"); };
     lfo2Btn.onHoldTick = [this] { cycleChoice ("lfo2target3"); };
     addAndMakeVisible (lfo1Btn);
     addAndMakeVisible (lfo2Btn);
@@ -243,6 +243,7 @@ void GlitchwaveAudioProcessorEditor::d2Press()
     const double now = juce::Time::getMillisecondCounterHiRes();
     if (d2LastTapMs > 0.0 && now - d2LastTapMs < 5000.0 && now - d2LastTapMs > 40.0)
         d2SetRateFromInterval (now - d2LastTapMs);
+    processor.requestLfo2Retrigger();   // v0.18: tap re-seeds chaos/drift waves
     d2LastTapMs = now;
 }
 
@@ -402,7 +403,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("GLITCHWAVE 567", 20, 10, 400, 30, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (12.0f));
-    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.17"),
+    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.18"),
                 20, 38, 500, 16, juce::Justification::centredLeft);
 
     drawSection (g, { 12,  60, 1036, 206 }, "PEDAL");

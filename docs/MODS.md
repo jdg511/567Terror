@@ -1,6 +1,39 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.17)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.18)
 
-## v0.17 — TAPLFO 3D waveforms + dual-hold depth sweep
+## v0.18 — THE waveform set: Bank A classics + Bank B chaos (Jason's plan)
+
+The 16 waveforms Jason chose (from the signal-flow-diagram chat), on both
+LFOs. This replaces the v0.17 TAPLFO list (those DSP shapes stay in the code,
+just unlisted).
+
+**Bank A — the classics:**
+Ramp Up, Ramp Dn, Square, Triangle, Sine, Sweep, Rand Slope, **S&H**.
+
+**Bank B — the fun stuff:**
+
+* **Lorenz** — chaos attractor; swoopy, orbit-like, never repeats.
+* **Rossler** — chaos attractor; smoother, spiral-y.
+* **Drunk Walk** — brownian wander with momentum; great slow filter drift.
+* **Perlin** — 3 octaves of layered smooth randomness; organic.
+* **Wobble** — sine whose depth randomly swells and fades (new swell each cycle).
+* **Glitch** — mostly calm (tiny ±0.1 wander) with sudden brief chaotic
+  flurries (80–250 ms of full-range jumps) — very on-brand.
+* **White Noise / Pink Noise** — holding Bank B's two open slots until the
+  first batch has been auditioned (swap candidates welcome).
+
+**Design nicety (as planned):** the chaos/drift waves aren't periodic, so on
+LFO 2 a tempo tap sets their **time-scale** (how fast the attractor moves) and
+**resets their state** — feels like sync under your foot. RATE does the same
+time-scaling on LFO 1. New param IDs `lfo1shape5` / `lfo2shape4`.
+
+All six new generators numerically verified: bounded ±1, finite at rate
+extremes (0.02–10 Hz, 30 s runs), drunk walk steps < 0.001/sample with full
+wander range, wobble peak envelope swings 0.54→0.96, glitch ~15 % loud
+samples, retrigger-safe mid-run.
+
+---
+
+## v0.17 — TAPLFO 3D waveforms + dual-hold depth sweep (list superseded)
 
 **The full Electric Druid TAPLFO 3D waveform set on both LFOs** (16 waves,
 datasheet order, both wave sets), plus the White/Pink noise LFOs from v0.4:

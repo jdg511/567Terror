@@ -35,16 +35,20 @@ enum class ModTarget : int
     Gain                            // the dirt GAIN knob
 };
 
-// v0.17: the full Electric Druid TAPLFO 3D waveform set (both wave sets),
-// plus the White/Pink noise LFOs Jason asked for in v0.4.
-// Values are append-only so saved sessions stay stable.
+// v0.18: Jason's two-bank waveform plan (from the signal-flow-diagram chat).
+// Bank A classics: RampUp, RampDown, Square, Triangle, Sine, Sweep,
+//                  RandSlopes, SampleHold (S&H).
+// Bank B fun stuff: Lorenz, Rossler, DrunkWalk, PerlinDrift, Wobble, Glitch,
+//                   + White/Pink noise holding the two open slots.
+// Values are append-only so saved sessions stay stable (TAPLFO extras from
+// v0.17 keep their values but are no longer listed in the UI).
 enum class LfoShape : int { Sine = 0, Triangle, Square, SampleHold, WhiteNoise, PinkNoise,
                             RampUp, RampDown,
-                            // TAPLFO 3D original set additions
                             Sweep, Lumps,
-                            // TAPLFO 3D alternate set
                             RampOct, QuadRamp, QuadPulse, TriStep,
-                            SineOct, Sine3rd, Sine4th, RandSlopes };
+                            SineOct, Sine3rd, Sine4th, RandSlopes,
+                            // v0.18 Bank B generators (stateful, non-periodic)
+                            Lorenz, Rossler, DrunkWalk, PerlinDrift, Wobble, Glitch };
 
 class ModSystem
 {
@@ -89,12 +93,22 @@ public:
         lfo1Phase = lfo2Phase = 0.0;
         shValue = shValue2 = shPrev = shPrev2 = 0.0f;
         noise1 = noise2 = {};
+        state1 = state2 = {};
         rngState = 0x1234ABCDu;
         visLfo1 = visLfo2 = 0.0f;
         samplesSinceCompute = 0;
     }
 
     void setParams (const Params& p) noexcept { params = p; }
+
+    // v0.18: a tap-tempo tap on LFO 2 resets the non-periodic generators'
+    // state (the tap sets the time-scale; the reset makes it feel synced
+    // under your foot). Harmless for periodic shapes — phase is untouched.
+    void retriggerLfo2() noexcept
+    {
+        state2 = {};
+        noise2 = {};
+    }
 
     // Call once per host-rate sample. Inputs are absolute-value levels (FS).
     inline void tick (float inputAbs, float cv1Abs, float cv2Abs) noexcept
@@ -124,24 +138,8 @@ public:
         float envGainEff   = params.envGain;
 
         // ---- LFO 2 (always bipolar) -----------------------------------------
-        float lfo2Raw;
-        if ((LfoShape) params.lfo2Shape == LfoShape::WhiteNoise
-         || (LfoShape) params.lfo2Shape == LfoShape::PinkNoise)
-        {
-            lfo2Raw = noiseSample (noise2, (LfoShape) params.lfo2Shape == LfoShape::PinkNoise,
-                                   params.lfo2RateHz, dt);
-        }
-        else
-        {
-            const double prev2 = lfo2Phase;
-            lfo2Phase = wrapPhase (lfo2Phase + (double) (params.lfo2RateHz * dt));
-            if (lfo2Phase < prev2)
-            {
-                shPrev2  = shValue2;             // Random Slopes interpolates prev -> next
-                shValue2 = whiteNoise();
-            }
-            lfo2Raw = lfoValue ((LfoShape) params.lfo2Shape, lfo2Phase, shValue2, shPrev2);
-        }
+        const float lfo2Raw = generate ((LfoShape) params.lfo2Shape, params.lfo2RateHz, dt,
+                                        lfo2Phase, shValue2, shPrev2, noise2, state2);
         visLfo2 = lfo2Raw;                                     // bipolar, for the LED
         const float lfo2Sig = lfo2Raw * params.lfo2Depth * cv2Vca;
 
@@ -157,24 +155,8 @@ public:
 
         // ---- LFO 1 (always unipolar-up; noise: rate = noise LPF cutoff) ------
         const float lfo1RateBent = clampf (lfo1RateEff * lfo1RateFactor, 0.01f, 0.45f / dt);
-        float lfo1Raw;
-        if ((LfoShape) params.lfo1Shape == LfoShape::WhiteNoise
-         || (LfoShape) params.lfo1Shape == LfoShape::PinkNoise)
-        {
-            lfo1Raw = noiseSample (noise1, (LfoShape) params.lfo1Shape == LfoShape::PinkNoise,
-                                   lfo1RateBent, dt);
-        }
-        else
-        {
-            const double prevPhase = lfo1Phase;
-            lfo1Phase = wrapPhase (lfo1Phase + (double) (lfo1RateBent * dt));
-            if (lfo1Phase < prevPhase)
-            {
-                shPrev  = shValue;
-                shValue = whiteNoise();
-            }
-            lfo1Raw = lfoValue ((LfoShape) params.lfo1Shape, lfo1Phase, shValue, shPrev);
-        }
+        const float lfo1Raw = generate ((LfoShape) params.lfo1Shape, lfo1RateBent, dt,
+                                        lfo1Phase, shValue, shPrev, noise1, state1);
         const float lfo1Out = 0.5f * (lfo1Raw + 1.0f);         // unipolar-up 0..1
         visLfo1 = lfo1Out;
         applyToKnob (out, (ModTarget) params.lfo1Target,
@@ -273,6 +255,157 @@ private:
 
     struct NoiseState { float lp = 0.0f, p0 = 0.0f, p1 = 0.0f, p2 = 0.0f; };
 
+    // ---- v0.18 Bank B state ------------------------------------------------
+    struct LfoState
+    {
+        // Lorenz / Rossler attractor coordinates
+        double ax = 0.0, ay = 0.0, az = 0.0;
+        bool   seeded = false;
+        // drunk walk (brownian with momentum)
+        float  dv = 0.0f, dpos = 0.0f;
+        // Perlin-style drift: 3 octaves of value noise
+        double pph[3] = { 0.0, 0.0, 0.0 };
+        float  pa[3]  = { 0.0f, 0.0f, 0.0f }, pb[3] = { 0.0f, 0.0f, 0.0f };
+        // wobble envelope (random swell/fade on a sine)
+        float  wEnv = 0.6f, wTgt = 0.6f;
+        // glitch: calm wander + burst timer
+        float  gCalm = 0.0f, gVal = 0.0f, gBurst = 0.0f;
+    };
+
+    inline float rand01() noexcept { return 0.5f * (whiteNoise() + 1.0f); }
+
+    // One LFO output sample. Periodic shapes ride `phase`; Bank B shapes and
+    // the noise LFOs are stateful. Rate = time-scale for the non-periodic ones
+    // ("how fast the attractor moves" — Jason's plan).
+    float generate (LfoShape shape, float rateHz, float dt,
+                    double& phase, float& sh, float& shp,
+                    NoiseState& ns, LfoState& ls) noexcept
+    {
+        switch (shape)
+        {
+            case LfoShape::WhiteNoise:
+            case LfoShape::PinkNoise:
+                return noiseSample (ns, shape == LfoShape::PinkNoise, rateHz, dt);
+
+            case LfoShape::Lorenz:      // swoopy, orbit-like, never repeats
+            {
+                if (! ls.seeded)
+                {
+                    ls.ax = 0.1 + 0.05 * whiteNoise(); ls.ay = 0.0; ls.az = 25.0;
+                    ls.seeded = true;
+                }
+                double h = 0.75 * rateHz * dt;          // ~1 orbit per 1/rate sec
+                const int n = 1 + (int) (h / 0.01);
+                h /= n;
+                for (int i = 0; i < n; ++i)
+                {
+                    const double dx = 10.0 * (ls.ay - ls.ax);
+                    const double dy = ls.ax * (28.0 - ls.az) - ls.ay;
+                    const double dz = ls.ax * ls.ay - (8.0 / 3.0) * ls.az;
+                    ls.ax += h * dx; ls.ay += h * dy; ls.az += h * dz;
+                }
+                if (! std::isfinite (ls.ax) || std::abs (ls.ax) > 1000.0)
+                    ls.seeded = false;                  // re-seed next sample
+                return clampf ((float) (ls.ax / 20.0), -1.0f, 1.0f);
+            }
+
+            case LfoShape::Rossler:     // smoother, spiral-y
+            {
+                if (! ls.seeded)
+                {
+                    ls.ax = 1.0 + 0.1 * whiteNoise(); ls.ay = 0.0; ls.az = 0.0;
+                    ls.seeded = true;
+                }
+                double h = 5.9 * rateHz * dt;           // ~1 spiral per 1/rate sec
+                const int n = 1 + (int) (h / 0.05);
+                h /= n;
+                for (int i = 0; i < n; ++i)
+                {
+                    const double dx = -ls.ay - ls.az;
+                    const double dy = ls.ax + 0.2 * ls.ay;
+                    const double dz = 0.2 + ls.az * (ls.ax - 5.7);
+                    ls.ax += h * dx; ls.ay += h * dy; ls.az += h * dz;
+                }
+                if (! std::isfinite (ls.ax) || std::abs (ls.ax) > 1000.0)
+                    ls.seeded = false;
+                return clampf ((float) (ls.ax / 11.0), -1.0f, 1.0f);
+            }
+
+            case LfoShape::DrunkWalk:   // brownian wander with momentum
+            {
+                const float a = clampf (rateHz * dt * 4.0f, 0.0f, 0.5f);
+                ls.dv  += whiteNoise() * a;
+                ls.dv  *= 1.0f - 0.5f * a;              // gentle damping
+                ls.dpos += ls.dv * clampf (rateHz * dt * 6.0f, 0.0f, 0.5f);
+                if (ls.dpos >  1.0f) { ls.dpos =  2.0f - ls.dpos; ls.dv = -std::abs (ls.dv); }
+                if (ls.dpos < -1.0f) { ls.dpos = -2.0f - ls.dpos; ls.dv =  std::abs (ls.dv); }
+                return ls.dpos;
+            }
+
+            case LfoShape::PerlinDrift: // layered smooth randomness, organic
+            {
+                float sum = 0.0f, amp = 1.0f, tot = 0.0f, f = rateHz;
+                for (int k = 0; k < 3; ++k)
+                {
+                    ls.pph[k] += (double) (f * dt);
+                    if (ls.pph[k] >= 1.0)
+                    {
+                        ls.pph[k] -= std::floor (ls.pph[k]);
+                        ls.pa[k] = ls.pb[k];
+                        ls.pb[k] = whiteNoise();
+                    }
+                    const float t = (float) ls.pph[k];
+                    const float s = 0.5f - 0.5f * std::cos (3.1415927f * t);
+                    sum += (ls.pa[k] + (ls.pb[k] - ls.pa[k]) * s) * amp;
+                    tot += amp;
+                    f *= 2.1f; amp *= 0.5f;
+                }
+                return clampf (sum / (tot * 0.75f), -1.0f, 1.0f);
+            }
+
+            case LfoShape::Glitch:      // mostly calm, sudden brief chaotic flurries
+            {
+                if (ls.gBurst > 0.0f)
+                {
+                    ls.gBurst -= dt;
+                    if (rand01() < dt * 250.0f)     // a hard jump every ~4 ms
+                        ls.gVal = whiteNoise();     // full-range chaotic flurry
+                }
+                else
+                {
+                    if (rand01() < rateHz * 0.4f * dt)          // flurries ~0.4/cycle
+                        ls.gBurst = 0.08f + 0.17f * rand01();
+                    ls.gCalm += (whiteNoise() - ls.gCalm)
+                              * clampf (dt * rateHz * 0.25f, 0.0f, 0.1f);
+                    ls.gVal  += (0.1f * ls.gCalm - ls.gVal)
+                              * clampf (dt * rateHz * 2.0f, 0.0f, 0.5f);
+                }
+                return clampf (ls.gVal, -1.0f, 1.0f);
+            }
+
+            default: break;             // periodic shapes fall through
+        }
+
+        // ---- phase-based shapes (incl. Wobble's sine carrier) ---------------
+        const double prev = phase;
+        phase = wrapPhase (phase + (double) (rateHz * dt));
+        if (phase < prev)
+        {
+            shp = sh;                   // Random Slopes interpolates prev -> next
+            sh  = whiteNoise();
+            if (shape == LfoShape::Wobble)
+                ls.wTgt = 0.15f + 0.85f * rand01();     // new swell each cycle
+        }
+
+        if (shape == LfoShape::Wobble)  // sine whose depth randomly swells/fades
+        {
+            ls.wEnv += (ls.wTgt - ls.wEnv) * clampf (rateHz * dt * 2.0f, 0.0f, 0.5f);
+            return sineOf (phase) * ls.wEnv;
+        }
+
+        return lfoValue (shape, phase, sh, shp);
+    }
+
     float noiseSample (NoiseState& ns, bool pink, float cutoffHz, float dt) noexcept
     {
         const float w = whiteNoise();
@@ -316,6 +449,7 @@ private:
     float  shValue = 0.0f, shValue2 = 0.0f;
     float  shPrev  = 0.0f, shPrev2  = 0.0f;   // for Random Slopes
     NoiseState noise1, noise2;
+    LfoState   state1, state2;   // v0.18 Bank B generators
     uint32_t rngState = 0x1234ABCDu;
 
     int   samplesSinceCompute = 0;
