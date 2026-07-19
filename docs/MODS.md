@@ -1,4 +1,130 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.10)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.17)
+
+## v0.17 — TAPLFO 3D waveforms + dual-hold depth sweep
+
+**The full Electric Druid TAPLFO 3D waveform set on both LFOs** (16 waves,
+datasheet order, both wave sets), plus the White/Pink noise LFOs from v0.4:
+
+* Original set: Ramp Up, Ramp Dn, Pulse, Tri, Sine, **Sweep** (smooth scoop),
+  **Lumps** (smooth arch), Rand Lvls (S&H).
+* Alternate set: **Ramp+Oct**, **Quad Ramp** (4 quick teeth then rest),
+  **Quad Pulse** (4 quick pulses then rest), **Tri Step** (4-level staircase),
+  **Sine+Oct**, **Sine+3rd**, **Sine+4th** (harmonic sums, normalised),
+  **Rand Slope** (lines between random levels).
+* White Noise / Pink Noise stay at the end of the list (rate = noise LPF).
+* New param IDs `lfo1shape4` / `lfo2shape3` (list grew 8 → 18).
+
+**LFO 2 depth: dual-button hold** (replaces the v0.16 double-tap loop — 100 ms
+was too fast to play):
+
+* The button is a plain **rate tap-tempo** button again. LED 1st colour
+  (amber), breathing with the LFO. Only two LED colours needed now.
+* **Hold BOTH LFO 2 buttons (rate/depth + shape/target) for 750 ms** →
+  LED switches to the 2nd colour (blue) and the depth starts riding a
+  sine-like wave **from its current % in its remembered direction**:
+  0 ↔ 100 % in 4 s per traverse, easing into the extremes, **pausing 300 ms
+  at 0 % and at 100 %** before turning around. LED brightness = depth %.
+* **Releasing either button freezes the depth** exactly where it is; the wave
+  resumes from that point (same direction) next time.
+* **In the simulator: hold CTRL + the rate/depth button** to stand in for
+  holding both buttons.
+* Hardware note: dual-hold must take priority over each button's single-hold
+  action in the MCU firmware (tap/hold actions fire only if the other button
+  is up).
+
+Also: fixed the garbled "·  ↑ →" characters in the panel printing (UTF-8).
+
+---
+
+## v0.16 — LFO 2 depth control loop (superseded by v0.17)
+
+The LFO 2 button is normally a **rate tap-tempo** button (LED = 1st colour,
+amber, breathing with the LFO). The depth is set through a timed control loop,
+exactly as specced for the hardware firmware:
+
+* **Double tap** = two presses **≤ 100 ms** apart, then **no press for 0.5 s**.
+* Double tap in rate mode → **ARMED**: LED = 2nd colour (blue) at 100 %,
+  fading to 0 % over **5 s**.
+  * no press in 5 s → back to rate mode (1st colour), nothing changes.
+  * single press → back to rate mode, nothing changes.
+  * double tap (2nd press ≤ 100 ms) → the loop begins at **point A**.
+* **Point A**: LED = 1st colour blinking **20 Hz for 0.5 s**.
+  * single tap during the blink → **depth = 0 %**, exit.
+  * double tap during the blink → jump to **point B**.
+  * untouched → **ramp up**: LED = 3rd colour (white); LED brightness **and**
+    depth rise linearly **0 → 100 % in 4 s**. Tap anytime = keep the current
+    depth, exit. You hear the depth sweep — tap when it sounds right.
+* **Point B** (after the ramp up, or straight from A by double tap):
+  LED = 3rd colour blinking 20 Hz for 0.5 s, **depth = 100 %**.
+  * tap during the blink → keep 100 %, exit.
+  * untouched → **ramp down**: brightness and depth fall **100 → 0 % in 4 s**.
+    Tap anytime = keep the current depth, exit.
+  * untouched again → the loop starts over at point A.
+* Exiting always returns to rate mode + 1st colour; the exit press never
+  counts as a tempo tap.
+
+Also: the editor now redraws at 60 fps so the 20 Hz blinks render.
+(The v0.15 hold-to-sweep depth behaviour is gone — replaced by this loop.)
+
+---
+
+## v0.15 — LFO 2 rate+depth on one button (first pass, superseded)
+
+* LFO 2's RATE/DEPTH knobs removed; one button: TAP = tap tempo,
+  HOLD = depth sweeps up/down 10 %/tick, ping-ponging. Replaced in v0.16 by
+  the depth control loop above.
+* Live "x.xx Hz · yy %" readout under the button (kept in v0.16).
+
+---
+
+## v0.14 — one-button tap/hold controls + more waveforms
+
+* **LFO waveforms are now 8**: Sine, Triangle, **Ramp Up, Ramp Dn**, Square,
+  Rand S&H, White Noise, Pink Noise (both LFOs).
+* **Filter gains a Notch mode**: Off / LP / BP / HP / **Notch** (free on a
+  hardware SVF).
+* **One button per section** (Jason's idea — this is the hardware interaction):
+  * **LFO 1 / LFO 2 button**: TAP = next shape. HOLD 600 ms = the target starts
+    cycling, one step every 400 ms, continuing from wherever it sits; release
+    to lock. LED columns are indicators only.
+  * **ENV button**: TAP = next filter mode ("waveform"). HOLD 600 ms = the
+    drive×range combo cycles every 400 ms in the ring
+    **up&hi → up&low → down&hi → down&low → …**, continuing from the current
+    combo; release to lock. (Env TARGET keeps its own tappable LED column.)
+* RATE / DEPTH / GAIN stay as physical pots.
+* Hardware note: one momentary switch + LED array per section — a small MCU
+  scanning buttons and driving LEDs is the clean implementation (to be decided
+  in step 3).
+
+---
+
+## v0.12 + v0.13 — THE HARDWARE PLAN (this is what the PCB will be)
+
+**Zero dropdowns.** Every selector is a button-cycled LED column (click the title
+to cycle like the pedal's button, or click a row directly).
+
+Control plate:
+
+* **Knobs (12):** FREQ · GAIN · LPF · RES · MIX · VOL (big row) + LFO1 RATE/DEPTH
+  + LFO2 RATE/DEPTH + ENV GAIN + (under the gate cover) THRESH/HOLD/FADE.
+* **Dirt:** BAZZ FUSS, hardwired, always on (red LED). No selector.
+* **LFO 1:** always **UNIPOLAR-UP** — SHAPE (6 LEDs) + TARGET (6 LEDs), amber
+  rate LED pulses with the LFO.
+* **LFO 2:** always **BIPOLAR** — SHAPE (6 LEDs) + TARGET (9 LEDs incl. LFO1
+  Rate/Depth and Env Gain), amber rate LED.
+* **Envelope follower:** GAIN knob + TARGET LEDs + DRIVE Up/Down + MODE
+  Off/LP/BP/HP + RANGE Lo/Hi. Mode Off = filter bypassed, whole block greys out.
+* **CV jacks (v0.13):** CV 1 (sidechain L) is **hardwired to LFO 1's DEPTH** as a
+  VCA; CV 2 (sidechain R) to **LFO 2's DEPTH**. No target selectors, no strength
+  knobs — sidechain level breathes the LFO's depth, the DEPTH knob sets the max.
+  LFOs never grey out. Like a normalled jack: no signal for ~3 s = "unplugged"
+  = VCA fully open, LFO runs at its knob. Green activity LEDs.
+* **Output gate:** under a clickable cover plate showing the live summary and
+  status LED (green open / amber blinking while fading / red closed).
+  Defaults −48 dB · 1 s · 30 s.
+* **Meters:** IN and OUT PPMs.
+
+---
 
 ## v0.10 changes — fixed voicing filters + PCB dirt decision
 

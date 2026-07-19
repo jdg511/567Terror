@@ -1,0 +1,256 @@
+<mxfile host="Electron" agent="Claude">
+  <diagram name="Glitchwave 567 - Signal Flow" id="glitchwave567signalflow">
+    <mxGraphModel dx="928" dy="821" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3400" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="b1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="INPUT JACK&#xa;1/4&quot; TS" vertex="1">
+          <mxGeometry height="70" width="130" x="40" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="b2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;" value="Input Buffer&#xa;unity gain, DC block&#xa;(U1.1, ~0.33Hz)" vertex="1">
+          <mxGeometry height="70" width="170" x="340" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="b3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;fontStyle=1;" value="Input HP Filter&#xa;24dB/oct Butterworth&#xa;@ 40Hz (2x Sallen-Key)&#xa;[FIXED - voicing]" vertex="1">
+          <mxGeometry height="70" width="170" x="550" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="b4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;verticalAlign=middle;align=center;" value="Gain Stage (U1.3)&lt;br&gt;+12dB, AC&amp;gt;15Hz&lt;br&gt;feeds 567 only" vertex="1">
+          <mxGeometry height="70" width="170" x="760" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="b5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;verticalAlign=middle;align=center;fontStyle=1;" value="BAZZ FUSS Dirt&#xa;1 transistor + 1 diode&#xa;gated &#39;velcro&#39; clip&#xa;GAIN knob x2..x300" vertex="1">
+          <mxGeometry height="70" width="170" x="760" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="b6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;verticalAlign=middle;align=center;fontStyle=1;" value="LM567 PLL&#xa;Tone Decoder&#xa;RT=3.6k+FREQpot,&#xa;CT=220n +switched caps&#xa;(FREQ 0.1Hz-18kHz)" vertex="1">
+          <mxGeometry height="90" width="170" x="980" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;" value="MIX pot&lt;br&gt;(567 wet &amp;lt;-&amp;gt; &lt;br&gt;Bazz Fuss dry)" vertex="1">
+          <mxGeometry height="70" width="140" x="1370" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="b8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;" value="Envelope Filter&#xa;OTA/photocell SVF&#xa;LP/BP/HP switch&#xa;RANGE Lo/Hi, RES" vertex="1">
+          <mxGeometry height="90" width="190" x="1550" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="b9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;fontFamily=Helvetica;fontColor=default;" value="GATE&lt;br&gt;LDR fade&lt;br&gt;(THRESH -48dB / HOLD 1 sec / FADE 30 sec. Set by internal trim pots)&amp;nbsp;&amp;nbsp;" vertex="1">
+          <mxGeometry height="110" width="170" x="1770" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="b10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;fontFamily=Helvetica;fontColor=default;" value="Output HP Filter&#xa;12dB/oct @ 60Hz&#xa;[FIXED - voicing]" vertex="1">
+          <mxGeometry height="70" width="170" x="2010" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="b11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;fontFamily=Helvetica;fontColor=default;" value="Output Bell/Peak&#xa;gyrator, +3dB Q0.5&#xa;@ 800Hz&#xa;[FIXED - voicing]" vertex="1">
+          <mxGeometry height="70" width="170" x="2260" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="b12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;" value="Output Buffer&#xa;+ DC block (220n/100k)&#xa;470R series" vertex="1">
+          <mxGeometry height="70" width="170" x="2500" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="b13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="BYPASS&#xa;footswitch (stomp)&#xa;true bypass" vertex="1">
+          <mxGeometry height="60" width="150" x="2560" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="b14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="OUTPUT JACK&#xa;1/4&quot; TS" vertex="1">
+          <mxGeometry height="70" width="130" x="2770" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="b31" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;" value="Envelope Follower&#xa;(Mu-Tron style)&#xa;rectify+smooth&#xa;GAIN, DRIVE Up/Down" vertex="1">
+          <mxGeometry height="70" width="170" x="1370" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="b32" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;dashed=1;" value="TARGET: assignable&lt;br&gt;Freq / Filter Cutoff" vertex="1">
+          <mxGeometry height="70" width="190" x="1550" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="b36" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="CV IN 1&#xa;1/4&quot; jack (side)" vertex="1">
+          <mxGeometry height="60" width="130" x="40" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="b37" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;" value="CV1 + LFO1 (STOMPLFO U3)&lt;div&gt;Rate/Depth/Waveform/Offset - see LFO detail below&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="170" x="210" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="b38" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;" value="CV1 + LFO1 TARGET SELECT&lt;br&gt;Freq / Filter / Res / Gain / Mix" vertex="1">
+          <mxGeometry height="60" width="190" x="420" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="b39" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="CV IN 2&#xa;1/4&quot; jack (side)" vertex="1">
+          <mxGeometry height="60" width="130" x="1430" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="b40" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;" value="CV2 + LFO2 (STOMPLFO U4)&lt;div&gt;Rate/Depth/Waveform/Offset - see LFO detail below&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="170" x="1600" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="b41" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;CV2 + LFO2 TARGET SELECT&lt;br&gt;Freq / Filter / Res / Gain / Mix / LFO1 Rate / LFO1 Depth&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="220" x="1810" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="b42" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="CV OUT&#xa;1/4&quot; jack (side)&#xa;buffered env/lock out" vertex="1">
+          <mxGeometry height="60" width="150" x="2400" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="b53" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;verticalAlign=middle;align=center;" value="9V DC JACK&#xa;center-negative" vertex="1">
+          <mxGeometry height="60" width="150" x="40" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="b54" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;verticalAlign=middle;align=center;" value="Reverse-polarity diode&#xa;+ bulk filter C9 100u" vertex="1">
+          <mxGeometry height="60" width="170" x="230" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="b55" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;verticalAlign=middle;align=center;fontStyle=1;" value="+4.5V Mid-Rail Bias&#xa;R14/R15 47k/47k + C10 47u&#xa;(VREF)" vertex="1">
+          <mxGeometry height="60" width="200" x="440" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="b56" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;verticalAlign=middle;align=center;dashed=1;" value="VREF distributed to every&#xa;op-amp stage above&#xa;(all stages ref&#39;d to 4.5V)" vertex="1">
+          <mxGeometry height="60" width="260" x="680" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="b60" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=16;verticalAlign=middle;align=center;fontStyle=1;" value="Glitchwave 567 Mod - Hardware Signal Flow (Step 3 PCB planning draft) - Vendor: Illicit Apothecary" vertex="1">
+          <mxGeometry height="35" width="900" x="40" as="geometry" />
+        </mxCell>
+        <mxCell id="b61" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;verticalAlign=middle;align=center;" value="LEGEND&#xa;Blue = confirmed audio path&#xa;Orange = dirt (Bazz Fuss)&#xa;Green = ICs (LM567 / STOMPLFO) &amp; power rail&#xa;Purple = modulation/CV&#xa;Yellow = jacks &amp; switches&#xa;Gray dashed = OPEN QUESTION" vertex="1">
+          <mxGeometry height="130" width="190" x="2580" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="b62" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;verticalAlign=middle;align=center;dashed=1;" value="&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Enclosure &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;1590DD&lt;/span&gt;" vertex="1">
+          <mxGeometry height="130" width="190" x="2580" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="b1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="b2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="b3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="b4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e18" edge="1" parent="1" source="b3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;exitX=1;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="b5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" edge="1" parent="1" source="b4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e20" edge="1" parent="1" source="b6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="jqXfasyfpFj3-dpbF1jQ-1" value="WET">
+          <mxGeometry relative="1" x="-0.2627" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e21" edge="1" parent="1" source="b5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" value="DRY (dirt)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1180" y="265" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e22" edge="1" parent="1" source="b7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e23" edge="1" parent="1" source="b8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b9" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e24" edge="1" parent="1" source="b9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e25" edge="1" parent="1" source="b10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b11" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e26" edge="1" parent="1" source="b11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b12" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e27" edge="1" parent="1" source="b12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="b14" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e28" edge="1" parent="1" source="b12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;dashed=1;exitX=0.7;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;" target="b13" value="bypass&#xa;route">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e29" edge="1" parent="1" source="b13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;dashed=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.8;entryDx=0;entryDy=0;" target="b14" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e30" edge="1" parent="1" source="b1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;fontSize=10;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.9;entryDx=0;entryDy=0;" target="b13" value="bypass sense&#xa;(SPDT)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="105" y="450" />
+              <mxPoint x="2580" y="450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e33" edge="1" parent="1" source="b2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.1;entryY=0;entryDx=0;entryDy=0;" target="b31" value="taps raw input&#xa;(pre-gain)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="425" y="400" />
+              <mxPoint x="1387" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e34" edge="1" parent="1" source="b31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;" target="b32" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e35" edge="1" parent="1" source="b32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.3;entryY=1;entryDx=0;entryDy=0;" target="b8" value="default&#xa;target">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e43" edge="1" parent="1" source="b36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b37" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e44" edge="1" parent="1" source="b37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b38" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e45" edge="1" parent="1" source="b38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.2;entryY=1;entryDx=0;entryDy=0;" target="b6" value="e.g. Freq">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e46" edge="1" parent="1" source="b38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=0.7;exitY=0;exitDx=0;exitDy=0;entryX=0.2;entryY=1;entryDx=0;entryDy=0;" target="b8" value="e.g. Filter">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e47" edge="1" parent="1" source="b39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b40" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e48" edge="1" parent="1" source="b40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b41" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e49" edge="1" parent="1" source="b41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=0.3;exitY=0;exitDx=0;exitDy=0;entryX=0.7;entryY=1;entryDx=0;entryDy=0;" target="b5" value="e.g. Gain">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e50" edge="1" parent="1" source="b41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=0.7;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="b7" value="e.g. Mix">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e51" edge="1" parent="1" source="b41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;" target="b37" value="mod-of-mod:&lt;br&gt;LFO1 Rate / Depth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e52" edge="1" parent="1" source="b31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;" target="b42" value="optional tap&#xa;(buffered)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e57" edge="1" parent="1" source="b53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b54" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e58" edge="1" parent="1" source="b54" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b55" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e59" edge="1" parent="1" source="b55" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b56" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jqXfasyfpFj3-dpbF1jQ-4" edge="1" parent="1" source="jqXfasyfpFj3-dpbF1jQ-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="b7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jqXfasyfpFj3-dpbF1jQ-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="1k Resistor" vertex="1">
+          <mxGeometry height="20" width="70" x="1230" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="jqXfasyfpFj3-dpbF1jQ-5" edge="1" parent="1" source="jqXfasyfpFj3-dpbF1jQ-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" target="b7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jqXfasyfpFj3-dpbF1jQ-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="1k Resistor" vertex="1">
+          <mxGeometry height="20" width="70" x="1180" y="255" as="geometry" />
+        </mxCell>
+              <mxCell id="lfo101" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;verticalAlign=middle;align=center;fontStyle=1;" value="LFO 1 &amp; LFO 2 hardware detail - Electric Druid STOMPLFO (8-pin IC, tap tempo + 8 waveforms)" vertex="1"><mxGeometry height="35" width="1650" x="40" y="920" as="geometry" /></mxCell>
+        <mxCell id="lfo102" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;verticalAlign=middle;align=center;dashed=1;" value="IC CHOICE NOTE: STOMPLFO kept over a&#10;microcontroller-DIY LFO (cheaper in raw&#10;parts, ~$1-2) because that route needs&#10;firmware coding. STOMPLFO is a drop-in&#10;8-pin chip - matches a no-code build." vertex="1"><mxGeometry height="90" width="320" x="2580" y="920" as="geometry" /></mxCell>
+        <mxCell id="lfo103" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;" value="LFO1 RATE pot&#10;-&gt; FREQ CV (log 0.05-25Hz)" vertex="1"><mxGeometry height="50" width="150" x="40" y="970" as="geometry" /></mxCell>
+        <mxCell id="lfo104" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;" value="LFO1 WAVEFORM sw&#10;8-position rotary -&gt; WAVEFORM CV&#10;(Ramp Up/Dn, Sq, Tri, Sine, Sweep,&#10;Random Levels, Random Slopes)" vertex="1"><mxGeometry height="50" width="150" x="40" y="1030" as="geometry" /></mxCell>
+        <mxCell id="lfo105" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;" value="LFO1 OFFSET/POLARITY pot&#10;-&gt; OFFSET CV&#10;(uni up / bi / uni down)" vertex="1"><mxGeometry height="50" width="150" x="40" y="1110" as="geometry" /></mxCell>
+        <mxCell id="lfo106" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;" value="LFO1 DEPTH pot&#10;-&gt; DEPTH CV (=LFO1 Depth)" vertex="1"><mxGeometry height="50" width="150" x="40" y="1170" as="geometry" /></mxCell>
+        <mxCell id="lfo107" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="TAP TEMPO footswitch (LFO1)&#10;-&gt; pin 4, sets rate by tapping" vertex="1"><mxGeometry height="45" width="170" x="380" y="960" as="geometry" /></mxCell>
+        <mxCell id="lfo108" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;verticalAlign=middle;align=center;fontStyle=1;" value="STOMPLFO U3 (LFO1)&#10;Electric Druid, DIP-8, +5V/0V&#10;pins: FREQ/WAVEFORM/OFFSET/&#10;DEPTH CV in, TAP TEMPO in,&#10;PDM OUT (2MHz, 31.25kHz sample)" vertex="1"><mxGeometry height="120" width="170" x="380" y="1015" as="geometry" /></mxCell>
+        <mxCell id="lfo109" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;" value="PDM Output Filter&#10;active Sallen-Key 12dB/oct&#10;~664Hz + bias (per datasheet,&#10;retune bias to board&#x27;s 4.5V VREF)&#10;-&gt; analog LFO1 CV out" vertex="1"><mxGeometry height="80" width="190" x="610" y="1035" as="geometry" /></mxCell>
+        <mxCell id="lfo110" edge="1" parent="1" source="lfo103" target="lfo108" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo111" edge="1" parent="1" source="lfo104" target="lfo108" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo112" edge="1" parent="1" source="lfo105" target="lfo108" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo113" edge="1" parent="1" source="lfo106" target="lfo108" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo114" edge="1" parent="1" source="lfo107" target="lfo108" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo115" edge="1" parent="1" source="lfo108" target="lfo109" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo116" edge="1" parent="1" source="lfo109" target="b37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0.3;entryY=1;entryDx=0;entryDy=0;" value="LFO1 waveform&#10;feeds CV1+LFO1 stage"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo117" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;" value="LFO2 RATE pot&#10;-&gt; FREQ CV (log 0.05-25Hz)" vertex="1"><mxGeometry height="50" width="150" x="1430" y="970" as="geometry" /></mxCell>
+        <mxCell id="lfo118" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;" value="LFO2 WAVEFORM sw&#10;8-position rotary -&gt; WAVEFORM CV&#10;(Ramp Up/Dn, Sq, Tri, Sine, Sweep,&#10;Random Levels, Random Slopes)" vertex="1"><mxGeometry height="50" width="150" x="1430" y="1030" as="geometry" /></mxCell>
+        <mxCell id="lfo119" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;" value="LFO2 OFFSET/POLARITY pot&#10;-&gt; OFFSET CV&#10;(uni up / bi / uni down)" vertex="1"><mxGeometry height="50" width="150" x="1430" y="1110" as="geometry" /></mxCell>
+        <mxCell id="lfo120" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;" value="LFO2 DEPTH pot&#10;-&gt; DEPTH CV (=LFO2 Depth)" vertex="1"><mxGeometry height="50" width="150" x="1430" y="1170" as="geometry" /></mxCell>
+        <mxCell id="lfo121" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="TAP TEMPO footswitch (LFO2)&#10;-&gt; pin 4, sets rate by tapping" vertex="1"><mxGeometry height="45" width="170" x="1770" y="960" as="geometry" /></mxCell>
+        <mxCell id="lfo122" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;verticalAlign=middle;align=center;fontStyle=1;" value="STOMPLFO U4 (LFO2)&#10;Electric Druid, DIP-8, +5V/0V&#10;pins: FREQ/WAVEFORM/OFFSET/&#10;DEPTH CV in, TAP TEMPO in,&#10;PDM OUT (2MHz, 31.25kHz sample)" vertex="1"><mxGeometry height="120" width="170" x="1770" y="1015" as="geometry" /></mxCell>
+        <mxCell id="lfo123" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;" value="PDM Output Filter&#10;active Sallen-Key 12dB/oct&#10;~664Hz + bias (per datasheet,&#10;retune bias to board&#x27;s 4.5V VREF)&#10;-&gt; analog LFO2 CV out" vertex="1"><mxGeometry height="80" width="190" x="2000" y="1035" as="geometry" /></mxCell>
+        <mxCell id="lfo124" edge="1" parent="1" source="lfo117" target="lfo122" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo125" edge="1" parent="1" source="lfo118" target="lfo122" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo126" edge="1" parent="1" source="lfo119" target="lfo122" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo127" edge="1" parent="1" source="lfo120" target="lfo122" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo128" edge="1" parent="1" source="lfo121" target="lfo122" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo129" edge="1" parent="1" source="lfo122" target="lfo123" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo130" edge="1" parent="1" source="lfo123" target="b40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0.3;entryY=1;entryDx=0;entryDy=0;" value="LFO2 waveform&#10;feeds CV2+LFO2 stage"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo131" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;verticalAlign=middle;align=center;fontStyle=1;" value="+5V Reg (78L05)&#10;from 9V rail, shared by&#10;both STOMPLFO ICs (U3 + U4)" vertex="1"><mxGeometry height="60" width="220" x="900" y="1250" as="geometry" /></mxCell>
+        <mxCell id="lfo132" edge="1" parent="1" source="lfo131" target="lfo108" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;fontSize=10;dashed=1;exitX=0.2;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" value="+5V"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo133" edge="1" parent="1" source="lfo131" target="lfo122" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;fontSize=10;dashed=1;exitX=0.8;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" value="+5V"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lfo134" edge="1" parent="1" source="b53" target="lfo131" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;fontSize=10;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" value="9V rail"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(Glitchwave567 VERSION 0.10.0 LANGUAGES C CXX)
+project(Glitchwave567 VERSION 0.17.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,19 +13,12 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(JUCE)
 
-# ---- Plugin formats: VST3 + Standalone everywhere, AU added on macOS only ----
-set(GW567_FORMATS VST3 Standalone)
-if(APPLE)
-    list(APPEND GW567_FORMATS AU)
-endif()
-
 # ---- Plugin ------------------------------------------------------------------
 juce_add_plugin(Glitchwave567
-    COMPANY_NAME "Illicit Apothecary"
-    BUNDLE_ID "com.illicitapothecary.glitchwave567"
-    PLUGIN_MANUFACTURER_CODE Ilap
+    COMPANY_NAME "JasonDIY"
+    PLUGIN_MANUFACTURER_CODE Jdgw
     PLUGIN_CODE Gw67
-    FORMATS ${GW567_FORMATS}
+    FORMATS VST3 Standalone
     PRODUCT_NAME "Glitchwave 567"
     IS_SYNTH FALSE
     NEEDS_MIDI_INPUT FALSE

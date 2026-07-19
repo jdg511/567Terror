@@ -1,13 +1,18 @@
 // ============================================================================
-//  ModSystem.h — modulation layer for the Glitchwave 567 sim (step-2 mods).
+//  ModSystem.h — modulation layer for the Glitchwave 567 sim.
 //
-//  Portable C++ (no JUCE). Sources: LFO1 (shape/target), LFO2 (hard-wired to
-//  LFO1 rate), input envelope follower (hard-wired to FREQ), and two CV buses
-//  fed by sidechain audio + file players. CV2 can additionally modulate CV1's
-//  strength and slew ("modulation of modulation"). See docs/MODS.md.
+//  v0.13 — matches the hardware plan exactly:
+//    * LFO 1: always UNIPOLAR-UP (0..+1), assignable target, blink LED.
+//    * LFO 2: always BIPOLAR (±1), assignable target incl. LFO1 rate/depth
+//      and the envelope follower's gain.
+//    * CV 1 (sidechain L) is hardwired to LFO 1's DEPTH as a VCA; CV 2
+//      (sidechain R) to LFO 2's DEPTH. No CV target dropdowns, no strength
+//      knobs. Like a normalled jack: with no sidechain signal for ~3 s the
+//      VCA opens fully and the LFO runs at its DEPTH knob.
+//    * Mu-Tron III style envelope follower (fixed 4 ms / 150 ms), GAIN knob,
+//      DRIVE up/down, assignable target.
 //
-//  Usage per host sample:   mod.tick (inputAbs, cv1In, cv2In);
-//  Every N samples:         auto out = mod.compute (baseParams);
+//  Portable C++ (no JUCE). See docs/MODS.md.
 // ============================================================================
 #pragma once
 
@@ -18,55 +23,50 @@
 namespace glitchwave
 {
 
-// Dropdown target lists — ORDER IS PART OF THE SAVED STATE, append only!
-// LFO1 + CV1 use indices 0..10; CV2 additionally understands 11 and 12.
+// Target list enum. Values are stable; the processor maps dropdown/LED-selector
+// indices onto these.
 enum class ModTarget : int
 {
     Off = 0,
-    Freq, Fizz, Dry, Vol, Trim,     // Fizz == the "LPF" cutoff knob (old name kept for state compat)
+    Freq, Fizz, Dry, Vol, Trim,     // Fizz == LPF cutoff, Dry == MIX (old names kept)
     Lfo1Rate, Lfo1Depth, Lfo2Rate, Lfo2Depth, EnvAmount,
-    Cv1Strength, Cv1Slew,           // CV2-only extras
-    LpfQ, DryLpf,                   // v0.3 additions
-    Gain                            // v0.9: the dirt Gain knob
+    Cv1Strength, Cv1Slew,           // retired (kept so enum values stay stable)
+    LpfQ, DryLpf,                   // DryLpf retired
+    Gain                            // the dirt GAIN knob
 };
 
-enum class LfoShape : int { Sine = 0, Triangle, Square, SampleHold, WhiteNoise, PinkNoise };
-enum class LfoMode  : int { UniUp = 0, Bipolar, UniDown };
+// v0.17: the full Electric Druid TAPLFO 3D waveform set (both wave sets),
+// plus the White/Pink noise LFOs Jason asked for in v0.4.
+// Values are append-only so saved sessions stay stable.
+enum class LfoShape : int { Sine = 0, Triangle, Square, SampleHold, WhiteNoise, PinkNoise,
+                            RampUp, RampDown,
+                            // TAPLFO 3D original set additions
+                            Sweep, Lumps,
+                            // TAPLFO 3D alternate set
+                            RampOct, QuadRamp, QuadPulse, TriStep,
+                            SineOct, Sine3rd, Sine4th, RandSlopes };
 
 class ModSystem
 {
 public:
     struct Params
     {
-        // LFO 1 (assignable). Noise shapes: rate = LPF cutoff on the noise.
-        float lfo1RateHz  = 2.0f;
-        float lfo1Depth   = 0.0f;
-        int   lfo1Shape   = (int) LfoShape::Triangle;
-        int   lfo1Mode    = (int) LfoMode::Bipolar;
-        int   lfo1Target  = (int) ModTarget::Freq;
-        // LFO 2 (assignable: knobs, LFO1 rate/depth, or env amount)
-        float lfo2RateHz  = 0.25f;
-        float lfo2Depth   = 0.0f;
-        int   lfo2Shape   = (int) LfoShape::Sine;
-        int   lfo2Mode    = (int) LfoMode::Bipolar;
-        int   lfo2Target  = (int) ModTarget::Lfo1Rate;
-        // Mu-Tron III style envelope follower (v0.7), assignable target.
-        // Fixed follower ballistics (4 ms attack / 150 ms release), GAIN sets
-        // how hard playing dynamics drive the sweep, DRIVE flips direction.
-        float envGain     = 4.0f;   // x0.125 .. x40 (Mu-Tron GAIN)
-        bool  envDriveUp  = true;   // Drive switch: up = opens, down = closes
-        int   envTarget   = (int) ModTarget::Fizz;
-        // CV buses
-        int   cv1Target   = (int) ModTarget::Off;
-        float cv1Strength = 0.0f;   // -1..+1
-        float cv1SlewMs   = 20.0f;  // 1..1000
-        int   cv2Target   = (int) ModTarget::Off;
-        float cv2Strength = 0.0f;
-        float cv2SlewMs   = 20.0f;
+        // LFO 1 (always unipolar-up). Noise shapes: rate = LPF cutoff on noise.
+        float lfo1RateHz = 2.0f;
+        float lfo1Depth  = 0.0f;
+        int   lfo1Shape  = (int) LfoShape::Triangle;
+        int   lfo1Target = (int) ModTarget::Freq;
+        // LFO 2 (always bipolar)
+        float lfo2RateHz = 0.25f;
+        float lfo2Depth  = 0.0f;
+        int   lfo2Shape  = (int) LfoShape::Sine;
+        int   lfo2Target = (int) ModTarget::Lfo1Rate;
+        // Envelope follower
+        float envGain    = 4.0f;    // x0.125 .. x40
+        bool  envDriveUp = true;
+        int   envTarget  = (int) ModTarget::Fizz;
     };
 
-    // Base knob positions in, modulated positions out. All normalized 0..1
-    // (trim is the 0..1 position of the -24..+24 dB range).
     struct KnobSet
     {
         float freq = 0.5f, fizz = 0.65f, dry = 0.5f, vol = 0.7f;
@@ -76,112 +76,86 @@ public:
     void prepare (double sampleRate) noexcept
     {
         fs = (float) sampleRate;
-        envAtkCoeff = onePoleCoeff (4.0f);    // Mu-Tron III-ish follower ballistics
+        envAtkCoeff = onePoleCoeff (4.0f);     // Mu-Tron-ish follower ballistics
         envRelCoeff = onePoleCoeff (150.0f);
+        cvCoeff     = onePoleCoeff (15.0f);    // fixed CV smoothing
         reset();
     }
 
     void reset() noexcept
     {
         inEnv = cv1Env = cv2Env = 0.0f;
+        cv1SilentSec = cv2SilentSec = 1000.0f;   // start "unplugged" -> VCAs open
         lfo1Phase = lfo2Phase = 0.0;
-        shValue = shValue2 = 0.0f;
+        shValue = shValue2 = shPrev = shPrev2 = 0.0f;
         noise1 = noise2 = {};
         rngState = 0x1234ABCDu;
+        visLfo1 = visLfo2 = 0.0f;
+        samplesSinceCompute = 0;
     }
 
     void setParams (const Params& p) noexcept { params = p; }
 
-    // Call once per host-rate sample. Inputs are absolute-value audio levels
-    // in full-scale units (0..~1).
+    // Call once per host-rate sample. Inputs are absolute-value levels (FS).
     inline void tick (float inputAbs, float cv1Abs, float cv2Abs) noexcept
     {
-        // input envelope: fast attack, slower release
-        inEnv += (inputAbs > inEnv ? envAtkCoeff : envRelCoeff) * (inputAbs - inEnv);
-
-        // CV envelopes: single slew constant each (may be modulated by CV2,
-        // so coefficients are refreshed in compute())
-        cv1Env += cv1Coeff * (cv1Abs - cv1Env);
-        cv2Env += cv2Coeff * (cv2Abs - cv2Env);
-
+        inEnv  += (inputAbs > inEnv ? envAtkCoeff : envRelCoeff) * (inputAbs - inEnv);
+        cv1Env += cvCoeff * (cv1Abs - cv1Env);
+        cv2Env += cvCoeff * (cv2Abs - cv2Env);
         ++samplesSinceCompute;
     }
 
-    // Call every N ticks. Advances the LFOs by the elapsed time and returns
-    // the modulated knob positions.
+    // Call every N ticks; returns the modulated knob positions.
     KnobSet compute (const KnobSet& base) noexcept
     {
         const float dt = (float) samplesSinceCompute / fs;
         samplesSinceCompute = 0;
 
-        // ---- 1) CV2 first: it may retune CV1 or any other mod control ------
-        float cv1StrengthEff = params.cv1Strength;
-        float cv1SlewMsEff   = params.cv1SlewMs;
-        float lfo1RateEff    = params.lfo1RateHz;
-        float lfo1DepthEff   = params.lfo1Depth;
-        float lfo2RateEff    = params.lfo2RateHz;
-        float lfo2DepthEff   = params.lfo2Depth;
-        float envGainEff     = params.envGain;
-
         KnobSet out = base;
 
-        // helper: route a CV signal into the mod controls; returns false if the
-        // target is a plain knob (applied later so evaluation order stays clean)
-        auto applyToModControl = [&] (ModTarget t, float sig) -> bool
-        {
-            switch (t)
-            {
-                case ModTarget::Cv1Strength: cv1StrengthEff = clampf (cv1StrengthEff + sig, -1.0f, 1.0f); return true;
-                case ModTarget::Cv1Slew:     cv1SlewMsEff   = clampf (cv1SlewMsEff * std::exp2 (sig * 4.0f), 1.0f, 1000.0f); return true;
-                case ModTarget::Lfo1Rate:    lfo1RateEff    = clampf (lfo1RateEff * std::exp2 (sig * 3.0f), 0.02f, 40.0f); return true;
-                case ModTarget::Lfo1Depth:   lfo1DepthEff   = clampf (lfo1DepthEff + sig, 0.0f, 1.0f); return true;
-                case ModTarget::Lfo2Rate:    lfo2RateEff    = clampf (lfo2RateEff * std::exp2 (sig * 3.0f), 0.01f, 20.0f); return true;
-                case ModTarget::Lfo2Depth:   lfo2DepthEff   = clampf (lfo2DepthEff + sig, 0.0f, 1.0f); return true;
-                case ModTarget::EnvAmount:   envGainEff     = clampf (envGainEff * std::exp2 (sig * 2.0f), 0.125f, 40.0f); return true;
-                default: return false;
-            }
-        };
+        // ---- CV "jack detect" + depth VCAs (hardwired CV1->LFO1, CV2->LFO2) --
+        if (cv1Env > 0.001f) cv1SilentSec = 0.0f; else cv1SilentSec += dt;
+        if (cv2Env > 0.001f) cv2SilentSec = 0.0f; else cv2SilentSec += dt;
+        const float cv1Vca = cv1SilentSec < 3.0f ? clampf (cv1Env * 2.0f, 0.0f, 1.0f) : 1.0f;
+        const float cv2Vca = cv2SilentSec < 3.0f ? clampf (cv2Env * 2.0f, 0.0f, 1.0f) : 1.0f;
 
-        // ---- 1) CV2 first (it may retune CV1's strength/slew or any control)
-        const float cv2Sig = params.cv2Strength * cv2Env;   // -1..+1
-        const bool cv2HitsKnob = ! applyToModControl ((ModTarget) params.cv2Target, cv2Sig);
+        float lfo1RateEff  = params.lfo1RateHz;
+        float lfo1DepthEff = params.lfo1Depth;
+        float envGainEff   = params.envGain;
 
-        // ---- 2) CV1 next, using its (possibly CV2-modulated) strength -------
-        const float cv1Sig = cv1StrengthEff * cv1Env;
-        const bool cv1HitsKnob = ! applyToModControl ((ModTarget) params.cv1Target, cv1Sig);
-
-        // refresh CV slew coefficients (cheap; every compute call)
-        cv1Coeff = onePoleCoeff (cv1SlewMsEff);
-        cv2Coeff = onePoleCoeff (params.cv2SlewMs);
-
-        // ---- 3) LFO2 (assignable; can bend LFO1 or the ADSR amount) ---------
+        // ---- LFO 2 (always bipolar) -----------------------------------------
         float lfo2Raw;
         if ((LfoShape) params.lfo2Shape == LfoShape::WhiteNoise
          || (LfoShape) params.lfo2Shape == LfoShape::PinkNoise)
         {
             lfo2Raw = noiseSample (noise2, (LfoShape) params.lfo2Shape == LfoShape::PinkNoise,
-                                   lfo2RateEff, dt);
+                                   params.lfo2RateHz, dt);
         }
         else
         {
             const double prev2 = lfo2Phase;
-            lfo2Phase = wrapPhase (lfo2Phase + (double) (lfo2RateEff * dt));
+            lfo2Phase = wrapPhase (lfo2Phase + (double) (params.lfo2RateHz * dt));
             if (lfo2Phase < prev2)
+            {
+                shPrev2  = shValue2;             // Random Slopes interpolates prev -> next
                 shValue2 = whiteNoise();
-            lfo2Raw = lfoValue ((LfoShape) params.lfo2Shape, lfo2Phase, shValue2);
+            }
+            lfo2Raw = lfoValue ((LfoShape) params.lfo2Shape, lfo2Phase, shValue2, shPrev2);
         }
-        const float lfo2Sig = modeShape ((LfoMode) params.lfo2Mode, lfo2Raw) * lfo2DepthEff;
+        visLfo2 = lfo2Raw;                                     // bipolar, for the LED
+        const float lfo2Sig = lfo2Raw * params.lfo2Depth * cv2Vca;
 
         float lfo1RateFactor = 1.0f;
         switch ((ModTarget) params.lfo2Target)
         {
             case ModTarget::Lfo1Rate:  lfo1RateFactor = std::exp2 (lfo2Sig * 2.0f); break;
             case ModTarget::Lfo1Depth: lfo1DepthEff = clampf (lfo1DepthEff + lfo2Sig, 0.0f, 1.0f); break;
-            case ModTarget::EnvAmount: envGainEff = clampf (envGainEff * std::exp2 (lfo2Sig * 2.0f), 0.125f, 40.0f); break;
+            case ModTarget::EnvAmount: envGainEff = clampf (envGainEff * std::exp2 (lfo2Sig * 2.0f),
+                                                            0.125f, 40.0f); break;
             default: applyToKnob (out, (ModTarget) params.lfo2Target, lfo2Sig * 0.5f); break;
         }
 
-        // ---- 4) LFO1 (noise shapes use the rate as the noise LPF cutoff) ----
+        // ---- LFO 1 (always unipolar-up; noise: rate = noise LPF cutoff) ------
         const float lfo1RateBent = clampf (lfo1RateEff * lfo1RateFactor, 0.01f, 0.45f / dt);
         float lfo1Raw;
         if ((LfoShape) params.lfo1Shape == LfoShape::WhiteNoise
@@ -194,30 +168,31 @@ public:
         {
             const double prevPhase = lfo1Phase;
             lfo1Phase = wrapPhase (lfo1Phase + (double) (lfo1RateBent * dt));
-            if (lfo1Phase < prevPhase)                 // wrapped -> new S&H value
+            if (lfo1Phase < prevPhase)
+            {
+                shPrev  = shValue;
                 shValue = whiteNoise();
-            lfo1Raw = lfoValue ((LfoShape) params.lfo1Shape, lfo1Phase, shValue);
+            }
+            lfo1Raw = lfoValue ((LfoShape) params.lfo1Shape, lfo1Phase, shValue, shPrev);
         }
-        const float lfo1Out = modeShape ((LfoMode) params.lfo1Mode, lfo1Raw);
-        applyToKnob (out, (ModTarget) params.lfo1Target, lfo1Out * lfo1DepthEff * 0.5f);
+        const float lfo1Out = 0.5f * (lfo1Raw + 1.0f);         // unipolar-up 0..1
+        visLfo1 = lfo1Out;
+        applyToKnob (out, (ModTarget) params.lfo1Target,
+                     lfo1Out * lfo1DepthEff * cv1Vca * 0.5f);
 
-        // ---- 4b) Mu-Tron III envelope follower -> assignable target ---------
-        // follower level x GAIN, clamped to a full-range sweep; DRIVE flips it
+        // ---- envelope follower -> assignable target --------------------------
         const float envSig = clampf (inEnv * envGainEff, 0.0f, 1.0f);
         applyToKnob (out, (ModTarget) params.envTarget,
                      params.envDriveUp ? envSig : -envSig);
 
-        // ---- 5) CV knob targets last ----------------------------------------
-        if (cv2HitsKnob) applyToKnob (out, (ModTarget) params.cv2Target, cv2Sig);
-        if (cv1HitsKnob) applyToKnob (out, (ModTarget) params.cv1Target, cv1Sig);
-
         return out;
     }
 
-    // handy for UI meters later
     float getInputEnv() const noexcept { return inEnv; }
     float getCv1Env()   const noexcept { return cv1Env; }
     float getCv2Env()   const noexcept { return cv2Env; }
+    float getLfo1Vis()  const noexcept { return visLfo1; }   // 0..1 (unipolar)
+    float getLfo2Vis()  const noexcept { return visLfo2; }   // -1..1 (bipolar)
 
 private:
     static inline float clampf (float v, float lo, float hi) noexcept
@@ -228,8 +203,7 @@ private:
         return 1.0f - std::exp (-1.0f / (std::max (ms, 0.01f) * 0.001f * fs));
     }
 
-    static inline double wrapPhase (double p) noexcept
-    { return p - std::floor (p); }
+    static inline double wrapPhase (double p) noexcept { return p - std::floor (p); }
 
     static inline float sineOf (double phase) noexcept
     { return std::sin ((float) (phase * 6.283185307179586)); }
@@ -240,39 +214,70 @@ private:
         return (float) (int32_t) rngState * (1.0f / 2147483648.0f);
     }
 
-    static float lfoValue (LfoShape shape, double phase, float sh) noexcept
+    static inline double fracd (double x) noexcept { return x - std::floor (x); }
+
+    // Shapes traced from the TAPLFO 3D datasheet waveform diagram (p.3).
+    static float lfoValue (LfoShape shape, double phase, float sh, float shPrev) noexcept
     {
         switch (shape)
         {
             case LfoShape::Sine:       return sineOf (phase);
             case LfoShape::Triangle:   return (float) (phase < 0.5 ? 4.0 * phase - 1.0
                                                                    : 3.0 - 4.0 * phase);
-            case LfoShape::Square:     return phase < 0.5 ? 1.0f : -1.0f;
-            case LfoShape::SampleHold: return sh;
-            default:                   return sh;   // noise shapes handled elsewhere
+            case LfoShape::Square:     return phase < 0.5 ? 1.0f : -1.0f;   // "Pulse"
+            case LfoShape::SampleHold: return sh;                           // "Random Levels"
+            case LfoShape::RampUp:     return (float) (2.0 * phase - 1.0);
+            case LfoShape::RampDown:   return (float) (1.0 - 2.0 * phase);
+
+            case LfoShape::Sweep:      // smooth scoop: starts high, dips, returns
+                return (float) std::cos (phase * 6.283185307179586);
+
+            case LfoShape::Lumps:      // one smooth arch per cycle
+                return (float) (2.0 * std::abs (std::sin (phase * 3.141592653589793)) - 1.0);
+
+            case LfoShape::RampOct:    // ramp + ramp one octave up
+                return (float) (((2.0 * phase - 1.0)
+                               + 0.5 * (2.0 * fracd (phase * 2.0) - 1.0)) / 1.5);
+
+            case LfoShape::QuadRamp:   // 4 quick ramp-down teeth, then rest
+                return phase < 0.5 ? (float) (1.0 - 2.0 * fracd (phase * 8.0)) : -1.0f;
+
+            case LfoShape::QuadPulse:  // 4 quick pulses, then rest
+                return phase < 0.5 ? (fracd (phase * 8.0) < 0.5 ? 1.0f : -1.0f) : -1.0f;
+
+            case LfoShape::TriStep:    // triangle quantised to 4 levels
+            {
+                const double t = phase < 0.5 ? 2.0 * phase : 2.0 - 2.0 * phase;   // 0..1..0
+                const int    q = std::min (3, (int) (t * 4.0));
+                return (float) (q * (2.0 / 3.0) - 1.0);
+            }
+
+            case LfoShape::SineOct:    // sine + 1/2 octave   (peak 1.2990 -> normalised)
+                return (float) ((std::sin (phase * 6.283185307179586)
+                               + 0.5 * std::sin (phase * 12.566370614359172)) / 1.2990381);
+
+            case LfoShape::Sine3rd:    // sine + 1/3 third    (peak 0.9428 -> normalised)
+                return (float) ((std::sin (phase * 6.283185307179586)
+                               + (1.0 / 3.0) * std::sin (phase * 18.849555921538759)) / 0.9428090);
+
+            case LfoShape::Sine4th:    // sine + 1/4 fourth   (peak 1.1888 -> normalised)
+                return (float) ((std::sin (phase * 6.283185307179586)
+                               + 0.25 * std::sin (phase * 25.132741228718345)) / 1.1888206);
+
+            case LfoShape::RandSlopes: // line from previous random level to the next
+                return shPrev + (sh - shPrev) * (float) phase;
+
+            default:                   return sh;
         }
     }
 
-    // uni-up / bipolar / uni-down polarity switch
-    static float modeShape (LfoMode m, float v) noexcept
-    {
-        switch (m)
-        {
-            case LfoMode::UniUp:   return  0.5f * (v + 1.0f);   //  0 .. +1
-            case LfoMode::UniDown: return -0.5f * (v + 1.0f);   //  0 .. -1
-            case LfoMode::Bipolar:
-            default:               return v;                    // -1 .. +1
-        }
-    }
-
-    // white/pink noise through a one-pole LPF whose cutoff = the LFO rate knob
     struct NoiseState { float lp = 0.0f, p0 = 0.0f, p1 = 0.0f, p2 = 0.0f; };
 
     float noiseSample (NoiseState& ns, bool pink, float cutoffHz, float dt) noexcept
     {
         const float w = whiteNoise();
         float x = w;
-        if (pink)   // Paul Kellet's economy pink filter
+        if (pink)
         {
             ns.p0 = 0.99765f * ns.p0 + w * 0.0990460f;
             ns.p1 = 0.96300f * ns.p1 + w * 0.2965164f;
@@ -282,7 +287,6 @@ private:
         const float fc = std::min (cutoffHz, 0.45f / dt);
         const float c  = 1.0f - std::exp (-6.2831853f * fc * dt);
         ns.lp += c * (x - ns.lp);
-        // rough variance renormalization so slow (dark) settings stay audible
         const float norm = std::sqrt (std::max ((2.0f - c) / c, 1.0f));
         return clampf (ns.lp * norm * 0.7f, -1.0f, 1.0f);
     }
@@ -297,7 +301,7 @@ private:
             case ModTarget::Vol:  k.vol  = clampf (k.vol  + offset, 0.0f, 1.0f); break;
             case ModTarget::LpfQ: k.lpfQ = clampf (k.lpfQ + offset, 0.0f, 1.0f); break;
             case ModTarget::Gain: k.gain = clampf (k.gain + offset, 0.0f, 1.0f); break;
-            default: break; // Off and non-knob targets: nothing to do here
+            default: break;
         }
     }
 
@@ -305,15 +309,17 @@ private:
     float  fs = 48000.0f;
 
     float inEnv = 0.0f, cv1Env = 0.0f, cv2Env = 0.0f;
-    float envAtkCoeff = 0.1f, envRelCoeff = 0.01f;
-    float cv1Coeff = 0.05f, cv2Coeff = 0.05f;
+    float envAtkCoeff = 0.1f, envRelCoeff = 0.01f, cvCoeff = 0.05f;
+    float cv1SilentSec = 1000.0f, cv2SilentSec = 1000.0f;
 
     double lfo1Phase = 0.0, lfo2Phase = 0.0;
     float  shValue = 0.0f, shValue2 = 0.0f;
+    float  shPrev  = 0.0f, shPrev2  = 0.0f;   // for Random Slopes
     NoiseState noise1, noise2;
     uint32_t rngState = 0x1234ABCDu;
 
     int   samplesSinceCompute = 0;
+    float visLfo1 = 0.0f, visLfo2 = 0.0f;
 };
 
 } // namespace glitchwave

@@ -41,6 +41,14 @@ public:
         return meterPeaks[id].exchange (0.0f, std::memory_order_relaxed);
     }
 
+    // ---- LED visualization values (v0.12) -----------------------------------------
+    // 0 = LFO1 (-1..1), 1 = LFO2 (-1..1), 2 = env (0..1), 3 = CV1, 4 = CV2,
+    // 5 = gate attenuation in dB (0 = open .. -96 = closed)
+    float readVis (int id) const noexcept
+    {
+        return (id >= 0 && id < 6) ? visVals[id].load (std::memory_order_relaxed) : 0.0f;
+    }
+
     juce::AudioProcessorValueTreeState apvts;
 
 private:
@@ -56,22 +64,21 @@ private:
     juce::AudioBuffer<float> cvBuffer;    // ch0 = CV1 (SC L), ch1 = CV2 (SC R)
 
     std::atomic<float> meterPeaks[2] { { 0.f }, { 0.f } };
+    std::atomic<float> visVals[6] { { 0.f }, { 0.f }, { 0.f }, { 0.f }, { 0.f }, { 0.f } };
 
     struct RawParams
     {
         std::atomic<float>* freq{};  std::atomic<float>* fizz{};
         std::atomic<float>* lpfq{};
         std::atomic<float>* dry{};   std::atomic<float>* vol{};
-        std::atomic<float>* dirtgain{}; std::atomic<float>* dirttype{};
+        std::atomic<float>* dirtgain{};
         std::atomic<float>* lfo1rate{}; std::atomic<float>* lfo1depth{};
-        std::atomic<float>* lfo1shape{}; std::atomic<float>* lfo1mode{}; std::atomic<float>* lfo1target{};
+        std::atomic<float>* lfo1shape{}; std::atomic<float>* lfo1target{};
         std::atomic<float>* lfo2rate{}; std::atomic<float>* lfo2depth{};
-        std::atomic<float>* lfo2shape{}; std::atomic<float>* lfo2mode{}; std::atomic<float>* lfo2target{};
+        std::atomic<float>* lfo2shape{}; std::atomic<float>* lfo2target{};
         std::atomic<float>* envtarget{}; std::atomic<float>* envgain{};
         std::atomic<float>* envdrive{};
         std::atomic<float>* lpfmode{}; std::atomic<float>* lpfrange{};
-        std::atomic<float>* cv1target{}; std::atomic<float>* cv1strength{};
-        std::atomic<float>* cv2target{}; std::atomic<float>* cv2strength{};
         std::atomic<float>* gatethresh{};
         std::atomic<float>* gatehold{}; std::atomic<float>* gatefade{};
     } raw;

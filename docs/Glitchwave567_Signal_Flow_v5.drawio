@@ -1,0 +1,195 @@
+<mxfile host="Electron" agent="Claude">
+  <diagram name="Glitchwave 567 - Signal Flow v5" id="glitchwave567signalflowv5">
+    <mxGraphModel dx="928" dy="821" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3400" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="b1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="INPUT JACK&#xa;1/4&quot; TS" vertex="1">
+          <mxGeometry height="70" width="130" x="40" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="b2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;" value="Input Buffer&#xa;unity gain, DC block&#xa;(U1.1, ~0.33Hz)" vertex="1">
+          <mxGeometry height="70" width="170" x="340" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="b3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;fontStyle=1;" value="Input HP Filter&#xa;24dB/oct Butterworth&#xa;@ 40Hz (2x Sallen-Key)&#xa;[FIXED - voicing]" vertex="1">
+          <mxGeometry height="70" width="170" x="550" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="b4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;verticalAlign=middle;align=center;" value="Gain Stage (U1.3)&lt;br&gt;+12dB, AC&amp;gt;15Hz&lt;br&gt;feeds 567 only" vertex="1">
+          <mxGeometry height="70" width="170" x="760" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="b5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;verticalAlign=middle;align=center;fontStyle=1;" value="BAZZ FUSS Dirt&#xa;1 transistor + 1 diode&#xa;gated &#39;velcro&#39; clip&#xa;GAIN knob x1.5..x300 (v5)&#xa;[GAIN mod: LED+LDR]" vertex="1">
+          <mxGeometry height="70" width="170" x="760" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="b6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;verticalAlign=middle;align=center;fontStyle=1;" value="LM567 PLL&#xa;Tone Decoder&#xa;RT=3.6k+FREQpot,&#xa;CT=220n +switched caps&#xa;(FREQ 0.1Hz-18kHz)&#xa;[FREQ mod: LED+LDR on RT]" vertex="1">
+          <mxGeometry height="90" width="170" x="980" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;" value="MIX pot&lt;br&gt;(567 wet &amp;lt;-&amp;gt; &lt;br&gt;Bazz Fuss dry)&lt;br&gt;[MIX mod: LED+LDR]" vertex="1">
+          <mxGeometry height="70" width="140" x="1370" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="b8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;fontStyle=1;" value="Envelope Filter&#xa;LM13700 OTA SVF&#xa;LP/BP/HP switch&#xa;RANGE Lo/Hi, RES&#xa;[cutoff mod: direct Iabc&#xa;current from mod CV]" vertex="1">
+          <mxGeometry height="90" width="190" x="1550" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="b10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;fontFamily=Helvetica;fontColor=default;" value="Output HP Filter&#xa;12dB/oct @ 60Hz&#xa;[FIXED - voicing]" vertex="1">
+          <mxGeometry height="70" width="170" x="1790" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="b11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;fontFamily=Helvetica;fontColor=default;" value="Output Bell/Peak&#xa;gyrator, +3dB Q0.5&#xa;@ 800Hz&#xa;[FIXED - voicing]" vertex="1">
+          <mxGeometry height="70" width="170" x="2000" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="b15" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;verticalAlign=middle;align=center;fontStyle=1;" value="J201 JFET Stage [NEW v5]&#xa;+6dB, tube-like soft clip&#xa;(square-law 2nd harmonic,&#xa;linear to ~+/-1V in, soft&#xa;knee ~+/-2.2V out @ 9V)" vertex="1">
+          <mxGeometry height="90" width="180" x="2210" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="b9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;fontFamily=Helvetica;fontColor=default;fontStyle=1;" value="GATE (last block)&lt;br&gt;LED+LDR audio element&lt;br&gt;driven by Pico PWM&lt;br&gt;THRESH/HOLD/FADE = firmware,&lt;br&gt;set by internal trims (mux1)" vertex="1">
+          <mxGeometry height="90" width="180" x="2420" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="b12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;" value="Output Buffer&#xa;+ DC block&#xa;470R series" vertex="1">
+          <mxGeometry height="70" width="130" x="2630" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="b13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="BYPASS&#xa;footswitch (stomp 1 of 2)&#xa;true bypass (mechanical,&#xa;NOT through Pico)" vertex="1">
+          <mxGeometry height="60" width="150" x="2560" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="b14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="OUTPUT JACK&#xa;1/4&quot; TS" vertex="1">
+          <mxGeometry height="70" width="130" x="2790" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="b31" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;" value="Envelope Follower&#xa;(analog rectify+smooth,&#xa;Mu-Tron ballistics)&#xa;-&gt; Pico ADC1&#xa;GAIN/DRIVE now firmware" vertex="1">
+          <mxGeometry height="70" width="170" x="1370" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="b36" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="CV IN 1&#xa;1/4&quot; jack (side)" vertex="1">
+          <mxGeometry height="60" width="130" x="40" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="b39" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="CV IN 2&#xa;1/4&quot; jack (side)" vertex="1">
+          <mxGeometry height="60" width="130" x="240" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="b42" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="CV OUT&#xa;1/4&quot; jack (side)&#xa;from Pico PWM+RC,&#xa;op-amp buffered" vertex="1">
+          <mxGeometry height="60" width="150" x="2400" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="b53" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;verticalAlign=middle;align=center;" value="9V DC JACK&#xa;center-negative" vertex="1">
+          <mxGeometry height="60" width="150" x="40" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="b54" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;verticalAlign=middle;align=center;" value="Reverse-polarity diode&#xa;+ bulk filter C9 100u" vertex="1">
+          <mxGeometry height="60" width="170" x="230" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="b55" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;verticalAlign=middle;align=center;fontStyle=1;" value="+4.5V Mid-Rail Bias&#xa;R14/R15 47k/47k + C10 47u&#xa;(VREF)" vertex="1">
+          <mxGeometry height="60" width="200" x="440" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="b56" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;verticalAlign=middle;align=center;dashed=1;" value="VREF distributed to every&#xa;op-amp stage above&#xa;(all stages ref&#39;d to 4.5V)" vertex="1">
+          <mxGeometry height="60" width="260" x="680" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="b60" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=16;verticalAlign=middle;align=center;fontStyle=1;" value="Glitchwave 567 Mod - Hardware Signal Flow v5 (slim panel: 2 stomps + 4 mini buttons; JFET glue stage; matches sim v0.12) - Vendor: Illicit Apothecary" vertex="1">
+          <mxGeometry height="35" width="1080" x="40" as="geometry" />
+        </mxCell>
+        <mxCell id="b61" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;verticalAlign=middle;align=center;" value="LEGEND&#xa;Blue = analog audio path&#xa;Orange = dirt / JFET clip stages&#xa;Green = ICs (LM567 / PICO) &amp; power&#xa;Purple = modulation/CV/control&#xa;Yellow = jacks, switches, LEDs&#xa;Gray dashed = notes" vertex="1">
+          <mxGeometry height="130" width="190" x="2580" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="b62" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;verticalAlign=middle;align=center;dashed=1;" value="Enclosure: 1590BB comfortable,&#xa;125B in play (panel: ~7 knobs,&#xa;2 stomps, 4 mini buttons,&#xa;4 LEDs) - confirm at&#xa;PCB layout rough-in" vertex="1">
+          <mxGeometry height="130" width="190" x="2580" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="b1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="b2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="b3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="b4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e18" edge="1" parent="1" source="b3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;exitX=1;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="b5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" edge="1" parent="1" source="b4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e20" edge="1" parent="1" source="b6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="r1k1" value="WET">
+          <mxGeometry relative="1" x="-0.2627" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e21" edge="1" parent="1" source="b5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" value="DRY (dirt)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1180" y="265" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e22" edge="1" parent="1" source="b7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e23" edge="1" parent="1" source="b8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e25" edge="1" parent="1" source="b10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b11" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e26" edge="1" parent="1" source="b11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b15" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e26b" edge="1" parent="1" source="b15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b9" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e24" edge="1" parent="1" source="b9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;" target="b12" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e27" edge="1" parent="1" source="b12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="b14" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e28" edge="1" parent="1" source="b12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;dashed=1;exitX=0.7;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;" target="b13" value="bypass&#xa;route">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e29" edge="1" parent="1" source="b13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;dashed=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.8;entryDx=0;entryDy=0;" target="b14" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e30" edge="1" parent="1" source="b1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;fontSize=10;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.9;entryDx=0;entryDy=0;" target="b13" value="bypass sense&#xa;(SPDT)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="105" y="450" />
+              <mxPoint x="2580" y="450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e33" edge="1" parent="1" source="b2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.1;entryY=0;entryDx=0;entryDy=0;" target="b31" value="taps raw input&#xa;(pre-gain)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="425" y="400" />
+              <mxPoint x="1387" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1k1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="1k Resistor" vertex="1">
+          <mxGeometry height="20" width="70" x="1230" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="r1k1e" edge="1" parent="1" source="r1k1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="b7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r1k2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="1k Resistor" vertex="1">
+          <mxGeometry height="20" width="70" x="1180" y="255" as="geometry" />
+        </mxCell>
+        <mxCell id="r1k2e" edge="1" parent="1" source="r1k2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" target="b7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4title" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;verticalAlign=middle;align=center;fontStyle=1;" value="PICO BRAIN detail v5 - slim panel edition: 2 footswitches, 4 mini buttons, ONE CD4051 mux, LFO1 uni / LFO2 bipolar fixed" vertex="1"><mxGeometry height="35" width="1650" x="40" y="920" as="geometry" /></mxCell>
+        <mxCell id="p4pots" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;verticalAlign=middle;align=center;" value="SINGLE CD4051 mux (U4) -&gt; ADC0:&#10;ch0 LFO1 RATE pot, ch1 LFO1 DEPTH pot,&#10;ch2 CV1 jack, ch3 CV2 jack (op-amp&#10;protected, scaled 0-3.3V),&#10;ch4-6 gate trims THRESH/HOLD/FADE,&#10;ch7 spare. (2nd mux deleted - LFO2 +&#10;OFFSET pots eliminated freed channels)" vertex="1"><mxGeometry height="130" width="240" x="40" y="980" as="geometry" /></mxCell>
+        <mxCell id="p4foot" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="FOOTSWITCHES x2 ONLY (v5):&#10;BYPASS (mechanical true bypass)&#10;+ TAP (LFO1) -&gt; GPIO:&#10;release &lt;800ms = tempo tap,&#10;hold &gt;1.3s = cycle waveform&#10;(1 step/450ms), 0.8-1.3s dead zone.&#10;LFO2 stomp DELETED" vertex="1"><mxGeometry height="120" width="240" x="40" y="1130" as="geometry" /></mxCell>
+        <mxCell id="p4btn" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="MINI BUTTONS x4 -&gt; GPIO:&#10;LFO2-1: tap=RATE, hold=WAVEFORM&#10;LFO2-2: tap=TARGET, hold=DEPTH&#10;CV1: tap=TARGET, hold=STRENGTH&#10;CV2: tap=TARGET, hold=STRENGTH&#10;Hold curve (log, LED = live preview):&#10;0%@1s, 1%@2s, 5%@3s, 50%@5s,&#10;100%@7s (capped)" vertex="1"><mxGeometry height="130" width="240" x="40" y="1270" as="geometry" /></mxCell>
+        <mxCell id="p4pico" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;verticalAlign=middle;align=center;fontStyle=1;" value="RASPBERRY PI PICO (U3)&#10;module w/ castellated edges&#10;ADC0 = mux, ADC1 = env follower&#10;USB = drag-drop .uf2 updates&#10;FIRMWARE: 2x LFO (16 waveforms,&#10;LFO1 uni / LFO2 bipolar FIXED),&#10;tap tempo (LFO2 window ~20s),&#10;gate logic, mod matrix, hold-curve&#10;input, LED ctrl - mirrors sim v0.12" vertex="1"><mxGeometry height="180" width="240" x="360" y="1000" as="geometry" /></mxCell>
+        <mxCell id="p4led" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;verticalAlign=middle;align=center;" value="WS2812D-F5 x4, ONE GPIO, chained:&#10;LFO1 -&gt; LFO2 -&gt; CV1 -&gt; CV2&#10;color = waveform/target (8 colors,&#10;Bank B blinks), brightness breathes&#10;w/ live LFO, previews depth during&#10;hold. 5V rail via series diode" vertex="1"><mxGeometry height="110" width="240" x="360" y="1210" as="geometry" /></mxCell>
+        <mxCell id="p4pwm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;" value="PWM outputs + RC / Sallen-Key&#10;smoothing (6 mod CV channels):&#10;FREQ / FILTER / RES / GAIN /&#10;MIX / CV OUT&#10;(no DAC chip needed - PWM&#10;@ &gt;100kHz filters clean)" vertex="1"><mxGeometry height="140" width="240" x="660" y="1000" as="geometry" /></mxCell>
+        <mxCell id="p4mode" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;align=center;" value="Mod elements at each knob:&#10;LED+LDR pairs on FREQ (567 RT),&#10;GAIN, MIX, RES / direct Iabc&#10;current into LM13700 for FILTER&#10;cutoff / gate LED direct PWM" vertex="1"><mxGeometry height="110" width="240" x="960" y="1000" as="geometry" /></mxCell>
+        <mxCell id="p4pwr" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;verticalAlign=middle;align=center;fontStyle=1;" value="+5V Reg (78L05) from 9V rail:&#10;Pico VSYS + WS2812 (via diode)&#10;Pico 3V3-out -&gt; pot/mux reference" vertex="1"><mxGeometry height="70" width="260" x="960" y="1140" as="geometry" /></mxCell>
+        <mxCell id="p4e1" edge="1" parent="1" source="p4pots" target="p4pico" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" value="ADC0"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e2" edge="1" parent="1" source="p4foot" target="p4pico" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.6;entryDx=0;entryDy=0;" value="GPIO"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e3" edge="1" parent="1" source="p4btn" target="p4pico" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.85;entryDx=0;entryDy=0;" value="GPIO x4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e4" edge="1" parent="1" source="p4pico" target="p4led" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="1 GPIO"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e5" edge="1" parent="1" source="p4pico" target="p4pwm" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e6" edge="1" parent="1" source="p4pwm" target="p4mode" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;exitX=1;exitY=0.4;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e7" edge="1" parent="1" source="b31" target="p4pico" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.7;entryY=0;entryDx=0;entryDy=0;" value="env level -&gt; ADC1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e8" edge="1" parent="1" source="b36" target="p4pots" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0.2;entryY=0;entryDx=0;entryDy=0;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e9" edge="1" parent="1" source="b39" target="p4pots" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;fontSize=10;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.7;entryY=0;entryDx=0;entryDy=0;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e10" edge="1" parent="1" source="p4mode" target="b6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=0.2;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" value="FREQ"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e11" edge="1" parent="1" source="p4mode" target="b8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" value="FILTER / RES"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e12" edge="1" parent="1" source="p4mode" target="b5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=0.1;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" value="GAIN"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e13" edge="1" parent="1" source="p4mode" target="b7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=0.35;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" value="MIX"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e14" edge="1" parent="1" source="p4mode" target="b9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=0.7;exitY=0;exitDx=0;exitDy=0;entryX=0.7;entryY=1;entryDx=0;entryDy=0;" value="gate LED PWM"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e15" edge="1" parent="1" source="p4pwm" target="b42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" value="CV OUT (buffered)"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e16" edge="1" parent="1" source="b53" target="p4pwr" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;fontSize=10;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" value="9V rail"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4e17" edge="1" parent="1" source="p4pwr" target="p4pico" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;fontSize=10;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.9;entryDx=0;entryDy=0;" value="+5V VSYS"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p5note1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;verticalAlign=top;align=left;spacing=8;dashed=1;" value="v5 CHANGES (2026-07-18 late night, matches sim v0.12)&#10;&#10;AUDIO:&#10;- GAIN knob floor: x1.5 at 0% (was x2), top still x300.&#10;- NEW J201 JFET stage: +6dB, tube-like soft clip (square-&#10;  law 2nd harmonic, asymmetric knees). Second-to-last&#10;  block; only the GATE after it. Linear to ~+/-1V in;&#10;  soft compression from ~+/-2V out; 9V, VREF biased.&#10;- Chain order now: env filter -&gt; 60Hz HP -&gt; 800Hz bell&#10;  -&gt; JFET -&gt; GATE -&gt; output buffer -&gt; jack.&#10;- Dirt is Bazz Fuss ONLY (choice dropdown removed&#10;  from sim; hardware never had it).&#10;&#10;PANEL (slim-down):&#10;- LFO OFFSET knobs deleted: LFO1 unidirectional FIXED,&#10;  LFO2 bipolar FIXED.&#10;- ALL LFO2 pots deleted -&gt; 2 mini buttons + LED readout.&#10;- LFO2 footswitch deleted -&gt; 2 stomps total.&#10;- CV strength set by button-hold (log curve), so CV&#10;  strength trims deleted too.&#10;- Gate trims: behind the &quot;interior&quot; cover in the sim;&#10;  physical internal trims on mux1 ch4-6 in hardware.&#10;  ALWAYS boot at -48dB / 1s hold / 30s fade.&#10;&#10;BOM DELTA vs v4: -1 CD4051, -5 pots, -1 footswitch,&#10;+2 mini buttons. Panel: ~7 knobs, 2 stomps, 4 buttons,&#10;4 LEDs -&gt; 1590BB comfortable, 125B possible.&#10;&#10;OPEN ITEMS:&#10;- LFO2 slow-rate entry is tap-only (firmware window&#10;  ~20s; LED blinks captured rate).&#10;- Verify LED+LDR sweep range on 567 RT at breadboard.&#10;- Enclosure final call at PCB layout rough-in." vertex="1"><mxGeometry height="620" width="410" x="2950" y="50" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

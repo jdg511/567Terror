@@ -133,6 +133,11 @@ namespace detail
                     b1 = -(1.0f + cosw) * inv;
                     b2 = b0;
                     break;
+                case 3: // notch
+                    b0 = inv;
+                    b1 = -2.0f * cosw * inv;
+                    b2 = inv;
+                    break;
             }
             a1 = -2.0f * cosw * inv;
             a2 = (1.0f - alpha) * inv;
@@ -190,7 +195,7 @@ public:
         float fizz        = 0.65f; // filter cutoff 0..1 within the selected RANGE
                                    // (v0.8: Lo 20 Hz..4 kHz, Hi 44 Hz..8.8 kHz)
         float lpfQ        = 0.4f;  // 0..1 -> Q 0.25 .. 8 (log)
-        int   lpfMode     = 1;     // v0.8: 0 = Off (bypass), 1 = LP, 2 = BP, 3 = HP
+        int   lpfMode     = 1;     // 0 = Off (bypass), 1 = LP, 2 = BP, 3 = HP, 4 = Notch
         int   lpfRangeHi  = 0;     // 0 = Lo range, 1 = Hi range
         float dry         = 0.5f;  // MIX crossfade — 0 = dry only, 0.5 = both, 1 = FX only
         float vol         = 0.5f;  // VOL1 pot position 0..1 (A100k), master level
