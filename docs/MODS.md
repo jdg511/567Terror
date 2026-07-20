@@ -1,4 +1,23 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.22)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.23)
+
+## v0.23 — softer A ladder (−6 onset) + switchable +6 dB boost
+
+* **Clip mode A is now a −6 ladder** (was the −18 v0.21 curve). Same
+  2:1/4:1/8:1 output-referred bands, but the onset sits only 6 dB below the
+  rail with tighter 4 dB knees: unity up to −8 dB(rail), out(0 dB) = −3.5,
+  rail reached at +22 dB in. GR at the rail is just 3.5 dB — the gentlest of
+  the ladder pair; B (−9) is unchanged. All anchors, knee continuity, band
+  slopes and 18 V rail-tracking re-verified from the compiled code.
+* **The +6 dB output boost is now a button** (`boost6`, default **ON**) in the
+  FOOTSWITCHES · POWER strip, so the make-up gain can be auditioned separately
+  from the clip stages. It still sits where it did in the chain: DC block →
+  ±6 dB boost → 60 Hz HPF → +3 dB @ 800 Hz → clip stage. Toggle measured
+  +6.02 dB through the full circuit at low drive.
+* CLIP button labels renamed accordingly ("A: -6 Ladder"); strip re-laid to
+  fit the new +6 dB button.
+
+---
+
 
 ## v0.22 — output clip AUDITION build (pick one, then it gets hardwired)
 

@@ -456,7 +456,8 @@ private:
     // v0.21 bypass stomp + supply "jack"
     TapHoldButton bypassBtn;
     LedIndicator  bypassLed;
-    juce::TextButton supplyBtn { "SUPPLY: 9V" };
+    juce::TextButton supplyBtn { "9V" };
+    juce::TextButton boostBtn  { "+6 dB: ON" };   // v0.23 boost audition
     juce::TextButton clipBtn   { "CLIP" };      // v0.22 clip-stage audition
     bool starveMode = false;   // MIX knob attached to the secret starve
 

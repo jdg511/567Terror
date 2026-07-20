@@ -205,9 +205,11 @@ public:
         // v0.21 power modelling
         float supplyV     = 9.0f;  // 9 or 18 (centre-negative adapter voltage)
         float starve      = 0.0f;  // 0..1 secret starve: rail sags toward 5 V
-        // v0.22 output-clip audition: 0 = A (-18 ladder, v0.21), 1 = B (-9
+        // v0.22/23 output-clip audition: 0 = A (-6 ladder), 1 = B (-9
         // ladder), 2 = D (JFET square-law stage), 3 = D+B (JFET into ladder)
         int   clipMode    = 0;
+        // v0.23: the +6 dB output boost is now switchable (1.0 or 2.0)
+        float boost6Gain  = 2.0f;
     };
 
     Tunables tune; // exposed so the harness / future mods can poke at it
@@ -267,6 +269,7 @@ public:
         smoothed.dry  += potSmoothCoeff * (target.dry  - smoothed.dry);
         smoothed.vol  += potSmoothCoeff * (target.vol  - smoothed.vol);
         smoothed.starve += potSmoothCoeff * (target.starve - smoothed.starve);
+        smoothed.boost6Gain += potSmoothCoeff * (target.boost6Gain - smoothed.boost6Gain);
 
         // v0.21: effective rail. 9 V is the reference design; 18 V doubles the
         // analogue headroom; the starve pot sags the DIRT/output rail toward
@@ -336,7 +339,7 @@ public:
 
         // ==== v0.21 output chain: +6 dB boost -> voicing -> rail soft clip ===
         float o = outDCBlock.process (vOut);
-        o *= 2.0f;                                     // +6 dB boost FIRST
+        o *= smoothed.boost6Gain;                      // +6 dB boost (switchable)
         o = outHP.process (o);                         // 12 dB/oct low-cut @ 60 Hz
         o = outPeak.process (o);                       // +3 dB Q0.5 bell @ 800 Hz
         return clipStage (o / tune.jackVoltsPerFS);    // clip: the LAST thing
@@ -358,13 +361,12 @@ public:
     float ladderDb (float Li, bool lateOnset) const noexcept
     {
         if (! lateOnset)
-        {   // A: output bands -18/-12/-6/0 -> input knees at -18, -6, +18
-            if      (Li <= -15.0f) { const float d = Li + 21.0f; return -21.0f + d - d * d / 24.0f; }
-            else if (Li <= -9.0f)  return -16.5f + 0.5f * (Li + 15.0f);
-            else if (Li <= -3.0f)  { const float d = Li + 9.0f;  return -13.5f + 0.5f * d - d * d / 48.0f; }
-            else if (Li <= 15.0f)  return -11.25f + 0.25f * (Li + 3.0f);
-            else if (Li <= 21.0f)  { const float d = Li - 15.0f; return -6.75f + 0.25f * d - d * d / 96.0f; }
-            else if (Li <= 66.0f)  return -5.625f + 0.125f * (Li - 21.0f);
+        {   // A (v0.23): -6 ladder — output bands -6/-4/-2/0, 4 dB knees
+            if      (Li <= -4.0f)  { const float d = Li + 8.0f; return -8.0f + d - d * d / 16.0f; }
+            else if (Li <= 0.0f)   { const float d = Li + 4.0f; return -5.0f + 0.5f * d - d * d / 32.0f; }
+            else if (Li <= 4.0f)   return -3.5f + 0.25f * Li;
+            else if (Li <= 8.0f)   { const float d = Li - 4.0f; return -2.5f + 0.25f * d - d * d / 64.0f; }
+            else if (Li <= 22.0f)  return -1.75f + 0.125f * (Li - 8.0f);
             return 0.0f;
         }
         // B: output bands -9/-6/-3/0 -> input knees at -9, -3, +9
@@ -380,7 +382,7 @@ public:
     {
         const float c  = railC;
         const float ax = std::fabs (x) / c;
-        const float lo = lateOnset ? 0.2512f : 0.0891f;   // below onset-3dB: untouched
+        const float lo = lateOnset ? 0.2512f : 0.3981f;   // below the first knee: untouched
         if (ax < lo)
             return x;
         const float Lo = ladderDb (20.0f * std::log10 (ax), lateOnset);

@@ -214,7 +214,7 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
             p->beginChangeGesture();
             *p = 1 - p->getIndex();      // swap the wall-wart: 9 V <-> 18 V
             p->endChangeGesture();
-            supplyBtn.setButtonText (p->getIndex() == 1 ? "SUPPLY: 18V" : "SUPPLY: 9V");
+            supplyBtn.setButtonText (p->getIndex() == 1 ? "18V" : "9V");
         }
     };
     addAndMakeVisible (supplyBtn);
@@ -233,8 +233,22 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
                                    + ": " + p->getCurrentChoiceName().fromFirstOccurrenceOf (": ", false, false));
         }
     };
-    clipBtn.setButtonText ("CLIP A: -18 Ladder");
+    clipBtn.setButtonText ("CLIP A: -6 Ladder");
     addAndMakeVisible (clipBtn);
+
+    // v0.23: the +6 dB output boost gets its own audition toggle
+    boostBtn.onClick = [this]
+    {
+        if (auto* p = processor.apvts.getParameter ("boost6"))
+        {
+            p->beginChangeGesture();
+            p->setValueNotifyingHost (p->getValue() >= 0.5f ? 0.0f : 1.0f);
+            p->endChangeGesture();
+            boostBtn.setButtonText (p->getValue() >= 0.5f ? "+6 dB: ON" : "+6 dB: OFF");
+        }
+    };
+    boostBtn.setButtonText ("+6 dB: ON");
+    addAndMakeVisible (boostBtn);
 
     // ---- CV jacks (hardwired to LFO depth VCAs) --------------------------------
     cv1Led.setColour (kGreen);
@@ -656,7 +670,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("GLITCHWAVE 567", 20, 10, 400, 30, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (12.0f));
-    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.22"),
+    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.23"),
                 20, 38, 500, 16, juce::Justification::centredLeft);
 
     drawSection (g, { 12,  60, 1036, 206 }, "PEDAL");
@@ -744,10 +758,10 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.setColour (kDim);
     g.setFont (juce::FontOptions (9.5f));
     g.setFont (juce::FontOptions (8.5f));
-    g.drawText (juce::String::fromUTF8 ("BYPASS + TAP held + MIX = secret STARVE (5 V floor) · sim: CTRL+ALT+MIX"),
-                420, 708, 315, 12, juce::Justification::centredLeft);
-    g.drawText ("9-18 V ctr-neg, protected & filtered; digital rails never starved",
-                420, 724, 315, 12, juce::Justification::centredLeft);
+    g.drawText (juce::String::fromUTF8 ("BYPASS+TAP held + MIX = STARVE (5 V floor) · sim CTRL+ALT+MIX"),
+                416, 708, 300, 12, juce::Justification::centredLeft);
+    g.drawText ("9-18 V ctr-neg, protected & filtered; digital never starved",
+                416, 724, 300, 12, juce::Justification::centredLeft);
 
     // CV jack panels: hardwired routing, printed like a control plate
     g.setColour (kText);
@@ -822,8 +836,9 @@ void GlitchwaveAudioProcessorEditor::resized()
     {
         bypassBtn.setBounds (250, 706, 40, 40);
         bypassLed.setBounds (304, 716, 20, 20);
-        clipBtn.setBounds   (742, 714, 158, 24);
-        supplyBtn.setBounds (920, 714, 116, 24);
+        boostBtn.setBounds  (724, 714, 92, 24);
+        clipBtn.setBounds   (824, 714, 138, 24);
+        supplyBtn.setBounds (970, 714, 70, 24);
     }
 
     // ---- CV jack panels + gate -------------------------------------------------------

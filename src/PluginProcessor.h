@@ -91,6 +91,7 @@ private:
         std::atomic<float>* gatehold{}; std::atomic<float>* gatefade{};
         std::atomic<float>* bypass{};   std::atomic<float>* supply{};
         std::atomic<float>* starve{};   std::atomic<float>* clipmode{};
+        std::atomic<float>* boost6{};
     } raw;
 
     // ---- output gate state ------------------------------------------------------
