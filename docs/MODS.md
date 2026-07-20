@@ -1,4 +1,25 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.21)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.22)
+
+## v0.22 — output clip AUDITION build (pick one, then it gets hardwired)
+
+The CLIP button in the FOOTSWITCHES · POWER strip cycles four output stages
+(all rail-referenced, all ride the 9/18 V supply and the starve):
+
+* **A — −18 ladder** (the v0.21 curve): 2:1/4:1/8:1 with onset 18 dB below
+  the rail. Strongest; squeezes clean playing (GR 10.5 dB at the rail).
+* **B — −9 ladder**: same ratios, onset −9 dB — clean playing untouched,
+  GR 5.25 dB at the rail, still 20–40 dB of squash when slammed.
+* **D — JFET**: J201 square-law stage (Fetzer-style bias) + output cap.
+  Tube-like: curvature everywhere, cutoff side rounds to a zero-slope stop,
+  ohmic side corners; **2nd harmonic −18 dB** at moderate drive (measured).
+* **D+B — JFET into the −9 ladder**: tube colour + rail safety.
+
+All four verified from the compiled code (curve points, harmonics, unity
+floors). Winner gets hardwired next version; in hardware A/B are an op-amp +
+diode-ladder stage, D is a J201 + 3 resistors + 2 caps.
+
+---
+
 
 ## v0.21 — one LED per section, ratio soft-clip, 9/18 V power + secret starve
 

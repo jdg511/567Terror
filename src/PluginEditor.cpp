@@ -219,6 +219,23 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     };
     addAndMakeVisible (supplyBtn);
 
+    // v0.22: output clip stage audition (temporary sim control — the winner
+    // gets hardwired like the dirt circuit was)
+    clipBtn.onClick = [this]
+    {
+        if (auto* p = dynamic_cast<juce::AudioParameterChoice*> (
+                          processor.apvts.getParameter ("clipmode")))
+        {
+            p->beginChangeGesture();
+            *p = (p->getIndex() + 1) % 4;
+            p->endChangeGesture();
+            clipBtn.setButtonText ("CLIP " + p->getCurrentChoiceName().upToFirstOccurrenceOf (":", false, false)
+                                   + ": " + p->getCurrentChoiceName().fromFirstOccurrenceOf (": ", false, false));
+        }
+    };
+    clipBtn.setButtonText ("CLIP A: -18 Ladder");
+    addAndMakeVisible (clipBtn);
+
     // ---- CV jacks (hardwired to LFO depth VCAs) --------------------------------
     cv1Led.setColour (kGreen);
     cv2Led.setColour (kGreen);
@@ -639,7 +656,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("GLITCHWAVE 567", 20, 10, 400, 30, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (12.0f));
-    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.21"),
+    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.22"),
                 20, 38, 500, 16, juce::Justification::centredLeft);
 
     drawSection (g, { 12,  60, 1036, 206 }, "PEDAL");
@@ -726,10 +743,11 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("BYPASS", 332, 722, 70, 14, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (9.5f));
-    g.drawText (juce::String::fromUTF8 ("HOLD BYPASS + TAP TEMPO and turn MIX = secret rail STARVE (floors at 5 V)  ·  sim: CTRL + ALT + drag MIX"),
-                430, 708, 640, 12, juce::Justification::centredLeft);
-    g.drawText ("9-18 V centre-negative, polarity-protected & filtered; digital rails regulated, never starved",
-                430, 724, 640, 12, juce::Justification::centredLeft);
+    g.setFont (juce::FontOptions (8.5f));
+    g.drawText (juce::String::fromUTF8 ("BYPASS + TAP held + MIX = secret STARVE (5 V floor) · sim: CTRL+ALT+MIX"),
+                420, 708, 315, 12, juce::Justification::centredLeft);
+    g.drawText ("9-18 V ctr-neg, protected & filtered; digital rails never starved",
+                420, 724, 315, 12, juce::Justification::centredLeft);
 
     // CV jack panels: hardwired routing, printed like a control plate
     g.setColour (kText);
@@ -804,6 +822,7 @@ void GlitchwaveAudioProcessorEditor::resized()
     {
         bypassBtn.setBounds (250, 706, 40, 40);
         bypassLed.setBounds (304, 716, 20, 20);
+        clipBtn.setBounds   (742, 714, 158, 24);
         supplyBtn.setBounds (920, 714, 116, 24);
     }
 

@@ -205,6 +205,9 @@ public:
         // v0.21 power modelling
         float supplyV     = 9.0f;  // 9 or 18 (centre-negative adapter voltage)
         float starve      = 0.0f;  // 0..1 secret starve: rail sags toward 5 V
+        // v0.22 output-clip audition: 0 = A (-18 ladder, v0.21), 1 = B (-9
+        // ladder), 2 = D (JFET square-law stage), 3 = D+B (JFET into ladder)
+        int   clipMode    = 0;
     };
 
     Tunables tune; // exposed so the harness / future mods can poke at it
@@ -229,6 +232,7 @@ public:
         loopFilter.setCutoff (tune.loopStrayHz, fs);  // no LFIL cap -> stray only
         ofilFilter.setCutoff (tune.ofilStrayHz, fs);  // no OFIL cap -> stray only
         outDCBlock.setCutoff (7.23f, fs);             // C8 (220n) + R12 (100k)
+        jfetDC.setCutoff (10.0f, fs);                 // v0.22 JFET output cap
 
         // pot smoothing ~5 ms (tight enough that LFO/CV modulation stays audible;
         // the mod system's slew knobs own any additional smoothing)
@@ -246,6 +250,7 @@ public:
         fizzLPF.reset();      dirtDC.reset();      odPreHP.reset();
         dirtLP.reset();       octHP.reset();
         inHP1.reset(); inHP2.reset(); outHP.reset(); outPeak.reset();
+        jfetDC.reset();
         sagEnv = dirtPrevY = 0.0f;
         vcoPhase = 0.0; sIn = 1.0f; detected = false; vQ = 0.0f;
         updateDerived (true);
@@ -334,46 +339,76 @@ public:
         o *= 2.0f;                                     // +6 dB boost FIRST
         o = outHP.process (o);                         // 12 dB/oct low-cut @ 60 Hz
         o = outPeak.process (o);                       // +3 dB Q0.5 bell @ 800 Hz
-        return railSoftClip (o / tune.jackVoltsPerFS); // ratios: the LAST thing
+        return clipStage (o / tune.jackVoltsPerFS);    // clip: the LAST thing
     }
 
     // ------------------------------------------------------------------------
-    // v0.21 rail soft clip — Jason's ratio ladder with smooth (quadratic)
-    // knees, referenced to the rail ("hard clipping") ceiling:
-    //   * unity below -18 dB
-    //   * 2:1 through the band that lands at -18..-12 dB of output
-    //   * 4:1 through -12..-6 dB of output
-    //   * 8:1 through the last 6 dB before the rail
-    // 6 dB-wide knees centred on each ratio change give the curvature.
-    // The ceiling scales with the effective rail (18 V = +6 dB headroom,
-    // starving drags it down), so the whole curve rides the supply.
+    // v0.21/v0.22 output clip stage.
+    // Ladder: Jason's ratio ladder (2:1 / 4:1 / 8:1 per 6 dB of output) with
+    // 6 dB quadratic knees, referenced to the effective rail. Two onsets:
+    //   A (v0.21): compression begins -18 dB below the rail
+    //   B:         begins -9 dB below the rail (last 9 dB only)
+    // JFET (D): a J201 square-law common-source stage biased at half
+    // pinch-off (Fetzer-Valve style) — smooth curvature everywhere, the
+    // cutoff side rounds to a perfect zero-slope stop at +0.5c, the ohmic
+    // side runs hotter and corners at -1.5c. Big 2nd harmonic, asymmetric.
+    // D+B: the JFET stage feeding the B ladder.
+    // Everything scales with the effective rail (18 V / starve).
     // ------------------------------------------------------------------------
-    float railSoftClip (float x) const noexcept
+    float ladderDb (float Li, bool lateOnset) const noexcept
     {
-        const float c  = railC;                        // rail ceiling (1.0 @ 9 V)
+        if (! lateOnset)
+        {   // A: output bands -18/-12/-6/0 -> input knees at -18, -6, +18
+            if      (Li <= -15.0f) { const float d = Li + 21.0f; return -21.0f + d - d * d / 24.0f; }
+            else if (Li <= -9.0f)  return -16.5f + 0.5f * (Li + 15.0f);
+            else if (Li <= -3.0f)  { const float d = Li + 9.0f;  return -13.5f + 0.5f * d - d * d / 48.0f; }
+            else if (Li <= 15.0f)  return -11.25f + 0.25f * (Li + 3.0f);
+            else if (Li <= 21.0f)  { const float d = Li - 15.0f; return -6.75f + 0.25f * d - d * d / 96.0f; }
+            else if (Li <= 66.0f)  return -5.625f + 0.125f * (Li - 21.0f);
+            return 0.0f;
+        }
+        // B: output bands -9/-6/-3/0 -> input knees at -9, -3, +9
+        if      (Li <= -6.0f)  { const float d = Li + 12.0f; return -12.0f + d - d * d / 24.0f; }
+        else if (Li <= 0.0f)   { const float d = Li + 6.0f;  return  -7.5f + 0.5f * d - d * d / 48.0f; }
+        else if (Li <= 6.0f)   return -5.25f + 0.25f * Li;
+        else if (Li <= 12.0f)  { const float d = Li - 6.0f;  return -3.75f + 0.25f * d - d * d / 96.0f; }
+        else if (Li <= 33.0f)  return -2.625f + 0.125f * (Li - 12.0f);
+        return 0.0f;
+    }
+
+    float ladderClip (float x, bool lateOnset) const noexcept
+    {
+        const float c  = railC;
         const float ax = std::fabs (x) / c;
-        if (ax < 0.0891f)                              // below -21 dB: untouched
+        const float lo = lateOnset ? 0.2512f : 0.0891f;   // below onset-3dB: untouched
+        if (ax < lo)
             return x;
-
-        const float Li = 20.0f * std::log10 (ax);
-        float Lo;
-        if      (Li <= -15.0f)  // knee 1: slope 1 -> 1/2 over -21..-15
-        { const float d = Li + 21.0f; Lo = -21.0f + d - d * d / 24.0f; }
-        else if (Li <= -9.0f)   // 2:1 straight
-            Lo = -16.5f + 0.5f * (Li + 15.0f);
-        else if (Li <= -3.0f)   // knee 2: slope 1/2 -> 1/4 over -9..-3
-        { const float d = Li + 9.0f; Lo = -13.5f + 0.5f * d - d * d / 48.0f; }
-        else if (Li <= 15.0f)   // 4:1 straight
-            Lo = -11.25f + 0.25f * (Li + 3.0f);
-        else if (Li <= 21.0f)   // knee 3: slope 1/4 -> 1/8 over 15..21
-        { const float d = Li - 15.0f; Lo = -6.75f + 0.25f * d - d * d / 96.0f; }
-        else if (Li <= 66.0f)   // 8:1 straight into the rail
-            Lo = -5.625f + 0.125f * (Li - 21.0f);
-        else                    // the rail itself
-            Lo = 0.0f;
-
-        const float y = c * std::pow (10.0f, Lo * 0.05f);
+        const float Lo = ladderDb (20.0f * std::log10 (ax), lateOnset);
+        const float y  = c * std::pow (10.0f, Lo * 0.05f);
         return x > 0.0f ? y : -y;
+    }
+
+    float jfetStage (float x) noexcept
+    {
+        const float c = railC;
+        const float u = x / c;                       // swing re: pinch-off
+        float y;
+        if      (u >=  1.0f) y =  0.5f;              // cutoff: zero-slope stop
+        else if (u <= -1.0f) y = -1.5f;              // ohmic corner
+        else                 y = u - 0.5f * u * u;   // square law
+        return jfetDC.process (y * c);               // output cap: block the DC
+    }
+
+    float clipStage (float x) noexcept
+    {
+        switch (target.clipMode)
+        {
+            default:
+            case 0: return ladderClip (x, false);                 // A (v0.21)
+            case 1: return ladderClip (x, true);                  // B
+            case 2: return jfetStage (x);                         // D
+            case 3: return ladderClip (jfetStage (x), true);      // D + B
+        }
     }
 
     // handy for UI / debugging
@@ -507,6 +542,7 @@ private:
 
     // stage filters
     detail::OnePoleHP inputDCBlock, gainShelfHP, in567HP, outDCBlock, dirtDC, odPreHP, octHP;
+    detail::OnePoleHP jfetDC;   // v0.22: JFET stage output cap
     detail::OnePoleLP loopFilter, ofilFilter, dirtLP;
     detail::BiquadLP  fizzLPF;
     detail::BiquadLP  inHP1, inHP2, outHP, outPeak;   // v0.10 fixed voicing

@@ -457,6 +457,7 @@ private:
     TapHoldButton bypassBtn;
     LedIndicator  bypassLed;
     juce::TextButton supplyBtn { "SUPPLY: 9V" };
+    juce::TextButton clipBtn   { "CLIP" };      // v0.22 clip-stage audition
     bool starveMode = false;   // MIX knob attached to the secret starve
 
     // CV jacks (hardwired: CV1 -> LFO1 depth VCA, CV2 -> LFO2 depth VCA)

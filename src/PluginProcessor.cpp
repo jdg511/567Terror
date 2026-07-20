@@ -104,6 +104,7 @@ GlitchwaveAudioProcessor::GlitchwaveAudioProcessor()
     raw.bypass      = apvts.getRawParameterValue ("bypass");
     raw.supply      = apvts.getRawParameterValue ("supply");
     raw.starve      = apvts.getRawParameterValue ("starve");
+    raw.clipmode    = apvts.getRawParameterValue ("clipmode");
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout
@@ -200,6 +201,8 @@ GlitchwaveAudioProcessor::createParameterLayout()
         juce::ParameterID { "bypass", 1 }, "Bypass", false));
     layout.add (std::make_unique<PC> (juce::ParameterID { "supply", 1 }, "Supply",
         juce::StringArray { "9V", "18V" }, 0));   // centre-negative adapter
+    layout.add (std::make_unique<PC> (juce::ParameterID { "clipmode", 1 }, "Clip Stage",
+        juce::StringArray { "A: -18 Ladder", "B: -9 Ladder", "D: JFET", "D+B: JFET+Ladder" }, 0));
     layout.add (std::make_unique<PF> (juce::ParameterID { "starve", 1 }, "Starve",
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.0f,
         Att().withStringFromValueFunction ([] (float v, int)
@@ -381,6 +384,7 @@ void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         cp.dirtType   = 2;   // v0.12: Bazz Fuss, hardwired (Jason's PCB pick)
         cp.supplyV    = raw.supply->load() >= 0.5f ? 18.0f : 9.0f;   // v0.21
         cp.starve     = raw.starve->load();
+        cp.clipMode   = juce::jlimit (0, 3, (int) raw.clipmode->load());   // v0.22 audition
         circuit.setParams (cp);
 
         float* chans[] = { mono + offset };
