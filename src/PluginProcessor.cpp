@@ -133,7 +133,7 @@ GlitchwaveAudioProcessor::createParameterLayout()
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.0f,
         Att().withStringFromValueFunction ([] (float v, int)
             {
-                const float g = 2.0f * std::pow (150.0f, v);
+                const float g = 1.1f * std::pow (272.727f, v);   // v0.19: x1.1 .. x300
                 return "x" + juce::String (g, g < 10.0f ? 1 : 0);
             })));
 

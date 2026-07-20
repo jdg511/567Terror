@@ -1,4 +1,50 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.18)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.19)
+
+## v0.19 — the shift-stomp control scheme (dual-function everything)
+
+**The tap tempo stomp is now the pedal's SHIFT key** (sim: holding CTRL =
+holding the stomp):
+
+* **Tap** (release < 750 ms, nothing else used) = tempo tap, 0.02–10 Hz,
+  timed from the press instant; re-seeds the chaos waves.
+* **Hold alone 750 ms** = depth sweep: LED → 2nd colour (blue), brightness =
+  depth %; depth rides the 4 s sine-like traverse from its current % in its
+  remembered direction, turning around **instantly** at 0 %/100 % (the 300 ms
+  dwells are gone). Release = freeze + LED back to 1st colour.
+* **Hold + move a knob** = that knob's 2nd function (and cancels the sweep).
+* **Hold + press a section button** = step that section's TARGET one notch
+  per press (LEDs show the 2nd colour while shifted).
+
+**Dual-function knobs** (plain = 1st, shifted = 2nd):
+
+| Knob | 1st | 2nd |
+|------|-----|-----|
+| Pedal 1 | FREQ | GAIN (dirt) |
+| Pedal 2 | LPF  | RES |
+| Pedal 3 | MIX  | VOL |
+| LFO 1   | RATE | DEPTH (also via holding the LFO1 button) |
+| ENV     | GAIN | drive×range combo (also via holding the ENV button) |
+
+The pedal row is physically **3 knobs** now and LFO 1's DEPTH knob is gone:
+**8 pots total** (3 pedal + LFO1 RATE + ENV GAIN + 3 gate), down from 12.
+
+**Button timing** (all three section buttons): hold threshold **750 ms**,
+then the cycle steps every **750 ms**. Tap stays instant-on-release.
+The ENV button's hold now cycles its **TARGET** (like the LFOs); drive×range
+moved to hold + GAIN knob (knob quarters = up&hi / up&low / down&hi /
+down&low). The env TARGET column is no longer directly clickable — every
+selector in the plugin is now an indicator.
+
+Knob-shift details: while a knob is shifted, its label swaps to the 2nd name
+in the 2nd colour, and the section LED goes blue (LFO1: brightness = depth %).
+The 1st-function value is never disturbed — releasing the shift snaps the
+knob display back (hardware will do this with soft-takeover on the Pico).
+
+**Bazz Fuss**: its LED is gone (it's always on); GAIN floor lowered to
+**×1.1** (was ×2), ceiling stays ×300.
+
+---
+
 
 ## v0.18 — THE waveform set: Bank A classics + Bank B chaos (Jason's plan)
 

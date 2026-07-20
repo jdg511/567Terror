@@ -401,7 +401,7 @@ private:
         f0 = std::min (0.1f * std::pow (180000.0f, smoothed.freq), 0.4f * fs);
 
         // ---- v0.9 dirt: GAIN 0..1 -> x2 .. x300 (log), per-model voicing ------
-        dirtG = 2.0f * std::pow (150.0f, smoothed.gain);
+        dirtG = 1.1f * std::pow (272.727f, smoothed.gain);   // v0.19: x1.1 .. x300
         dirtLP.setCutoff (target.dirtType == 1 ? 3500.0f
                         : target.dirtType == 3 ? 6000.0f : 9000.0f, fs);
 

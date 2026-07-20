@@ -208,37 +208,50 @@ private:
 };
 
 // ---------------------------------------------------------------------------
-// Hardware-style momentary button: TAP fires onTap; holding for 600 ms starts
-// firing onHoldTick every 400 ms (first tick at 600 ms), like the real pedal
-// button will.
+// Hardware-style momentary button (v0.19 timing): TAP fires onTap on release;
+// holding for 750 ms starts firing onHoldTick every 750 ms, like the real
+// pedal button will. cancelPressActions() consumes the current press (no tap,
+// no further hold ticks) — used when the press turns out to be a knob-shift
+// gesture instead.
 // ---------------------------------------------------------------------------
 class TapHoldButton : public juce::Component, private juce::Timer
 {
 public:
     std::function<void()> onTap, onHoldTick;
-    std::function<void()> onPress;   // fires on the press itself (mouse down) —
-                                     // used by the LFO2 rate/depth button
+    std::function<void()> onPress;     // fires on the press itself (mouse down)
+    std::function<void()> onRelease;   // always fires on release (after onTap)
 
     bool isDown() const noexcept { return pressed; }
+
+    void cancelPressActions() noexcept
+    {
+        consumed = true;      // suppress the tap and any further hold ticks
+        stopTimer();
+    }
 
     void mouseDown (const juce::MouseEvent&) override
     {
         if (! isEnabled()) return;
         pressed = true;
         holdStarted = false;
+        consumed = false;
         if (onPress)
             onPress();
-        startTimer (600);
+        if (! consumed)       // onPress may have consumed the press
+            startTimer (750);
         repaint();
     }
 
     void mouseUp (const juce::MouseEvent&) override
     {
         stopTimer();
-        if (pressed && ! holdStarted && onTap)
+        if (pressed && ! holdStarted && ! consumed && onTap)
             onTap();
         pressed = false;
         holdStarted = false;
+        consumed = false;
+        if (onRelease)
+            onRelease();
         repaint();
     }
 
@@ -261,12 +274,12 @@ private:
     void timerCallback() override
     {
         holdStarted = true;
-        if (onHoldTick)
+        if (! consumed && onHoldTick)
             onHoldTick();
-        startTimer (400);
+        startTimer (750);   // v0.19: cycle every 750 ms while held
     }
 
-    bool pressed = false, holdStarted = false;
+    bool pressed = false, holdStarted = false, consumed = false;
 };
 
 // ---------------------------------------------------------------------------
@@ -350,39 +363,50 @@ private:
     void cycleChoice (const juce::String& paramID);
     void advanceDriveRange();
 
-    // ---- LFO2 one-button rate + dual-hold depth sweep (v0.17) -------------
-    // The button is a rate tap-tempo button (LED 1st colour, amber).
-    // On hardware, holding BOTH the rate/depth button and the shape/target
-    // button for 750 ms starts the depth sweep; in the sim, CTRL + hold the
-    // rate/depth button stands in for "both buttons held".
-    // While sweeping: LED = 2nd colour (blue), brightness = depth; the depth
-    // rides a sine-like wave from its current % in its remembered direction,
-    // 0 -> 100% (or back) in 4 s per traverse, pausing 300 ms at 0% and 100%.
-    // Releasing either button freezes the depth wherever it is.
-    void d2Press();                            // raw button press (mouse down)
+    // ---- v0.19 control scheme ---------------------------------------------
+    // The LFO2 rate/depth button is the TAP TEMPO STOMP and doubles as the
+    // pedal's SHIFT key (sim: holding CTRL = holding the stomp):
+    //   * tap (release < 750 ms, nothing else used) = tempo tap (0.02-10 Hz),
+    //     committed at the PRESS time; also re-seeds the chaos generators.
+    //   * hold alone 750 ms = depth sweep: LED 2nd colour (blue) @ depth %,
+    //     depth rides the 4 s sine-like traverse from its current % in its
+    //     remembered direction, turning around instantly at 0% / 100% (no
+    //     dwell). Release = freeze + back to 1st colour.
+    //   * hold + move a knob = the knob's 2ND FUNCTION (shift):
+    //       FREQ->GAIN, LPF->RES, MIX->VOL, LFO1 RATE->DEPTH,
+    //       ENV GAIN->drive x range combo. Using shift cancels the sweep.
+    //   * hold + press a section button = step that section's TARGET.
+    // The LFO1 and ENV buttons also shift their own knob while held:
+    //   LFO1 btn + RATE knob = LFO1 depth; ENV btn + GAIN knob = drive/range.
+    //   Held alone 750 ms they cycle their TARGET every 750 ms.
+    void d2StompPress();
+    void d2StompRelease();
     void d2Frame (double nowMs);               // called every timer frame
     void d2Engage();                           // 750 ms reached -> start sweep
     void d2SetDepth (float newDepth01);
     float d2GetDepth() const;
     void d2SetRateFromInterval (double intervalMs);
+    bool stompDown() const;                    // button or CTRL (sim stand-in)
+    void updateKnobModes();                    // swap slider attachments
+    void applyEnvComboFromKnob();              // knob position -> drive x range
 
     GlitchwaveAudioProcessor& processor;
     juce::LookAndFeel_V4 lnf;
 
-    // pedal row
-    juce::Slider freqKnob, gainKnob, lpfKnob, resKnob, mixKnob, volKnob;
-    juce::Label  freqLabel, gainLabel, lpfLabel, resLabel, mixLabel, volLabel;
-    std::unique_ptr<SliderAttachment> freqAtt, gainAtt, lpfAtt, resAtt, mixAtt, volAtt;
-    LedIndicator dirtLed;
+    // pedal row — v0.19: THREE dual-function knobs (FREQ/GAIN, LPF/RES,
+    // MIX/VOL); attachments swap to the 2nd param while the stomp is held
+    juce::Slider freqKnob, lpfKnob, mixKnob;
+    juce::Label  freqLabel, lpfLabel, mixLabel;
+    std::unique_ptr<SliderAttachment> freqAtt, lpfAtt, mixAtt;
     PPMMeter meterIn, meterOut;
 
     // LFO panels (LFO1 always unipolar-up, LFO2 always bipolar — no selectors)
-    // v0.17: LFO2 has NO rate/depth knobs — tap tempo on the button; depth via
-    // the dual-hold sine sweep (see the d2* comment above)
-    juce::Slider lfo1RateKnob, lfo1DepthKnob;
-    juce::Label  lfo1RateLabel, lfo1DepthLabel;
+    // v0.19: LFO1 has ONE knob (RATE; depth via button-hold + knob); LFO2 has
+    // no knobs at all — tap tempo + hold sweep on the stomp
+    juce::Slider lfo1RateKnob;
+    juce::Label  lfo1RateLabel;
     juce::Label  lfo2ValueLabel;
-    std::unique_ptr<SliderAttachment> lfo1RateAtt, lfo1DepthAtt;
+    std::unique_ptr<SliderAttachment> lfo1RateAtt;
     LedSelector lfo1Shape  { "SHAPE",  juce::Colour (0xffd9a441) };
     LedSelector lfo1Target { "TARGET", juce::Colour (0xff7bd88f) };
     LedSelector lfo2Shape  { "SHAPE",  juce::Colour (0xffd9a441) };
@@ -390,14 +414,23 @@ private:
     LedIndicator lfo1Led, lfo2Led;
     TapHoldButton lfo1Btn, lfo2Btn, envBtn, lfo2RateBtn;
 
-    double d2LastTapMs   = 0.0;    // previous tempo tap (press time)
-    double d2BothSinceMs = 0.0;    // when "both buttons" (CTRL+button) went down
+    double d2LastTapMs   = 0.0;    // previous committed tempo tap (press time)
+    double d2PressMs     = 0.0;    // current stomp press time (0 = not pressed)
+    double d2StompSince  = 0.0;    // when the stomp (button or CTRL) went down
     double d2PrevFrameMs = 0.0;    // for per-frame dt
     bool   d2Sweeping    = false;  // depth sweep engaged
+    bool   d2SweptThisHold = false;// a sweep happened during this stomp hold
     bool   d2Rising      = true;   // remembered wave direction
-    bool   d2Pausing     = false;  // in the 300 ms extreme pause
-    double d2PauseEndMs  = 0.0;
     double d2U           = 0.0;    // progress 0..1 along the current half-wave
+
+    // shift / dual-function state
+    bool shiftAttached   = false;  // top-row + LFO1 + ENV knobs on 2nd params
+    bool shiftConsumed   = false;  // a knob or button used the shift this hold
+    bool lfo1DepthMode   = false;  // RATE knob currently writes lfo1depth
+    bool envComboMode    = false;  // GAIN knob currently selects drive x range
+    bool suppressSliderCb = false; // guard while swapping attachments
+    bool lfo1KnobUsed    = false;  // knob moved during lfo1Btn hold
+    bool envKnobUsed     = false;  // knob moved during envBtn hold
 
     // envelope follower panel
     juce::Slider envGainKnob;

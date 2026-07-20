@@ -11,6 +11,7 @@ namespace
     const juce::Colour kGreen      { 0xff4caf6d };
     const juce::Colour kAmber      { 0xffd9a441 };
     const juce::Colour kRed        { 0xffd95050 };
+    const juce::Colour kBlue       { 0xff6fa8dc };   // the "2nd colour" everywhere
 
     void drawSection (juce::Graphics& g, juce::Rectangle<int> r, const juce::String& title)
     {
@@ -39,35 +40,41 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
 
     auto& apvts = processor.apvts;
 
-    // ---- pedal row -----------------------------------------------------------
-    setupKnob (freqKnob, freqLabel, "FREQ", true);
-    setupKnob (gainKnob, gainLabel, "GAIN", true);
-    setupKnob (lpfKnob,  lpfLabel,  "LPF",  true);
-    setupKnob (resKnob,  resLabel,  "RES",  true);
-    setupKnob (mixKnob,  mixLabel,  "MIX",  true);
-    setupKnob (volKnob,  volLabel,  "VOL",  true);
-    freqAtt = std::make_unique<SliderAttachment> (apvts, "freq",     freqKnob);
-    gainAtt = std::make_unique<SliderAttachment> (apvts, "dirtgain", gainKnob);
-    lpfAtt  = std::make_unique<SliderAttachment> (apvts, "fizz",     lpfKnob);
-    resAtt  = std::make_unique<SliderAttachment> (apvts, "lpfq",     resKnob);
-    mixAtt  = std::make_unique<SliderAttachment> (apvts, "dry",      mixKnob);
-    volAtt  = std::make_unique<SliderAttachment> (apvts, "vol",      volKnob);
-    dirtLed.setColour (kRed);
-    dirtLed.setLevel (1.0f);
-    addAndMakeVisible (dirtLed);
+    // ---- pedal row (v0.19: 3 dual-function knobs) ----------------------------
+    setupKnob (freqKnob, freqLabel, "FREQ", true);   // shift: GAIN
+    setupKnob (lpfKnob,  lpfLabel,  "LPF",  true);   // shift: RES
+    setupKnob (mixKnob,  mixLabel,  "MIX",  true);   // shift: VOL
+    freqAtt = std::make_unique<SliderAttachment> (apvts, "freq", freqKnob);
+    lpfAtt  = std::make_unique<SliderAttachment> (apvts, "fizz", lpfKnob);
+    mixAtt  = std::make_unique<SliderAttachment> (apvts, "dry",  mixKnob);
+
+    // moving a shifted knob consumes the shift (and cancels the depth sweep)
+    auto shiftKnobMoved = [this]
+    {
+        if (suppressSliderCb) return;
+        if (shiftAttached) { shiftConsumed = true; d2Sweeping = false; }
+    };
+    freqKnob.onValueChange = shiftKnobMoved;
+    lpfKnob.onValueChange  = shiftKnobMoved;
+    mixKnob.onValueChange  = shiftKnobMoved;
     addAndMakeVisible (meterIn);
     addAndMakeVisible (meterOut);
 
     // ---- LFO panels ----------------------------------------------------------
-    setupKnob (lfo1RateKnob,  lfo1RateLabel,  "RATE",  false);
-    setupKnob (lfo1DepthKnob, lfo1DepthLabel, "DEPTH", false);
-    lfo1RateAtt  = std::make_unique<SliderAttachment> (apvts, "lfo1rate",  lfo1RateKnob);
-    lfo1DepthAtt = std::make_unique<SliderAttachment> (apvts, "lfo1depth", lfo1DepthKnob);
+    // v0.19: LFO1 has ONE knob. Plain = RATE; while the LFO1 button (or the
+    // stomp/CTRL shift) is held it writes DEPTH instead.
+    setupKnob (lfo1RateKnob, lfo1RateLabel, "RATE", false);
+    lfo1RateAtt = std::make_unique<SliderAttachment> (apvts, "lfo1rate", lfo1RateKnob);
+    lfo1RateKnob.onValueChange = [this]
+    {
+        if (suppressSliderCb) return;
+        if (shiftAttached) { shiftConsumed = true; d2Sweeping = false; }
+        if (lfo1Btn.isDown()) { lfo1KnobUsed = true; lfo1Btn.cancelPressActions(); }
+    };
 
-    // v0.17: LFO2 rate/depth = one button. Tap = tempo. Holding BOTH LFO2
-    // buttons 750 ms (sim: CTRL + hold this button) = depth sweep; see
-    // d2Frame() for the wave. Release freezes the depth.
-    lfo2RateBtn.onPress = [this] { d2Press(); };
+    // The TAP TEMPO STOMP (also the pedal's shift key; sim: CTRL = stomp).
+    lfo2RateBtn.onPress   = [this] { d2StompPress(); };
+    lfo2RateBtn.onRelease = [this] { d2StompRelease(); };
     addAndMakeVisible (lfo2RateBtn);
 
     lfo2ValueLabel.setJustificationType (juce::Justification::centred);
@@ -90,9 +97,34 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     addAndMakeVisible (lfo1Led);
     addAndMakeVisible (lfo2Led);
 
-    // one button per LFO: tap = shape, hold = cycle target
+    // one button per LFO: tap = shape, hold 750 ms = cycle target every 750 ms.
+    // With the stomp/CTRL shift held, a PRESS steps the target instead.
+    // Holding the LFO1 button also shifts its RATE knob to DEPTH.
+    lfo1Btn.onPress = [this]
+    {
+        if (stompDown())
+        {
+            cycleChoice ("lfo1target4");
+            shiftConsumed = true; d2Sweeping = false;
+            lfo1Btn.cancelPressActions();
+            return;
+        }
+        lfo1KnobUsed = false;
+        updateKnobModes();               // RATE knob -> DEPTH while held
+    };
     lfo1Btn.onTap      = [this] { cycleChoice ("lfo1shape5"); };
-    lfo1Btn.onHoldTick = [this] { cycleChoice ("lfo1target4"); };
+    lfo1Btn.onHoldTick = [this] { if (! lfo1KnobUsed) cycleChoice ("lfo1target4"); };
+    lfo1Btn.onRelease  = [this] { updateKnobModes(); };
+
+    lfo2Btn.onPress = [this]
+    {
+        if (stompDown())
+        {
+            cycleChoice ("lfo2target3");
+            shiftConsumed = true; d2Sweeping = false;
+            lfo2Btn.cancelPressActions();
+        }
+    };
     lfo2Btn.onTap      = [this] { cycleChoice ("lfo2shape4"); };
     lfo2Btn.onHoldTick = [this] { cycleChoice ("lfo2target3"); };
     addAndMakeVisible (lfo1Btn);
@@ -101,23 +133,43 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     // ---- envelope follower panel --------------------------------------------
     setupKnob (envGainKnob, envGainLabel, "GAIN", false);
     envGainAtt = std::make_unique<SliderAttachment> (apvts, "envgain", envGainKnob);
+    envGainKnob.onValueChange = [this]
+    {
+        if (suppressSliderCb) return;
+        if (shiftAttached) { shiftConsumed = true; d2Sweeping = false; }
+        if (envBtn.isDown()) { envKnobUsed = true; envBtn.cancelPressActions(); }
+        if (envComboMode) applyEnvComboFromKnob();   // knob picks drive x range
+    };
     envTarget.bind (apvts, "envtarget4");
     envDrive.bind  (apvts, "envdrive");
     lpfMode.bind   (apvts, "lpfmode3");
     lpfRange.bind  (apvts, "lpfrange");
-    for (auto* s : { &envDrive, &lpfMode, &lpfRange })
+    for (auto* s : { &envTarget, &envDrive, &lpfMode, &lpfRange })
     {
-        s->setInteractive (false);   // driven by the env button
+        s->setInteractive (false);   // v0.19: ALL columns are indicators only
         addAndMakeVisible (s);
     }
-    addAndMakeVisible (envTarget);   // TARGET stays tappable (its own cycle)
     envLed.setColour (kAmber);
     addAndMakeVisible (envLed);
 
-    // Jason's one-button scheme: tap = filter mode ("waveform");
-    // hold 600 ms = cycle drive x range combos every 400 ms from current spot
+    // v0.19 env button: tap = filter mode; hold + GAIN knob = drive x range
+    // combo; hold alone 750 ms = cycle TARGET every 750 ms (like the LFOs).
+    // With the stomp/CTRL shift held, a PRESS steps the target.
+    envBtn.onPress = [this]
+    {
+        if (stompDown())
+        {
+            cycleChoice ("envtarget4");
+            shiftConsumed = true; d2Sweeping = false;
+            envBtn.cancelPressActions();
+            return;
+        }
+        envKnobUsed = false;
+        updateKnobModes();               // GAIN knob -> combo select while held
+    };
     envBtn.onTap      = [this] { cycleChoice ("lpfmode3"); };
-    envBtn.onHoldTick = [this] { advanceDriveRange(); };
+    envBtn.onHoldTick = [this] { if (! envKnobUsed) cycleChoice ("envtarget4"); };
+    envBtn.onRelease  = [this] { updateKnobModes(); };
     addAndMakeVisible (envBtn);
 
     // ---- CV jacks (hardwired to LFO depth VCAs) --------------------------------
@@ -230,31 +282,107 @@ float GlitchwaveAudioProcessorEditor::d2GetDepth() const
     return 0.0f;
 }
 
-void GlitchwaveAudioProcessorEditor::d2Press()
+bool GlitchwaveAudioProcessorEditor::stompDown() const
 {
-    // With CTRL held this press is the start (or part) of the dual-button
-    // depth gesture -- never a tempo tap. d2Frame() handles the 750 ms arming.
-    if (juce::ModifierKeys::getCurrentModifiers().isCtrlDown())
+    return lfo2RateBtn.isDown()
+        || juce::ModifierKeys::getCurrentModifiersRealtime().isCtrlDown();
+}
+
+void GlitchwaveAudioProcessorEditor::d2StompPress()
+{
+    d2PressMs = juce::Time::getMillisecondCounterHiRes();
+    updateKnobModes();                        // shift engages immediately
+}
+
+void GlitchwaveAudioProcessorEditor::d2StompRelease()
+{
+    const double now  = juce::Time::getMillisecondCounterHiRes();
+    const bool   ctrl = juce::ModifierKeys::getCurrentModifiersRealtime().isCtrlDown();
+
+    if (! ctrl && ! d2SweptThisHold && ! shiftConsumed
+        && d2PressMs > 0.0 && now - d2PressMs < 750.0)
     {
-        d2LastTapMs = 0.0;
-        return;
+        // a clean tap: commit the tempo using the PRESS instant
+        if (d2LastTapMs > 0.0 && d2PressMs - d2LastTapMs < 5000.0
+                              && d2PressMs - d2LastTapMs > 40.0)
+            d2SetRateFromInterval (d2PressMs - d2LastTapMs);
+        processor.requestLfo2Retrigger();     // taps re-seed the chaos waves
+        d2LastTapMs = d2PressMs;
+    }
+    else
+    {
+        d2LastTapMs = 0.0;                    // hold/shift use: reset tap chain
+    }
+    d2PressMs = 0.0;
+    updateKnobModes();                        // CTRL may still hold the shift
+}
+
+void GlitchwaveAudioProcessorEditor::updateKnobModes()
+{
+    auto& ap = processor.apvts;
+    const bool shift   = stompDown();
+    const bool l1depth = shift || lfo1Btn.isDown();
+    const bool envCmb  = shift || envBtn.isDown();
+
+    if (shift != shiftAttached)               // top-row knobs swap params
+    {
+        suppressSliderCb = true;
+        freqAtt.reset(); lpfAtt.reset(); mixAtt.reset();
+        freqAtt = std::make_unique<SliderAttachment> (ap, shift ? "dirtgain" : "freq", freqKnob);
+        lpfAtt  = std::make_unique<SliderAttachment> (ap, shift ? "lpfq"     : "fizz", lpfKnob);
+        mixAtt  = std::make_unique<SliderAttachment> (ap, shift ? "vol"      : "dry",  mixKnob);
+        suppressSliderCb = false;
+        shiftAttached = shift;
+        if (! shift)
+            shiftConsumed = false;            // fresh shift next time
     }
 
-    const double now = juce::Time::getMillisecondCounterHiRes();
-    if (d2LastTapMs > 0.0 && now - d2LastTapMs < 5000.0 && now - d2LastTapMs > 40.0)
-        d2SetRateFromInterval (now - d2LastTapMs);
-    processor.requestLfo2Retrigger();   // v0.18: tap re-seeds chaos/drift waves
-    d2LastTapMs = now;
+    if (l1depth != lfo1DepthMode)             // RATE knob <-> DEPTH
+    {
+        suppressSliderCb = true;
+        lfo1RateAtt.reset();
+        lfo1RateAtt = std::make_unique<SliderAttachment> (
+                          ap, l1depth ? "lfo1depth" : "lfo1rate", lfo1RateKnob);
+        suppressSliderCb = false;
+        lfo1DepthMode = l1depth;
+    }
+
+    if (envCmb != envComboMode)               // GAIN knob <-> combo selector
+    {
+        suppressSliderCb = true;
+        if (envCmb)
+            envGainAtt.reset();               // detached: position picks combo
+        else
+            envGainAtt = std::make_unique<SliderAttachment> (ap, "envgain", envGainKnob);
+        suppressSliderCb = false;
+        envComboMode = envCmb;
+    }
+}
+
+void GlitchwaveAudioProcessorEditor::applyEnvComboFromKnob()
+{
+    // knob quarters, in Jason's ring order: up&hi, up&low, down&hi, down&low
+    const double prop  = envGainKnob.valueToProportionOfLength (envGainKnob.getValue());
+    const int    combo = juce::jlimit (0, 3, (int) (prop * 4.0));
+
+    auto* d = dynamic_cast<juce::AudioParameterChoice*> (
+                  processor.apvts.getParameter ("envdrive"));
+    auto* r = dynamic_cast<juce::AudioParameterChoice*> (
+                  processor.apvts.getParameter ("lpfrange"));
+    if (d == nullptr || r == nullptr)
+        return;
+
+    d->beginChangeGesture(); *d = combo / 2;                 d->endChangeGesture();
+    r->beginChangeGesture(); *r = (combo % 2 == 0) ? 1 : 0;  r->endChangeGesture();
 }
 
 void GlitchwaveAudioProcessorEditor::d2Engage()
 {
     d2Sweeping = true;
-    d2Pausing  = false;
 
     // Resume the wave from the current depth %, in the remembered direction.
     float d = d2GetDepth();
-    if (d2Rising && d >= 0.999f)      { d2Rising = false; d = 1.0f; }
+    if (d2Rising && d >= 0.999f)        { d2Rising = false; d = 1.0f; }
     else if (! d2Rising && d <= 0.001f) { d2Rising = true;  d = 0.0f; }
 
     // rising: d = 0.5 - 0.5*cos(pi*u)   falling: d = 0.5 + 0.5*cos(pi*u)
@@ -268,48 +396,40 @@ void GlitchwaveAudioProcessorEditor::d2Frame (double nowMs)
                                             : 1000.0 / 60.0;
     d2PrevFrameMs = nowMs;
 
-    // "Both buttons held" -- in the sim that is CTRL + the rate/depth button.
-    const bool bothDown = lfo2RateBtn.isDown()
-                       && juce::ModifierKeys::getCurrentModifiersRealtime().isCtrlDown();
-
-    if (! bothDown)
+    if (! stompDown())
     {
-        d2BothSinceMs = 0.0;
-        d2Sweeping    = false;   // releasing either button freezes the depth
+        d2StompSince    = 0.0;
+        d2Sweeping      = false;   // releasing the stomp freezes the depth
+        d2SweptThisHold = false;
         return;
     }
 
-    if (d2BothSinceMs == 0.0)
-        d2BothSinceMs = nowMs;
+    if (d2StompSince == 0.0)
+        d2StompSince = nowMs;
+
+    if (shiftConsumed)             // shift was used: no sweep this hold
+    {
+        d2Sweeping = false;
+        return;
+    }
 
     if (! d2Sweeping)
     {
-        if (nowMs - d2BothSinceMs >= 750.0)
-            d2Engage();
-        return;
-    }
-
-    // ---- advance the sine-like depth wave ---------------------------------
-    if (d2Pausing)
-    {
-        if (nowMs >= d2PauseEndMs)
+        if (nowMs - d2StompSince >= 750.0)
         {
-            d2Pausing = false;
-            d2Rising  = ! d2Rising;   // turn around after the extreme pause
-            d2U       = 0.0;
+            d2Engage();
+            d2SweptThisHold = true;
         }
         return;
     }
 
-    d2U += dtMs / 4000.0;             // 0% <-> 100% in 4 s per traverse
-    if (d2U >= 1.0)
+    // ---- advance the sine-like depth wave: no dwell at 0% / 100% ----------
+    d2U += dtMs / 4000.0;          // 0% <-> 100% in 4 s per traverse
+    while (d2U >= 1.0)
     {
-        d2SetDepth (d2Rising ? 1.0f : 0.0f);
-        d2Pausing    = true;          // sit at the extreme for 300 ms
-        d2PauseEndMs = nowMs + 300.0;
-        return;
+        d2U -= 1.0;
+        d2Rising = ! d2Rising;     // turn around instantly at the extreme
     }
-
     const double c = std::cos (juce::MathConstants<double>::pi * d2U);
     d2SetDepth ((float) (d2Rising ? 0.5 - 0.5 * c : 0.5 + 0.5 * c));
 }
@@ -333,30 +453,54 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     meterIn.fall  (fallPerFrame);
     meterOut.fall (fallPerFrame);
 
+    // v0.19: keep the shift state honest every frame (CTRL can change any time)
+    updateKnobModes();
+
     // v0.13: LFOs never grey out — CVs just breathe their depth (VCA).
     // Filter Mode Off still disables the envelope-filter block.
     const bool filterOn = lpfMode.getSelectedIndex() > 0;
 
     for (auto* c : std::initializer_list<juce::Component*> {
              &envTarget, &envDrive, &lpfRange, &envGainKnob, &envGainLabel,
-             &lpfKnob, &lpfLabel, &resKnob, &resLabel })
+             &lpfKnob, &lpfLabel })
         c->setEnabled (filterOn);
 
     for (auto* s : { &lfo1Shape, &lfo1Target, &lfo2Shape, &lfo2Target,
                      &envTarget, &envDrive, &lpfMode, &lpfRange })
         s->refresh();
 
-    // ---- LEDs ----------------------------------------------------------------
-    lfo1Led.setLevel (juce::jlimit (0.0f, 1.0f, processor.readVis (0)));         // unipolar
+    // ---- dual-function labels (2nd colour while shifted) ---------------------
+    freqLabel.setText (shiftAttached ? "GAIN" : "FREQ", juce::dontSendNotification);
+    lpfLabel.setText  (shiftAttached ? "RES"  : "LPF",  juce::dontSendNotification);
+    mixLabel.setText  (shiftAttached ? "VOL"  : "MIX",  juce::dontSendNotification);
+    for (auto* l : { &freqLabel, &lpfLabel, &mixLabel })
+        l->setColour (juce::Label::textColourId, shiftAttached ? kBlue : kText);
+    lfo1RateLabel.setText (lfo1DepthMode ? "DEPTH" : "RATE", juce::dontSendNotification);
+    lfo1RateLabel.setColour (juce::Label::textColourId, lfo1DepthMode ? kBlue : kDim);
+    envGainLabel.setText (envComboMode ? "DRV+RNG" : "GAIN", juce::dontSendNotification);
+    envGainLabel.setColour (juce::Label::textColourId, envComboMode ? kBlue : kDim);
 
-    // LFO2 LED + the dual-hold depth sweep (v0.17)
+    // ---- LEDs ----------------------------------------------------------------
+    if (lfo1DepthMode)      // knob is writing DEPTH: 2nd colour @ depth %
+    {
+        lfo1Led.setColour (kBlue);
+        if (auto* pd = processor.apvts.getParameter ("lfo1depth"))
+            lfo1Led.setLevel (pd->getValue());
+    }
+    else                    // 1st colour, blinking at the LFO rate
+    {
+        lfo1Led.setColour (kAmber);
+        lfo1Led.setLevel (juce::jlimit (0.0f, 1.0f, processor.readVis (0)));
+    }
+
+    // LFO2 LED + the stomp-hold depth sweep (v0.19)
     {
         const double nowMs = juce::Time::getMillisecondCounterHiRes();
         d2Frame (nowMs);
 
         if (d2Sweeping)
         {
-            lfo2Led.setColour (juce::Colour (0xff6fa8dc));            // 2nd colour: blue
+            lfo2Led.setColour (kBlue);                                // 2nd colour
             lfo2Led.setLevel (d2GetDepth());                          // brightness = depth %
         }
         else
@@ -373,7 +517,16 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
                 juce::String (pr->convertFrom0to1 (pr->getValue()), 2) + juce::String::fromUTF8 (" Hz  \xc2\xb7  ")
                     + juce::String (juce::roundToInt (pd->getValue() * 100.0f)) + " %",
                 juce::dontSendNotification);
-    envLed.setLevel  (filterOn ? juce::jmin (1.0f, processor.readVis (2) * 4.0f) : 0.0f);
+    if (envComboMode)       // knob is picking drive x range: 2nd colour
+    {
+        envLed.setColour (kBlue);
+        envLed.setLevel (1.0f);
+    }
+    else
+    {
+        envLed.setColour (kAmber);
+        envLed.setLevel (filterOn ? juce::jmin (1.0f, processor.readVis (2) * 4.0f) : 0.0f);
+    }
     cv1Led.setLevel  (juce::jmin (1.0f, processor.readVis (3) * 1.5f));
     cv2Led.setLevel  (juce::jmin (1.0f, processor.readVis (4) * 1.5f));
 
@@ -403,7 +556,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("GLITCHWAVE 567", 20, 10, 400, 30, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (12.0f));
-    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.18"),
+    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.19"),
                 20, 38, 500, 16, juce::Justification::centredLeft);
 
     drawSection (g, { 12,  60, 1036, 206 }, "PEDAL");
@@ -415,20 +568,23 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     if (gateOpen)
         drawSection (g, { 692, 534, 356, 154 }, "OUTPUT GATE");
 
-    // button captions, printed like a control plate
+    // button captions, printed like a control plate (v0.19 scheme)
     g.setColour (kDim);
     g.setFont (juce::FontOptions (9.5f, juce::Font::bold));
-    g.drawText ("TAP = SHAPE",        216, 462, 124, 11, juce::Justification::centred);
-    g.drawText ("HOLD = TARGET",      216, 474, 124, 11, juce::Justification::centred);
-    g.drawText ("TAP = TEMPO",            352, 350, 116, 11, juce::Justification::centred);
-    g.drawText ("HOLD BOTH BTNS = DEPTH", 340, 362, 140, 11, juce::Justification::centred);
+    g.drawText ("TAP = SHAPE",          216, 462, 124, 11, juce::Justification::centred);
+    g.drawText ("HOLD = TARGET",        216, 474, 124, 11, juce::Justification::centred);
+    g.drawText ("HOLD + RATE = DEPTH",  204, 486, 148, 11, juce::Justification::centred);
+    g.drawText ("TAP = TEMPO",          352, 404, 116, 11, juce::Justification::centred);
+    g.drawText ("HOLD = DEPTH SWEEP",   340, 416, 140, 11, juce::Justification::centred);
+    g.drawText ("HOLD + KNOB = 2ND FN", 340, 428, 140, 11, juce::Justification::centred);
     g.setFont (juce::FontOptions (8.5f));
-    g.drawText ("(sim: CTRL + hold)",     340, 374, 140, 10, juce::Justification::centred);
+    g.drawText ("(sim: CTRL = stomp)",  340, 440, 140, 10, juce::Justification::centred);
     g.setFont (juce::FontOptions (9.5f, juce::Font::bold));
-    g.drawText ("TAP = SHAPE",        558, 506, 124, 11, juce::Justification::centred);
-    g.drawText ("HOLD = TARGET",      558, 518, 124, 11, juce::Justification::centred);
-    g.drawText ("TAP = MODE",         880, 408, 120, 11, juce::Justification::centred);
-    g.drawText ("HOLD = DRIVE+RANGE", 880, 420, 120, 11, juce::Justification::centred);
+    g.drawText ("TAP = SHAPE",          558, 506, 124, 11, juce::Justification::centred);
+    g.drawText ("HOLD = TARGET",        558, 518, 124, 11, juce::Justification::centred);
+    g.drawText ("TAP = MODE",           890, 412, 158, 11, juce::Justification::centred);
+    g.drawText ("HOLD = TARGET",        890, 424, 158, 11, juce::Justification::centred);
+    g.drawText ("HOLD + GAIN = DRV/RNG", 890, 436, 158, 11, juce::Justification::centred);
 
     // CV jack panels: hardwired routing, printed like a control plate
     g.setColour (kText);
@@ -446,12 +602,12 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("no signal for 3 s = jack out, full depth", 364, 626, 300, 14,
                 juce::Justification::centredLeft);
 
-    g.setColour (kDim);
-    g.setFont (juce::FontOptions (11.0f, juce::Font::bold));
-    g.drawText ("DIRT", 764, 96, 60, 12, juce::Justification::centredLeft);
     g.setColour (kText);
     g.setFont (juce::FontOptions (13.0f, juce::Font::bold));
-    g.drawText ("BAZZ FUSS", 786, 112, 110, 16, juce::Justification::centredLeft);
+    g.drawText ("BAZZ FUSS", 764, 112, 110, 16, juce::Justification::centredLeft);
+    g.setColour (kDim);
+    g.setFont (juce::FontOptions (9.5f));
+    g.drawText ("always on", 764, 130, 110, 12, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (11.0f, juce::Font::bold));
     g.drawText ("IN",  976, 84, 24, 12, juce::Justification::centred);
@@ -460,19 +616,17 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
 
 void GlitchwaveAudioProcessorEditor::resized()
 {
-    // ---- pedal row -----------------------------------------------------------
+    // ---- pedal row (v0.19: 3 dual-function knobs) ----------------------------
     {
-        const int y = 82, knobW = 112, knobH = 140, labelH = 18;
-        int x = 20;
-        juce::Slider* ks[] = { &freqKnob, &gainKnob, &lpfKnob, &resKnob, &mixKnob, &volKnob };
-        juce::Label*  ls[] = { &freqLabel, &gainLabel, &lpfLabel, &resLabel, &mixLabel, &volLabel };
-        for (int i = 0; i < 6; ++i)
+        const int y = 82, knobW = 130, knobH = 140, labelH = 18;
+        const int xs[3] = { 90, 320, 550 };
+        juce::Slider* ks[] = { &freqKnob, &lpfKnob, &mixKnob };
+        juce::Label*  ls[] = { &freqLabel, &lpfLabel, &mixLabel };
+        for (int i = 0; i < 3; ++i)
         {
-            ls[i]->setBounds (x, y, knobW, labelH);
-            ks[i]->setBounds (x, y + labelH, knobW, knobH);
-            x += knobW + 10;
+            ls[i]->setBounds (xs[i], y, knobW, labelH);
+            ks[i]->setBounds (xs[i], y + labelH, knobW, knobH);
         }
-        dirtLed.setBounds (764, 112, 16, 16);
         meterIn.setBounds  (980, 98, 16, 150);
         meterOut.setBounds (1012, 98, 16, 150);
     }
@@ -480,12 +634,10 @@ void GlitchwaveAudioProcessorEditor::resized()
     // ---- LFO panels ------------------------------------------------------------
     {
         const int y = 296;
-        // LFO 1
-        lfo1RateLabel.setBounds (24, y, 80, 12);
-        lfo1RateKnob.setBounds  (24, y + 12, 80, 90);
-        lfo1Led.setBounds       (106, y + 40, 14, 14);
-        lfo1DepthLabel.setBounds (24, y + 112, 80, 12);
-        lfo1DepthKnob.setBounds  (24, y + 124, 80, 90);
+        // LFO 1 (single dual-function knob: RATE / hold = DEPTH)
+        lfo1RateLabel.setBounds (24, y + 20, 80, 12);
+        lfo1RateKnob.setBounds  (24, y + 32, 80, 90);
+        lfo1Led.setBounds       (106, y + 60, 14, 14);
         lfo1Shape.setBounds  (128, y - 4, 90, lfo1Shape.idealHeight());
         lfo1Target.setBounds (228, y, 106, lfo1Target.idealHeight());
         lfo1Btn.setBounds    (256, y + 116, 44, 44);
