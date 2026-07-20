@@ -1,4 +1,25 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.19)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.20)
+
+## v0.20 — NeoPixel shape indicator preview
+
+The two 16-row SHAPE LED columns are replaced by **one RGB "NeoPixel" LED per
+LFO** (hardware: WS2812s chained on a single Pico pin):
+
+* **Hue = the slot within the bank** (same hue for the A and B shape sharing
+  a slot): red = Ramp Up/Lorenz, orange = Ramp Dn/Rossler, yellow =
+  Square/Drunk Walk, green = Triangle/Perlin, cyan = Sine/Wobble, blue =
+  Sweep/Glitch, violet = Rnd Slope/White Noise, pink = S&H/Pink Noise.
+* **Solid = Bank A; flashing at 7 Hz = Bank B.**
+* A printed hue chart on each LFO panel maps colour → A/B names (that chart
+  becomes enclosure artwork on the real pedal).
+* Nothing else changed — tap-cycling through all 16 shapes, targets, and the
+  v0.19 control scheme are untouched.
+
+Point of the preview: if this reads well, the pedal drops ~32 panel LEDs and
+likely a whole enclosure size (1590DD → 1590XX).
+
+---
+
 
 ## v0.19 — the shift-stomp control scheme (dual-function everything)
 

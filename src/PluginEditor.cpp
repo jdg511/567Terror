@@ -13,6 +13,22 @@ namespace
     const juce::Colour kRed        { 0xffd95050 };
     const juce::Colour kBlue       { 0xff6fa8dc };   // the "2nd colour" everywhere
 
+    // v0.20: NeoPixel hue per shape slot (same slot in Bank A and Bank B)
+    const juce::Colour kShapeHues[8] = {
+        juce::Colour (0xffff4444),   // 0  red      Ramp Up   / Lorenz
+        juce::Colour (0xffff8c00),   // 1  orange   Ramp Dn   / Rossler
+        juce::Colour (0xffffd400),   // 2  yellow   Square    / Drunk Walk
+        juce::Colour (0xff44dd66),   // 3  green    Triangle  / Perlin
+        juce::Colour (0xff33cccc),   // 4  cyan     Sine      / Wobble
+        juce::Colour (0xff4488ff),   // 5  blue     Sweep     / Glitch
+        juce::Colour (0xff9955ff),   // 6  violet   Rnd Slope / White Noise
+        juce::Colour (0xffff55bb),   // 7  pink     S&H       / Pink Noise
+    };
+    const char* kShapeChartA[8] = { "Ramp Up", "Ramp Dn", "Square", "Triangle",
+                                    "Sine", "Sweep", "Rnd Slope", "S&H" };
+    const char* kShapeChartB[8] = { "Lorenz", "Rossler", "Drunk Wk", "Perlin",
+                                    "Wobble", "Glitch", "White Ns", "Pink Ns" };
+
     void drawSection (juce::Graphics& g, juce::Rectangle<int> r, const juce::String& title)
     {
         g.setColour (kPanel);
@@ -81,17 +97,19 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     lfo2ValueLabel.setFont (juce::FontOptions (12.0f));
     lfo2ValueLabel.setColour (juce::Label::textColourId, kText);
     addAndMakeVisible (lfo2ValueLabel);
-    lfo1Shape.bind  (apvts, "lfo1shape5");
     lfo1Target.bind (apvts, "lfo1target4");
-    lfo2Shape.bind  (apvts, "lfo2shape4");
     lfo2Target.bind (apvts, "lfo2target3");
-    lfo1Shape.setRowHeight (13);     // 16 waveforms (Bank A + Bank B)
-    lfo2Shape.setRowHeight (13);
-    for (auto* s : { &lfo1Shape, &lfo1Target, &lfo2Shape, &lfo2Target })
+    for (auto* s : { &lfo1Target, &lfo2Target })
     {
         s->setInteractive (false);   // v0.14: LED columns are indicators only
         addAndMakeVisible (s);
     }
+
+    // v0.20: one NeoPixel per LFO shows the shape (hue = slot, flash = Bank B)
+    lfo1ShapeParam = dynamic_cast<juce::AudioParameterChoice*> (apvts.getParameter ("lfo1shape5"));
+    lfo2ShapeParam = dynamic_cast<juce::AudioParameterChoice*> (apvts.getParameter ("lfo2shape4"));
+    addAndMakeVisible (lfo1ShapeLed);
+    addAndMakeVisible (lfo2ShapeLed);
     lfo1Led.setColour (kAmber);
     lfo2Led.setColour (kAmber);
     addAndMakeVisible (lfo1Led);
@@ -465,9 +483,28 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
              &lpfKnob, &lpfLabel })
         c->setEnabled (filterOn);
 
-    for (auto* s : { &lfo1Shape, &lfo1Target, &lfo2Shape, &lfo2Target,
+    for (auto* s : { &lfo1Target, &lfo2Target,
                      &envTarget, &envDrive, &lpfMode, &lpfRange })
         s->refresh();
+
+    // ---- NeoPixel shape indicators (v0.20) -----------------------------------
+    // hue = slot within the bank; solid = Bank A, flashing 7 Hz = Bank B
+    {
+        const double ms   = juce::Time::getMillisecondCounterHiRes();
+        const bool   f7on = ((int) (ms / 71.43)) % 2 == 0;    // 7 Hz square
+
+        auto showShape = [&] (LedIndicator& led, juce::AudioParameterChoice* p)
+        {
+            if (p == nullptr) return;
+            const int idx  = p->getIndex();
+            const int slot = idx % 8;
+            const bool bankB = idx >= 8;
+            led.setColour (kShapeHues[slot]);
+            led.setLevel (bankB ? (f7on ? 1.0f : 0.0f) : 1.0f);
+        };
+        showShape (lfo1ShapeLed, lfo1ShapeParam);
+        showShape (lfo2ShapeLed, lfo2ShapeParam);
+    }
 
     // ---- dual-function labels (2nd colour while shifted) ---------------------
     freqLabel.setText (shiftAttached ? "GAIN" : "FREQ", juce::dontSendNotification);
@@ -556,7 +593,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("GLITCHWAVE 567", 20, 10, 400, 30, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (12.0f));
-    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.19"),
+    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.20"),
                 20, 38, 500, 16, juce::Justification::centredLeft);
 
     drawSection (g, { 12,  60, 1036, 206 }, "PEDAL");
@@ -574,17 +611,42 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("TAP = SHAPE",          216, 462, 124, 11, juce::Justification::centred);
     g.drawText ("HOLD = TARGET",        216, 474, 124, 11, juce::Justification::centred);
     g.drawText ("HOLD + RATE = DEPTH",  204, 486, 148, 11, juce::Justification::centred);
-    g.drawText ("TAP = TEMPO",          352, 404, 116, 11, juce::Justification::centred);
-    g.drawText ("HOLD = DEPTH SWEEP",   340, 416, 140, 11, juce::Justification::centred);
-    g.drawText ("HOLD + KNOB = 2ND FN", 340, 428, 140, 11, juce::Justification::centred);
+    g.drawText ("TAP = TEMPO",          340, 404, 122, 11, juce::Justification::centred);
+    g.drawText ("HOLD = DEPTH SWEEP",   334, 416, 128, 11, juce::Justification::centred);
+    g.drawText ("HOLD + KNOB = 2ND FN", 334, 428, 128, 11, juce::Justification::centred);
     g.setFont (juce::FontOptions (8.5f));
-    g.drawText ("(sim: CTRL = stomp)",  340, 440, 140, 10, juce::Justification::centred);
+    g.drawText ("(sim: CTRL = stomp)",  334, 440, 128, 10, juce::Justification::centred);
     g.setFont (juce::FontOptions (9.5f, juce::Font::bold));
     g.drawText ("TAP = SHAPE",          558, 506, 124, 11, juce::Justification::centred);
     g.drawText ("HOLD = TARGET",        558, 518, 124, 11, juce::Justification::centred);
     g.drawText ("TAP = MODE",           890, 412, 158, 11, juce::Justification::centred);
     g.drawText ("HOLD = TARGET",        890, 424, 158, 11, juce::Justification::centred);
     g.drawText ("HOLD + GAIN = DRV/RNG", 890, 436, 158, 11, juce::Justification::centred);
+
+    // ---- NeoPixel shape charts (v0.20): hue -> Bank A / Bank B names --------
+    auto drawShapeChart = [&g] (int x, int ledLabelX)
+    {
+        g.setColour (kDim);
+        g.setFont (juce::FontOptions (9.5f, juce::Font::bold));
+        g.drawText ("SHAPE", ledLabelX, 300, 60, 11, juce::Justification::centred);
+
+        g.setFont (juce::FontOptions (8.0f));
+        for (int i = 0; i < 8; ++i)
+        {
+            const int ry = 360 + i * 13;
+            g.setColour (kShapeHues[i]);
+            g.fillEllipse ((float) x, (float) ry + 3.0f, 7.0f, 7.0f);
+            g.setColour (kDim);
+            g.drawText (juce::String (kShapeChartA[i]) + " / " + kShapeChartB[i],
+                        x + 11, ry, 86, 13, juce::Justification::centredLeft);
+        }
+        g.setColour (kDim);
+        g.setFont (juce::FontOptions (7.5f, juce::Font::bold));
+        g.drawText ("BANK B = FLASH 7 Hz", x, 360 + 8 * 13 + 2, 100, 10,
+                    juce::Justification::centredLeft);
+    };
+    drawShapeChart (126, 135);   // LFO 1 panel
+    drawShapeChart (466, 475);   // LFO 2 panel
 
     // CV jack panels: hardwired routing, printed like a control plate
     g.setColour (kText);
@@ -638,14 +700,14 @@ void GlitchwaveAudioProcessorEditor::resized()
         lfo1RateLabel.setBounds (24, y + 20, 80, 12);
         lfo1RateKnob.setBounds  (24, y + 32, 80, 90);
         lfo1Led.setBounds       (106, y + 60, 14, 14);
-        lfo1Shape.setBounds  (128, y - 4, 90, lfo1Shape.idealHeight());
+        lfo1ShapeLed.setBounds (150, y + 24, 30, 30);
         lfo1Target.setBounds (228, y, 106, lfo1Target.idealHeight());
         lfo1Btn.setBounds    (256, y + 116, 44, 44);
         // LFO 2 — one button for rate (tap tempo) + depth (hold), no knobs
         lfo2RateBtn.setBounds   (382, y + 8, 48, 48);
         lfo2Led.setBounds       (440, y + 24, 14, 14);
         lfo2ValueLabel.setBounds (356, y + 88, 108, 16);
-        lfo2Shape.setBounds  (468, y - 4, 90, lfo2Shape.idealHeight());
+        lfo2ShapeLed.setBounds (490, y + 24, 30, 30);
         lfo2Target.setBounds (568, y, 110, lfo2Target.idealHeight());
         lfo2Btn.setBounds    (598, y + 160, 44, 44);
     }

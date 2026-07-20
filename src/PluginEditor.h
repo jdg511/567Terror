@@ -407,9 +407,13 @@ private:
     juce::Label  lfo1RateLabel;
     juce::Label  lfo2ValueLabel;
     std::unique_ptr<SliderAttachment> lfo1RateAtt;
-    LedSelector lfo1Shape  { "SHAPE",  juce::Colour (0xffd9a441) };
+    // v0.20: the 16-row SHAPE columns are replaced by one "NeoPixel" RGB LED
+    // per LFO — 8 hues = the 8 slots within a bank; solid = Bank A,
+    // flashing at 7 Hz = Bank B. (Hardware: WS2812 on one Pico pin.)
+    LedIndicator lfo1ShapeLed, lfo2ShapeLed;
+    juce::AudioParameterChoice* lfo1ShapeParam = nullptr;
+    juce::AudioParameterChoice* lfo2ShapeParam = nullptr;
     LedSelector lfo1Target { "TARGET", juce::Colour (0xff7bd88f) };
-    LedSelector lfo2Shape  { "SHAPE",  juce::Colour (0xffd9a441) };
     LedSelector lfo2Target { "TARGET", juce::Colour (0xff7bd88f) };
     LedIndicator lfo1Led, lfo2Led;
     TapHoldButton lfo1Btn, lfo2Btn, envBtn, lfo2RateBtn;
