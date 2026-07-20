@@ -202,6 +202,9 @@ public:
         float gain        = 0.0f;  // v0.9: dirt GAIN 0..1 -> x2 (slightly dirty) .. x300 (fuzz wall)
         int   dirtType    = 0;     // v0.9: 0 Electra, 1 Fuzz Face Ge, 2 Bazz Fuss,
                                    //       3 Op-Amp OD, 4 Octave Fuzz (always on, dry path only)
+        // v0.21 power modelling
+        float supplyV     = 9.0f;  // 9 or 18 (centre-negative adapter voltage)
+        float starve      = 0.0f;  // 0..1 secret starve: rail sags toward 5 V
     };
 
     Tunables tune; // exposed so the harness / future mods can poke at it
@@ -258,6 +261,15 @@ public:
         smoothed.lpfQ += potSmoothCoeff * (target.lpfQ - smoothed.lpfQ);
         smoothed.dry  += potSmoothCoeff * (target.dry  - smoothed.dry);
         smoothed.vol  += potSmoothCoeff * (target.vol  - smoothed.vol);
+        smoothed.starve += potSmoothCoeff * (target.starve - smoothed.starve);
+
+        // v0.21: effective rail. 9 V is the reference design; 18 V doubles the
+        // analogue headroom; the starve pot sags the DIRT/output rail toward
+        // 5 V (never below — the digital 3.3/5 V rails are separately
+        // regulated and never starved).
+        const float vEff  = target.supplyV - smoothed.starve * (target.supplyV - 5.0f);
+        railC             = vEff / 9.0f;               // clip ceiling re: 9 V FS
+        starveA           = smoothed.starve;
         smoothed.gain += potSmoothCoeff * (target.gain - smoothed.gain);
 
         if (--coeffCounter <= 0)
@@ -317,11 +329,51 @@ public:
                                ? detail::opampClip (fizzLPF.process (vMix))
                                : vMix;
 
-        // ==== output voicing (v0.10, always on) + DC block + level scaling ===
+        // ==== v0.21 output chain: +6 dB boost -> voicing -> rail soft clip ===
         float o = outDCBlock.process (vOut);
+        o *= 2.0f;                                     // +6 dB boost FIRST
         o = outHP.process (o);                         // 12 dB/oct low-cut @ 60 Hz
         o = outPeak.process (o);                       // +3 dB Q0.5 bell @ 800 Hz
-        return o / tune.jackVoltsPerFS;
+        return railSoftClip (o / tune.jackVoltsPerFS); // ratios: the LAST thing
+    }
+
+    // ------------------------------------------------------------------------
+    // v0.21 rail soft clip — Jason's ratio ladder with smooth (quadratic)
+    // knees, referenced to the rail ("hard clipping") ceiling:
+    //   * unity below -18 dB
+    //   * 2:1 through the band that lands at -18..-12 dB of output
+    //   * 4:1 through -12..-6 dB of output
+    //   * 8:1 through the last 6 dB before the rail
+    // 6 dB-wide knees centred on each ratio change give the curvature.
+    // The ceiling scales with the effective rail (18 V = +6 dB headroom,
+    // starving drags it down), so the whole curve rides the supply.
+    // ------------------------------------------------------------------------
+    float railSoftClip (float x) const noexcept
+    {
+        const float c  = railC;                        // rail ceiling (1.0 @ 9 V)
+        const float ax = std::fabs (x) / c;
+        if (ax < 0.0891f)                              // below -21 dB: untouched
+            return x;
+
+        const float Li = 20.0f * std::log10 (ax);
+        float Lo;
+        if      (Li <= -15.0f)  // knee 1: slope 1 -> 1/2 over -21..-15
+        { const float d = Li + 21.0f; Lo = -21.0f + d - d * d / 24.0f; }
+        else if (Li <= -9.0f)   // 2:1 straight
+            Lo = -16.5f + 0.5f * (Li + 15.0f);
+        else if (Li <= -3.0f)   // knee 2: slope 1/2 -> 1/4 over -9..-3
+        { const float d = Li + 9.0f; Lo = -13.5f + 0.5f * d - d * d / 48.0f; }
+        else if (Li <= 15.0f)   // 4:1 straight
+            Lo = -11.25f + 0.25f * (Li + 3.0f);
+        else if (Li <= 21.0f)   // knee 3: slope 1/4 -> 1/8 over 15..21
+        { const float d = Li - 15.0f; Lo = -6.75f + 0.25f * d - d * d / 96.0f; }
+        else if (Li <= 66.0f)   // 8:1 straight into the rail
+            Lo = -5.625f + 0.125f * (Li - 21.0f);
+        else                    // the rail itself
+            Lo = 0.0f;
+
+        const float y = c * std::pow (10.0f, Lo * 0.05f);
+        return x > 0.0f ? y : -y;
     }
 
     // handy for UI / debugging
@@ -364,12 +416,19 @@ private:
             }
 
             case 2: // Bazz Fuss: dead zone (gated) + asymmetric hard clip -> velcro
-            {
-                float u = dirtG * vIn;
-                const float dz = 0.08f;
+            {       // v0.21: starving sags the bias, widens the dead zone,
+                    // chokes the rails and gates the tails -> sputtery
+                float u = dirtG * vIn + 0.15f * starveA;             // bias shift
+                const float dz = 0.08f + 0.32f * starveA * starveA;  // gate grows
                 u = u > dz ? u - dz : (u < -dz ? u + dz : 0.0f);
-                y = u > 0.0f ? std::min (u * 1.2f, 0.5f)
-                             : std::max (u * 1.6f, -0.32f);
+                y = u > 0.0f ? std::min (u * 1.2f,  0.5f  * railC)
+                             : std::max (u * 1.6f, -0.32f * railC);
+                const float gap = 0.15f * starveA * starveA;         // sputter gate
+                if (gap > 0.0f)
+                {
+                    const float a = std::fabs (y);
+                    if (a < gap) { const float t = a / gap; y *= t * t * t; }
+                }
                 break;
             }
 
@@ -454,6 +513,7 @@ private:
 
     // dirt state (v0.9)
     float dirtG = 2.0f, sagEnv = 0.0f, sagCoeff = 0.001f, dirtPrevY = 0.0f;
+    float railC = 1.0f, starveA = 0.0f;   // v0.21 effective rail / starve
     detail::Rng       rng;
 
     // PLL state

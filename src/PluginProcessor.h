@@ -89,6 +89,8 @@ private:
         std::atomic<float>* lpfmode{}; std::atomic<float>* lpfrange{};
         std::atomic<float>* gatethresh{};
         std::atomic<float>* gatehold{}; std::atomic<float>* gatefade{};
+        std::atomic<float>* bypass{};   std::atomic<float>* supply{};
+        std::atomic<float>* starve{};
     } raw;
 
     // ---- output gate state ------------------------------------------------------
@@ -98,6 +100,7 @@ private:
     float  gateAttenDb  = 0.0f;   // 0 (open) .. -96 (fully faded)
     float  gateBelowSec = 0.0f;
     float  lastOutGain  = 1.0f;
+    float  bypassMix    = 0.0f;   // v0.21 buffered-bypass crossfade
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GlitchwaveAudioProcessor)
 };

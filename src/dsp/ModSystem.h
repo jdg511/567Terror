@@ -32,7 +32,8 @@ enum class ModTarget : int
     Lfo1Rate, Lfo1Depth, Lfo2Rate, Lfo2Depth, EnvAmount,
     Cv1Strength, Cv1Slew,           // retired (kept so enum values stay stable)
     LpfQ, DryLpf,                   // DryLpf retired
-    Gain                            // the dirt GAIN knob
+    Gain,                           // the dirt GAIN knob
+    EnvLevel                        // v0.21: scales the env follower's output
 };
 
 // v0.18: Jason's two-bank waveform plan (from the signal-flow-diagram chat).
@@ -95,7 +96,7 @@ public:
         noise1 = noise2 = {};
         state1 = state2 = {};
         rngState = 0x1234ABCDu;
-        visLfo1 = visLfo2 = 0.0f;
+        visLfo1 = visLfo2 = visEnvSig = 0.0f;
         samplesSinceCompute = 0;
     }
 
@@ -153,19 +154,47 @@ public:
             default: applyToKnob (out, (ModTarget) params.lfo2Target, lfo2Sig * 0.5f); break;
         }
 
+        // ---- envelope pre-pass (v0.21: env can drive LFO1 rate/depth) --------
+        const float envPre      = clampf (inEnv * envGainEff, 0.0f, 1.0f);
+        const float envApplyPre = params.envDriveUp ? envPre : -envPre;
+        switch ((ModTarget) params.envTarget)
+        {
+            case ModTarget::Lfo1Rate:
+                lfo1RateFactor *= std::exp2 (envApplyPre * 2.0f); break;
+            case ModTarget::Lfo1Depth:
+                lfo1DepthEff = clampf (lfo1DepthEff + envApplyPre, 0.0f, 1.0f); break;
+            default: break;
+        }
+
         // ---- LFO 1 (always unipolar-up; noise: rate = noise LPF cutoff) ------
         const float lfo1RateBent = clampf (lfo1RateEff * lfo1RateFactor, 0.01f, 0.45f / dt);
         const float lfo1Raw = generate ((LfoShape) params.lfo1Shape, lfo1RateBent, dt,
                                         lfo1Phase, shValue, shPrev, noise1, state1);
         const float lfo1Out = 0.5f * (lfo1Raw + 1.0f);         // unipolar-up 0..1
         visLfo1 = lfo1Out;
-        applyToKnob (out, (ModTarget) params.lfo1Target,
-                     lfo1Out * lfo1DepthEff * cv1Vca * 0.5f);
 
-        // ---- envelope follower -> assignable target --------------------------
-        const float envSig = clampf (inEnv * envGainEff, 0.0f, 1.0f);
-        applyToKnob (out, (ModTarget) params.envTarget,
-                     params.envDriveUp ? envSig : -envSig);
+        // v0.21: LFO1 can also drive the env follower's gain or output level
+        float envLevelMul = 1.0f;
+        const float lfo1Sig = lfo1Out * lfo1DepthEff * cv1Vca;
+        switch ((ModTarget) params.lfo1Target)
+        {
+            case ModTarget::EnvAmount:
+                envGainEff = clampf (envGainEff * std::exp2 (lfo1Sig * 2.0f),
+                                     0.125f, 40.0f); break;
+            case ModTarget::EnvLevel:
+                envLevelMul = 1.0f + 2.0f * lfo1Sig; break;      // up to x3
+            default:
+                applyToKnob (out, (ModTarget) params.lfo1Target, lfo1Sig * 0.5f);
+                break;
+        }
+
+        // ---- envelope follower -> its knob target ----------------------------
+        // (skipped when it already spent itself on LFO1 rate/depth above)
+        const float envSig = clampf (inEnv * envGainEff * envLevelMul, 0.0f, 1.0f);
+        visEnvSig = envSig;
+        const ModTarget et = (ModTarget) params.envTarget;
+        if (et != ModTarget::Lfo1Rate && et != ModTarget::Lfo1Depth)
+            applyToKnob (out, et, params.envDriveUp ? envSig : -envSig);
 
         return out;
     }
@@ -175,6 +204,7 @@ public:
     float getCv2Env()   const noexcept { return cv2Env; }
     float getLfo1Vis()  const noexcept { return visLfo1; }   // 0..1 (unipolar)
     float getLfo2Vis()  const noexcept { return visLfo2; }   // -1..1 (bipolar)
+    float getEnvSigVis() const noexcept { return visEnvSig; } // 0..1 post gain/level
 
 private:
     static inline float clampf (float v, float lo, float hi) noexcept
@@ -453,7 +483,7 @@ private:
     uint32_t rngState = 0x1234ABCDu;
 
     int   samplesSinceCompute = 0;
-    float visLfo1 = 0.0f, visLfo2 = 0.0f;
+    float visLfo1 = 0.0f, visLfo2 = 0.0f, visEnvSig = 0.0f;
 };
 
 } // namespace glitchwave

@@ -361,7 +361,6 @@ private:
     void setupKnob (juce::Slider& s, juce::Label& l, const juce::String& name, bool big);
     void setGateOpen (bool shouldBeOpen);
     void cycleChoice (const juce::String& paramID);
-    void advanceDriveRange();
 
     // ---- v0.19 control scheme ---------------------------------------------
     // The LFO2 rate/depth button is the TAP TEMPO STOMP and doubles as the
@@ -407,15 +406,27 @@ private:
     juce::Label  lfo1RateLabel;
     juce::Label  lfo2ValueLabel;
     std::unique_ptr<SliderAttachment> lfo1RateAtt;
-    // v0.20: the 16-row SHAPE columns are replaced by one "NeoPixel" RGB LED
-    // per LFO — 8 hues = the 8 slots within a bank; solid = Bank A,
-    // flashing at 7 Hz = Bank B. (Hardware: WS2812 on one Pico pin.)
-    LedIndicator lfo1ShapeLed, lfo2ShapeLed;
-    juce::AudioParameterChoice* lfo1ShapeParam = nullptr;
-    juce::AudioParameterChoice* lfo2ShapeParam = nullptr;
-    LedSelector lfo1Target { "TARGET", juce::Colour (0xff7bd88f) };
-    LedSelector lfo2Target { "TARGET", juce::Colour (0xff7bd88f) };
+    // v0.21: ONE NeoPixel per section shows everything (Jason's spec):
+    //   LFO idle  = WHITE breathing at the LFO rate
+    //   shape     = hue (slot 0-7), flashing 3 Hz (Bank A) / 6 Hz (Bank B)
+    //   target    = solid hue (Off = dim)
+    //   depth     = blue @ depth % (while the depth gesture is live)
+    //   env idle  = WHITE @ envelope level; modes flash 3 Hz; drive/range
+    //               combos flash 6 Hz; target solid.
+    juce::AudioParameterChoice* lfo1ShapeParam  = nullptr;
+    juce::AudioParameterChoice* lfo2ShapeParam  = nullptr;
+    juce::AudioParameterChoice* lfo1TargetParam = nullptr;
+    juce::AudioParameterChoice* lfo2TargetParam = nullptr;
+    juce::AudioParameterChoice* envTargetParam  = nullptr;
+    juce::AudioParameterChoice* lpfModeParam    = nullptr;
+    juce::AudioParameterChoice* envDriveParam   = nullptr;
+    juce::AudioParameterChoice* lpfRangeParam   = nullptr;
     LedIndicator lfo1Led, lfo2Led;
+
+    // transient LED display contexts (what the one LED is showing right now)
+    enum { kCtxIdle = 0, kCtxShape, kCtxTarget, kCtxMode, kCtxCombo };
+    int    lfo1Ctx = 0, lfo2Ctx = 0, envCtx = 0;
+    double lfo1CtxUntil = 0.0, lfo2CtxUntil = 0.0, envCtxUntil = 0.0;
     TapHoldButton lfo1Btn, lfo2Btn, envBtn, lfo2RateBtn;
 
     double d2LastTapMs   = 0.0;    // previous committed tempo tap (press time)
@@ -436,15 +447,17 @@ private:
     bool lfo1KnobUsed    = false;  // knob moved during lfo1Btn hold
     bool envKnobUsed     = false;  // knob moved during envBtn hold
 
-    // envelope follower panel
+    // envelope follower panel (v0.21: one LED, zero LED columns)
     juce::Slider envGainKnob;
     juce::Label  envGainLabel;
     std::unique_ptr<SliderAttachment> envGainAtt;
-    LedSelector envTarget { "TARGET", juce::Colour (0xff7bd88f) };
-    LedSelector envDrive  { "DRIVE",  juce::Colour (0xff6fa8dc) };
-    LedSelector lpfMode   { "MODE",   juce::Colour (0xffd95050) };
-    LedSelector lpfRange  { "RANGE",  juce::Colour (0xff6fa8dc) };
     LedIndicator envLed;
+
+    // v0.21 bypass stomp + supply "jack"
+    TapHoldButton bypassBtn;
+    LedIndicator  bypassLed;
+    juce::TextButton supplyBtn { "SUPPLY: 9V" };
+    bool starveMode = false;   // MIX knob attached to the secret starve
 
     // CV jacks (hardwired: CV1 -> LFO1 depth VCA, CV2 -> LFO2 depth VCA)
     LedIndicator cv1Led, cv2Led;

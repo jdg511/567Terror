@@ -1,4 +1,47 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.20)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.21)
+
+## v0.21 — one LED per section, ratio soft-clip, 9/18 V power + secret starve
+
+**One LED per section** (LFO 1, LFO 2, ENV — plus the shape banks re-timed):
+
+* LFO idle = **white**, breathing the LFO wave ("white is rate").
+* Shape display (after a shape tap, ~1.5 s): hue = slot, **Bank A flashes
+  3 Hz, Bank B flashes 6 Hz**.
+* Target display: **solid** hue (Off = dim). Depth gestures: blue @ depth %.
+* ENV: idle white = **envelope level**; MODE hues flash **3 Hz**; the four
+  drive×range combos flash **6 Hz**; target solid.
+* ALL LED columns are gone — panels are knob + button + one LED + printed
+  legend charts (future silkscreen).
+
+**Target routing changes**: LFO 2 loses Gain. LFO 1 gains **Env Gain** and
+**Env Level** (new EnvLevel mod target, output ×1..×3). The env follower
+gains **LFO1 Rate / LFO1 Depth** (applied pre-LFO1 each block). All three
+lists are 8 entries. New IDs `lfo1target5` / `lfo2target4` / `envtarget5`.
+
+**Output chain reordered + ratio soft clip** (the absolute last thing):
+`+6 dB boost → HP 60 Hz + 3 dB bell 800 Hz → rail soft clip`.
+The clip is Jason's ladder, referenced to the rail: unity below −18 dB, then
+2:1, 4:1, and **8:1 through the last 6 dB before hard clipping**, with 6 dB
+quadratic knees for curvature. Numerically verified (continuity, exact
+mid-band ratios, monotonic).
+
+**Power (v0.21 sim + hardware spec)**:
+
+* **9–18 V centre-negative**; 18 V = +6 dB analogue headroom (the whole clip
+  curve rides the rail). SUPPLY "jack" button in the sim swaps the adapter.
+* Hardware notes: series polarity protection (P-FET), RC + ferrite supply
+  filtering, ≥25 V caps, 36 V-rated opamps. **The LM567 maxes at ~9 V and the
+  Pico at 5 V/3.3 V — both run from their own regulators at any supply.**
+* **Secret starve**: hold BYPASS + TAP TEMPO and turn MIX (sim: CTRL + ALT +
+  drag MIX). Sags the analogue rail from the supply toward a **5 V floor**
+  (never below; digital rails untouched). Starving chokes the Bazz Fuss
+  rails, sags its bias (asymmetry), widens its dead zone and adds a
+  crossover sputter gate — dying-battery velcro, by design.
+* **Bypass stomp** added (buffered bypass in the sim, 10 ms crossfade) with
+  a proper green status LED, in a new FOOTSWITCHES · POWER strip.
+
+---
+
 
 ## v0.20 — NeoPixel shape indicator preview
 

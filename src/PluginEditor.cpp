@@ -97,32 +97,35 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     lfo2ValueLabel.setFont (juce::FontOptions (12.0f));
     lfo2ValueLabel.setColour (juce::Label::textColourId, kText);
     addAndMakeVisible (lfo2ValueLabel);
-    lfo1Target.bind (apvts, "lfo1target4");
-    lfo2Target.bind (apvts, "lfo2target3");
-    for (auto* s : { &lfo1Target, &lfo2Target })
-    {
-        s->setInteractive (false);   // v0.14: LED columns are indicators only
-        addAndMakeVisible (s);
-    }
-
-    // v0.20: one NeoPixel per LFO shows the shape (hue = slot, flash = Bank B)
-    lfo1ShapeParam = dynamic_cast<juce::AudioParameterChoice*> (apvts.getParameter ("lfo1shape5"));
-    lfo2ShapeParam = dynamic_cast<juce::AudioParameterChoice*> (apvts.getParameter ("lfo2shape4"));
-    addAndMakeVisible (lfo1ShapeLed);
-    addAndMakeVisible (lfo2ShapeLed);
-    lfo1Led.setColour (kAmber);
-    lfo2Led.setColour (kAmber);
+    // v0.21: one LED per section — cache the choice params it displays
+    auto choice = [&apvts] (const char* id)
+    { return dynamic_cast<juce::AudioParameterChoice*> (apvts.getParameter (id)); };
+    lfo1ShapeParam  = choice ("lfo1shape5");
+    lfo2ShapeParam  = choice ("lfo2shape4");
+    lfo1TargetParam = choice ("lfo1target5");
+    lfo2TargetParam = choice ("lfo2target4");
+    envTargetParam  = choice ("envtarget5");
+    lpfModeParam    = choice ("lpfmode3");
+    envDriveParam   = choice ("envdrive");
+    lpfRangeParam   = choice ("lpfrange");
     addAndMakeVisible (lfo1Led);
     addAndMakeVisible (lfo2Led);
 
     // one button per LFO: tap = shape, hold 750 ms = cycle target every 750 ms.
     // With the stomp/CTRL shift held, a PRESS steps the target instead.
     // Holding the LFO1 button also shifts its RATE knob to DEPTH.
-    lfo1Btn.onPress = [this]
+    auto ctxStamp = [] (int& ctx, double& until, int newCtx)
+    {
+        ctx   = newCtx;
+        until = juce::Time::getMillisecondCounterHiRes() + 1500.0;
+    };
+
+    lfo1Btn.onPress = [this, ctxStamp]
     {
         if (stompDown())
         {
-            cycleChoice ("lfo1target4");
+            cycleChoice ("lfo1target5");
+            ctxStamp (lfo1Ctx, lfo1CtxUntil, kCtxTarget);
             shiftConsumed = true; d2Sweeping = false;
             lfo1Btn.cancelPressActions();
             return;
@@ -130,21 +133,26 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
         lfo1KnobUsed = false;
         updateKnobModes();               // RATE knob -> DEPTH while held
     };
-    lfo1Btn.onTap      = [this] { cycleChoice ("lfo1shape5"); };
-    lfo1Btn.onHoldTick = [this] { if (! lfo1KnobUsed) cycleChoice ("lfo1target4"); };
+    lfo1Btn.onTap      = [this, ctxStamp] { cycleChoice ("lfo1shape5");
+                                            ctxStamp (lfo1Ctx, lfo1CtxUntil, kCtxShape); };
+    lfo1Btn.onHoldTick = [this, ctxStamp] { if (! lfo1KnobUsed) { cycleChoice ("lfo1target5");
+                                            ctxStamp (lfo1Ctx, lfo1CtxUntil, kCtxTarget); } };
     lfo1Btn.onRelease  = [this] { updateKnobModes(); };
 
-    lfo2Btn.onPress = [this]
+    lfo2Btn.onPress = [this, ctxStamp]
     {
         if (stompDown())
         {
-            cycleChoice ("lfo2target3");
+            cycleChoice ("lfo2target4");
+            ctxStamp (lfo2Ctx, lfo2CtxUntil, kCtxTarget);
             shiftConsumed = true; d2Sweeping = false;
             lfo2Btn.cancelPressActions();
         }
     };
-    lfo2Btn.onTap      = [this] { cycleChoice ("lfo2shape4"); };
-    lfo2Btn.onHoldTick = [this] { cycleChoice ("lfo2target3"); };
+    lfo2Btn.onTap      = [this, ctxStamp] { cycleChoice ("lfo2shape4");
+                                            ctxStamp (lfo2Ctx, lfo2CtxUntil, kCtxShape); };
+    lfo2Btn.onHoldTick = [this, ctxStamp] { cycleChoice ("lfo2target4");
+                                            ctxStamp (lfo2Ctx, lfo2CtxUntil, kCtxTarget); };
     addAndMakeVisible (lfo1Btn);
     addAndMakeVisible (lfo2Btn);
 
@@ -158,26 +166,18 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
         if (envBtn.isDown()) { envKnobUsed = true; envBtn.cancelPressActions(); }
         if (envComboMode) applyEnvComboFromKnob();   // knob picks drive x range
     };
-    envTarget.bind (apvts, "envtarget4");
-    envDrive.bind  (apvts, "envdrive");
-    lpfMode.bind   (apvts, "lpfmode3");
-    lpfRange.bind  (apvts, "lpfrange");
-    for (auto* s : { &envTarget, &envDrive, &lpfMode, &lpfRange })
-    {
-        s->setInteractive (false);   // v0.19: ALL columns are indicators only
-        addAndMakeVisible (s);
-    }
-    envLed.setColour (kAmber);
     addAndMakeVisible (envLed);
 
-    // v0.19 env button: tap = filter mode; hold + GAIN knob = drive x range
-    // combo; hold alone 750 ms = cycle TARGET every 750 ms (like the LFOs).
-    // With the stomp/CTRL shift held, a PRESS steps the target.
-    envBtn.onPress = [this]
+    // v0.21 env button: tap = filter mode (LED: mode hue @ 3 Hz); hold + GAIN
+    // knob = drive x range combo (LED: combo hue @ 6 Hz); hold alone 750 ms =
+    // cycle TARGET every 750 ms (LED: solid target hue). Shift-press = step
+    // target.
+    envBtn.onPress = [this, ctxStamp]
     {
         if (stompDown())
         {
-            cycleChoice ("envtarget4");
+            cycleChoice ("envtarget5");
+            ctxStamp (envCtx, envCtxUntil, kCtxTarget);
             shiftConsumed = true; d2Sweeping = false;
             envBtn.cancelPressActions();
             return;
@@ -185,10 +185,39 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
         envKnobUsed = false;
         updateKnobModes();               // GAIN knob -> combo select while held
     };
-    envBtn.onTap      = [this] { cycleChoice ("lpfmode3"); };
-    envBtn.onHoldTick = [this] { if (! envKnobUsed) cycleChoice ("envtarget4"); };
+    envBtn.onTap      = [this, ctxStamp] { cycleChoice ("lpfmode3");
+                                           ctxStamp (envCtx, envCtxUntil, kCtxMode); };
+    envBtn.onHoldTick = [this, ctxStamp] { if (! envKnobUsed) { cycleChoice ("envtarget5");
+                                           ctxStamp (envCtx, envCtxUntil, kCtxTarget); } };
     envBtn.onRelease  = [this] { updateKnobModes(); };
     addAndMakeVisible (envBtn);
+
+    // ---- v0.21 bypass stomp + supply "jack" ------------------------------------
+    bypassBtn.onTap = [this]
+    {
+        if (auto* p = processor.apvts.getParameter ("bypass"))
+        {
+            p->beginChangeGesture();
+            p->setValueNotifyingHost (p->getValue() >= 0.5f ? 0.0f : 1.0f);
+            p->endChangeGesture();
+        }
+    };
+    addAndMakeVisible (bypassBtn);
+    bypassLed.setColour (kGreen);
+    addAndMakeVisible (bypassLed);
+
+    supplyBtn.onClick = [this]
+    {
+        if (auto* p = dynamic_cast<juce::AudioParameterChoice*> (
+                          processor.apvts.getParameter ("supply")))
+        {
+            p->beginChangeGesture();
+            *p = 1 - p->getIndex();      // swap the wall-wart: 9 V <-> 18 V
+            p->endChangeGesture();
+            supplyBtn.setButtonText (p->getIndex() == 1 ? "SUPPLY: 18V" : "SUPPLY: 9V");
+        }
+    };
+    addAndMakeVisible (supplyBtn);
 
     // ---- CV jacks (hardwired to LFO depth VCAs) --------------------------------
     cv1Led.setColour (kGreen);
@@ -212,7 +241,7 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     setGateOpen (false);
 
     startTimerHz (60);   // smooth depth sweep + LED animation
-    setSize (1060, 700);
+    setSize (1060, 764);
 }
 
 GlitchwaveAudioProcessorEditor::~GlitchwaveAudioProcessorEditor()
@@ -245,23 +274,6 @@ void GlitchwaveAudioProcessorEditor::cycleChoice (const juce::String& paramID)
     }
 }
 
-void GlitchwaveAudioProcessorEditor::advanceDriveRange()
-{
-    // combo ring, in Jason's order: up&hi -> up&low -> down&hi -> down&low -> ...
-    auto* d = dynamic_cast<juce::AudioParameterChoice*> (
-                  processor.apvts.getParameter ("envdrive"));
-    auto* r = dynamic_cast<juce::AudioParameterChoice*> (
-                  processor.apvts.getParameter ("lpfrange"));
-    if (d == nullptr || r == nullptr)
-        return;
-
-    // drive: 0 = Up, 1 = Down; range: 0 = Lo, 1 = Hi
-    int combo = d->getIndex() * 2 + (r->getIndex() == 1 ? 0 : 1);
-    combo = (combo + 1) % 4;
-
-    d->beginChangeGesture(); *d = combo / 2;                 d->endChangeGesture();
-    r->beginChangeGesture(); *r = (combo % 2 == 0) ? 1 : 0;  r->endChangeGesture();
-}
 
 // ---------------------------------------------------------------------------
 // LFO2 one-button state machine (v0.16) — Jason's spec, state for state.
@@ -342,15 +354,23 @@ void GlitchwaveAudioProcessorEditor::updateKnobModes()
     const bool l1depth = shift || lfo1Btn.isDown();
     const bool envCmb  = shift || envBtn.isDown();
 
-    if (shift != shiftAttached)               // top-row knobs swap params
+    // v0.21 secret starve: BOTH stomps held (bypass + tap; sim: CTRL + ALT)
+    // turns the MIX knob into the rail-starve control.
+    const bool starve = shift
+        && (bypassBtn.isDown()
+            || juce::ModifierKeys::getCurrentModifiersRealtime().isAltDown());
+
+    if (shift != shiftAttached || starve != starveMode)
     {
         suppressSliderCb = true;
         freqAtt.reset(); lpfAtt.reset(); mixAtt.reset();
         freqAtt = std::make_unique<SliderAttachment> (ap, shift ? "dirtgain" : "freq", freqKnob);
         lpfAtt  = std::make_unique<SliderAttachment> (ap, shift ? "lpfq"     : "fizz", lpfKnob);
-        mixAtt  = std::make_unique<SliderAttachment> (ap, shift ? "vol"      : "dry",  mixKnob);
+        mixAtt  = std::make_unique<SliderAttachment> (ap,
+                      starve ? "starve" : (shift ? "vol" : "dry"), mixKnob);
         suppressSliderCb = false;
         shiftAttached = shift;
+        starveMode    = starve;
         if (! shift)
             shiftConsumed = false;            // fresh shift next time
     }
@@ -379,6 +399,9 @@ void GlitchwaveAudioProcessorEditor::updateKnobModes()
 
 void GlitchwaveAudioProcessorEditor::applyEnvComboFromKnob()
 {
+    envCtx      = kCtxCombo;
+    envCtxUntil = juce::Time::getMillisecondCounterHiRes() + 1500.0;
+
     // knob quarters, in Jason's ring order: up&hi, up&low, down&hi, down&low
     const double prop  = envGainKnob.valueToProportionOfLength (envGainKnob.getValue());
     const int    combo = juce::jlimit (0, 3, (int) (prop * 4.0));
@@ -425,7 +448,9 @@ void GlitchwaveAudioProcessorEditor::d2Frame (double nowMs)
     if (d2StompSince == 0.0)
         d2StompSince = nowMs;
 
-    if (shiftConsumed)             // shift was used: no sweep this hold
+    const bool starveHold = bypassBtn.isDown()
+        || juce::ModifierKeys::getCurrentModifiersRealtime().isAltDown();
+    if (shiftConsumed || starveHold)   // shift/starve in use: no sweep this hold
     {
         d2Sweeping = false;
         return;
@@ -476,76 +501,107 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
 
     // v0.13: LFOs never grey out — CVs just breathe their depth (VCA).
     // Filter Mode Off still disables the envelope-filter block.
-    const bool filterOn = lpfMode.getSelectedIndex() > 0;
+    const bool filterOn = lpfModeParam != nullptr && lpfModeParam->getIndex() > 0;
 
     for (auto* c : std::initializer_list<juce::Component*> {
-             &envTarget, &envDrive, &lpfRange, &envGainKnob, &envGainLabel,
-             &lpfKnob, &lpfLabel })
+             &envGainKnob, &envGainLabel, &lpfKnob, &lpfLabel })
         c->setEnabled (filterOn);
-
-    for (auto* s : { &lfo1Target, &lfo2Target,
-                     &envTarget, &envDrive, &lpfMode, &lpfRange })
-        s->refresh();
-
-    // ---- NeoPixel shape indicators (v0.20) -----------------------------------
-    // hue = slot within the bank; solid = Bank A, flashing 7 Hz = Bank B
-    {
-        const double ms   = juce::Time::getMillisecondCounterHiRes();
-        const bool   f7on = ((int) (ms / 71.43)) % 2 == 0;    // 7 Hz square
-
-        auto showShape = [&] (LedIndicator& led, juce::AudioParameterChoice* p)
-        {
-            if (p == nullptr) return;
-            const int idx  = p->getIndex();
-            const int slot = idx % 8;
-            const bool bankB = idx >= 8;
-            led.setColour (kShapeHues[slot]);
-            led.setLevel (bankB ? (f7on ? 1.0f : 0.0f) : 1.0f);
-        };
-        showShape (lfo1ShapeLed, lfo1ShapeParam);
-        showShape (lfo2ShapeLed, lfo2ShapeParam);
-    }
 
     // ---- dual-function labels (2nd colour while shifted) ---------------------
     freqLabel.setText (shiftAttached ? "GAIN" : "FREQ", juce::dontSendNotification);
     lpfLabel.setText  (shiftAttached ? "RES"  : "LPF",  juce::dontSendNotification);
-    mixLabel.setText  (shiftAttached ? "VOL"  : "MIX",  juce::dontSendNotification);
-    for (auto* l : { &freqLabel, &lpfLabel, &mixLabel })
+    mixLabel.setText  (starveMode ? "STARVE" : (shiftAttached ? "VOL" : "MIX"),
+                       juce::dontSendNotification);
+    for (auto* l : { &freqLabel, &lpfLabel })
         l->setColour (juce::Label::textColourId, shiftAttached ? kBlue : kText);
+    mixLabel.setColour (juce::Label::textColourId,
+                        starveMode ? kRed : (shiftAttached ? kBlue : kText));
     lfo1RateLabel.setText (lfo1DepthMode ? "DEPTH" : "RATE", juce::dontSendNotification);
     lfo1RateLabel.setColour (juce::Label::textColourId, lfo1DepthMode ? kBlue : kDim);
     envGainLabel.setText (envComboMode ? "DRV+RNG" : "GAIN", juce::dontSendNotification);
     envGainLabel.setColour (juce::Label::textColourId, envComboMode ? kBlue : kDim);
 
-    // ---- LEDs ----------------------------------------------------------------
-    if (lfo1DepthMode)      // knob is writing DEPTH: 2nd colour @ depth %
+    // ---- the three section LEDs (v0.21: one LED shows everything) ------------
+    const double nowMs = juce::Time::getMillisecondCounterHiRes();
+    d2Frame (nowMs);
+
+    const bool f3 = ((int) (nowMs / 166.67)) % 2 == 0;   // 3 Hz square
+    const bool f6 = ((int) (nowMs /  83.33)) % 2 == 0;   // 6 Hz square
+    const juce::Colour kWhite { 0xffffffff };
+
+    auto expire = [nowMs] (int& ctx, double until)
+    { if (ctx != kCtxIdle && nowMs > until) ctx = kCtxIdle; };
+    expire (lfo1Ctx, lfo1CtxUntil);
+    expire (lfo2Ctx, lfo2CtxUntil);
+    expire (envCtx,  envCtxUntil);
+
+    auto shapeShow = [&] (LedIndicator& led, juce::AudioParameterChoice* p)
+    {
+        const int idx = p != nullptr ? p->getIndex() : 0;
+        led.setColour (kShapeHues[idx % 8]);
+        led.setLevel ((idx >= 8 ? f6 : f3) ? 1.0f : 0.0f);   // A = 3 Hz, B = 6 Hz
+    };
+    auto targetShow = [&] (LedIndicator& led, juce::AudioParameterChoice* p)
+    {
+        const int idx = p != nullptr ? p->getIndex() : 0;
+        if (idx == 0) { led.setColour (kWhite); led.setLevel (0.12f); }   // Off = dim
+        else          { led.setColour (kShapeHues[idx]); led.setLevel (1.0f); }
+    };
+
+    // LFO 1
+    if (lfo1DepthMode)
     {
         lfo1Led.setColour (kBlue);
         if (auto* pd = processor.apvts.getParameter ("lfo1depth"))
             lfo1Led.setLevel (pd->getValue());
     }
-    else                    // 1st colour, blinking at the LFO rate
+    else if (lfo1Ctx == kCtxShape)  shapeShow  (lfo1Led, lfo1ShapeParam);
+    else if (lfo1Ctx == kCtxTarget) targetShow (lfo1Led, lfo1TargetParam);
+    else   // idle: WHITE breathing at the LFO rate
     {
-        lfo1Led.setColour (kAmber);
+        lfo1Led.setColour (kWhite);
         lfo1Led.setLevel (juce::jlimit (0.0f, 1.0f, processor.readVis (0)));
     }
 
-    // LFO2 LED + the stomp-hold depth sweep (v0.19)
+    // LFO 2
+    if (d2Sweeping)
     {
-        const double nowMs = juce::Time::getMillisecondCounterHiRes();
-        d2Frame (nowMs);
-
-        if (d2Sweeping)
-        {
-            lfo2Led.setColour (kBlue);                                // 2nd colour
-            lfo2Led.setLevel (d2GetDepth());                          // brightness = depth %
-        }
-        else
-        {
-            lfo2Led.setColour (kAmber);                               // 1st colour: rate mode
-            lfo2Led.setLevel ((processor.readVis (1) + 1.0f) * 0.5f); // bipolar wave
-        }
+        lfo2Led.setColour (kBlue);
+        lfo2Led.setLevel (d2GetDepth());
     }
+    else if (lfo2Ctx == kCtxShape)  shapeShow  (lfo2Led, lfo2ShapeParam);
+    else if (lfo2Ctx == kCtxTarget) targetShow (lfo2Led, lfo2TargetParam);
+    else
+    {
+        lfo2Led.setColour (kWhite);
+        lfo2Led.setLevel ((processor.readVis (1) + 1.0f) * 0.5f);
+    }
+
+    // ENV
+    if (envCtx == kCtxMode)         // filter mode: hue @ 3 Hz
+    {
+        const int m = lpfModeParam != nullptr ? lpfModeParam->getIndex() : 0;
+        envLed.setColour (kShapeHues[juce::jlimit (0, 4, m)]);
+        envLed.setLevel (f3 ? 1.0f : 0.0f);
+    }
+    else if (envCtx == kCtxCombo)   // drive x range combo: hue @ 6 Hz
+    {
+        const int d = envDriveParam  != nullptr ? envDriveParam->getIndex()  : 0;
+        const int r = lpfRangeParam  != nullptr ? lpfRangeParam->getIndex()  : 0;
+        const int combo = d * 2 + (r == 1 ? 0 : 1);   // ring order up&hi..dn&lo
+        envLed.setColour (kShapeHues[juce::jlimit (0, 3, combo)]);
+        envLed.setLevel (f6 ? 1.0f : 0.0f);
+    }
+    else if (envCtx == kCtxTarget)  targetShow (envLed, envTargetParam);
+    else                            // idle: WHITE @ envelope level
+    {
+        envLed.setColour (kWhite);
+        envLed.setLevel (juce::jlimit (0.0f, 1.0f, processor.readVis (2)));
+    }
+
+    // bypass status LED (green = effect active, like every pedal)
+    if (auto* pb = processor.apvts.getParameter ("bypass"))
+        bypassLed.setLevel (pb->getValue() >= 0.5f ? 0.0f : 1.0f);
 
     // LFO2 live readout (its rate/depth have no knobs)
     if (auto* pr = processor.apvts.getParameter ("lfo2rate"))
@@ -554,16 +610,6 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
                 juce::String (pr->convertFrom0to1 (pr->getValue()), 2) + juce::String::fromUTF8 (" Hz  \xc2\xb7  ")
                     + juce::String (juce::roundToInt (pd->getValue() * 100.0f)) + " %",
                 juce::dontSendNotification);
-    if (envComboMode)       // knob is picking drive x range: 2nd colour
-    {
-        envLed.setColour (kBlue);
-        envLed.setLevel (1.0f);
-    }
-    else
-    {
-        envLed.setColour (kAmber);
-        envLed.setLevel (filterOn ? juce::jmin (1.0f, processor.readVis (2) * 4.0f) : 0.0f);
-    }
     cv1Led.setLevel  (juce::jmin (1.0f, processor.readVis (3) * 1.5f));
     cv2Led.setLevel  (juce::jmin (1.0f, processor.readVis (4) * 1.5f));
 
@@ -593,7 +639,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("GLITCHWAVE 567", 20, 10, 400, 30, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (12.0f));
-    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.20"),
+    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.21"),
                 20, 38, 500, 16, juce::Justification::centredLeft);
 
     drawSection (g, { 12,  60, 1036, 206 }, "PEDAL");
@@ -604,49 +650,86 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     drawSection (g, { 352, 534, 332, 154 }, "CV 2 JACK  (SIDECHAIN R)");
     if (gateOpen)
         drawSection (g, { 692, 534, 356, 154 }, "OUTPUT GATE");
+    drawSection (g, { 12, 696, 1036, 56 }, juce::String::fromUTF8 ("FOOTSWITCHES  ·  POWER"));
 
-    // button captions, printed like a control plate (v0.19 scheme)
+    // button captions, printed like a control plate (v0.21 scheme)
     g.setColour (kDim);
     g.setFont (juce::FontOptions (9.5f, juce::Font::bold));
-    g.drawText ("TAP = SHAPE",          216, 462, 124, 11, juce::Justification::centred);
-    g.drawText ("HOLD = TARGET",        216, 474, 124, 11, juce::Justification::centred);
-    g.drawText ("HOLD + RATE = DEPTH",  204, 486, 148, 11, juce::Justification::centred);
+    g.drawText ("TAP = SHAPE",          20, 462, 160, 11, juce::Justification::centredLeft);
+    g.drawText ("HOLD = TARGET",        20, 474, 160, 11, juce::Justification::centredLeft);
+    g.drawText ("HOLD + RATE = DEPTH",  20, 486, 160, 11, juce::Justification::centredLeft);
     g.drawText ("TAP = TEMPO",          340, 404, 122, 11, juce::Justification::centred);
     g.drawText ("HOLD = DEPTH SWEEP",   334, 416, 128, 11, juce::Justification::centred);
     g.drawText ("HOLD + KNOB = 2ND FN", 334, 428, 128, 11, juce::Justification::centred);
     g.setFont (juce::FontOptions (8.5f));
     g.drawText ("(sim: CTRL = stomp)",  334, 440, 128, 10, juce::Justification::centred);
     g.setFont (juce::FontOptions (9.5f, juce::Font::bold));
-    g.drawText ("TAP = SHAPE",          558, 506, 124, 11, juce::Justification::centred);
-    g.drawText ("HOLD = TARGET",        558, 518, 124, 11, juce::Justification::centred);
-    g.drawText ("TAP = MODE",           890, 412, 158, 11, juce::Justification::centred);
-    g.drawText ("HOLD = TARGET",        890, 424, 158, 11, juce::Justification::centred);
-    g.drawText ("HOLD + GAIN = DRV/RNG", 890, 436, 158, 11, juce::Justification::centred);
+    g.drawText ("TAP = SHAPE",          556, 506, 140, 11, juce::Justification::centred);
+    g.drawText ("HOLD = TARGET",        556, 518, 140, 11, juce::Justification::centred);
+    g.drawText ("TAP = MODE",           704, 496, 170, 11, juce::Justification::centredLeft);
+    g.setFont (juce::FontOptions (8.5f, juce::Font::bold));
+    g.drawText ("HOLD = TARGET   HOLD + GAIN = DRV/RNG", 704, 508, 190, 11, juce::Justification::centredLeft);
+    g.setFont (juce::FontOptions (9.5f, juce::Font::bold));
 
-    // ---- NeoPixel shape charts (v0.20): hue -> Bank A / Bank B names --------
-    auto drawShapeChart = [&g] (int x, int ledLabelX)
+    // ---- v0.21 legend charts: what the one LED is telling you ---------------
+    auto chart = [&g] (int x, int yHdr, const char* title, const char* const* names,
+                       int n, int hueOffset, bool dimFirst)
     {
         g.setColour (kDim);
-        g.setFont (juce::FontOptions (9.5f, juce::Font::bold));
-        g.drawText ("SHAPE", ledLabelX, 300, 60, 11, juce::Justification::centred);
-
+        g.setFont (juce::FontOptions (8.5f, juce::Font::bold));
+        g.drawText (title, x, yHdr, 110, 10, juce::Justification::centredLeft);
         g.setFont (juce::FontOptions (8.0f));
-        for (int i = 0; i < 8; ++i)
+        for (int i = 0; i < n; ++i)
         {
-            const int ry = 360 + i * 13;
-            g.setColour (kShapeHues[i]);
+            const int ry = yHdr + 12 + i * 13;
+            if (dimFirst && i == 0)
+                g.setColour (juce::Colour (0xff3a3f47));
+            else
+                g.setColour (kShapeHues[(i + hueOffset) & 7]);
             g.fillEllipse ((float) x, (float) ry + 3.0f, 7.0f, 7.0f);
             g.setColour (kDim);
-            g.drawText (juce::String (kShapeChartA[i]) + " / " + kShapeChartB[i],
-                        x + 11, ry, 86, 13, juce::Justification::centredLeft);
+            g.drawText (names[i], x + 11, ry, 96, 13, juce::Justification::centredLeft);
         }
-        g.setColour (kDim);
-        g.setFont (juce::FontOptions (7.5f, juce::Font::bold));
-        g.drawText ("BANK B = FLASH 7 Hz", x, 360 + 8 * 13 + 2, 100, 10,
-                    juce::Justification::centredLeft);
     };
-    drawShapeChart (126, 135);   // LFO 1 panel
-    drawShapeChart (466, 475);   // LFO 2 panel
+
+    static const char* kShapeNames[8] = { "Ramp Up / Lorenz", "Ramp Dn / Rossler",
+        "Square / Drunk", "Triangle / Perlin", "Sine / Wobble", "Sweep / Glitch",
+        "R.Slope / White", "S&H / Pink" };
+    static const char* kT1[8] = { "Off", "Freq", "LPF", "Res", "Mix", "Gain",
+                                  "Env Gain", "Env Level" };
+    static const char* kT2[8] = { "Off", "Freq", "LPF", "Res", "Mix",
+                                  "LFO1 Rate", "LFO1 Depth", "Env Gain" };
+    static const char* kTE[8] = { "Off", "Freq", "LPF", "Res", "Mix", "Gain",
+                                  "LFO1 Rate", "LFO1 Depth" };
+    static const char* kModeN[5]  = { "Off", "LP", "BP", "HP", "Notch" };
+    static const char* kComboN[4] = { "Up-Hi", "Up-Lo", "Dn-Hi", "Dn-Lo" };
+
+    // LFO panels: shape chart (flashing) + target chart (solid)
+    chart (122, 344, "SHAPE  A=3Hz B=6Hz", kShapeNames, 8, 0, false);
+    chart (232, 344, "TARGET  solid",      kT1,         8, 0, true);
+    chart (466, 344, "SHAPE  A=3Hz B=6Hz", kShapeNames, 8, 0, false);
+    chart (576, 344, "TARGET  solid",      kT2,         8, 0, true);
+    // env panel: target + mode + combo charts
+    chart (800, 330, "TARGET  solid",      kTE,     8, 0, true);
+    chart (912, 330, "MODE  3Hz",          kModeN,  5, 0, false);
+    chart (912, 414, "DRV/RNG  6Hz",       kComboN, 4, 0, false);
+
+    g.setColour (kDim);
+    g.setFont (juce::FontOptions (8.0f));
+    g.drawText ("LED white = LFO wave",  122, 458, 110, 10, juce::Justification::centredLeft);
+    g.drawText ("LED white = LFO wave",  466, 458, 110, 10, juce::Justification::centredLeft);
+    g.drawText ("LED white = env level", 912, 486, 130, 10, juce::Justification::centredLeft);
+
+    // footswitch strip lettering
+    g.setColour (kText);
+    g.setFont (juce::FontOptions (12.0f, juce::Font::bold));
+    g.drawText ("BYPASS", 332, 722, 70, 14, juce::Justification::centredLeft);
+    g.setColour (kDim);
+    g.setFont (juce::FontOptions (9.5f));
+    g.drawText (juce::String::fromUTF8 ("HOLD BYPASS + TAP TEMPO and turn MIX = secret rail STARVE (floors at 5 V)  ·  sim: CTRL + ALT + drag MIX"),
+                430, 708, 640, 12, juce::Justification::centredLeft);
+    g.drawText ("9-18 V centre-negative, polarity-protected & filtered; digital rails regulated, never starved",
+                430, 724, 640, 12, juce::Justification::centredLeft);
 
     // CV jack panels: hardwired routing, printed like a control plate
     g.setColour (kText);
@@ -697,32 +780,31 @@ void GlitchwaveAudioProcessorEditor::resized()
     {
         const int y = 296;
         // LFO 1 (single dual-function knob: RATE / hold = DEPTH)
-        lfo1RateLabel.setBounds (24, y + 20, 80, 12);
-        lfo1RateKnob.setBounds  (24, y + 32, 80, 90);
-        lfo1Led.setBounds       (106, y + 60, 14, 14);
-        lfo1ShapeLed.setBounds (150, y + 24, 30, 30);
-        lfo1Target.setBounds (228, y, 106, lfo1Target.idealHeight());
-        lfo1Btn.setBounds    (256, y + 116, 44, 44);
+        lfo1RateLabel.setBounds (24, y + 10, 80, 12);
+        lfo1RateKnob.setBounds  (24, y + 22, 80, 90);
+        lfo1Led.setBounds       (148, y + 4, 34, 34);   // THE section LED
+        lfo1Btn.setBounds    (280, y + 160, 44, 44);
         // LFO 2 — one button for rate (tap tempo) + depth (hold), no knobs
         lfo2RateBtn.setBounds   (382, y + 8, 48, 48);
-        lfo2Led.setBounds       (440, y + 24, 14, 14);
+        lfo2Led.setBounds       (492, y + 4, 34, 34);  // THE section LED
         lfo2ValueLabel.setBounds (356, y + 88, 108, 16);
-        lfo2ShapeLed.setBounds (490, y + 24, 30, 30);
-        lfo2Target.setBounds (568, y, 110, lfo2Target.idealHeight());
-        lfo2Btn.setBounds    (598, y + 160, 44, 44);
+        lfo2Btn.setBounds    (614, y + 160, 44, 44);
     }
 
     // ---- envelope follower panel -------------------------------------------------
     {
         const int y = 296;
-        envGainLabel.setBounds (704, y, 76, 12);
-        envGainKnob.setBounds  (704, y + 12, 76, 90);
-        envLed.setBounds       (782, y + 40, 14, 14);
-        envTarget.setBounds (704, y + 120, 100, envTarget.idealHeight());
-        lpfMode.setBounds   (816, y, 76, lpfMode.idealHeight());
-        envDrive.setBounds  (816, y + lpfMode.idealHeight() + 8, 76, envDrive.idealHeight());
-        lpfRange.setBounds  (902, y, 76, lpfRange.idealHeight());
-        envBtn.setBounds    (916, y + 62, 48, 48);
+        envGainLabel.setBounds (704, y + 10, 76, 12);
+        envGainKnob.setBounds  (704, y + 22, 76, 90);
+        envLed.setBounds       (836, y + 4, 34, 34);    // THE section LED
+        envBtn.setBounds       (718, y + 148, 48, 48);
+    }
+
+    // ---- v0.21 footswitch strip -------------------------------------------------
+    {
+        bypassBtn.setBounds (250, 706, 40, 40);
+        bypassLed.setBounds (304, 716, 20, 20);
+        supplyBtn.setBounds (920, 714, 116, 24);
     }
 
     // ---- CV jack panels + gate -------------------------------------------------------

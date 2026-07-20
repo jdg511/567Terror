@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(Glitchwave567 VERSION 0.20.0 LANGUAGES C CXX)
+project(Glitchwave567 VERSION 0.21.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
