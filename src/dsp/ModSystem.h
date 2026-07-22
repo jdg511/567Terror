@@ -111,6 +111,14 @@ public:
         noise2 = {};
     }
 
+    // v0.24: tap tempo commits now target either LFO — LFO1 taps re-seed
+    // LFO1's chaos generators the same way.
+    void retriggerLfo1() noexcept
+    {
+        state1 = {};
+        noise1 = {};
+    }
+
     // Call once per host-rate sample. Inputs are absolute-value levels (FS).
     inline void tick (float inputAbs, float cv1Abs, float cv2Abs) noexcept
     {

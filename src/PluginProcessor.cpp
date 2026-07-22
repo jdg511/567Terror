@@ -153,7 +153,7 @@ GlitchwaveAudioProcessor::createParameterLayout()
     auto hz2 = Att().withStringFromValueFunction ([] (float v, int)
                    { return juce::String (v, 2) + " Hz"; });
     layout.add (std::make_unique<PF> (juce::ParameterID { "lfo1rate", 1 }, "LFO1 Rate",
-        juce::NormalisableRange<float> (0.05f, 20.0f, 0.0f, 0.35f), 2.0f, hz2));
+        juce::NormalisableRange<float> (0.2f, 20.0f, 0.0f, 0.35f), 2.0f, hz2));   // v0.24 range
     layout.add (std::make_unique<PF> (juce::ParameterID { "lfo1depth", 1 }, "LFO1 Depth",
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.0f, pct));
     layout.add (std::make_unique<PC> (juce::ParameterID { "lfo1shape5", 1 }, "LFO1 Shape",
@@ -161,7 +161,7 @@ GlitchwaveAudioProcessor::createParameterLayout()
     layout.add (std::make_unique<PC> (juce::ParameterID { "lfo1target5", 1 }, "LFO1 Target",
         kLfo1Targets, 1)); // default: Freq (LFO1 is always unipolar-up)
     layout.add (std::make_unique<PF> (juce::ParameterID { "lfo2rate", 1 }, "LFO2 Rate",
-        juce::NormalisableRange<float> (0.02f, 10.0f, 0.0f, 0.35f), 0.25f, hz2));
+        juce::NormalisableRange<float> (0.2f, 20.0f, 0.0f, 0.35f), 0.25f, hz2));  // v0.24 range
     layout.add (std::make_unique<PF> (juce::ParameterID { "lfo2depth", 1 }, "LFO2 Depth",
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.0f, pct));
     layout.add (std::make_unique<PC> (juce::ParameterID { "lfo2shape4", 1 }, "LFO2 Shape",
@@ -203,7 +203,8 @@ GlitchwaveAudioProcessor::createParameterLayout()
     layout.add (std::make_unique<PC> (juce::ParameterID { "supply", 1 }, "Supply",
         juce::StringArray { "9V", "18V" }, 0));   // centre-negative adapter
     layout.add (std::make_unique<PC> (juce::ParameterID { "clipmode", 1 }, "Clip Stage",
-        juce::StringArray { "A: -6 Ladder", "B: -9 Ladder", "D: JFET", "D+B: JFET+Ladder" }, 0));
+        juce::StringArray { "A: -6 Ladder", "B: -9 Ladder", "D: JFET", "D+B: JFET+Ladder",
+                            "E: -9/Rail", "F: -9/-3", "G: -6/Rail", "H: -3/Rail" }, 0));
     layout.add (std::make_unique<juce::AudioParameterBool> (
         juce::ParameterID { "boost6", 1 }, "+6dB Boost", true));
     layout.add (std::make_unique<PF> (juce::ParameterID { "starve", 1 }, "Starve",
@@ -328,6 +329,8 @@ void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     mp.envDriveUp  = raw.envdrive->load() < 0.5f;
     if (lfo2Retrig.exchange (false, std::memory_order_relaxed))
         mod.retriggerLfo2();     // tempo tap re-seeds chaos/drift generators
+    if (lfo1Retrig.exchange (false, std::memory_order_relaxed))
+        mod.retriggerLfo1();     // v0.24: LFO1 taps re-seed LFO1 the same way
 
     mod.setParams (mp);
 
@@ -387,7 +390,7 @@ void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         cp.dirtType   = 2;   // v0.12: Bazz Fuss, hardwired (Jason's PCB pick)
         cp.supplyV    = raw.supply->load() >= 0.5f ? 18.0f : 9.0f;   // v0.21
         cp.starve     = raw.starve->load();
-        cp.clipMode   = juce::jlimit (0, 3, (int) raw.clipmode->load());   // v0.22 audition
+        cp.clipMode   = juce::jlimit (0, 7, (int) raw.clipmode->load());   // v0.22/24 audition
         cp.boost6Gain = raw.boost6->load() >= 0.5f ? 2.0f : 1.0f;          // v0.23 toggle
         circuit.setParams (cp);
 

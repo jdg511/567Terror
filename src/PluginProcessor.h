@@ -49,11 +49,16 @@ public:
         return (id >= 0 && id < 6) ? visVals[id].load (std::memory_order_relaxed) : 0.0f;
     }
 
-    // v0.18: a tempo tap on the LFO2 button re-seeds the non-periodic
+    // v0.18/v0.24: a committed tempo tap re-seeds that LFO's non-periodic
     // generators (chaos/drift) so the tap "syncs" them. Editor -> audio thread.
     void requestLfo2Retrigger() noexcept
     {
         lfo2Retrig.store (true, std::memory_order_relaxed);
+    }
+
+    void requestLfo1Retrigger() noexcept
+    {
+        lfo1Retrig.store (true, std::memory_order_relaxed);
     }
 
     juce::AudioProcessorValueTreeState apvts;
@@ -73,6 +78,7 @@ private:
     std::atomic<float> meterPeaks[2] { { 0.f }, { 0.f } };
     std::atomic<float> visVals[6] { { 0.f }, { 0.f }, { 0.f }, { 0.f }, { 0.f }, { 0.f } };
     std::atomic<bool>  lfo2Retrig { false };
+    std::atomic<bool>  lfo1Retrig { false };
 
     struct RawParams
     {

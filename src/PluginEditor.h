@@ -98,121 +98,9 @@ private:
 };
 
 // ---------------------------------------------------------------------------
-// Hardware-style option selector: a labelled column of LEDs, one per option.
-// Click a row to select it; click the title to cycle (like the pedal's button).
-// Bound directly to an AudioParameterChoice. ZERO dropdowns.
-// ---------------------------------------------------------------------------
-class LedSelector : public juce::Component
-{
-public:
-    LedSelector (const juce::String& titleToUse, juce::Colour ledColour)
-        : title (titleToUse), colour (ledColour) {}
-
-    void bind (juce::AudioProcessorValueTreeState& apvts, const juce::String& paramID)
-    {
-        param = dynamic_cast<juce::AudioParameterChoice*> (apvts.getParameter (paramID));
-        if (param != nullptr)
-            items = param->choices;
-    }
-
-    // indicator mode: LEDs only, all changes come from the section's button
-    void setInteractive (bool b) noexcept { interactive = b; }
-
-    // v0.17: 18-item shape lists need tighter rows to fit the panel
-    void setRowHeight (int h) noexcept { rowH = h; }
-
-    int getSelectedIndex() const noexcept
-    {
-        return param != nullptr ? param->getIndex() : 0;
-    }
-
-    void refresh()   // called from the editor timer
-    {
-        const int idx = getSelectedIndex();
-        if (idx != shownIndex)
-        {
-            shownIndex = idx;
-            repaint();
-        }
-    }
-
-    void mouseDown (const juce::MouseEvent& e) override
-    {
-        if (param == nullptr || ! isEnabled() || ! interactive)
-            return;
-
-        int newIndex;
-        if (e.y < kTitleH)                                   // title = cycle button
-            newIndex = (param->getIndex() + 1) % items.size();
-        else
-        {
-            const int row = (e.y - kTitleH) / rowH;
-            if (row < 0 || row >= items.size())
-                return;
-            newIndex = row;
-        }
-        param->beginChangeGesture();
-        *param = newIndex;
-        param->endChangeGesture();
-        refresh();
-    }
-
-    void paint (juce::Graphics& g) override
-    {
-        const float alpha = isEnabled() ? 1.0f : 0.35f;
-        const int   idx   = shownIndex;
-
-        // title acts as the pedal's cycle button
-        g.setColour (juce::Colour (0xff2e3340).withMultipliedAlpha (alpha));
-        g.fillRoundedRectangle (0.0f, 0.0f, (float) getWidth(), (float) kTitleH - 2.0f, 4.0f);
-        g.setColour (juce::Colour (0xffe8e8e8).withMultipliedAlpha (alpha));
-        g.setFont (juce::FontOptions (10.0f, juce::Font::bold));
-        g.drawText (title, 0, 0, getWidth(), kTitleH - 2, juce::Justification::centred);
-
-        const float ledD  = rowH < 14 ? 7.0f : 9.0f;
-        g.setFont (juce::FontOptions (rowH < 14 ? 9.0f : 10.0f));
-        for (int i = 0; i < items.size(); ++i)
-        {
-            const int y = kTitleH + i * rowH;
-            const bool on = (i == idx);
-            auto led = juce::Rectangle<float> (3.0f, (float) y + (rowH - ledD) * 0.5f,
-                                               ledD, ledD);
-            if (on)
-            {
-                g.setColour (colour.withAlpha (0.30f * alpha));
-                g.fillEllipse (led.expanded (3.0f));
-            }
-            g.setColour (juce::Colour (0xff15171b)
-                             .interpolatedWith (colour, on ? 1.0f : 0.15f)
-                             .withMultipliedAlpha (alpha));
-            g.fillEllipse (led);
-            g.setColour ((on ? juce::Colour (0xffe8e8e8) : juce::Colour (0xff9aa0a6))
-                             .withMultipliedAlpha (alpha));
-            g.drawText (items[i], 14, y, getWidth() - 14, rowH,
-                        juce::Justification::centredLeft);
-        }
-    }
-
-    int idealHeight() const noexcept { return kTitleH + items.size() * rowH + 2; }
-
-    static constexpr int kTitleH = 16;
-
-private:
-    juce::String title;
-    juce::Colour colour;
-    juce::StringArray items;
-    juce::AudioParameterChoice* param = nullptr;
-    int shownIndex = -1;
-    int rowH = 15;
-    bool interactive = true;
-};
-
-// ---------------------------------------------------------------------------
-// Hardware-style momentary button (v0.19 timing): TAP fires onTap on release;
-// holding for 750 ms starts firing onHoldTick every 750 ms, like the real
-// pedal button will. cancelPressActions() consumes the current press (no tap,
-// no further hold ticks) — used when the press turns out to be a knob-shift
-// gesture instead.
+// Hardware-style momentary stomp (v0.19 timing): TAP fires onTap on release
+// (< 750 ms, not consumed). cancelPressActions() consumes the current press
+// (no tap) — used when a knob turns the hold into a layer-shift gesture.
 // ---------------------------------------------------------------------------
 class TapHoldButton : public juce::Component, private juce::Timer
 {
@@ -276,7 +164,7 @@ private:
         holdStarted = true;
         if (! consumed && onHoldTick)
             onHoldTick();
-        startTimer (750);   // v0.19: cycle every 750 ms while held
+        startTimer (750);
     }
 
     bool pressed = false, holdStarted = false, consumed = false;
@@ -360,59 +248,42 @@ private:
     void timerCallback() override;
     void setupKnob (juce::Slider& s, juce::Label& l, const juce::String& name, bool big);
     void setGateOpen (bool shouldBeOpen);
-    void cycleChoice (const juce::String& paramID);
 
-    // ---- v0.19 control scheme ---------------------------------------------
-    // The LFO2 rate/depth button is the TAP TEMPO STOMP and doubles as the
-    // pedal's SHIFT key (sim: holding CTRL = holding the stomp):
-    //   * tap (release < 750 ms, nothing else used) = tempo tap (0.02-10 Hz),
-    //     committed at the PRESS time; also re-seeds the chaos generators.
-    //   * hold alone 750 ms = depth sweep: LED 2nd colour (blue) @ depth %,
-    //     depth rides the 4 s sine-like traverse from its current % in its
-    //     remembered direction, turning around instantly at 0% / 100% (no
-    //     dwell). Release = freeze + back to 1st colour.
-    //   * hold + move a knob = the knob's 2ND FUNCTION (shift):
-    //       FREQ->GAIN, LPF->RES, MIX->VOL, LFO1 RATE->DEPTH,
-    //       ENV GAIN->drive x range combo. Using shift cancels the sweep.
-    //   * hold + press a section button = step that section's TARGET.
-    // The LFO1 and ENV buttons also shift their own knob while held:
-    //   LFO1 btn + RATE knob = LFO1 depth; ENV btn + GAIN knob = drive/range.
-    //   Held alone 750 ms they cycle their TARGET every 750 ms.
-    void d2StompPress();
-    void d2StompRelease();
-    void d2Frame (double nowMs);               // called every timer frame
-    void d2Engage();                           // 750 ms reached -> start sweep
-    void d2SetDepth (float newDepth01);
-    float d2GetDepth() const;
-    void d2SetRateFromInterval (double intervalMs);
-    bool stompDown() const;                    // button or CTRL (sim stand-in)
-    void updateKnobModes();                    // swap slider attachments
-    void applyEnvComboFromKnob();              // knob position -> drive x range
+    // ---- v0.24 control scheme: three knob layers, ZERO section buttons -----
+    // Six knobs (Freq, LPF, Mix | LFO1 Rate, LFO2 Rate, Env Gain):
+    //   C1 (nothing held):        Freq   LPF     Mix     Rate   Rate   Gain
+    //   C2 (TAP held / CTRL):     Gain   Res     Vol     Target Target Target
+    //   C3 (BYPASS held / ALT):   L1 Dep L2 Dep  DrvRng  Shape  Shape  Mode
+    //   BOTH held (secret):       Mix knob -> STARVE; every other knob dead.
+    // TAP stomp: 4-tap average sets LFO1 rate (with BYPASS held: LFO2 rate),
+    // rolling window of the last 4 taps, clamped 0.2..20 Hz. 1-3 taps arm
+    // only. A committed tap re-seeds that LFO's chaos generators.
+    // The section LEDs show the live value colour of whatever the active
+    // layer edits (Jason: "I couldn't see it as it was changing" — fixed).
+    bool tapStompDown() const;      // TAP stomp or CTRL (sim stand-in)
+    bool bypassStompDown() const;   // BYPASS stomp or ALT (sim stand-in)
+    int  computeLayer() const;      // 0 = C1, 1 = C2, 2 = C3, 3 = secret starve
+    void updateKnobModes();         // swap slider attachments per layer
+    void knobTouched();             // any knob move consumes the held stomps
+    void applyZone (juce::Slider& s, const char* paramID, int zones,
+                    int& ctx, double& ctxUntil, int ctxKind);
+    void applyComboFromMixKnob();   // C3 Mix knob -> env drive x range
+    void recordTap (bool lfo2, double pressMs);
 
     GlitchwaveAudioProcessor& processor;
     juce::LookAndFeel_V4 lnf;
 
-    // pedal row — v0.19: THREE dual-function knobs (FREQ/GAIN, LPF/RES,
-    // MIX/VOL); attachments swap to the 2nd param while the stomp is held
+    // the six knobs
     juce::Slider freqKnob, lpfKnob, mixKnob;
     juce::Label  freqLabel, lpfLabel, mixLabel;
     std::unique_ptr<SliderAttachment> freqAtt, lpfAtt, mixAtt;
+    juce::Slider lfo1RateKnob, lfo2RateKnob, envGainKnob;
+    juce::Label  lfo1RateLabel, lfo2RateLabel, envGainLabel;
+    std::unique_ptr<SliderAttachment> lfo1RateAtt, lfo2RateAtt, envGainAtt;
+    juce::Label  lfo1ValueLabel, lfo2ValueLabel;   // live rate · depth readouts
     PPMMeter meterIn, meterOut;
 
-    // LFO panels (LFO1 always unipolar-up, LFO2 always bipolar — no selectors)
-    // v0.19: LFO1 has ONE knob (RATE; depth via button-hold + knob); LFO2 has
-    // no knobs at all — tap tempo + hold sweep on the stomp
-    juce::Slider lfo1RateKnob;
-    juce::Label  lfo1RateLabel;
-    juce::Label  lfo2ValueLabel;
-    std::unique_ptr<SliderAttachment> lfo1RateAtt;
-    // v0.21: ONE NeoPixel per section shows everything (Jason's spec):
-    //   LFO idle  = WHITE breathing at the LFO rate
-    //   shape     = hue (slot 0-7), flashing 3 Hz (Bank A) / 6 Hz (Bank B)
-    //   target    = solid hue (Off = dim)
-    //   depth     = blue @ depth % (while the depth gesture is live)
-    //   env idle  = WHITE @ envelope level; modes flash 3 Hz; drive/range
-    //               combos flash 6 Hz; target solid.
+    // cached choice params the LEDs display
     juce::AudioParameterChoice* lfo1ShapeParam  = nullptr;
     juce::AudioParameterChoice* lfo2ShapeParam  = nullptr;
     juce::AudioParameterChoice* lfo1TargetParam = nullptr;
@@ -421,45 +292,29 @@ private:
     juce::AudioParameterChoice* lpfModeParam    = nullptr;
     juce::AudioParameterChoice* envDriveParam   = nullptr;
     juce::AudioParameterChoice* lpfRangeParam   = nullptr;
-    LedIndicator lfo1Led, lfo2Led;
+    LedIndicator lfo1Led, lfo2Led, envLed;
 
-    // transient LED display contexts (what the one LED is showing right now)
-    enum { kCtxIdle = 0, kCtxShape, kCtxTarget, kCtxMode, kCtxCombo };
+    // transient LED display contexts (linger 1.5 s after a change)
+    enum { kCtxIdle = 0, kCtxShape, kCtxTarget, kCtxMode, kCtxCombo, kCtxDepth };
     int    lfo1Ctx = 0, lfo2Ctx = 0, envCtx = 0;
     double lfo1CtxUntil = 0.0, lfo2CtxUntil = 0.0, envCtxUntil = 0.0;
-    TapHoldButton lfo1Btn, lfo2Btn, envBtn, lfo2RateBtn;
 
-    double d2LastTapMs   = 0.0;    // previous committed tempo tap (press time)
-    double d2PressMs     = 0.0;    // current stomp press time (0 = not pressed)
-    double d2StompSince  = 0.0;    // when the stomp (button or CTRL) went down
-    double d2PrevFrameMs = 0.0;    // for per-frame dt
-    bool   d2Sweeping    = false;  // depth sweep engaged
-    bool   d2SweptThisHold = false;// a sweep happened during this stomp hold
-    bool   d2Rising      = true;   // remembered wave direction
-    double d2U           = 0.0;    // progress 0..1 along the current half-wave
-
-    // shift / dual-function state
-    bool shiftAttached   = false;  // top-row + LFO1 + ENV knobs on 2nd params
-    bool shiftConsumed   = false;  // a knob or button used the shift this hold
-    bool lfo1DepthMode   = false;  // RATE knob currently writes lfo1depth
-    bool envComboMode    = false;  // GAIN knob currently selects drive x range
-    bool suppressSliderCb = false; // guard while swapping attachments
-    bool lfo1KnobUsed    = false;  // knob moved during lfo1Btn hold
-    bool envKnobUsed     = false;  // knob moved during envBtn hold
-
-    // envelope follower panel (v0.21: one LED, zero LED columns)
-    juce::Slider envGainKnob;
-    juce::Label  envGainLabel;
-    std::unique_ptr<SliderAttachment> envGainAtt;
-    LedIndicator envLed;
-
-    // v0.21 bypass stomp + supply "jack"
-    TapHoldButton bypassBtn;
+    // the two stomps
+    TapHoldButton tapStompBtn, bypassBtn;
     LedIndicator  bypassLed;
     juce::TextButton supplyBtn { "9V" };
     juce::TextButton boostBtn  { "+6 dB: ON" };   // v0.23 boost audition
-    juce::TextButton clipBtn   { "CLIP" };      // v0.22 clip-stage audition
-    bool starveMode = false;   // MIX knob attached to the secret starve
+    juce::TextButton clipBtn   { "CLIP" };        // v0.22/24 clip-stage audition
+
+    // layer state
+    int  knobLayer        = 0;
+    bool suppressSliderCb = false;   // guard while swapping attachments
+
+    // tap tempo state (press times; commit = average of the last 4)
+    double tapHist1[4] {}, tapHist2[4] {};
+    int    tapN1 = 0, tapN2 = 0;
+    double tapPressMs   = 0.0;
+    bool   tapPressLfo2 = false;     // BYPASS was held at the press
 
     // CV jacks (hardwired: CV1 -> LFO1 depth VCA, CV2 -> LFO2 depth VCA)
     LedIndicator cv1Led, cv2Led;

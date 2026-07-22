@@ -1,4 +1,50 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.23)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.24)
+
+## v0.24 — the C1/C2/C3 layer scheme (no section buttons), clip modes E–H
+
+**Controls completely reworked** (Jason's spec). Six knobs — Freq, LPF, Mix |
+LFO1 Rate, LFO2 Rate, Env Gain — each with three layers:
+
+* **C1** (nothing held): Freq · LPF · Mix · Rate · Rate · Gain
+* **C2** (TAP stomp held, sim CTRL): Gain · Res · Vol · Target · Target · Target
+* **C3** (BYPASS stomp held, sim ALT): **LFO1 Depth · LFO2 Depth · DRV/RNG** ·
+  Shape A&B · Shape A&B · Mode
+* **BOTH stomps held** (secret/easter egg, unlabeled on the real pedal): Mix
+  knob = **STARVE**; every other knob goes **dead**.
+
+All three 2nd-row buttons (LFO1, LFO2, ENV) are **gone**. LFO2 gets its own
+RATE knob. Targets/shapes/mode are picked by knob position (8 / 16 / 5 zones);
+DRV/RNG rides the Mix knob's quarters in C3.
+
+**Tap tempo** is now a 4-tap average: 1–3 taps arm only, the 4th (and every
+tap after — rolling window of the last 4) commits. TAP alone = LFO1 rate;
+with BYPASS held = LFO2 rate. Range 0.2–20 Hz, and both rate KNOBS moved to
+the same 0.2–20 Hz. A committed tap re-seeds that LFO's chaos generators
+(new `retriggerLfo1`). A >5 s gap starts a new chain.
+
+**LEDs fixed + re-timed**: the section LEDs now show the live value colour of
+whatever the active layer is editing (the v0.21–23 bug where the colour only
+appeared on release is gone). Bank A blinks **2 Hz**, Bank B **5 Hz**,
+DRV/RNG is **solid** (no blink), Mode stays 3 Hz, depth = blue @ %.
+
+**Boost clarified**: the switchable +6 dB is the output make-up boost and now
+sits literally 2nd-to-last, directly feeding the clip stage (HPF and 800 Hz
+bell come before it — same math, matches the hardware order). The **+15 dB
+pre-567 trim was never touched** — it feeds the wet branch only; the dry
+path never sees it.
+
+**Clip modes E–H added** (the asymmetric ladders from the graphs, by request):
+E = −9/rail, F = −9/−3, G = −6/rail, H = −3/rail (positive half first; the
+"rail" half runs clean into a hard stop at the rail). New −3 ladder: bands
+−3/−2/−1/0, 2 dB knees, unity below −4 dB, rail at +11. CLIP button cycles
+all 8. All curves verified from the compiled code (32 checks).
+
+draw.io drawing added: `docs/glitchwave567_v0.24.drawio` (Signal Flow +
+Controls pages) with PNG previews.
+
+---
+
+
 
 ## v0.23 — softer A ladder (−6 onset) + switchable +6 dB boost
 
