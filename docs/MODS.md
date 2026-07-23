@@ -1,4 +1,16 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.25)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.26)
+
+## v0.26 — sim key change: BYPASS hold = SHIFT (was ALT)
+
+Plain ALT+drag never reached the plugin on Jason's machine (Windows / a
+window-management utility grabs lone-ALT drags — ALT+CTRL got through, ALT
+alone didn't). The C3 sim key is now **SHIFT**; C2 stays CTRL; the secret
+starve combo is **CTRL+SHIFT** + Mix knob. Hardware unaffected — the real
+pedal uses the physical stomps. Diagram regenerated (v0.26 files).
+
+---
+
+
 
 ## v0.25 — bugfix: knobs frozen while a layer key is held
 

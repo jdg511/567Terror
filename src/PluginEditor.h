@@ -253,7 +253,7 @@ private:
     // Six knobs (Freq, LPF, Mix | LFO1 Rate, LFO2 Rate, Env Gain):
     //   C1 (nothing held):        Freq   LPF     Mix     Rate   Rate   Gain
     //   C2 (TAP held / CTRL):     Gain   Res     Vol     Target Target Target
-    //   C3 (BYPASS held / ALT):   L1 Dep L2 Dep  DrvRng  Shape  Shape  Mode
+    //   C3 (BYPASS held / SHIFT): L1 Dep L2 Dep  DrvRng  Shape  Shape  Mode
     //   BOTH held (secret):       Mix knob -> STARVE; every other knob dead.
     // TAP stomp: 4-tap average sets LFO1 rate (with BYPASS held: LFO2 rate),
     // rolling window of the last 4 taps, clamped 0.2..20 Hz. 1-3 taps arm
@@ -261,7 +261,7 @@ private:
     // The section LEDs show the live value colour of whatever the active
     // layer edits (Jason: "I couldn't see it as it was changing" — fixed).
     bool tapStompDown() const;      // TAP stomp or CTRL (sim stand-in)
-    bool bypassStompDown() const;   // BYPASS stomp or ALT (sim stand-in)
+    bool bypassStompDown() const;   // BYPASS stomp or SHIFT (sim stand-in)
     int  computeLayer() const;      // 0 = C1, 1 = C2, 2 = C3, 3 = secret starve
     void updateKnobModes();         // swap slider attachments per layer
     void knobTouched();             // any knob move consumes the held stomps

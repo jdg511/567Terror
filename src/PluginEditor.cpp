@@ -274,8 +274,10 @@ bool GlitchwaveAudioProcessorEditor::tapStompDown() const
 
 bool GlitchwaveAudioProcessorEditor::bypassStompDown() const
 {
+    // v0.26: sim key changed ALT -> SHIFT (plain ALT+drag gets eaten by
+    // Windows / window-manager utilities before the plugin ever sees it)
     return bypassBtn.isDown()
-        || juce::ModifierKeys::getCurrentModifiersRealtime().isAltDown();
+        || juce::ModifierKeys::getCurrentModifiersRealtime().isShiftDown();
 }
 
 int GlitchwaveAudioProcessorEditor::computeLayer() const
@@ -588,7 +590,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("GLITCHWAVE 567", 20, 10, 400, 30, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (12.0f));
-    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.25"),
+    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.26"),
                 20, 38, 500, 16, juce::Justification::centredLeft);
 
     drawSection (g, { 12,  60, 1036, 206 }, "PEDAL");
@@ -619,7 +621,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("BOTH held: MIX = STARVE (secret), other knobs dead",
                 700, 200, 340, 10, juce::Justification::centredLeft);
     g.setColour (kDim);
-    g.drawText ("sim: CTRL = TAP held, ALT = BYPASS held",
+    g.drawText ("sim: CTRL = TAP held, SHIFT = BYPASS held",
                 700, 212, 340, 10, juce::Justification::centredLeft);
 
     g.setColour (kText);
