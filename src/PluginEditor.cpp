@@ -250,6 +250,10 @@ void GlitchwaveAudioProcessorEditor::setupKnob (juce::Slider& s, juce::Label& l,
 {
     s.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
     s.setTextBoxStyle (juce::Slider::TextBoxBelow, false, big ? 96 : 74, big ? 18 : 14);
+    // v0.25: CTRL/ALT are the C2/C3 layer keys — stop JUCE from hijacking a
+    // modifier-held drag into its "velocity" fine-adjust mode (which makes the
+    // knob appear frozen while a layer key is held)
+    s.setVelocityModeParameters (1.0, 1, 0.0, false);
     addAndMakeVisible (s);
 
     l.setText (name, juce::dontSendNotification);
@@ -584,7 +588,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("GLITCHWAVE 567", 20, 10, 400, 30, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (12.0f));
-    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.24"),
+    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.25"),
                 20, 38, 500, 16, juce::Justification::centredLeft);
 
     drawSection (g, { 12,  60, 1036, 206 }, "PEDAL");

@@ -1,4 +1,17 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.24)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.25)
+
+## v0.25 — bugfix: knobs frozen while a layer key is held
+
+Holding BYPASS/ALT (or TAP/CTRL) changed the labels but knob drags did
+nothing. Cause: JUCE sliders silently switch a drag into "velocity"
+fine-adjust mode when CTRL/ALT is held — the same keys the C2/C3 layers use —
+so slow drags produced ~zero movement. Fixed by disabling the modifier-swap
+(`setVelocityModeParameters (…, userCanPressKeyToSwapMode = false)`) on all
+knobs. No DSP changes.
+
+---
+
+
 
 ## v0.24 — the C1/C2/C3 layer scheme (no section buttons), clip modes E–H
 
