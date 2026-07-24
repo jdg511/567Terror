@@ -339,6 +339,39 @@ void GlitchwaveAudioProcessorEditor::updateKnobModes()
             mixAtt  = std::make_unique<SliderAttachment> (ap, "starve", mixKnob);
             break;
     }
+
+    // v0.31 (Jason's find): the zone-select knobs have no attachment, so on
+    // re-entering Y/Z they still SHOWED the X position even though the
+    // selection was intact — and the first touch teleported it. Now every
+    // layer entry parks each selector knob at the CENTRE of its current
+    // selection's zone, so the position always tells the truth and a small
+    // turn steps to the neighbouring choice.
+    auto placeZone = [] (juce::Slider& s, juce::AudioParameterChoice* pc, int zones)
+    {
+        if (pc != nullptr)
+            s.setValue (s.proportionOfLengthToValue ((pc->getIndex() + 0.5) / (double) zones),
+                        juce::dontSendNotification);
+    };
+    if (layer == 1)          // Y: SHAPE / SHAPE / MODE
+    {
+        placeZone (lfo1RateKnob, lfo1ShapeParam, 16);
+        placeZone (lfo2RateKnob, lfo2ShapeParam, 16);
+        placeZone (envGainKnob,  lpfModeParam,    5);
+    }
+    else if (layer == 2)     // Z: TARGET x3 + Mix = DRV/RNG combo
+    {
+        placeZone (lfo1RateKnob, lfo1TargetParam, 8);
+        placeZone (lfo2RateKnob, lfo2TargetParam, 8);
+        placeZone (envGainKnob,  envTargetParam,  8);
+        if (envDriveParam != nullptr && lpfRangeParam != nullptr)
+        {
+            const int combo = envDriveParam->getIndex() * 2
+                            + (lpfRangeParam->getIndex() == 1 ? 0 : 1);   // ring order
+            mixKnob.setValue (mixKnob.proportionOfLengthToValue ((combo + 0.5) / 4.0),
+                              juce::dontSendNotification);
+        }
+    }
+
     suppressSliderCb = false;
     knobLayer = layer;
 }
@@ -630,7 +663,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("GLITCHWAVE 567", 20, 10, 400, 30, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (12.0f));
-    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.30"),
+    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.31"),
                 20, 38, 500, 16, juce::Justification::centredLeft);
 
     drawSection (g, { 12,  60, 1036, 206 }, "PEDAL");

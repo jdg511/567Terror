@@ -1,4 +1,19 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.30)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.31)
+
+## v0.31 — selector knobs re-sync on layer entry (Jason's diagnosis)
+
+Jason pinned it: values changed correctly in Y/Z, but re-entering the layer
+left the selector knobs (Shape/Target/Mode/DRV-RNG) showing the X position —
+they're zone-driven with no attachment, so nothing repositioned them, and
+the first touch teleported the selection to the stale position's zone. (A
+was immune because Starve is a real attachment — the tell.) Now every layer
+entry parks each selector knob at the centre of its current selection's
+zone: the position always tells the truth, and a small turn steps to the
+neighbouring choice instead of jumping.
+
+---
+
+
 
 ## v0.30 — Jason's X/Y/Z/A layer spec + permanent key readout
 
