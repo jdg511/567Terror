@@ -1,4 +1,15 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.28)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.29)
+
+## v0.29 — sim keys: DELETE = TAP held, INSERT = BYPASS held
+
+Jason's pick after the lone-modifier interceptor saga: ordinary keys that
+hotkey utilities leave alone. DELETE held = C2 row, INSERT held = C3 row,
+both = Starve. Polled globally (GetAsyncKeyState), works without keyboard
+focus. Right-click stomp latch (v0.28) stays as the mouse-only alternative.
+
+---
+
+
 
 ## v0.28 — right-click latch: the sim no longer depends on modifier keys
 

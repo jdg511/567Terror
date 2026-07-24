@@ -268,18 +268,17 @@ void GlitchwaveAudioProcessorEditor::setupKnob (juce::Slider& s, juce::Label& l,
 // ---------------------------------------------------------------------------
 bool GlitchwaveAudioProcessorEditor::tapStompDown() const
 {
-    // v0.28: right-click LATCH is the reliable sim hold — something on
-    // Jason's machine intercepts every LONE modifier key (ALT, CTRL and
-    // SHIFT held alone all flickered; only combos passed), so the keyboard
-    // paths are best-effort extras.
+    // v0.29: sim keys are now DELETE (TAP) and INSERT (BYPASS) — ordinary
+    // keys that no lone-modifier hotkey utility touches, polled globally
+    // via GetAsyncKeyState. Right-click LATCH remains the mouse-only hold.
     return tapStompBtn.isDown() || tapStompBtn.isLatched()
-        || juce::ModifierKeys::getCurrentModifiersRealtime().isCtrlDown();
+        || juce::KeyPress::isKeyCurrentlyDown (juce::KeyPress::deleteKey);
 }
 
 bool GlitchwaveAudioProcessorEditor::bypassStompDown() const
 {
     return bypassBtn.isDown() || bypassBtn.isLatched()
-        || juce::ModifierKeys::getCurrentModifiersRealtime().isShiftDown();
+        || juce::KeyPress::isKeyCurrentlyDown (juce::KeyPress::insertKey);
 }
 
 int GlitchwaveAudioProcessorEditor::computeLayer() const
@@ -602,7 +601,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("GLITCHWAVE 567", 20, 10, 400, 30, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (12.0f));
-    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.28"),
+    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.29"),
                 20, 38, 500, 16, juce::Justification::centredLeft);
 
     drawSection (g, { 12,  60, 1036, 206 }, "PEDAL");
@@ -633,7 +632,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("BOTH held: MIX = STARVE (secret), other knobs dead",
                 700, 200, 340, 10, juce::Justification::centredLeft);
     g.setColour (kDim);
-    g.drawText ("sim: RIGHT-CLICK a stomp = latch it held (light ring = latched)",
+    g.drawText ("sim: hold DELETE = TAP, INSERT = BYPASS - or RIGHT-CLICK a stomp to latch",
                 700, 212, 340, 10, juce::Justification::centredLeft);
 
     g.setColour (kText);
@@ -716,7 +715,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.setFont (juce::FontOptions (8.5f));
     g.drawText (juce::String::fromUTF8 ("TAP \xc3\x97""4 avg = LFO1 RATE · BYPASS held: LFO2 RATE · 0.2\xe2\x80\x93""20 Hz"),
                 450, 704, 270, 12, juce::Justification::centredLeft);
-    g.drawText ("HOLD (or RIGHT-CLICK = latch) TAP = C2, BYPASS = C3, BOTH = STARVE",
+    g.drawText ("HOLD TAP (DEL) = C2, BYPASS (INS) = C3, BOTH = STARVE",
                 450, 717, 270, 12, juce::Justification::centredLeft);
     g.drawText ("9-18 V ctr-neg, protected & filtered; digital never starved",
                 450, 730, 270, 12, juce::Justification::centredLeft);
