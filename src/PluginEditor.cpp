@@ -292,6 +292,16 @@ void GlitchwaveAudioProcessorEditor::updateKnobModes()
     if (layer == knobLayer)
         return;
 
+    // v0.27: NEVER swap attachments while a knob is being dragged. A drag
+    // latches the function it started on; the layer switch lands only after
+    // every knob is released. (Before this, releasing the layer key a beat
+    // before the mouse re-attached the knob to its C1 param MID-DRAG, and
+    // the tail of the drag slammed that param — VOL to 0, rates to 20 Hz...)
+    for (auto* s : { &freqKnob, &lpfKnob, &mixKnob,
+                     &lfo1RateKnob, &lfo2RateKnob, &envGainKnob })
+        if (s->isMouseButtonDown())
+            return;
+
     auto& ap = processor.apvts;
     suppressSliderCb = true;
     freqAtt.reset(); lpfAtt.reset(); mixAtt.reset();
@@ -590,7 +600,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("GLITCHWAVE 567", 20, 10, 400, 30, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (12.0f));
-    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.26"),
+    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.27"),
                 20, 38, 500, 16, juce::Justification::centredLeft);
 
     drawSection (g, { 12,  60, 1036, 206 }, "PEDAL");

@@ -1,4 +1,19 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.26)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.27)
+
+## v0.27 — bugfix: layer switches no longer bleed into the wrong knob
+
+Releasing (or pressing) a layer key while still mid-drag re-attached the
+knob to a different parameter, and the rest of the drag wrote into it —
+silently slamming C1 values (VOL to 0% = total silence, FREQ to 1 Hz, both
+rates to 20 Hz, MIX to full wet). Jason's video showed the layers themselves
+worked; the bleed was the "nothing works" feeling. Now a drag latches the
+function it started on and layer swaps wait until every knob is released.
+Tip that also came out of this: **double-click any knob (no layer held) to
+reset that parameter to its default.**
+
+---
+
+
 
 ## v0.26 — sim key change: BYPASS hold = SHIFT (was ALT)
 
