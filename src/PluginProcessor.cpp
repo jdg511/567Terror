@@ -12,9 +12,9 @@ namespace
         return juce::String (hz / 1000.0f, 2) + " kHz";
     }
 
-    juce::String freqToText (float pos)   // 0.1 Hz .. 18 kHz log
+    juce::String freqToText (float pos)   // v0.32: 0.2 Hz .. 6 kHz log
     {
-        return hzToText (0.1f * std::pow (180000.0f, pos));
+        return hzToText (0.2f * std::pow (30000.0f, pos));
     }
 
     juce::String lpfToText (float pos)    // v0.8 ranges, shows Lo / Hi
@@ -102,9 +102,10 @@ GlitchwaveAudioProcessor::GlitchwaveAudioProcessor()
     raw.gatehold    = apvts.getRawParameterValue ("gatehold");
     raw.gatefade    = apvts.getRawParameterValue ("gatefade");
     raw.bypass      = apvts.getRawParameterValue ("bypass");
-    raw.supply      = apvts.getRawParameterValue ("supply");
+    raw.supply      = apvts.getRawParameterValue ("supply4");
     raw.starve      = apvts.getRawParameterValue ("starve");
-    raw.clipmode    = apvts.getRawParameterValue ("clipmode");
+    raw.jfeton      = apvts.getRawParameterValue ("jfeton");
+    raw.ladder36    = apvts.getRawParameterValue ("ladder36");
     raw.boost6      = apvts.getRawParameterValue ("boost6");
 }
 
@@ -120,17 +121,19 @@ GlitchwaveAudioProcessor::createParameterLayout()
                    { return juce::String (juce::roundToInt (v * 100.0f)) + " %"; });
 
     // ---- the pedal itself ----------------------------------------------------
+    // v0.32 ship defaults (Jason's spec): FREQ 0.5 Hz, LPF 200 Hz (Hi range),
+    // Q 4, Mix D100/FX25, Vol 90 %
     layout.add (std::make_unique<PF> (juce::ParameterID { "freq", 1 }, "Freq",
-        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.5f,
+        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.088883f,   // 0.5 Hz
         Att().withStringFromValueFunction ([] (float v, int) { return freqToText (v); })));
     layout.add (std::make_unique<PF> (juce::ParameterID { "fizz", 1 }, "LPF",
-        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.65f,
+        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.28494f,    // 200 Hz @ Hi
         Att().withStringFromValueFunction ([] (float v, int) { return lpfToText (v); })));
     layout.add (std::make_unique<PF> (juce::ParameterID { "lpfq", 1 }, "Resonance",
-        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.4f,
+        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.8f,        // Q 4
         Att().withStringFromValueFunction ([] (float v, int) { return lpfQToText (v); })));
     layout.add (std::make_unique<PF> (juce::ParameterID { "dry", 1 }, "Mix",
-        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.5f,
+        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.125f,      // D100 / FX25
         Att().withStringFromValueFunction ([] (float v, int)
             {
                 const int d = juce::roundToInt ((v <= 0.5f ? 1.0f : 2.0f * (1.0f - v)) * 100.0f);
@@ -138,7 +141,7 @@ GlitchwaveAudioProcessor::createParameterLayout()
                 return "D" + juce::String (d) + " / FX" + juce::String (w);
             })));
     layout.add (std::make_unique<PF> (juce::ParameterID { "vol", 1 }, "Vol",
-        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.7f, pct));
+        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.9f, pct));   // 90 %
 
     // ---- always-on Bazz Fuss dirt in the dry path (v0.12: hardwired) --------------
     layout.add (std::make_unique<PF> (juce::ParameterID { "dirtgain", 1 }, "Gain",
@@ -153,17 +156,17 @@ GlitchwaveAudioProcessor::createParameterLayout()
     auto hz2 = Att().withStringFromValueFunction ([] (float v, int)
                    { return juce::String (v, 2) + " Hz"; });
     layout.add (std::make_unique<PF> (juce::ParameterID { "lfo1rate", 1 }, "LFO1 Rate",
-        juce::NormalisableRange<float> (0.2f, 20.0f, 0.0f, 0.35f), 2.0f, hz2));   // v0.24 range
+        juce::NormalisableRange<float> (0.2f, 20.0f, 0.0f, 0.35f), 0.5f, hz2));   // 0.5 Hz
     layout.add (std::make_unique<PF> (juce::ParameterID { "lfo1depth", 1 }, "LFO1 Depth",
-        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.0f, pct));
+        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.5f, pct));           // 50 %
     layout.add (std::make_unique<PC> (juce::ParameterID { "lfo1shape5", 1 }, "LFO1 Shape",
-        kLfoShapes, 3));   // default: Triangle
+        kLfoShapes, 4));   // default: Sine
     layout.add (std::make_unique<PC> (juce::ParameterID { "lfo1target5", 1 }, "LFO1 Target",
         kLfo1Targets, 1)); // default: Freq (LFO1 is always unipolar-up)
     layout.add (std::make_unique<PF> (juce::ParameterID { "lfo2rate", 1 }, "LFO2 Rate",
-        juce::NormalisableRange<float> (0.2f, 20.0f, 0.0f, 0.35f), 0.25f, hz2));  // v0.24 range
+        juce::NormalisableRange<float> (0.2f, 20.0f, 0.0f, 0.35f), 0.2f, hz2));   // 0.2 Hz
     layout.add (std::make_unique<PF> (juce::ParameterID { "lfo2depth", 1 }, "LFO2 Depth",
-        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.0f, pct));
+        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.15f, pct));          // 15 %
     layout.add (std::make_unique<PC> (juce::ParameterID { "lfo2shape4", 1 }, "LFO2 Shape",
         kLfoShapes, 4));   // default: Sine
     layout.add (std::make_unique<PC> (juce::ParameterID { "lfo2target4", 1 }, "LFO2 Target",
@@ -173,7 +176,7 @@ GlitchwaveAudioProcessor::createParameterLayout()
     layout.add (std::make_unique<PC> (juce::ParameterID { "envtarget5", 1 }, "Env Target",
         kEnvTargets, 2)); // default: LPF
     layout.add (std::make_unique<PF> (juce::ParameterID { "envgain", 1 }, "Env Gain",
-        juce::NormalisableRange<float> (0.125f, 40.0f, 0.0f, 0.3f), 4.0f,
+        juce::NormalisableRange<float> (0.125f, 40.0f, 0.0f, 0.3f), 10.0f,   // x10
         Att().withStringFromValueFunction ([] (float v, int)
             { return "x" + juce::String (v, v < 2.0f ? 2 : 1); })));
     layout.add (std::make_unique<PC> (juce::ParameterID { "envdrive", 1 }, "Env Drive",
@@ -181,7 +184,7 @@ GlitchwaveAudioProcessor::createParameterLayout()
     layout.add (std::make_unique<PC> (juce::ParameterID { "lpfmode3", 1 }, "Filter Mode",
         juce::StringArray { "Off", "Mode LP", "Mode BP", "Mode HP", "Mode Notch" }, 1));
     layout.add (std::make_unique<PC> (juce::ParameterID { "lpfrange", 1 }, "Filter Range",
-        juce::StringArray { "Range Lo", "Range Hi" }, 0));
+        juce::StringArray { "Range Lo", "Range Hi" }, 1));   // default: Hi (Up/Hi)
 
     // v0.13: CV 1/2 are hardwired VCAs on LFO 1/2 depth — no CV parameters.
 
@@ -200,11 +203,14 @@ GlitchwaveAudioProcessor::createParameterLayout()
     // ---- v0.21 power + bypass ----------------------------------------------------
     layout.add (std::make_unique<juce::AudioParameterBool> (
         juce::ParameterID { "bypass", 1 }, "Bypass", false));
-    layout.add (std::make_unique<PC> (juce::ParameterID { "supply", 1 }, "Supply",
-        juce::StringArray { "9V", "18V" }, 0));   // centre-negative adapter
-    layout.add (std::make_unique<PC> (juce::ParameterID { "clipmode", 1 }, "Clip Stage",
-        juce::StringArray { "A: -6 Ladder", "B: -9 Ladder", "D: JFET", "D+B: JFET+Ladder",
-                            "E: -9/Rail", "F: -9/-3", "G: -6/Rail", "H: -3/Rail" }, 0));
+    // v0.32: internal switches (under the cover). Ships: JFET ON, -3/-6
+    // ladder OFF, 9 V. Supply now 9/12/15/18 V.
+    layout.add (std::make_unique<PC> (juce::ParameterID { "supply4", 1 }, "Supply",
+        juce::StringArray { "9V", "12V", "15V", "18V" }, 0));
+    layout.add (std::make_unique<juce::AudioParameterBool> (
+        juce::ParameterID { "jfeton", 1 }, "JFET Stage", true));
+    layout.add (std::make_unique<juce::AudioParameterBool> (
+        juce::ParameterID { "ladder36", 1 }, "-3/-6 Ladder", false));
     layout.add (std::make_unique<juce::AudioParameterBool> (
         juce::ParameterID { "boost6", 1 }, "+6dB Boost", true));
     layout.add (std::make_unique<PF> (juce::ParameterID { "starve", 1 }, "Starve",
@@ -388,10 +394,14 @@ void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         cp.vol        = k.vol;
         cp.gain       = k.gain;
         cp.dirtType   = 2;   // v0.12: Bazz Fuss, hardwired (Jason's PCB pick)
-        cp.supplyV    = raw.supply->load() >= 0.5f ? 18.0f : 9.0f;   // v0.21
+        {   // v0.32: 4-step simulated supply
+            static constexpr float kVolts[4] = { 9.0f, 12.0f, 15.0f, 18.0f };
+            cp.supplyV = kVolts[juce::jlimit (0, 3, (int) raw.supply->load())];
+        }
         cp.starve     = raw.starve->load();
-        cp.clipMode   = juce::jlimit (0, 7, (int) raw.clipmode->load());   // v0.22/24 audition
-        cp.boost6Gain = raw.boost6->load() >= 0.5f ? 2.0f : 1.0f;          // v0.23 toggle
+        cp.jfetOn     = raw.jfeton->load()   >= 0.5f;   // internal switch (ships ON)
+        cp.ladder36   = raw.ladder36->load() >= 0.5f;   // internal switch (ships OFF)
+        cp.boost6Gain = raw.boost6->load()   >= 0.5f ? 2.0f : 1.0f;   // internal switch
         circuit.setParams (cp);
 
         float* chans[] = { mono + offset };
@@ -455,6 +465,11 @@ void GlitchwaveAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 
 void GlitchwaveAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
+    // v0.32 (Jason): the STANDALONE pedal powers up on the ship defaults
+    // every time, like flipping on a real pedal. DAWs still restore their
+    // saved session state as plugins must.
+    if (wrapperType == wrapperType_Standalone)
+        return;
     if (auto xml = getXmlFromBinary (data, sizeInBytes))
         if (xml->hasTagName (apvts.state.getType()))
             apvts.replaceState (juce::ValueTree::fromXml (*xml));

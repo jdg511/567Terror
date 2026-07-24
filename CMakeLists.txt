@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(Glitchwave567 VERSION 0.31.0 LANGUAGES C CXX)
+project(Glitchwave567 VERSION 0.32.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,7 +18,8 @@ juce_add_plugin(Glitchwave567
     COMPANY_NAME "JasonDIY"
     PLUGIN_MANUFACTURER_CODE Jdgw
     PLUGIN_CODE Gw67
-    FORMATS VST3 Standalone
+    FORMATS VST3 LV2 Standalone AU AUv3
+    LV2URI "https://github.com/jdg511/567Terror"
     PRODUCT_NAME "Glitchwave 567"
     IS_SYNTH FALSE
     NEEDS_MIDI_INPUT FALSE

@@ -129,12 +129,6 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
         addAndMakeVisible (*l);
     }
 
-    // v0.30: permanent key-state readout (stays until the control scheme is
-    // signed off) — raw INS/DEL as the app sees them + the active layer
-    keyReadout.setJustificationType (juce::Justification::centredLeft);
-    keyReadout.setFont (juce::FontOptions (juce::Font::getDefaultMonospacedFontName(), 12.0f, juce::Font::bold));
-    keyReadout.setColour (juce::Label::textColourId, kDim);
-    addAndMakeVisible (keyReadout);
 
     // cache the choice params the LEDs display
     auto choice = [&apvts] (const char* id)
@@ -154,7 +148,8 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     // ---- the TAP TEMPO stomp (sim: CTRL = held) ------------------------------
     tapStompBtn.onPress = [this]
     {
-        tapPressMs   = nowMs();
+        tapPressMs     = nowMs();
+        lastTapFlashMs = tapPressMs;          // v0.32: tempo LED flashes each press
         tapPressLfo2 = bypassStompDown();
         if (tapPressLfo2 && bypassBtn.isDown())
             bypassBtn.cancelPressActions();   // that hold is a tap-shift now, not a bypass toggle
@@ -180,48 +175,43 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     bypassLed.setColour (kGreen);
     addAndMakeVisible (bypassLed);
 
+    tapLed.setColour (kAccent);
+    addAndMakeVisible (tapLed);
+
+    // ---- v0.32 internal switches (under the cover, like the real PCB) --------
+    auto boolToggle = [this] (juce::TextButton& b, const char* id,
+                              const char* onTxt, const char* offTxt)
+    {
+        b.onClick = [this, &b, id, onTxt, offTxt]
+        {
+            if (auto* pb = processor.apvts.getParameter (id))
+            {
+                pb->beginChangeGesture();
+                pb->setValueNotifyingHost (pb->getValue() >= 0.5f ? 0.0f : 1.0f);
+                pb->endChangeGesture();
+                b.setButtonText (pb->getValue() >= 0.5f ? onTxt : offTxt);
+            }
+        };
+        if (auto* pb = processor.apvts.getParameter (id))
+            b.setButtonText (pb->getValue() >= 0.5f ? onTxt : offTxt);
+        addAndMakeVisible (b);
+    };
+    boolToggle (jfetBtn,   "jfeton",   "JFET: ON",        "JFET: OFF");
+    boolToggle (ladderBtn, "ladder36", "-3/-6 LDR: ON",   "-3/-6 LDR: OFF");
+    boolToggle (boostBtn,  "boost6",   "+6 dB: ON",       "+6 dB: OFF");
+
     supplyBtn.onClick = [this]
     {
         if (auto* ps = dynamic_cast<juce::AudioParameterChoice*> (
-                          processor.apvts.getParameter ("supply")))
+                          processor.apvts.getParameter ("supply4")))
         {
             ps->beginChangeGesture();
-            *ps = 1 - ps->getIndex();      // swap the wall-wart: 9 V <-> 18 V
+            *ps = (ps->getIndex() + 1) % ps->choices.size();   // 9 -> 12 -> 15 -> 18
             ps->endChangeGesture();
-            supplyBtn.setButtonText (ps->getIndex() == 1 ? "18V" : "9V");
+            supplyBtn.setButtonText (ps->getCurrentChoiceName());
         }
     };
     addAndMakeVisible (supplyBtn);
-
-    // v0.22/24: output clip stage audition — now 8 modes (the winner gets
-    // hardwired like the dirt circuit was)
-    clipBtn.onClick = [this]
-    {
-        if (auto* pc = dynamic_cast<juce::AudioParameterChoice*> (
-                          processor.apvts.getParameter ("clipmode")))
-        {
-            pc->beginChangeGesture();
-            *pc = (pc->getIndex() + 1) % pc->choices.size();
-            pc->endChangeGesture();
-            clipBtn.setButtonText ("CLIP " + pc->getCurrentChoiceName());
-        }
-    };
-    clipBtn.setButtonText ("CLIP A: -6 Ladder");
-    addAndMakeVisible (clipBtn);
-
-    // v0.23: the +6 dB output boost has its own audition toggle
-    boostBtn.onClick = [this]
-    {
-        if (auto* pb = processor.apvts.getParameter ("boost6"))
-        {
-            pb->beginChangeGesture();
-            pb->setValueNotifyingHost (pb->getValue() >= 0.5f ? 0.0f : 1.0f);
-            pb->endChangeGesture();
-            boostBtn.setButtonText (pb->getValue() >= 0.5f ? "+6 dB: ON" : "+6 dB: OFF");
-        }
-    };
-    boostBtn.setButtonText ("+6 dB: ON");
-    addAndMakeVisible (boostBtn);
 
     // ---- CV jacks (hardwired to LFO depth VCAs) --------------------------------
     cv1Led.setColour (kGreen);
@@ -246,6 +236,7 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
 
     startTimerHz (60);
     setSize (1060, 764);
+    setScaleFactor (2.0f);   // v0.32: 2x UI — all text doubles and fits
 }
 
 GlitchwaveAudioProcessorEditor::~GlitchwaveAudioProcessorEditor()
@@ -426,6 +417,8 @@ void GlitchwaveAudioProcessorEditor::applyComboFromMixKnob()
 // ---------------------------------------------------------------------------
 void GlitchwaveAudioProcessorEditor::recordTap (bool lfo2, double pressMs)
 {
+    // v0.32: rolling average of the last THREE presses (2 intervals);
+    // 1-2 presses arm only, the 3rd (and every press after) commits.
     if (pressMs <= 0.0)
         return;
     double* h = lfo2 ? tapHist2 : tapHist1;
@@ -433,13 +426,13 @@ void GlitchwaveAudioProcessorEditor::recordTap (bool lfo2, double pressMs)
 
     if (n > 0 && pressMs - h[n - 1] > 5000.0)
         n = 0;                                   // stale chain: start over
-    if (n == 4)
-    { h[0] = h[1]; h[1] = h[2]; h[2] = h[3]; n = 3; }
+    if (n == 3)
+    { h[0] = h[1]; h[1] = h[2]; n = 2; }
     h[n++] = pressMs;
 
-    if (n == 4)
+    if (n == 3)
     {
-        const double avgMs = (h[3] - h[0]) / 3.0;
+        const double avgMs = (h[2] - h[0]) / 2.0;
         const float  hz    = juce::jlimit (0.2f, 20.0f, (float) (1000.0 / avgMs));
         if (auto* pr = processor.apvts.getParameter (lfo2 ? "lfo2rate" : "lfo1rate"))
         {
@@ -459,7 +452,8 @@ void GlitchwaveAudioProcessorEditor::setGateOpen (bool shouldBeOpen)
     gateCover.setVisible (! gateOpen);
     gateCoverBtn.setVisible (gateOpen);
     for (auto* c : std::initializer_list<juce::Component*> {
-             &threshKnob, &threshLabel, &holdKnob, &holdLabel, &fadeKnob, &fadeLabel, &gateLed })
+             &threshKnob, &threshLabel, &holdKnob, &holdLabel, &fadeKnob, &fadeLabel,
+             &gateLed, &jfetBtn, &ladderBtn, &boostBtn, &supplyBtn })
         c->setVisible (gateOpen);
 }
 
@@ -476,22 +470,19 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     updateKnobModes();
     const int layer = knobLayer;
 
-    // ---- v0.30 permanent key-state readout + stomp held-indicators -----------
+    // stomp held-indicators (readout removed in v0.32 — controls signed off)
+    tapStompBtn.setIndicated (tapStompDown());
+    bypassBtn.setIndicated (bypassStompDown());
+
+    // v0.32 tempo LED: blinks at the tapped LFO1 rate, full flash on a press
     {
-        const bool ins = juce::KeyPress::isKeyCurrentlyDown (juce::KeyPress::insertKey);
-        const bool del = juce::KeyPress::isKeyCurrentlyDown (juce::KeyPress::deleteKey);
-        static const char* layerNames[4] = { "X", "Y", "Z", "A" };
-        juce::String s;
-        s << "INS[" << (ins ? "#" : "-") << "]  DEL[" << (del ? "#" : "-") << "]  LAYER "
-          << layerNames[juce::jlimit (0, 3, layer)];
-        if (tapStompBtn.isLatched() || bypassBtn.isLatched())
-            s << "  latched";
-        keyReadout.setText (s, juce::dontSendNotification);
-        keyReadout.setColour (juce::Label::textColourId,
-                              layer == 3 ? kRed : layer == 2 ? kAmber
-                                               : layer == 1 ? kBlue : kDim);
-        tapStompBtn.setIndicated (tapStompDown());
-        bypassBtn.setIndicated (bypassStompDown());
+        const double t0 = nowMs();
+        float rate = 0.5f;
+        if (auto* pr = processor.apvts.getParameter ("lfo1rate"))
+            rate = pr->convertFrom0to1 (pr->getValue());
+        const double phase = std::fmod (t0 * rate / 1000.0, 1.0);
+        const bool flash = (t0 - lastTapFlashMs) < 120.0;
+        tapLed.setLevel (flash ? 1.0f : (phase < 0.5 ? 0.7f : 0.05f));
     }
 
     const bool filterOn = lpfModeParam != nullptr && lpfModeParam->getIndex() > 0;
@@ -663,7 +654,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("GLITCHWAVE 567", 20, 10, 400, 30, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (12.0f));
-    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.31"),
+    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.32"),
                 20, 38, 500, 16, juce::Justification::centredLeft);
 
     drawSection (g, { 12,  60, 1036, 206 }, "PEDAL");
@@ -673,7 +664,8 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     drawSection (g, { 12, 534, 332, 154 }, "CV 1 JACK  (SIDECHAIN L)");
     drawSection (g, { 352, 534, 332, 154 }, "CV 2 JACK  (SIDECHAIN R)");
     if (gateOpen)
-        drawSection (g, { 692, 534, 356, 154 }, "OUTPUT GATE");
+        drawSection (g, { 692, 534, 356, 154 },
+                     juce::String::fromUTF8 ("INTERNAL \xc2\xb7 TRIM POTS / SWITCHES / SIM VOLTAGE"));
     drawSection (g, { 12, 696, 1036, 56 }, juce::String::fromUTF8 ("FOOTSWITCHES  ·  POWER"));
 
     // ---- the C1/C2/C3 layer chart, printed on the pedal face ---------------
@@ -775,10 +767,12 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("BYPASS", 378, 722, 60, 14, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (8.5f));
-    g.drawText (juce::String::fromUTF8 ("TAP \xc3\x97""4 avg = LFO1 RATE · BYPASS held: LFO2 RATE · 0.2\xe2\x80\x93""20 Hz"),
-                450, 718, 270, 12, juce::Justification::centredLeft);
+    g.drawText (juce::String::fromUTF8 ("TAP \xc3\x97""3 avg = LFO1 RATE · BYPASS held: LFO2 RATE · 0.2\xe2\x80\x93""20 Hz · LED = tempo"),
+                450, 712, 320, 12, juce::Justification::centredLeft);
     g.drawText ("Y = TAP/INS held, Z = BYPASS/DEL held, A = both = STARVE",
-                450, 731, 270, 12, juce::Justification::centredLeft);
+                450, 725, 320, 12, juce::Justification::centredLeft);
+    g.drawText ("internal switches + sim voltage: under the cover (click it)",
+                450, 738, 320, 12, juce::Justification::centredLeft);
 
     // CV jack panels: hardwired routing, printed like a control plate
     g.setColour (kText);
@@ -839,12 +833,9 @@ void GlitchwaveAudioProcessorEditor::resized()
     // ---- footswitch strip -----------------------------------------------------
     {
         tapStompBtn.setBounds (190, 706, 40, 40);
+        tapLed.setBounds      (154, 716, 20, 20);   // v0.32 tempo LED
         bypassBtn.setBounds   (300, 706, 40, 40);
         bypassLed.setBounds   (354, 716, 20, 20);
-        keyReadout.setBounds  (450, 700, 270, 16);   // v0.30 permanent readout
-        boostBtn.setBounds    (724, 714, 92, 24);
-        clipBtn.setBounds     (824, 714, 138, 24);
-        supplyBtn.setBounds   (970, 714, 70, 24);
     }
 
     // ---- CV jack panels + gate ------------------------------------------------
@@ -860,8 +851,13 @@ void GlitchwaveAudioProcessorEditor::resized()
         juce::Label*  gl[] = { &threshLabel, &holdLabel, &fadeLabel };
         for (int i = 0; i < 3; ++i)
         {
-            gl[i]->setBounds (gx[i], 568, 96, 12);
-            gk[i]->setBounds (gx[i], 580, 96, 96);
+            gl[i]->setBounds (gx[i], 560, 88, 12);
+            gk[i]->setBounds (gx[i], 572, 88, 68);
         }
+        // v0.32 internal switches row (under the cover)
+        jfetBtn.setBounds   (704, 650, 80, 24);
+        ladderBtn.setBounds (790, 650, 104, 24);
+        boostBtn.setBounds  (900, 650, 76, 24);
+        supplyBtn.setBounds (982, 650, 54, 24);
     }
 }

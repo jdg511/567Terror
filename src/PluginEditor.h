@@ -241,11 +241,14 @@ public:
         g.fillEllipse (led);
 
         g.setColour (juce::Colour (0xffe8e8e8));
-        g.setFont (juce::FontOptions (15.0f, juce::Font::bold));
-        g.drawText ("OUTPUT GATE", 0, 44, getWidth(), 18, juce::Justification::centred);
+        g.setFont (juce::FontOptions (14.0f, juce::Font::bold));
+        g.drawText ("INTERNAL PEDAL TRIM POTS / SWITCHES", 0, 44, getWidth(), 16,
+                    juce::Justification::centred);
+        g.drawText ("SIMULATED INPUT VOLTAGE", 0, 60, getWidth(), 14,
+                    juce::Justification::centred);
         g.setColour (juce::Colour (0xff9aa0a6));
         g.setFont (juce::FontOptions (12.0f));
-        g.drawText (summary, 0, 66, getWidth(), 16, juce::Justification::centred);
+        g.drawText (summary, 0, 80, getWidth(), 16, juce::Justification::centred);
         g.setFont (juce::FontOptions (10.0f));
         g.drawText ("click to open cover", 0, getHeight() - 22, getWidth(), 12,
                     juce::Justification::centred);
@@ -307,7 +310,6 @@ private:
     juce::Label  lfo1RateLabel, lfo2RateLabel, envGainLabel;
     std::unique_ptr<SliderAttachment> lfo1RateAtt, lfo2RateAtt, envGainAtt;
     juce::Label  lfo1ValueLabel, lfo2ValueLabel;   // live rate · depth readouts
-    juce::Label  keyReadout;                       // v0.30: permanent key-state readout
     PPMMeter meterIn, meterOut;
 
     // cached choice params the LEDs display
@@ -329,9 +331,14 @@ private:
     // the two stomps
     TapHoldButton tapStompBtn, bypassBtn;
     LedIndicator  bypassLed;
+    LedIndicator  tapLed;              // v0.32: blinks the tap tempo + flashes presses
+    double lastTapFlashMs = 0.0;
+
+    // v0.32 internal switches — live under the cover, like on the real PCB
+    juce::TextButton jfetBtn   { "JFET: ON" };
+    juce::TextButton ladderBtn { "-3/-6 LDR: OFF" };
+    juce::TextButton boostBtn  { "+6 dB: ON" };
     juce::TextButton supplyBtn { "9V" };
-    juce::TextButton boostBtn  { "+6 dB: ON" };   // v0.23 boost audition
-    juce::TextButton clipBtn   { "CLIP" };        // v0.22/24 clip-stage audition
 
     // layer state
     int  knobLayer        = 0;

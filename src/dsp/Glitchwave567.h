@@ -205,10 +205,11 @@ public:
         // v0.21 power modelling
         float supplyV     = 9.0f;  // 9 or 18 (centre-negative adapter voltage)
         float starve      = 0.0f;  // 0..1 secret starve: rail sags toward 5 V
-        // v0.22..24 output-clip audition: 0 = A (-6 sym), 1 = B (-9 sym),
-        // 2 = D (JFET), 3 = D+B, then asymmetric (pos/neg): 4 = E (-9/rail),
-        // 5 = F (-9/-3), 6 = G (-6/rail), 7 = H (-3/rail)
-        int   clipMode    = 0;
+        // v0.32 — Jason's FINAL output stage (audition over): two internal
+        // switches. JFET stage on/off (ships ON) feeding an asymmetric
+        // -3/-6 ladder on/off (ships OFF). Both off = the bare op-amp rail.
+        bool  jfetOn      = true;
+        bool  ladder36    = false;
         // v0.23: the +6 dB output boost is now switchable (1.0 or 2.0)
         float boost6Gain  = 2.0f;
     };
@@ -438,18 +439,16 @@ public:
 
     float clipStage (float x) noexcept
     {
-        switch (target.clipMode)
+        // v0.32 internal switches: JFET (ships ON) -> -3/-6 ladder (ships
+        // OFF). Both off = the bare op-amp rail as a hard stop.
+        if (target.jfetOn)
         {
-            default:
-            case 0: return ladderClip (x, 6);                     // A: -6 sym
-            case 1: return ladderClip (x, 9);                     // B: -9 sym
-            case 2: return jfetStage (x);                         // D: JFET
-            case 3: return ladderClip (jfetStage (x), 9);         // D + B
-            case 4: return asymClip (x, 9, 0);                    // E: -9 / rail
-            case 5: return asymClip (x, 9, 3);                    // F: -9 / -3
-            case 6: return asymClip (x, 6, 0);                    // G: -6 / rail
-            case 7: return asymClip (x, 3, 0);                    // H: -3 / rail
+            const float y = jfetStage (x);
+            return target.ladder36 ? asymClip (y, 3, 6) : y;
         }
+        if (target.ladder36)
+            return asymClip (x, 3, 6);
+        return x >= 0.0f ? std::min (x, railC) : std::max (x, -railC);
     }
 
     // handy for UI / debugging
@@ -533,7 +532,8 @@ private:
         // ---- v0.3 extended FREQ: 0.1 Hz .. 18 kHz, log --------------------------
         // (the stock RT/CT network gave 304-1148 Hz; this is Jason's wishlist
         //  range — hardware will need switched timing caps to match)
-        f0 = std::min (0.1f * std::pow (180000.0f, smoothed.freq), 0.4f * fs);
+        // v0.32: FREQ range 0.2 Hz .. 6 kHz (was 0.1 Hz .. 18 kHz)
+        f0 = std::min (0.2f * std::pow (30000.0f, smoothed.freq), 0.4f * fs);
 
         // ---- v0.9 dirt: GAIN 0..1 -> x2 .. x300 (log), per-model voicing ------
         dirtG = 1.1f * std::pow (272.727f, smoothed.gain);   // v0.19: x1.1 .. x300

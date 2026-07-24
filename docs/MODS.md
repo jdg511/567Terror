@@ -1,4 +1,36 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.31)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.32)
+
+## v0.32 — THE PEDAL TAKES ITS FINAL SHAPE (clip decided, ship defaults)
+
+**Output stage decided** (audition over): two internal switches — **JFET
+on/off (ships ON)** feeding a **−3/−6 asymmetric ladder on/off (ships
+OFF)**. Both off = the bare op-amp rail. CLIP button removed.
+
+**Under the cover** (renamed "Internal Pedal Trim Pots / Switches /
+Simulated input voltage", gate LED stays on top): gate trim pots
+(thresh/hold/fade), JFET switch, −3/−6 ladder switch, +6 dB switch, and the
+supply selector — now **9 V / 12 V / 15 V / 18 V**.
+
+**Ship defaults** (every fresh load; the standalone powers up on these
+every time like a real pedal — DAW sessions still recall their state):
+FREQ 0.5 Hz, LPF 200 Hz, Q 4, Mix D100/FX25, Vol 90 %, LFO1 0.5 Hz / 50 % /
+Sine / →Freq, LFO2 0.2 Hz / 15 % / Sine / →LFO1 Rate, Env ×10 / →LPF /
+LP / Up-Hi, Starve 0, JFET ON, ladder OFF, +6 dB ON, 9 V.
+
+**FREQ range is now 0.2 Hz – 6 kHz** (was 0.1 Hz – 18 kHz) — display and
+VCO mapping both.
+
+**UI 2×**: whole panel renders at double size (all text doubled). INS/DEL
+readout removed (controls signed off). **Tempo LED** added next to TAP:
+blinks at the tapped LFO1 rate, flashes bright on every press. Tap tempo
+commits on the **3rd press** now (rolling average of the last 3).
+
+**Build formats**: VST3 + LV2 + Standalone on Windows & Linux; AU/AUv3
+included in the build config for anyone compiling on macOS.
+
+---
+
+
 
 ## v0.31 — selector knobs re-sync on layer entry (Jason's diagnosis)
 
