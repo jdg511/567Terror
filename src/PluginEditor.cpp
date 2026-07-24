@@ -89,32 +89,33 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
         if (knobLayer == 2)
             applyComboFromMixKnob();          // C3: knob quarters pick DRV x RNG
     };
+    // v0.30: Y (layer 1) = SHAPE / SHAPE / MODE, Z (layer 2) = TARGET x3
     lfo1RateKnob.onValueChange = [this]
     {
         if (suppressSliderCb) return;
         knobTouched();
-        if (knobLayer == 1)      applyZone (lfo1RateKnob, "lfo1target5", 8,
-                                            lfo1Ctx, lfo1CtxUntil, kCtxTarget);
-        else if (knobLayer == 2) applyZone (lfo1RateKnob, "lfo1shape5", 16,
+        if (knobLayer == 1)      applyZone (lfo1RateKnob, "lfo1shape5", 16,
                                             lfo1Ctx, lfo1CtxUntil, kCtxShape);
+        else if (knobLayer == 2) applyZone (lfo1RateKnob, "lfo1target5", 8,
+                                            lfo1Ctx, lfo1CtxUntil, kCtxTarget);
     };
     lfo2RateKnob.onValueChange = [this]
     {
         if (suppressSliderCb) return;
         knobTouched();
-        if (knobLayer == 1)      applyZone (lfo2RateKnob, "lfo2target4", 8,
-                                            lfo2Ctx, lfo2CtxUntil, kCtxTarget);
-        else if (knobLayer == 2) applyZone (lfo2RateKnob, "lfo2shape4", 16,
+        if (knobLayer == 1)      applyZone (lfo2RateKnob, "lfo2shape4", 16,
                                             lfo2Ctx, lfo2CtxUntil, kCtxShape);
+        else if (knobLayer == 2) applyZone (lfo2RateKnob, "lfo2target4", 8,
+                                            lfo2Ctx, lfo2CtxUntil, kCtxTarget);
     };
     envGainKnob.onValueChange = [this]
     {
         if (suppressSliderCb) return;
         knobTouched();
-        if (knobLayer == 1)      applyZone (envGainKnob, "envtarget5", 8,
-                                            envCtx, envCtxUntil, kCtxTarget);
-        else if (knobLayer == 2) applyZone (envGainKnob, "lpfmode3", 5,
+        if (knobLayer == 1)      applyZone (envGainKnob, "lpfmode3", 5,
                                             envCtx, envCtxUntil, kCtxMode);
+        else if (knobLayer == 2) applyZone (envGainKnob, "envtarget5", 8,
+                                            envCtx, envCtxUntil, kCtxTarget);
     };
 
     addAndMakeVisible (meterIn);
@@ -127,6 +128,13 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
         l->setColour (juce::Label::textColourId, kDim);
         addAndMakeVisible (*l);
     }
+
+    // v0.30: permanent key-state readout (stays until the control scheme is
+    // signed off) — raw INS/DEL as the app sees them + the active layer
+    keyReadout.setJustificationType (juce::Justification::centredLeft);
+    keyReadout.setFont (juce::FontOptions (juce::Font::getDefaultMonospacedFontName(), 12.0f, juce::Font::bold));
+    keyReadout.setColour (juce::Label::textColourId, kDim);
+    addAndMakeVisible (keyReadout);
 
     // cache the choice params the LEDs display
     auto choice = [&apvts] (const char* id)
@@ -268,17 +276,17 @@ void GlitchwaveAudioProcessorEditor::setupKnob (juce::Slider& s, juce::Label& l,
 // ---------------------------------------------------------------------------
 bool GlitchwaveAudioProcessorEditor::tapStompDown() const
 {
-    // v0.29: sim keys are now DELETE (TAP) and INSERT (BYPASS) — ordinary
-    // keys that no lone-modifier hotkey utility touches, polled globally
-    // via GetAsyncKeyState. Right-click LATCH remains the mouse-only hold.
+    // v0.30 (Jason's X/Y/Z/A spec): Y = TAP held = INS, Z = BYPASS held =
+    // DEL. Polled globally via GetAsyncKeyState; right-click LATCH remains
+    // the mouse-only hold.
     return tapStompBtn.isDown() || tapStompBtn.isLatched()
-        || juce::KeyPress::isKeyCurrentlyDown (juce::KeyPress::deleteKey);
+        || juce::KeyPress::isKeyCurrentlyDown (juce::KeyPress::insertKey);
 }
 
 bool GlitchwaveAudioProcessorEditor::bypassStompDown() const
 {
     return bypassBtn.isDown() || bypassBtn.isLatched()
-        || juce::KeyPress::isKeyCurrentlyDown (juce::KeyPress::insertKey);
+        || juce::KeyPress::isKeyCurrentlyDown (juce::KeyPress::deleteKey);
 }
 
 int GlitchwaveAudioProcessorEditor::computeLayer() const
@@ -431,9 +439,27 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     meterIn.fall  (fallPerFrame);
     meterOut.fall (fallPerFrame);
 
-    // keep the layer honest every frame (CTRL/ALT can change any time)
+    // keep the layer honest every frame (keys can change any time)
     updateKnobModes();
     const int layer = knobLayer;
+
+    // ---- v0.30 permanent key-state readout + stomp held-indicators -----------
+    {
+        const bool ins = juce::KeyPress::isKeyCurrentlyDown (juce::KeyPress::insertKey);
+        const bool del = juce::KeyPress::isKeyCurrentlyDown (juce::KeyPress::deleteKey);
+        static const char* layerNames[4] = { "X", "Y", "Z", "A" };
+        juce::String s;
+        s << "INS[" << (ins ? "#" : "-") << "]  DEL[" << (del ? "#" : "-") << "]  LAYER "
+          << layerNames[juce::jlimit (0, 3, layer)];
+        if (tapStompBtn.isLatched() || bypassBtn.isLatched())
+            s << "  latched";
+        keyReadout.setText (s, juce::dontSendNotification);
+        keyReadout.setColour (juce::Label::textColourId,
+                              layer == 3 ? kRed : layer == 2 ? kAmber
+                                               : layer == 1 ? kBlue : kDim);
+        tapStompBtn.setIndicated (tapStompDown());
+        bypassBtn.setIndicated (bypassStompDown());
+    }
 
     const bool filterOn = lpfModeParam != nullptr && lpfModeParam->getIndex() > 0;
 
@@ -449,10 +475,10 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     // ---- knob labels follow the active layer ---------------------------------
     struct Cap { const char* t[6]; };
     static const Cap caps[4] = {
-        {{ "FREQ",     "LPF",      "MIX",     "RATE",  "RATE",  "GAIN" }},
-        {{ "GAIN",     "RES",      "VOL",     "TARGET","TARGET","TARGET" }},
-        {{ "L1 DEPTH", "L2 DEPTH", "DRV/RNG", "SHAPE", "SHAPE", "MODE" }},
-        {{ "-",        "-",        "STARVE",  "-",     "-",     "-" }},
+        {{ "FREQ",     "LPF",      "MIX",     "RATE",  "RATE",  "GAIN" }},    // X
+        {{ "GAIN",     "RES",      "VOL",     "SHAPE", "SHAPE", "MODE" }},    // Y
+        {{ "L1 DEPTH", "L2 DEPTH", "DRV/RNG", "TARGET","TARGET","TARGET" }},  // Z
+        {{ "-",        "-",        "STARVE",  "-",     "-",     "-" }},       // A
     };
     const juce::Colour layerCol = layer == 1 ? kBlue : layer >= 2 ? kAmber : kText;
     const juce::Colour smallCol = layer == 0 ? kDim  : layerCol;
@@ -517,10 +543,11 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
         led.setLevel (1.0f);
     };
 
-    // LFO 1
-    if (layer == 1)      targetShow (lfo1Led, lfo1TargetParam);
+    // LFO 1 — Y shows SHAPE, Z shows TARGET (or blue depth while the Z
+    // depth knob is being turned)
+    if (layer == 1)      shapeShow (lfo1Led, lfo1ShapeParam);
     else if (layer == 2) (lfo1Ctx == kCtxDepth ? depthShow (lfo1Led, "lfo1depth")
-                                               : shapeShow (lfo1Led, lfo1ShapeParam));
+                                               : targetShow (lfo1Led, lfo1TargetParam));
     else if (layer == 0 && lfo1Ctx == kCtxShape)  shapeShow  (lfo1Led, lfo1ShapeParam);
     else if (layer == 0 && lfo1Ctx == kCtxTarget) targetShow (lfo1Led, lfo1TargetParam);
     else if (layer == 0 && lfo1Ctx == kCtxDepth)  depthShow  (lfo1Led, "lfo1depth");
@@ -531,9 +558,9 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     }
 
     // LFO 2
-    if (layer == 1)      targetShow (lfo2Led, lfo2TargetParam);
+    if (layer == 1)      shapeShow (lfo2Led, lfo2ShapeParam);
     else if (layer == 2) (lfo2Ctx == kCtxDepth ? depthShow (lfo2Led, "lfo2depth")
-                                               : shapeShow (lfo2Led, lfo2ShapeParam));
+                                               : targetShow (lfo2Led, lfo2TargetParam));
     else if (layer == 0 && lfo2Ctx == kCtxShape)  shapeShow  (lfo2Led, lfo2ShapeParam);
     else if (layer == 0 && lfo2Ctx == kCtxTarget) targetShow (lfo2Led, lfo2TargetParam);
     else if (layer == 0 && lfo2Ctx == kCtxDepth)  depthShow  (lfo2Led, "lfo2depth");
@@ -543,9 +570,11 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
         lfo2Led.setLevel ((processor.readVis (1) + 1.0f) * 0.5f);
     }
 
-    // ENV
-    if (layer == 1)      targetShow (envLed, envTargetParam);
-    else if (layer == 2) (envCtx == kCtxCombo ? comboShow (envLed) : modeShow (envLed));
+    // ENV — Y shows MODE, Z shows TARGET (or DRV/RNG combo while the Z Mix
+    // knob is being turned)
+    if (layer == 1)      modeShow (envLed);
+    else if (layer == 2) (envCtx == kCtxCombo ? comboShow (envLed)
+                                              : targetShow (envLed, envTargetParam));
     else if (layer == 0 && envCtx == kCtxTarget) targetShow (envLed, envTargetParam);
     else if (layer == 0 && envCtx == kCtxMode)   modeShow  (envLed);
     else if (layer == 0 && envCtx == kCtxCombo)  comboShow (envLed);
@@ -601,7 +630,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("GLITCHWAVE 567", 20, 10, 400, 30, juce::Justification::centredLeft);
     g.setColour (kDim);
     g.setFont (juce::FontOptions (12.0f));
-    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.29"),
+    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.30"),
                 20, 38, 500, 16, juce::Justification::centredLeft);
 
     drawSection (g, { 12,  60, 1036, 206 }, "PEDAL");
@@ -620,19 +649,19 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawText ("KNOB LAYERS", 700, 150, 260, 11, juce::Justification::centredLeft);
     g.setFont (juce::FontOptions (8.5f));
     g.setColour (kDim);
-    g.drawText ("C1            FREQ    LPF      MIX       RATE  RATE  GAIN",
+    g.drawText ("X              FREQ    LPF      MIX       RATE  RATE  GAIN",
                 700, 164, 340, 10, juce::Justification::centredLeft);
     g.setColour (kBlue);
-    g.drawText ("C2 hold TAP   GAIN    RES      VOL       TGT   TGT   TGT",
+    g.drawText ("Y  TAP / INS   GAIN    RES      VOL       SHP   SHP   MODE",
                 700, 176, 340, 10, juce::Justification::centredLeft);
     g.setColour (kAmber);
-    g.drawText ("C3 hold BYP   L1 DEP  L2 DEP   DRV/RNG   SHP   SHP   MODE",
+    g.drawText ("Z  BYP / DEL   L1 DEP  L2 DEP   DRV/RNG   TGT   TGT   TGT",
                 700, 188, 340, 10, juce::Justification::centredLeft);
     g.setColour (kRed);
-    g.drawText ("BOTH held: MIX = STARVE (secret), other knobs dead",
+    g.drawText ("A  BOTH: MIX = STARVE (secret), other knobs dead",
                 700, 200, 340, 10, juce::Justification::centredLeft);
     g.setColour (kDim);
-    g.drawText ("sim: hold DELETE = TAP, INSERT = BYPASS - or RIGHT-CLICK a stomp to latch",
+    g.drawText ("hold the key or the stomp - or RIGHT-CLICK a stomp to latch it",
                 700, 212, 340, 10, juce::Justification::centredLeft);
 
     g.setColour (kText);
@@ -679,13 +708,13 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     static const char* kModeN[5]  = { "Off", "LP", "BP", "HP", "Notch" };
     static const char* kComboN[4] = { "Up-Hi", "Up-Lo", "Dn-Hi", "Dn-Lo" };
 
-    chart (122, 344, "SHAPE  A=2Hz B=5Hz", kShapeNames, 8, 0, false);
-    chart (232, 344, "TARGET  solid",      kT1,         8, 0, true);
-    chart (466, 344, "SHAPE  A=2Hz B=5Hz", kShapeNames, 8, 0, false);
-    chart (576, 344, "TARGET  solid",      kT2,         8, 0, true);
-    chart (800, 330, "TARGET  solid",      kTE,     8, 0, true);
-    chart (912, 330, "MODE  3Hz",          kModeN,  5, 0, false);
-    chart (912, 414, "DRV/RNG  solid",     kComboN, 4, 0, false);
+    chart (122, 344, "SHAPE (Y) A=2Hz B=5Hz", kShapeNames, 8, 0, false);
+    chart (232, 344, "TARGET (Z) solid",      kT1,         8, 0, true);
+    chart (466, 344, "SHAPE (Y) A=2Hz B=5Hz", kShapeNames, 8, 0, false);
+    chart (576, 344, "TARGET (Z) solid",      kT2,         8, 0, true);
+    chart (800, 330, "TARGET (Z) solid",      kTE,     8, 0, true);
+    chart (912, 330, "MODE (Y) 3Hz",          kModeN,  5, 0, false);
+    chart (912, 414, "DRV/RNG (Z) solid",     kComboN, 4, 0, false);
 
     g.setColour (kDim);
     g.setFont (juce::FontOptions (8.0f));
@@ -697,11 +726,11 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
 
     // panel hints: where each section's C2/C3 things live
     g.setFont (juce::FontOptions (8.5f, juce::Font::bold));
-    g.drawText (juce::String::fromUTF8 ("C2 RATE-KNOB = TARGET · C3 = SHAPE · C3 FREQ-KNOB = DEPTH"),
+    g.drawText (juce::String::fromUTF8 ("Y RATE-KNOB = SHAPE · Z = TARGET · Z FREQ-KNOB = DEPTH"),
                 20, 502, 310, 11, juce::Justification::centredLeft);
-    g.drawText (juce::String::fromUTF8 ("C2 RATE-KNOB = TARGET · C3 = SHAPE · C3 LPF-KNOB = DEPTH"),
+    g.drawText (juce::String::fromUTF8 ("Y RATE-KNOB = SHAPE · Z = TARGET · Z LPF-KNOB = DEPTH"),
                 360, 502, 310, 11, juce::Justification::centredLeft);
-    g.drawText (juce::String::fromUTF8 ("C2 GAIN-KNOB = TARGET · C3 = MODE · C3 MIX-KNOB = DRV/RNG"),
+    g.drawText (juce::String::fromUTF8 ("Y GAIN-KNOB = MODE · Z = TARGET · Z MIX-KNOB = DRV/RNG"),
                 704, 502, 336, 11, juce::Justification::centredLeft);
     g.drawText (juce::String::fromUTF8 ("TAP \xc3\x97""4 = RATE"), 360, 490, 150, 11,
                 juce::Justification::centredLeft);
@@ -714,11 +743,9 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.setColour (kDim);
     g.setFont (juce::FontOptions (8.5f));
     g.drawText (juce::String::fromUTF8 ("TAP \xc3\x97""4 avg = LFO1 RATE · BYPASS held: LFO2 RATE · 0.2\xe2\x80\x93""20 Hz"),
-                450, 704, 270, 12, juce::Justification::centredLeft);
-    g.drawText ("HOLD TAP (DEL) = C2, BYPASS (INS) = C3, BOTH = STARVE",
-                450, 717, 270, 12, juce::Justification::centredLeft);
-    g.drawText ("9-18 V ctr-neg, protected & filtered; digital never starved",
-                450, 730, 270, 12, juce::Justification::centredLeft);
+                450, 718, 270, 12, juce::Justification::centredLeft);
+    g.drawText ("Y = TAP/INS held, Z = BYPASS/DEL held, A = both = STARVE",
+                450, 731, 270, 12, juce::Justification::centredLeft);
 
     // CV jack panels: hardwired routing, printed like a control plate
     g.setColour (kText);
@@ -781,6 +808,7 @@ void GlitchwaveAudioProcessorEditor::resized()
         tapStompBtn.setBounds (190, 706, 40, 40);
         bypassBtn.setBounds   (300, 706, 40, 40);
         bypassLed.setBounds   (354, 716, 20, 20);
+        keyReadout.setBounds  (450, 700, 270, 16);   // v0.30 permanent readout
         boostBtn.setBounds    (724, 714, 92, 24);
         clipBtn.setBounds     (824, 714, 138, 24);
         supplyBtn.setBounds   (970, 714, 70, 24);

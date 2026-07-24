@@ -1,4 +1,37 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.29)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.30)
+
+## v0.30 — Jason's X/Y/Z/A layer spec + permanent key readout
+
+Fresh layer layout per Jason's table (X = plain knobs, exactly the v0.23
+feel; every control audited — nothing homeless):
+
+| knob      | X        | Y (TAP/INS)   | Z (BYP/DEL)  | A (both) |
+|-----------|----------|---------------|--------------|----------|
+| Freq      | Freq     | Gain (dirt)   | LFO1 Depth   | dead     |
+| LPF       | LPF      | Res           | LFO2 Depth   | dead     |
+| Mix       | Mix      | Vol           | DRV/RNG      | STARVE   |
+| LFO1 Rate | Rate     | LFO1 Shape    | LFO1 Target  | dead     |
+| LFO2 Rate | Rate     | LFO2 Shape    | LFO2 Target  | dead     |
+| Env Gain  | Gain     | Mode          | Env Target   | dead     |
+
+Keys: **INS = TAP held (Y), DEL = BYPASS held (Z), both = A** (Jason's
+mapping — note reversed vs v0.29). Right-click latch stays. Stomps now
+light while their key is held (indicators) and remain clickable. Tap tempo
+unchanged: rolling 4-tap average, LFO1 (BYPASS held: LFO2), 0.2–20 Hz.
+
+**Permanent key-state readout** in the footswitch strip — raw INS/DEL as
+the app sees them + the active layer letter, coloured per layer. Stays on
+every version until the control scheme is signed off, so any key problem is
+visible in one glance: key held but INS[-] = the app never saw it; INS[#]
+but LAYER X = logic bug; both right but knob dead = slider bug.
+
+Kept from the C-scheme era: 8 clip modes A–H, boost 2nd-to-last, LFO2 rate
+knob, drag-latch (a knob keeps the function it was grabbed with), velocity
+fine-adjust disabled, double-click = default.
+
+---
+
+
 
 ## v0.29 — sim keys: DELETE = TAP held, INSERT = BYPASS held
 

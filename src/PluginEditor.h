@@ -116,6 +116,14 @@ public:
     // whatever eats lone modifier keys on the host machine.
     bool isLatched() const noexcept { return latched; }
 
+    // v0.30: the stomp doubles as an INDICATOR — it lights while its layer
+    // key (INS/DEL) is held, so the widget shows the held state AND can be
+    // activated by mouse.
+    void setIndicated (bool b) noexcept
+    {
+        if (indicated != b) { indicated = b; repaint(); }
+    }
+
     void cancelPressActions() noexcept
     {
         consumed = true;      // suppress the tap and any further hold ticks
@@ -164,14 +172,15 @@ public:
         const float a = isEnabled() ? 1.0f : 0.35f;
         g.setColour (juce::Colour (0xff15171b).withMultipliedAlpha (a));
         g.fillEllipse (btn.expanded (3.0f));
-        g.setColour (((pressed || latched) ? juce::Colour (0xff53565e)
-                                           : juce::Colour (0xff2e3340))
+        g.setColour (((pressed || latched || indicated) ? juce::Colour (0xff53565e)
+                                                        : juce::Colour (0xff2e3340))
                          .withMultipliedAlpha (a));
         g.fillEllipse (btn);
-        // latched = "foot is on it": accent ring so the held state is obvious
-        g.setColour ((latched ? juce::Colour (0xffffd166) : juce::Colour (0xff9aa0a6))
+        // latched/indicated = "foot is on it": accent ring makes it obvious
+        const bool held = latched || indicated;
+        g.setColour ((held ? juce::Colour (0xffffd166) : juce::Colour (0xff9aa0a6))
                          .withMultipliedAlpha (a));
-        g.drawEllipse (btn, latched ? 2.5f : 1.5f);
+        g.drawEllipse (btn, held ? 2.5f : 1.5f);
     }
 
 private:
@@ -184,7 +193,7 @@ private:
     }
 
     bool pressed = false, holdStarted = false, consumed = false;
-    bool latched = false, rightPress = false;
+    bool latched = false, rightPress = false, indicated = false;
 };
 
 // ---------------------------------------------------------------------------
@@ -266,20 +275,20 @@ private:
     void setupKnob (juce::Slider& s, juce::Label& l, const juce::String& name, bool big);
     void setGateOpen (bool shouldBeOpen);
 
-    // ---- v0.24 control scheme: three knob layers, ZERO section buttons -----
+    // ---- v0.30 control scheme: Jason's X/Y/Z/A knob layers -----------------
     // Six knobs (Freq, LPF, Mix | LFO1 Rate, LFO2 Rate, Env Gain):
-    //   C1 (nothing held):        Freq   LPF     Mix     Rate   Rate   Gain
-    //   C2 (TAP held / CTRL):     Gain   Res     Vol     Target Target Target
-    //   C3 (BYPASS held / SHIFT): L1 Dep L2 Dep  DrvRng  Shape  Shape  Mode
-    //   BOTH held (secret):       Mix knob -> STARVE; every other knob dead.
+    //   X (nothing held):        Freq   LPF     Mix      Rate   Rate   Gain
+    //   Y (TAP held / INS):      Gain   Res     Vol      Shape  Shape  Mode
+    //   Z (BYPASS held / DEL):   L1 Dep L2 Dep  DrvRng   Target Target Target
+    //   A (BOTH held, secret):   Mix knob -> STARVE; every other knob dead.
     // TAP stomp: 4-tap average sets LFO1 rate (with BYPASS held: LFO2 rate),
     // rolling window of the last 4 taps, clamped 0.2..20 Hz. 1-3 taps arm
-    // only. A committed tap re-seeds that LFO's chaos generators.
-    // The section LEDs show the live value colour of whatever the active
-    // layer edits (Jason: "I couldn't see it as it was changing" — fixed).
-    bool tapStompDown() const;      // TAP stomp or CTRL (sim stand-in)
-    bool bypassStompDown() const;   // BYPASS stomp or SHIFT (sim stand-in)
-    int  computeLayer() const;      // 0 = C1, 1 = C2, 2 = C3, 3 = secret starve
+    // only. A committed tap re-seeds that LFO's chaos generators. Stomps
+    // light while their key is held (indicators) and stay clickable; a
+    // permanent readout shows raw INS/DEL state + the active layer.
+    bool tapStompDown() const;      // TAP stomp, latch, or INS held
+    bool bypassStompDown() const;   // BYPASS stomp, latch, or DEL held
+    int  computeLayer() const;      // 0 = X, 1 = Y, 2 = Z, 3 = A (starve)
     void updateKnobModes();         // swap slider attachments per layer
     void knobTouched();             // any knob move consumes the held stomps
     void applyZone (juce::Slider& s, const char* paramID, int zones,
@@ -298,6 +307,7 @@ private:
     juce::Label  lfo1RateLabel, lfo2RateLabel, envGainLabel;
     std::unique_ptr<SliderAttachment> lfo1RateAtt, lfo2RateAtt, envGainAtt;
     juce::Label  lfo1ValueLabel, lfo2ValueLabel;   // live rate · depth readouts
+    juce::Label  keyReadout;                       // v0.30: permanent key-state readout
     PPMMeter meterIn, meterOut;
 
     // cached choice params the LEDs display
