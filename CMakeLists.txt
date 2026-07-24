@@ -18,7 +18,7 @@ juce_add_plugin(Glitchwave567
     COMPANY_NAME "JasonDIY"
     PLUGIN_MANUFACTURER_CODE Jdgw
     PLUGIN_CODE Gw67
-    FORMATS VST3 LV2 Standalone AU AUv3
+    FORMATS VST3 LV2 Standalone AU
     LV2URI "https://github.com/jdg511/567Terror"
     PRODUCT_NAME "Glitchwave 567"
     IS_SYNTH FALSE

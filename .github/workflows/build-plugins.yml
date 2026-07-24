@@ -1,0 +1,71 @@
+name: build-plugins
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            name: macos-universal
+            cmake_flags: '"-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64"'
+          - os: windows-latest
+            name: windows-x64
+            cmake_flags: ''
+          - os: ubuntu-latest
+            name: linux-x86_64
+            cmake_flags: ''
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Linux build deps
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2-dev libx11-dev libxext-dev \
+            libxrandr-dev libxinerama-dev libxcursor-dev libfreetype6-dev \
+            libfontconfig1-dev libwebkit2gtk-4.1-dev libglu1-mesa-dev \
+            libcurl4-openssl-dev
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release ${{ matrix.cmake_flags }}
+
+      - name: Build
+        run: cmake --build build --config Release -j 4
+
+      - name: Package
+        shell: bash
+        run: |
+          mkdir -p out
+          cp -r "build/Glitchwave567_artefacts/Release/." out/
+          find out -name "*.a" -delete -o -name "*.lib" -delete -o -name "*.exp" -delete
+          ls -R out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: glitchwave567-${{ matrix.name }}
+          path: out
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Zip per platform
+        run: |
+          cd artifacts
+          for d in */; do (cd "$d" && zip -r "../${d%/}.zip" .); done
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*.zip
