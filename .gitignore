@@ -29,3 +29,4 @@ CMakeUserPresets.json
 Thumbs.db
 .DS_Store
 build_err.txt
+dist/
