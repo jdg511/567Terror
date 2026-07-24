@@ -111,15 +111,27 @@ public:
 
     bool isDown() const noexcept { return pressed; }
 
+    // v0.28 sim aid: RIGHT-CLICK latches the stomp "held" until the next
+    // right-click — a pure-mouse stand-in for a held footswitch, immune to
+    // whatever eats lone modifier keys on the host machine.
+    bool isLatched() const noexcept { return latched; }
+
     void cancelPressActions() noexcept
     {
         consumed = true;      // suppress the tap and any further hold ticks
         stopTimer();
     }
 
-    void mouseDown (const juce::MouseEvent&) override
+    void mouseDown (const juce::MouseEvent& e) override
     {
         if (! isEnabled()) return;
+        if (e.mods.isRightButtonDown())   // right-click = toggle the latch
+        {
+            rightPress = true;
+            latched = ! latched;
+            repaint();
+            return;
+        }
         pressed = true;
         holdStarted = false;
         consumed = false;
@@ -132,6 +144,7 @@ public:
 
     void mouseUp (const juce::MouseEvent&) override
     {
+        if (rightPress) { rightPress = false; return; }
         stopTimer();
         if (pressed && ! holdStarted && ! consumed && onTap)
             onTap();
@@ -151,11 +164,14 @@ public:
         const float a = isEnabled() ? 1.0f : 0.35f;
         g.setColour (juce::Colour (0xff15171b).withMultipliedAlpha (a));
         g.fillEllipse (btn.expanded (3.0f));
-        g.setColour ((pressed ? juce::Colour (0xff53565e) : juce::Colour (0xff2e3340))
+        g.setColour (((pressed || latched) ? juce::Colour (0xff53565e)
+                                           : juce::Colour (0xff2e3340))
                          .withMultipliedAlpha (a));
         g.fillEllipse (btn);
-        g.setColour (juce::Colour (0xff9aa0a6).withMultipliedAlpha (a));
-        g.drawEllipse (btn, 1.5f);
+        // latched = "foot is on it": accent ring so the held state is obvious
+        g.setColour ((latched ? juce::Colour (0xffffd166) : juce::Colour (0xff9aa0a6))
+                         .withMultipliedAlpha (a));
+        g.drawEllipse (btn, latched ? 2.5f : 1.5f);
     }
 
 private:
@@ -168,6 +184,7 @@ private:
     }
 
     bool pressed = false, holdStarted = false, consumed = false;
+    bool latched = false, rightPress = false;
 };
 
 // ---------------------------------------------------------------------------

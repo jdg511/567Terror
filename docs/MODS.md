@@ -1,4 +1,21 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.27)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.28)
+
+## v0.28 — right-click latch: the sim no longer depends on modifier keys
+
+Frame analysis of Jason's second video showed both layers working during
+long stable key-holds, then the layer state bouncing C3→C1→C3 at a regular
+~1.2 s rhythm with the cursor parked — and across v0.24–27 every LONE
+modifier (ALT, then CTRL, then SHIFT) misbehaved while every COMBO passed.
+That's a system-level lone-modifier interceptor (hotkey utility / keyboard
+driver), not the plugin. Fix: **right-click a stomp to LATCH it held**
+(accent ring shows the latch; right-click again to release). Latch TAP = C2,
+latch BYPASS = C3, latch both = Starve. Pure mouse, host-independent.
+CTRL/SHIFT still work as best-effort extras. Bonus: bypass-latch + tap ×4
+(LFO2 tempo) is now a one-handed gesture.
+
+---
+
+
 
 ## v0.27 — bugfix: layer switches no longer bleed into the wrong knob
 
