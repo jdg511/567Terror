@@ -10,7 +10,7 @@ must reproduce.
 |---|---|
 | Assembly | **PCBWay full turnkey** — PCBWay sources and solders EVERY part including pots, stomp switches, jacks, and the Pico module. Consequence: all mechanical parts must be LCSC/PCBWay-sourceable, and enclosure drilling must match the board exactly (1:1 drill template is a hard deliverable). Jason's only build steps: drill the 1590XX, drop the board in, tighten the nuts. |
 | Board count | **Two-board stack: control board + main board** (final, 2026-07-25): the control board carries the 6 pots, 2 stomps, and all topside LEDs and bolts to the enclosure face; the main board carries the whole audio/power/Pico circuit plus the wall-mounted jacks, joined to the control board by a keyed pin header. Standard commercial-pedal construction — panel alignment is set by one board, the circuit lives on the other. Both boards in the same PCBWay turnkey order. |
-| Enclosure | **Hammond 1590XX** (dimensions verified against Hammond drawing during layout) |
+| Enclosure | **Hammond 1590XX** — VERIFIED against official drawing (vendor_assets/): external 145.2×121.2×39.3, internal 140.7×116.7 (lid face) → 139.0×115.0 (closed face), depth 35.0, wall 2.0, floor 2.25, 4× Ø9 corner bosses 6-32. Max PCB 138×114 with corner notches. |
 | CV jacks | **2 CV inputs + 1 CV output**, on the side walls |
 | CAD | KiCad — authored in the cloud (v7 file format), opens cleanly in Jason's KiCad 10.0 |
 
@@ -119,8 +119,18 @@ LEFT WALL:                                            RIGHT WALL:
         └─────────────────────────────────────────┘
 ```
 
-- 6 pots: 9 mm board-mount (RK09K style, LCSC-sourceable), knobs in a
-  symmetric 3+3 grid — **on the control board**.
+- 6 pots: **ALPS RK09K1130A5R (LCSC C209779), B10k linear, vertical snap-in,
+  20 mm knurled shaft** — on the control board, symmetric 3+3 grid.
+  Availability finding: LCSC stocks no threaded-bushing vertical 9 mm pot, so
+  shafts pass through plain Ø7 face holes with no nuts; the control board is
+  retained on standoffs. All six pots are B10k linear; the Pico applies
+  tapers (audio-law VOL etc.) in firmware — sonically identical to the plugin.
+- Selected jacks (all LCSC-verified, PCB right-angle, wall-mounted):
+  2× HOOYA PJ-603A 6.35 mm (C309273, M12 nut, axis 5.0 mm above PCB);
+  3× XKB PJ-3410 3.5 mm switched (C5146694, M7.7 nut, axis 4.5 mm) for
+  CV1/CV2/CVOUT — switch contact = free normalling detect on CV inputs;
+  1× XKB DC-044A 2.1 mm barrel (C319095, 3 A, axis ~3.7 mm TO VERIFY).
+  Wall-hole heights differ per jack type; the 1:1 drill template covers it.
 - 2 stomps: soft-touch momentary SPST, **on the control board** with the pots
   (the layer system needs momentary action; latching done in firmware per
   the v0.27/v0.31 rules; true-bypass relay or buffered bypass decided at
@@ -146,11 +156,18 @@ LEFT WALL:                                            RIGHT WALL:
 5. Pico firmware — **separate follow-on task** after the board is ordered
    (the board is designed so firmware can be updated over USB forever).
 
-## Open items (flagged, not blocking)
+## Open items — RESOLVED (Jason, 2026-07-25)
 
-- Bypass style: relay true-bypass vs buffered bypass (sim is buffered with
-  10 ms crossfade — buffered matches the sim exactly and is simpler).
-- VOL: VCA vs digipot (VCA shares the gate stage — likely free).
-- Momentary stomp part choice (soft-touch SPST) — confirm feel with Jason.
-- Exact 1590XX drawing + pot/stomp heights verified via find-missing-3d-models
-  before layout.
+- Bypass style: **BUFFERED** (matches the sim's 10 ms crossfade exactly; the
+  crossfade is performed by the gate/bypass LM13700 VCA under Pico control —
+  silent switching, no relay clunk, input buffer always in-circuit).
+- VOL: **VCA** (LM13700, shares the output gate stage) — VOL stays a live
+  modulation target in hardware exactly like the plugin.
+- Stomps: **soft-touch momentary SPST** confirmed.
+- 1590XX drawing + pot/stomp/jack heights: DONE 2026-07-25 (see
+  vendor_assets/MANIFEST.md). Residual items: download Hammond STEP/DXF,
+  verify DC-044A axis height, confirm PBS-24B 12 mm thread from a drawing.
+- NEW ISSUE from sourcing: LCSC has NO soft-touch footswitch — the stomps
+  (Daier PBS-24B-2 style) cannot be part of the turnkey order. Decision
+  pending with Jason: hand-wire 2 wires/stomp after assembly (recommended)
+  vs consigning switches to PCBWay.
