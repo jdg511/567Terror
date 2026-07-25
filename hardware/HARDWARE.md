@@ -9,7 +9,7 @@ must reproduce.
 | Decision | Choice |
 |---|---|
 | Assembly | **PCBWay full turnkey** — PCBWay sources and solders EVERY part including pots, stomp switches, jacks, and the Pico module. Consequence: all mechanical parts must be LCSC/PCBWay-sourceable, and enclosure drilling must match the board exactly (1:1 drill template is a hard deliverable). Jason's only build steps: drill the 1590XX, drop the board in, tighten the nuts. |
-| Board count | **Single board**, everything board-mounted (pots, stomps, jacks), screws in behind the face of the enclosure |
+| Board count | **Main board + stomp daughterboard** (decided 2026-07-25, supersedes single-board): pots, LEDs, jacks and all circuitry on the main board behind the face; the two stomp switches on a small second PCB, joined by a short ribbon/header. Both boards in the same PCBWay order/panel. |
 | Enclosure | **Hammond 1590XX** (dimensions verified against Hammond drawing during layout) |
 | CV jacks | **2 CV inputs + 1 CV output**, on the side walls |
 | CAD | KiCad — authored in the cloud (v7 file format), opens cleanly in Jason's KiCad 10.0 |
@@ -120,10 +120,11 @@ LEFT WALL:                                            RIGHT WALL:
 ```
 
 - 6 pots: 9 mm Alpha board-mount (RK09K style), knobs in a symmetric 3+3 grid.
-- 2 stomps: 3PDT or soft-touch momentary **board-mounted** (the layer system
-  needs momentary action → use momentary SPST stomps, latching done in
-  firmware per the v0.27/v0.31 rules; true-bypass relay or buffered bypass
-  decided at schematic time).
+- 2 stomps: soft-touch momentary SPST, **on their own daughterboard** (the
+  layer system needs momentary action; latching done in firmware per the
+  v0.27/v0.31 rules; true-bypass relay or buffered bypass decided at
+  schematic time). Daughterboard → main board via a keyed 4-pin header
+  (GND, 3V3, STOMP1, STOMP2) + short ribbon.
 - Jacks: Amphenol ACJM / Neutrik NMJ box-style board-mount 1/4″ on the back
   wall + side walls; DC = board-mount barrel (2.1 mm center-negative).
 - Internal: 3 gate trim pots, 3-pos DIP or slide switches (JFET / ladder /
@@ -133,7 +134,8 @@ LEFT WALL:                                            RIGHT WALL:
 
 ## Deliverables of STEP 3
 
-1. `hardware/kicad/glitchwave567/` — full KiCad project (schematic + board).
+1. `hardware/kicad/glitchwave567/` — full KiCad project (schematic + main
+   board + stomp daughterboard).
 2. `hardware/fab/` — gerber+drill ZIP for PCBWay, assembly BOM (with LCSC/
    distributor part numbers) + centroid CPL for their SMT service.
 3. `hardware/drill_template.pdf` — 1:1 face/side/back drilling template.
