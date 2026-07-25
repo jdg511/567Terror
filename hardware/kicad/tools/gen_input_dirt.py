@@ -86,8 +86,8 @@ C(s.add('Device:C','C35','100n',(281.94,187.96)), {1:'VA', 2:'GND'})
 # unused LM13700 half (OTA-B) + both darlington buffers: parked
 C(s.add('Amplifier_Operational:LM13700','U3','LM13700',(302.26,116.84),unit=1),
   {14:'VREF', 13:'VREF', 12:None, 16:'GND', 15:None})
-C(s.add('Amplifier_Operational:LM13700','U3','LM13700',(302.26,146.05),unit=2), {10:None, 9:None})
-C(s.add('Amplifier_Operational:LM13700','U3','LM13700',(302.26,165.1),unit=4), {7:None, 8:None})
+C(s.add('Amplifier_Operational:LM13700','U3','LM13700',(302.26,146.05),unit=2), {10:'GND', 9:None})
+C(s.add('Amplifier_Operational:LM13700','U3','LM13700',(302.26,165.1),unit=4), {7:'GND', 8:None})
 # spare U2 units parked as followers
 C(s.add('Amplifier_Operational:TL074','U2','TL074',(302.26,187.96),unit=3), {10:'VREF', 9:'U2C_FB', 8:'U2C_FB'})
 C(s.add('Amplifier_Operational:TL074','U2','TL074',(302.26,213.36),unit=4), {12:'VREF', 13:'U2D_FB', 14:'U2D_FB'})

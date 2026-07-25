@@ -27,7 +27,7 @@ C(s.add('Amplifier_Operational:TL074','U17','TL074',(137.16,45.72),unit=2), {6:'
 C(s.add('Device:R','R134','100k',(149.86,63.5)), {1:'RECT_OUT', 2:'FW_SUM'})
 # ballistics: attack 4.7k into 1u, release 150k bleed
 C(s.add('Device:D','D82','1N4148W',(165.1,45.72),angle=90), {2:'RECT_OUT', 1:'BAL_A'})
-C(s.add('Device:R','R135','4.7k',(177.8,45.72),angle=90), {1:'BAL_A', 2:'ENV_C'})
+C(s.add('Device:R','R135','3.9k',(177.8,45.72),angle=90), {1:'BAL_A', 2:'ENV_C'})
 C(s.add('Device:C','C80','1u',(190.5,63.5)), {1:'ENV_C', 2:'VREF'})
 C(s.add('Device:R','R136','150k',(203.2,63.5)), {1:'ENV_C', 2:'VREF'})
 C(s.add('Amplifier_Operational:TL074','U17','TL074',(228.6,45.72),unit=3), {10:'ENV_C', 9:'ENV_B', 8:'ENV_B'})

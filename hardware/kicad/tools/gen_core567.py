@@ -29,7 +29,8 @@ s.text('LM567 TONE DECODER — THE HEART. NO CAPS on LFIL/OFIL (DNP pads only): 
 u5 = s.add(LM, 'U5', 'LM567 (SO-8)', (78.74, 55.88))
 C(u5, {3:'IN567', 4:'V567', 5:'RT_SQ', 6:'CT_NODE', 2:'LFIL_PAD', 1:'OFIL_PAD', 8:'Q_OC', 7:'GND'})
 # input coupling (original C3 220n into ~20k internal impedance = 36Hz HP)
-C(s.add('Device:C','C3','220n',(40.64,55.88),angle=90), {1:'V567_DRIVE', 2:'IN567'})
+C(s.add('Device:C','C3','220n',(30.48,55.88),angle=90), {1:'V567_DRIVE', 2:'IN567A'})
+C(s.add('Device:R','R53','1k (pin3 clamp-current limit)',(48.26,55.88),angle=90), {1:'IN567A', 2:'IN567'})
 C(s.add('Device:C','C40','100n',(96.52,30.48)), {1:'V567', 2:'GND'})
 # DNP experiment pads (not fitted, not in BOM)
 C(s.add('Device:C','C41','DNP-LFIL',(120.65,55.88), dnp=True), {1:'LFIL_PAD', 2:'GND'})
@@ -48,7 +49,8 @@ C(s.add('Device:R','R42','47k',(214.63,63.5)), {1:'LOCK_SENSE', 2:'GND'})
 
 # ---- timing: OTA as variable RT --------------------------------------------
 s.text('FREQ: U7 OTA emulates the timing resistor. Pin5 square -> attenuator -> OTA -> current into CT node; Iabc (FREQ_CV) sweeps f0 over decades.', (25.4, 96.52), 1.8)
-s.text('R38 100k parallel floor keeps the VCO alive at Iabc=0. Original was R6 3.6k + B10k pot with C4 220n (304-1148Hz).', (25.4, 100.33), 1.8)
+s.text('R38 100k floor keeps the VCO alive at Iabc=0. NOTE: 100k is outside the 2k-20k documented RT range -', (25.4, 100.33), 1.8)
+s.text('OTA-off f0 accuracy/drift unspecified (fine: floor only). Mux rON adds ~3.6*rON/Reff timing error - firmware cal per range.', (25.4, 104.14), 1.8)
 # divider reference for OTA inputs: V567/2 (its own midpoint, not VA VREF)
 C(s.add('Device:R','R43','47k',(33.02,116.84)), {1:'V567', 2:'V567_MID'})
 C(s.add('Device:R','R44','47k',(33.02,134.62)), {1:'V567_MID', 2:'GND'})
@@ -87,8 +89,8 @@ C(s.add('Amplifier_Operational:LM13700','U7','LM13700',(33.02,190.5),unit=5), {1
 C(s.add('Device:C','C50','100n',(48.26,190.5)), {1:'VA', 2:'GND'})
 C(s.add('Amplifier_Operational:LM13700','U7','LM13700',(71.12,190.5),unit=1),
   {14:'VREF', 13:'VREF', 12:None, 16:'GND', 15:None})
-C(s.add('Amplifier_Operational:LM13700','U7','LM13700',(96.52,190.5),unit=2), {10:None, 9:None})
-C(s.add('Amplifier_Operational:LM13700','U7','LM13700',(114.3,190.5),unit=4), {7:None, 8:None})
+C(s.add('Amplifier_Operational:LM13700','U7','LM13700',(96.52,190.5),unit=2), {10:'GND', 9:None})
+C(s.add('Amplifier_Operational:LM13700','U7','LM13700',(114.3,190.5),unit=4), {7:'GND', 8:None})
 
 s.save('/home/claude/work/hardware/kicad/glitchwave567/core567.kicad_sch')
 ok, rep = verify_netlist('/home/claude/work/hardware/kicad/glitchwave567/core567.kicad_sch', EXPECT)

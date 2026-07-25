@@ -42,22 +42,24 @@ C(u20, {1:'PWM_FREQ', 2:'PWM_DIRT', 3:'GND', 4:'PWM_MIXW', 5:'PWM_MIXD',
         21:'STOMP1', 22:'STOMP2', 23:'GND', 24:'MUX_S0', 25:'MUX_S1',
         26:'MUX_S2', 27:'MUX_S3', 28:'GND', 29:None, 30:None,
         31:'ADC_MUXED', 32:'CV1_ADC', 33:'GND', 34:'CV2_ADC',
-        35:'ADC_VREF_F', 36:'3V3', 37:None, 38:'GND', 39:'PICO_VSYS', 40:None})
+        35:None, 36:'3V3', 37:None, 38:'GND', 39:'PICO_VSYS', 40:None})  # ADC_VREF: onboard 201R/2.2u - leave NC
 C(s.add('Device:D_Schottky','D90','SS14 (+5V->VSYS)',(33.02,45.72),angle=90), {2:'+5V', 1:'PICO_VSYS'})
 C(s.add('Device:C_Polarized','C90','10u',(33.02,63.5)), {1:'PICO_VSYS', 2:'GND'})
 C(s.add('Device:C','C91','100n',(45.72,63.5)), {1:'3V3', 2:'GND'})
-C(s.add('Device:R','R160','10R',(127.0,45.72),angle=90), {1:'3V3', 2:'ADC_VREF_F'})
-C(s.add('Device:C','C92','1u',(139.7,63.5)), {1:'ADC_VREF_F', 2:'GND'})
+# (ADC_VREF external feed removed per Pico datasheet review - onboard filter is authoritative)
 
 # ---- PWM RC filters (1-pole here; the CV consumers add series R) -----------
-s.text('PWM CV filters: 10k + 100n per CV (~160Hz pole; PWM at 100kHz+ in firmware).', (25.4, 152.4), 1.8)
-pwm_map = [('PWM_FREQ','FREQ_CV'), ('PWM_DIRT','DIRT_CV'), ('PWM_MIXW','MIX_WET_CV'),
+s.text('PWM CV filters: 10k + 100n per CV (~160Hz pole; PWM at 100kHz+ in firmware). FREQ gets a SECOND pole (pitch = most FM-audible).', (25.4, 152.4), 1.8)
+pwm_map = [('PWM_FREQ','FREQ_F1'), ('PWM_DIRT','DIRT_CV'), ('PWM_MIXW','MIX_WET_CV'),
            ('PWM_MIXD','MIX_DRY_CV'), ('PWM_SVFF','SVF_F_CV'), ('PWM_SVFQ','SVF_Q_CV'),
            ('PWM_GATE','GATE_VOL_CV'), ('PWM_BYP','BYPASS_CV'), ('PWM_STARVE','STARVE_CV')]
 for i,(src,dst) in enumerate(pwm_map):
     x = 30.48 + (i%5)*27.94; y = 165.1 + (i//5)*27.94
     C(s.add('Device:R', f'R16{i+1}', '10k', (x, y), angle=90), {1:src, 2:dst})
     C(s.add('Device:C', f'C9{i+3}', '100n', (x+8.89, y+12.7)), {1:dst, 2:'GND'})
+
+C(s.add('Device:R','R174','10k',(170.18,165.1),angle=90), {1:'FREQ_F1', 2:'FREQ_CV'})
+C(s.add('Device:C','C107','100n',(179.07,177.8)), {1:'FREQ_CV', 2:'GND'})
 
 # ---- ADC mux (74HC4067 on 3V3) --------------------------------------------
 s.text('16ch ADC mux (3V3): C0-5 pot wipers, C6 env, C7 VA sense, C8 lock sense, C9-11 gate trims, C12-15 grounded.', (177.8, 22.86), 1.8)

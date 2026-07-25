@@ -15,10 +15,10 @@ def C(part, mapping):
         EXPECT.setdefault(net, set()).add(f'{part.ref}.{pin}')
 
 mp1584 = make_symbol('MP1584EN', 'U',
-    pins=[('2','VIN','L',0,'power_in'), ('7','EN','L',1,'input'),
-          ('6','COMP','L',2,'input'), ('8','FREQ','L',3,'input'), ('5','FB','L',4,'input'),
-          ('1','BST','R',0,'input'), ('3','SW','R',1,'output'),
-          ('4','GND','B',3,'power_in')], body_w=20.32)
+    pins=[('7','VIN','L',0,'power_in'), ('2','EN','L',1,'input'),
+          ('3','COMP','L',2,'input'), ('6','FREQ','L',3,'input'), ('4','FB','L',4,'input'),
+          ('8','BST','R',0,'input'), ('1','SW','R',1,'output'),
+          ('5','GND','B',3,'power_in')], body_w=20.32)  # pin numbers = datasheet SOIC-8
 MP = register_custom(s, mp1584)
 
 # ---- block: input + reverse protection + VA --------------------------------
@@ -30,18 +30,21 @@ C(s.add('Device:D_Zener','D100','BZT52C10',(83.82,66.04)), {1:'VPROT', 2:'QGATE'
 C(s.add('Device:FerriteBead','FB100','600R/3A',(96.52,45.72),angle=90), {1:'VPROT', 2:'VA'})
 C(s.add('Device:C_Polarized','C100','220u/35V',(109.22,66.04)), {1:'VA', 2:'GND'})
 C(s.add('Device:C','C101','100n',(121.92,66.04)), {1:'VA', 2:'GND'})
+C(s.add('Device:D_TVS','D106','SMAJ18A (VA transient clamp)',(134.62,66.04)), {1:'VA', 2:'GND'})
 
 # ---- block: 78L09 -> V567 --------------------------------------------------
 s.text('LM567 rail: 78L09 (chip abs max ~9-10V)', (152.4, 25.4), 1.8)
-C(s.add('Regulator_Linear:L78L09_SOT89','U18','L78L09',(167.64,45.72)), {3:'VA', 1:'V567', 2:'GND'})
+C(s.add('Regulator_Linear:L78L09_SOT89','U18','L78L09',(167.64,45.72)), {3:'VA', 1:'V9RAW', 2:'GND'})
+C(s.add('Device:D','D105','1N4148W (drop: LM567C abs max 9V vs 78L09 +5% tol)',(190.5,38.1),angle=180), {2:'V9RAW', 1:'V567'})
 C(s.add('Device:C','C102','1u',(154.94,66.04)), {1:'VA', 2:'GND'})
 C(s.add('Device:C','C103','1u',(180.34,66.04)), {1:'V567', 2:'GND'})
 
 # ---- block: MP1584 buck -> +5V --------------------------------------------
 s.text('5V buck (Pico VSYS + WS2812). VERIFY COMP/FREQ/FB values vs MP1584 datasheet at review pass', (33.02, 96.52), 1.8)
-C(s.add(MP,'U19','MP1584EN',(63.5,127.0)), {2:'VA', 7:'BUCK_EN', 6:'BUCK_COMP', 8:'BUCK_FREQ', 5:'BUCK_FB', 1:'BUCK_BST', 3:'BUCK_SW', 4:'GND'})
-C(s.add('Device:C','C104','10u/25V',(33.02,127.0)), {1:'VA', 2:'GND'})
+C(s.add(MP,'U19','MP1584EN',(63.5,127.0)), {7:'VA', 2:'BUCK_EN', 3:'BUCK_COMP', 6:'BUCK_FREQ', 4:'BUCK_FB', 8:'BUCK_BST', 1:'BUCK_SW', 5:'GND'})
+C(s.add('Device:C','C104','10u/50V X7R',(33.02,127.0)), {1:'VA', 2:'GND'})
 C(s.add('Device:R','R101','100k',(33.02,144.78)), {1:'VA', 2:'BUCK_EN'})
+C(s.add('Device:R','R114','24k9 (EN divider - EN abs max 6V!)',(17.78,144.78)), {1:'BUCK_EN', 2:'GND'})
 C(s.add('Device:R','R102','51k',(43.18,157.48),angle=90), {1:'BUCK_COMP', 2:'BUCK_COMPC'})
 C(s.add('Device:C','C105','3n3',(58.42,157.48),angle=90), {1:'BUCK_COMPC', 2:'GND'})
 C(s.add('Device:R','R103','100k',(73.66,157.48),angle=90), {1:'BUCK_FREQ', 2:'GND'})
