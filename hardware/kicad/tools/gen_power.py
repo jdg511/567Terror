@@ -33,13 +33,13 @@ C(s.add('Device:C','C101','100n',(121.92,66.04)), {1:'VA', 2:'GND'})
 
 # ---- block: 78L09 -> V567 --------------------------------------------------
 s.text('LM567 rail: 78L09 (chip abs max ~9-10V)', (152.4, 25.4), 1.8)
-C(s.add('Regulator_Linear:L78L09_SOT89','U11','L78L09',(167.64,45.72)), {3:'VA', 1:'V567', 2:'GND'})
+C(s.add('Regulator_Linear:L78L09_SOT89','U18','L78L09',(167.64,45.72)), {3:'VA', 1:'V567', 2:'GND'})
 C(s.add('Device:C','C102','1u',(154.94,66.04)), {1:'VA', 2:'GND'})
 C(s.add('Device:C','C103','1u',(180.34,66.04)), {1:'V567', 2:'GND'})
 
 # ---- block: MP1584 buck -> +5V --------------------------------------------
 s.text('5V buck (Pico VSYS + WS2812). VERIFY COMP/FREQ/FB values vs MP1584 datasheet at review pass', (33.02, 96.52), 1.8)
-C(s.add(MP,'U12','MP1584EN',(63.5,127.0)), {2:'VA', 7:'BUCK_EN', 6:'BUCK_COMP', 8:'BUCK_FREQ', 5:'BUCK_FB', 1:'BUCK_BST', 3:'BUCK_SW', 4:'GND'})
+C(s.add(MP,'U19','MP1584EN',(63.5,127.0)), {2:'VA', 7:'BUCK_EN', 6:'BUCK_COMP', 8:'BUCK_FREQ', 5:'BUCK_FB', 1:'BUCK_BST', 3:'BUCK_SW', 4:'GND'})
 C(s.add('Device:C','C104','10u/25V',(33.02,127.0)), {1:'VA', 2:'GND'})
 C(s.add('Device:R','R101','100k',(33.02,144.78)), {1:'VA', 2:'BUCK_EN'})
 C(s.add('Device:R','R102','51k',(43.18,157.48),angle=90), {1:'BUCK_COMP', 2:'BUCK_COMPC'})

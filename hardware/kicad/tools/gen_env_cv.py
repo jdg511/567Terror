@@ -19,7 +19,7 @@ s.text('Routing/assignment of the envelope is FIRMWARE (matches plugin mod syste
 C(s.add('Device:R','R130','100k',(33.02,45.72),angle=90), {1:'DRY_CLEAN', 2:'FW_IN'})
 C(s.add('Amplifier_Operational:TL074','U17','TL074',(58.42,45.72),unit=1), {2:'FW_IN', 3:'VREF', 1:'FW_A'})
 C(s.add('Device:D','D80','1N4148W',(73.66,38.1),angle=90), {2:'FW_A', 1:'FW_N'})
-C(s.add('Device:D','D81','1N4148W',(73.66,55.88),angle=90), {1:'FW_A', 2:'FW_IN2'})
+C(s.add('Device:D','D81','1N4148W',(73.66,55.88),angle=90), {1:'FW_A', 2:'FW_IN'})
 C(s.add('Device:R','R131','100k',(86.36,38.1)), {1:'FW_N', 2:'FW_IN'})
 C(s.add('Device:R','R132','100k',(99.06,45.72),angle=90), {1:'FW_N', 2:'FW_SUM'})
 C(s.add('Device:R','R133','200k',(119.38,45.72),angle=90), {1:'FW_IN', 2:'FW_SUM'})

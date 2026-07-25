@@ -1,0 +1,395 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-07-25T02:54:04",
+    "ignored_checks": [
+        {
+            "description": "Global label only appears once in the schematic",
+            "key": "single_global_label"
+        },
+        {
+            "description": "Four connection points are joined together",
+            "key": "four_way_junction"
+        },
+        {
+            "description": "SPICE model issue",
+            "key": "simulation_model_issue"
+        },
+        {
+            "description": "Assigned footprint doesn't match footprint filters",
+            "key": "footprint_filter"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning"
+    ],
+    "kicad_version": "10.0.4",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787",
+            "violations": [
+                {
+                    "description": "The current configuration does not include the symbol library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol U19 [MP1584EN]",
+                            "pos": {
+                                "x": 0.635,
+                                "y": 1.27
+                            },
+                            "uuid": "80275578-99be-40de-8c30-c49e461e123f"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_issues"
+                },
+                {
+                    "description": "Symbol 'BCP56' doesn't match copy in library 'Transistor_BJT'",
+                    "items": [
+                        {
+                            "description": "Symbol Q11 [BCP56]",
+                            "pos": {
+                                "x": 3.2512,
+                                "y": 1.27
+                            },
+                            "uuid": "00f3d1bd-e94d-41f8-9b72-6b272d42d331"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "Symbol 'Q_NPN_Darlington_BCE' not found in symbol library 'Device'",
+                    "items": [
+                        {
+                            "description": "Symbol Q1 [Q_NPN_Darlington_BCE]",
+                            "pos": {
+                                "x": 0.635,
+                                "y": 1.8796
+                            },
+                            "uuid": "054d059b-33de-4ad9-88da-fcc608d9b39f"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_issues"
+                },
+                {
+                    "description": "The current configuration does not include the symbol library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol U5 [LM567]",
+                            "pos": {
+                                "x": 0.7874,
+                                "y": 0.5588
+                            },
+                            "uuid": "4cb941bd-3b65-4388-9415-6264b9129825"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_issues"
+                },
+                {
+                    "description": "Symbol 'MMBT3904' doesn't match copy in library 'Transistor_BJT'",
+                    "items": [
+                        {
+                            "description": "Symbol Q2 [MMBT3904]",
+                            "pos": {
+                                "x": 2.6924,
+                                "y": 1.905
+                            },
+                            "uuid": "98ebd02a-e179-4dfc-9803-0e37073df43b"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "Symbol 'MMBT3904' doesn't match copy in library 'Transistor_BJT'",
+                    "items": [
+                        {
+                            "description": "Symbol Q3 [MMBT3904]",
+                            "pos": {
+                                "x": 2.9083,
+                                "y": 1.905
+                            },
+                            "uuid": "48f22b46-3b93-4b8f-a2ed-fe5b0c2e8342"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "The current configuration does not include the symbol library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol U20 [RPi_Pico]",
+                            "pos": {
+                                "x": 0.762,
+                                "y": 0.889
+                            },
+                            "uuid": "d69423f3-2a1a-45b0-b14b-f66cdc392895"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_issues"
+                },
+                {
+                    "description": "Symbol 'R_Potentiometer' doesn't match copy in library 'Device'",
+                    "items": [
+                        {
+                            "description": "Symbol RV1 [R_Potentiometer]",
+                            "pos": {
+                                "x": 2.5654,
+                                "y": 1.1684
+                            },
+                            "uuid": "3d021b03-f244-42e1-b9b2-f6b32bcd70a5"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "Symbol 'R_Potentiometer' doesn't match copy in library 'Device'",
+                    "items": [
+                        {
+                            "description": "Symbol RV2 [R_Potentiometer]",
+                            "pos": {
+                                "x": 2.7686,
+                                "y": 1.1684
+                            },
+                            "uuid": "cfcdfdf8-ec0a-4ac1-bbfc-1d311abbf340"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "Symbol 'R_Potentiometer' doesn't match copy in library 'Device'",
+                    "items": [
+                        {
+                            "description": "Symbol RV3 [R_Potentiometer]",
+                            "pos": {
+                                "x": 2.9718,
+                                "y": 1.1684
+                            },
+                            "uuid": "cbe34e52-8024-4dca-ab2e-0e281b9b5050"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "Symbol 'MMBT3904' doesn't match copy in library 'Transistor_BJT'",
+                    "items": [
+                        {
+                            "description": "Symbol Q4 [MMBT3904]",
+                            "pos": {
+                                "x": 2.667,
+                                "y": 2.159
+                            },
+                            "uuid": "85a0f2af-fba6-492b-b460-24c630d3e0ab"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "Symbol 'MMBT3904' doesn't match copy in library 'Transistor_BJT'",
+                    "items": [
+                        {
+                            "description": "Symbol Q5 [MMBT3904]",
+                            "pos": {
+                                "x": 2.8702,
+                                "y": 2.159
+                            },
+                            "uuid": "734d630e-8077-4c23-96df-6dda4fe1a17d"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "Symbol 'MMBT3904' doesn't match copy in library 'Transistor_BJT'",
+                    "items": [
+                        {
+                            "description": "Symbol Q6 [MMBT3904]",
+                            "pos": {
+                                "x": 3.0734,
+                                "y": 2.159
+                            },
+                            "uuid": "16920496-bb75-41cd-8689-a68cd1779998"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol J1 [AudioJack2_SwitchT]",
+                            "pos": {
+                                "x": 0.3302,
+                                "y": 0.4572
+                            },
+                            "uuid": "ccb12eee-e199-4611-9977-41fce395697d"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol J3 [AudioJack2_SwitchT]",
+                            "pos": {
+                                "x": 0.3302,
+                                "y": 0.8636
+                            },
+                            "uuid": "cca7a931-cfcb-42a8-a56e-8f8570ed1172"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol J2 [AudioJack2]",
+                            "pos": {
+                                "x": 0.8382,
+                                "y": 0.4572
+                            },
+                            "uuid": "5f6c1e40-95ba-48c2-954b-92ad8eb246de"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol J4 [AudioJack2_SwitchT]",
+                            "pos": {
+                                "x": 0.8382,
+                                "y": 0.8636
+                            },
+                            "uuid": "94323cc6-88e0-4342-96e6-e23db494fe5d"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol J6 [AudioJack2]",
+                            "pos": {
+                                "x": 1.3462,
+                                "y": 0.8636
+                            },
+                            "uuid": "005dfef5-5ba2-4679-9fb4-6d950317f9d8"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                }
+            ]
+        },
+        {
+            "path": "/power/",
+            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/e801c1e6-17ce-4ac2-a5fb-ac59051baef3",
+            "violations": []
+        },
+        {
+            "path": "/output/",
+            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/76e580bd-7276-48f8-89e3-7a546b45efe9",
+            "violations": [
+                {
+                    "description": "Pins of type Output and Output are connected",
+                    "items": [
+                        {
+                            "description": "Symbol U15 Pin 5 [Output, Line]",
+                            "pos": {
+                                "x": 0.889,
+                                "y": 1.905
+                            },
+                            "uuid": "2a4d790c-3e1a-4bd4-8673-daafa37221d9"
+                        },
+                        {
+                            "description": "Symbol U15 Pin 12 [Output, Line]",
+                            "pos": {
+                                "x": 1.7018,
+                                "y": 1.905
+                            },
+                            "uuid": "cc52e343-a6a0-44a8-944a-b626793b36b4"
+                        }
+                    ],
+                    "severity": "error",
+                    "type": "pin_to_pin"
+                }
+            ]
+        },
+        {
+            "path": "/input_dirt/",
+            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/1a8319a9-a6c2-4fef-b2a8-8e073003154a",
+            "violations": []
+        },
+        {
+            "path": "/env_cv/",
+            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/c5e87dd4-2360-44c5-93cb-746d024435a9",
+            "violations": []
+        },
+        {
+            "path": "/core567/",
+            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/1df45449-3d65-473b-9336-38c51203ac43",
+            "violations": []
+        },
+        {
+            "path": "/mcu/",
+            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/42babe6a-7070-407a-b036-269c6f78cc00",
+            "violations": []
+        },
+        {
+            "path": "/mix_svf/",
+            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/3f9dec00-ae75-4986-b3a2-98f6d4e97a80",
+            "violations": [
+                {
+                    "description": "Pins of type Output and Output are connected",
+                    "items": [
+                        {
+                            "description": "Symbol U10 Pin 5 [Output, Line]",
+                            "pos": {
+                                "x": 1.143,
+                                "y": 0.4572
+                            },
+                            "uuid": "e2b1fc65-7b0a-4af3-a99d-a8c33eb97ac3"
+                        },
+                        {
+                            "description": "Symbol U10 Pin 12 [Output, Line]",
+                            "pos": {
+                                "x": 2.1082,
+                                "y": 0.4572
+                            },
+                            "uuid": "db4fc670-ecc0-4c2b-87c4-529b045dc0a3"
+                        }
+                    ],
+                    "severity": "error",
+                    "type": "pin_to_pin"
+                }
+            ]
+        },
+        {
+            "path": "/jacks/",
+            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/481cb742-4c6a-409b-85ea-72199d372a5c",
+            "violations": []
+        }
+    ],
+    "source": "glitchwave567.kicad_sch"
+}

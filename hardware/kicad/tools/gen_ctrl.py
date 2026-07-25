@@ -37,6 +37,10 @@ for i in range(6):
     C(s.add('Device:C',f'C{i+1}','100n',(x+15.24,163.83)), {1:'+5V', 2:'GND'})
     prev = nxt
 C(s.add('Device:C_Polarized','C7','100u',(320.04,146.05)), {1:'+5V', 2:'GND'})
+for i,(net,x) in enumerate([('+5V',280.67),('3V3',295.91),('GND',311.15)]):
+    f = s.add('power:PWR_FLAG', f'#FLG30{i}', 'PWR_FLAG', (x, 63.5))
+    connect(s, f, {1: net}, globals_=G)
+
 s.save('/home/claude/work/hardware/kicad/glitchwave567_ctrl/glitchwave567_ctrl.kicad_sch')
 ok, rep = verify_netlist('/home/claude/work/hardware/kicad/glitchwave567_ctrl/glitchwave567_ctrl.kicad_sch', EXPECT)
 print('VERIFY:', ok); print(rep)

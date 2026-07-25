@@ -14,6 +14,7 @@ def C(part, mapping):
         if net is None: EXPECT.setdefault('_FLOATING', set()).add(f'{part.ref}.{pin}')
         else: EXPECT.setdefault(net, set()).add(f'{part.ref}.{pin}')
 
+s.text('NOTE: U10A+U10B outputs tied = OTA CURRENT summing (intentional; ERC output-output waiver).', (25.4, 33.02), 1.5)
 # ---- MIX: dual VCA crossfade, currents sum into one I-to-V -----------------
 s.text('MIX crossfade: WET (raw 567 square) and DRY (Bazz Fuss) each through a VCA; output CURRENTS sum at U9A virtual ground (free mixing).', (25.4, 25.4), 1.8)
 s.text('Original mixer ratios (R9 1M wet / R10 100k dry / R11 100k fb) are reproduced by the input attenuators + firmware CV law.', (25.4, 29.21), 1.8)
@@ -106,7 +107,7 @@ C(s.add('Amplifier_Operational:LM13700','U10','LM13700',(325.12,45.72),unit=2), 
 C(s.add('Amplifier_Operational:LM13700','U10','LM13700',(325.12,63.5),unit=4), {7:None, 8:None})
 C(s.add('Amplifier_Operational:LM13700','U12','LM13700',(325.12,83.82),unit=1),
   {14:'VREF', 13:'VREF', 12:None, 16:'GND', 15:None})
-C(s.add('Amplifier_Operational:LM13700','U12','LM13700',(325.12,108.0),unit=2), {10:None, 9:None})
+C(s.add('Amplifier_Operational:LM13700','U12','LM13700',(325.12,107.95),unit=2), {10:None, 9:None})
 C(s.add('Amplifier_Operational:LM13700','U12','LM13700',(325.12,127.0),unit=4), {7:None, 8:None})
 
 s.save('/home/claude/work/hardware/kicad/glitchwave567/mix_svf.kicad_sch')

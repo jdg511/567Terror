@@ -1,0 +1,247 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-07-25T02:54:06",
+    "ignored_checks": [
+        {
+            "description": "Global label only appears once in the schematic",
+            "key": "single_global_label"
+        },
+        {
+            "description": "Four connection points are joined together",
+            "key": "four_way_junction"
+        },
+        {
+            "description": "SPICE model issue",
+            "key": "simulation_model_issue"
+        },
+        {
+            "description": "Assigned footprint doesn't match footprint filters",
+            "key": "footprint_filter"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning"
+    ],
+    "kicad_version": "10.0.4",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/ae930b8f-080a-4a2f-b4ba-9183ac811a29",
+            "violations": [
+                {
+                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol RV1 [R_Potentiometer]",
+                            "pos": {
+                                "x": 1.016,
+                                "y": 0.4572
+                            },
+                            "uuid": "1aaf99c3-aa20-40db-9b42-7379836bf775"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Symbol 'R_Potentiometer' doesn't match copy in library 'Device'",
+                    "items": [
+                        {
+                            "description": "Symbol RV1 [R_Potentiometer]",
+                            "pos": {
+                                "x": 1.016,
+                                "y": 0.4572
+                            },
+                            "uuid": "1aaf99c3-aa20-40db-9b42-7379836bf775"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol RV4 [R_Potentiometer]",
+                            "pos": {
+                                "x": 1.016,
+                                "y": 0.8382
+                            },
+                            "uuid": "e4c68e50-0684-4948-98ca-b6bd37ff857b"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Symbol 'R_Potentiometer' doesn't match copy in library 'Device'",
+                    "items": [
+                        {
+                            "description": "Symbol RV4 [R_Potentiometer]",
+                            "pos": {
+                                "x": 1.016,
+                                "y": 0.8382
+                            },
+                            "uuid": "e4c68e50-0684-4948-98ca-b6bd37ff857b"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol RV2 [R_Potentiometer]",
+                            "pos": {
+                                "x": 1.397,
+                                "y": 0.4572
+                            },
+                            "uuid": "579a2e57-30d8-44ad-afad-c28963ff7d26"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Symbol 'R_Potentiometer' doesn't match copy in library 'Device'",
+                    "items": [
+                        {
+                            "description": "Symbol RV2 [R_Potentiometer]",
+                            "pos": {
+                                "x": 1.397,
+                                "y": 0.4572
+                            },
+                            "uuid": "579a2e57-30d8-44ad-afad-c28963ff7d26"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol RV5 [R_Potentiometer]",
+                            "pos": {
+                                "x": 1.397,
+                                "y": 0.8382
+                            },
+                            "uuid": "c5787a8c-3916-40ec-9e74-234d55d97afa"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Symbol 'R_Potentiometer' doesn't match copy in library 'Device'",
+                    "items": [
+                        {
+                            "description": "Symbol RV5 [R_Potentiometer]",
+                            "pos": {
+                                "x": 1.397,
+                                "y": 0.8382
+                            },
+                            "uuid": "c5787a8c-3916-40ec-9e74-234d55d97afa"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol RV3 [R_Potentiometer]",
+                            "pos": {
+                                "x": 1.778,
+                                "y": 0.4572
+                            },
+                            "uuid": "b3341dce-d547-4ebd-9585-45337be63ad3"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Symbol 'R_Potentiometer' doesn't match copy in library 'Device'",
+                    "items": [
+                        {
+                            "description": "Symbol RV3 [R_Potentiometer]",
+                            "pos": {
+                                "x": 1.778,
+                                "y": 0.4572
+                            },
+                            "uuid": "b3341dce-d547-4ebd-9585-45337be63ad3"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol RV6 [R_Potentiometer]",
+                            "pos": {
+                                "x": 1.778,
+                                "y": 0.8382
+                            },
+                            "uuid": "ebe9f51d-d1f2-4e97-a5fe-d6af79de0949"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Symbol 'R_Potentiometer' doesn't match copy in library 'Device'",
+                    "items": [
+                        {
+                            "description": "Symbol RV6 [R_Potentiometer]",
+                            "pos": {
+                                "x": 1.778,
+                                "y": 0.8382
+                            },
+                            "uuid": "ebe9f51d-d1f2-4e97-a5fe-d6af79de0949"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol SW1 [SW_Push]",
+                            "pos": {
+                                "x": 2.286,
+                                "y": 0.4572
+                            },
+                            "uuid": "19effeda-bb65-4356-8eec-62db4165841c"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
+                    "items": [
+                        {
+                            "description": "Symbol SW2 [SW_Push]",
+                            "pos": {
+                                "x": 2.667,
+                                "y": 0.4572
+                            },
+                            "uuid": "d00db2b3-a020-4b2b-b54d-0ca63cd5744f"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                }
+            ]
+        }
+    ],
+    "source": "glitchwave567_ctrl.kicad_sch"
+}
