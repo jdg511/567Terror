@@ -9,7 +9,7 @@ must reproduce.
 | Decision | Choice |
 |---|---|
 | Assembly | **PCBWay full turnkey** — PCBWay sources and solders EVERY part including pots, stomp switches, jacks, and the Pico module. Consequence: all mechanical parts must be LCSC/PCBWay-sourceable, and enclosure drilling must match the board exactly (1:1 drill template is a hard deliverable). Jason's only build steps: drill the 1590XX, drop the board in, tighten the nuts. |
-| Board count | **Main board + stomp daughterboard** (decided 2026-07-25, supersedes single-board): pots, LEDs, jacks and all circuitry on the main board behind the face; the two stomp switches on a small second PCB, joined by a short ribbon/header. Both boards in the same PCBWay order/panel. |
+| Board count | **Two-board stack: control board + main board** (final, 2026-07-25): the control board carries the 6 pots, 2 stomps, and all topside LEDs and bolts to the enclosure face; the main board carries the whole audio/power/Pico circuit plus the wall-mounted jacks, joined to the control board by a keyed pin header. Standard commercial-pedal construction — panel alignment is set by one board, the circuit lives on the other. Both boards in the same PCBWay turnkey order. |
 | Enclosure | **Hammond 1590XX** (dimensions verified against Hammond drawing during layout) |
 | CV jacks | **2 CV inputs + 1 CV output**, on the side walls |
 | CAD | KiCad — authored in the cloud (v7 file format), opens cleanly in Jason's KiCad 10.0 |
@@ -119,12 +119,15 @@ LEFT WALL:                                            RIGHT WALL:
         └─────────────────────────────────────────┘
 ```
 
-- 6 pots: 9 mm Alpha board-mount (RK09K style), knobs in a symmetric 3+3 grid.
-- 2 stomps: soft-touch momentary SPST, **on their own daughterboard** (the
-  layer system needs momentary action; latching done in firmware per the
-  v0.27/v0.31 rules; true-bypass relay or buffered bypass decided at
-  schematic time). Daughterboard → main board via a keyed 4-pin header
-  (GND, 3V3, STOMP1, STOMP2) + short ribbon.
+- 6 pots: 9 mm board-mount (RK09K style, LCSC-sourceable), knobs in a
+  symmetric 3+3 grid — **on the control board**.
+- 2 stomps: soft-touch momentary SPST, **on the control board** with the pots
+  (the layer system needs momentary action; latching done in firmware per
+  the v0.27/v0.31 rules; true-bypass relay or buffered bypass decided at
+  schematic time).
+- Control board ↔ main board: keyed 2×8 header carrying GND/3V3, the 6 pot
+  wipers, 2 stomp lines, WS2812 data, and the discrete LED lines. All analog
+  audio stays on the main board — only DC control signals cross the header.
 - Jacks: Amphenol ACJM / Neutrik NMJ box-style board-mount 1/4″ on the back
   wall + side walls; DC = board-mount barrel (2.1 mm center-negative).
 - Internal: 3 gate trim pots, 3-pos DIP or slide switches (JFET / ladder /
@@ -135,7 +138,7 @@ LEFT WALL:                                            RIGHT WALL:
 ## Deliverables of STEP 3
 
 1. `hardware/kicad/glitchwave567/` — full KiCad project (schematic + main
-   board + stomp daughterboard).
+   board + control board).
 2. `hardware/fab/` — gerber+drill ZIP for PCBWay, assembly BOM (with LCSC/
    distributor part numbers) + centroid CPL for their SMT service.
 3. `hardware/drill_template.pdf` — 1:1 face/side/back drilling template.
