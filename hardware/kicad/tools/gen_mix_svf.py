@@ -85,7 +85,7 @@ s.text('Mode select: CD4051B on VA rail. ch0=Off(bypass) ch1=LP ch2=BP ch3=HP ch
 C(s.add('Device:R','R85','100k',(154.94,190.5),angle=90), {1:'SVF_LP', 2:'NOTCH_SUM'})
 C(s.add('Device:R','R86','100k',(154.94,203.2),angle=90), {1:'SVF_HP', 2:'NOTCH_SUM'})
 C(s.add('Amplifier_Operational:TL074','U9','TL074',(180.34,196.85),unit=4), {13:'NOTCH_SUM', 12:'VREF', 14:'SVF_NOTCH'})
-C(s.add('Device:R','R87','50k',(193.04,215.9)), {1:'SVF_NOTCH', 2:'NOTCH_SUM'})
+C(s.add('Device:R','R87','51k',(193.04,215.9)), {1:'SVF_NOTCH', 2:'NOTCH_SUM'})
 u13 = s.add('Analog_Switch:CD4051B','U13','CD4051B',(228.6,203.2))
 C(u13, {3:'FILT_OUT', 13:'MIX_OUT', 14:'SVF_LP', 15:'SVF_BP', 12:'SVF_HP', 1:'SVF_NOTCH',
         5:None, 2:None, 4:None,

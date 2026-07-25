@@ -50,7 +50,7 @@ C(s.add('Device:C','C105','3n3',(58.42,157.48),angle=90), {1:'BUCK_COMPC', 2:'GN
 C(s.add('Device:R','R103','100k',(73.66,157.48),angle=90), {1:'BUCK_FREQ', 2:'GND'})
 C(s.add('Device:C','C106','100n',(96.52,114.3),angle=90), {1:'BUCK_BST', 2:'BUCK_SW'})
 C(s.add('Device:D_Schottky','D101','SS34',(96.52,144.78)), {1:'BUCK_SW', 2:'GND'})    # K=1 to SW, A=2 to GND
-C(s.add('Device:L','L100','22uH/3A',(111.76,127.0),angle=270), {1:'BUCK_SW', 2:'+5V'})
+C(s.add('Device:L','L100','22uH/3A SMDRI127',(111.76,127.0),angle=270), {1:'BUCK_SW', 2:'+5V'})
 C(s.add('Device:C','C107','22u',(127.0,144.78)), {1:'+5V', 2:'GND'})
 C(s.add('Device:C','C108','22u',(139.7,144.78)), {1:'+5V', 2:'GND'})
 C(s.add('Device:R','R104','40k2 1%',(152.4,127.0)), {1:'+5V', 2:'BUCK_FB'})

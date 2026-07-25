@@ -351,7 +351,7 @@ def _auto_footprint(libid, value, ref):
     if entry == '74AHCT1G125':
         return 'Package_TO_SOT_SMD:SOT-23-5'
     if entry == 'L':
-        return 'Inductor_SMD:L_Bourns-SRN8040_8x8.15mm'
+        return 'Inductor_SMD:L_12x12mm_H8mm'
     if entry == 'FerriteBead':
         return 'Inductor_SMD:L_1206_3216Metric'
     if entry == 'WS2812B':

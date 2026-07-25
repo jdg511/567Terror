@@ -43,7 +43,7 @@ s.text('JFET J201 Fetzer-Valve stage (ships IN): big 2nd harmonic, asym squish. 
 C(s.add('Device:C','C73','100n',(33.02,116.84),angle=90), {1:'B6_OUT', 2:'JF_G'})
 C(s.add('Device:R','R108A','1M',(45.72,134.62)), {1:'JF_G', 2:'GND'})
 C(s.add('Device:Q_NJFET_DGS','QJ1','MMBFJ201',(63.5,116.84)), {1:'JF_D', 2:'JF_G', 3:'JF_S'})
-C(s.add('Device:R','R109A','847R (Fetzer Rs)',(76.2,134.62)), {1:'JF_S', 2:'GND'})
+C(s.add('Device:R','R109A','845R 1% (Fetzer Rs)',(76.2,134.62)), {1:'JF_S', 2:'GND'})
 C(s.add('Device:R','R110A','15k',(76.2,99.06)), {1:'VA', 2:'JF_D'})
 C(s.add('Device:C','C74','1u',(96.52,116.84),angle=90), {1:'JF_D', 2:'JF_AC'})
 C(s.add('Device:R','R111A','220k',(109.22,134.62)), {1:'JF_AC', 2:'VREF'})
