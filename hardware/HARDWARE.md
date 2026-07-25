@@ -178,3 +178,32 @@ LEFT WALL:                                            RIGHT WALL:
   'PRO' PCB-mount soft-touch, same format) and solders them into the
   footprint — 6 pins, no wires. Wire pads kept on the footprint as
   belt-and-suspenders for the solder-lug AC05 variant.
+
+## STATUS 2026-07-25 — FAB-READY ✅ (commit 1949fc3)
+
+Both boards passed KiCad 10 DRC with **0 unconnected items and 0 electrical
+violations** (no shorts, no clearance, no hole errors). Residual warnings are
+cosmetic silkscreen overlaps (fab clips silk over pads) and 4 courtyard
+kisses ≤0.4 mm with bodies verified clear (C47/U8, C110/C43, C109/C94,
+Q11/U9). Stackup: 4-layer, F.Cu route / In1 solid GND plane / In2 route /
+B.Cu route, 138×114 mm, 11 mm corner notches.
+
+What shipped into `hardware/fab/`:
+
+- `glitchwave567_main_gerbers.zip`, `glitchwave567_ctrl_gerbers.zip` —
+  PCBWay-uploadable 4-layer gerber+drill archives (one per board).
+- `pos_main.csv`, `pos_ctrl.csv` — pick-and-place centroids.
+- `drill_template_1to1.pdf` — print at 100 % for the 1590XX drilling.
+- `README_PCBWAY.md` — ordering guide (specs, turnkey sourcing notes,
+  Digi-Key stomp caveat, DNP warning for the LFIL/OFIL "voice" pads).
+
+3D renders: `hardware/kicad/render_main_top.png`, `render_main_bottom.png`,
+`render_ctrl_top.png`. Assembly BOM: `hardware/BOM.xlsx` (MAIN 297 lines,
+CONTROL 22, first-article checklist sheet).
+
+Routing toolchain that got us here lives in `hardware/kicad/tools/`:
+`router.py` (grid A* bulk router), `microroute.py` (exact-geometry
+single-net closer — SHAPE.Collide-based, paths DRC-clean by construction),
+`surgical.py` / `mover.py` / `finalize2.py` / `finalize3.py` / `dangling.py`
+(DRC repair, part relocation, GND via-in-pad + fragment stitching, stub
+cleanup). Next: Pico firmware plan (`FIRMWARE_PLAN.md`), PCBWay order.
