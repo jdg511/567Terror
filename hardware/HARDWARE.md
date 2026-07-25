@@ -170,8 +170,11 @@ LEFT WALL:                                            RIGHT WALL:
 - Stomp turnkey gap: **RESOLVED** — PCBWay turnkey sources from Digi-Key/
   Mouser/Arrow/Avnet, not just LCSC. Selected: **Suntsu SSWFS-S01 soft-touch
   SPST momentary stomp** (PBS-24B-2 form factor, M12×1.0 bushing, 100k
-  cycles, $2.95, Digi-Key stocked). Control board gets the PC-pin footprint
-  (variant SSWFS-S01-AA09/AC09-HWH, Digi-Key Marketplace — confirm PCBWay
-  will buy Marketplace-fulfilled at order time); fallback = solder-lug
-  SSWFS-S01-AC05-HWH from Digi-Key's own stock, shipped loose, 2 wires to
-  the same control-board pads. Footprint carries both options.
+  cycles, $2.95, Digi-Key stocked). Jason's call: **PCB-pin mounting** —
+  control board carries the SSWFS-S01-AA09/AC09-HWH PC-pin footprint.
+  Sourcing priority: (1) PCBWay buys the PC-pin variant on the turnkey BOM
+  (Digi-Key Marketplace listing — confirm with PCBWay at order time);
+  (2) Jason orders 2 himself (Digi-Key Marketplace or Love My Switches
+  'PRO' PCB-mount soft-touch, same format) and solders them into the
+  footprint — 6 pins, no wires. Wire pads kept on the footprint as
+  belt-and-suspenders for the solder-lug AC05 variant.
