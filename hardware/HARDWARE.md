@@ -55,12 +55,12 @@ Recommended element per controlled parameter (SMD, PCBWay-sourceable):
 
 | Parameter | Range (from sim) | Element | Notes |
 |---|---|---|---|
-| 567 FREQ | 0.2 Hz – 6 kHz | DAC/PWM current source into RT node + **4 switched timing caps** (analog mux 74HC4052) | stock RT/CT only covers ~300–1150 Hz; 4 cap decades × current span covers the full range |
-| Dirt GAIN | ×1.1 – ×300 | digipot (MCP42100 half) as input attenuator into fixed-gain Bazz Fuss drive | log law done in firmware |
+| 567 FREQ | 0.2 Hz – 6 kHz | LM13700 OTA emulates the timing resistor (pin-5 square → OTA → current into CT node; Iabc = FREQ CV sweeps f0 over decades) + CD4052B selects 1 of 4 timing caps (47n/1u/22u/470u). R38 100k parallel floor keeps the VCO alive at zero CV | stock RT/CT only covered ~300–1150 Hz |
+| Dirt GAIN | ×1.1 – ×300 | LM13700 VCA attenuator into fixed ×300 stage feeding the Bazz Fuss (digipot dropped: a 5 V digipot cannot pass audio referenced to VREF=9 V at 18 V supply) | log law done in firmware |
 | SVF cutoff | 20 Hz – 8.8 kHz (Lo/Hi) | **LM13700 OTA state-variable filter**, cutoff = Iabc from PWM CV | classic CV-controlled SVF; Lo/Hi range = firmware scaling |
-| SVF Q | 0.25 – 8 | digipot in the damping leg | |
+| SVF Q | 0.25 – 8 | LM13700 VCA in the damping leg (voltage-controlled resonance, synth-style) | |
 | MIX crossfade | D100/FX0 … D0/FX100 | LM13700 dual-VCA crossfade | |
-| VOL | 0–100% | LM13700 VCA (or digipot — decided at schematic time) | |
+| VOL | 0–100% | LM13700 VCA (decided: VCA — shares the gate stage; VOL×gate product computed in firmware, one VCA does both) | |
 | Output gate | −96 dB fade | same VOL VCA, driven by firmware gate logic (thresh/hold/fade **trim pots** read by Pico ADC) | gate LED topside driven by Pico |
 | STARVE | rail sag → 5 V floor | op-amp rail servo: PWM CV sets the Bazz Fuss local rail, hard 5 V floor in hardware | both-stomps-held gesture, per sim |
 | Env follower | Mu-Tron ballistics | **analog** full-wave rectifier + 4 ms/150 ms ballistics → Pico ADC; routing to targets done in firmware | keeps the Mu-Tron feel analog, routing flexible |
@@ -88,12 +88,12 @@ All electrolytics ≥25 V; op-amps 36 V-rated (TL074 family).
 |---|---|---|
 | Op-amps (buffers, filters, voicing, gate, servos) | TL074 ×4–5 | SOIC-14 |
 | Tone demodulator | LM567 (LM567CMX) | SOIC-8 |
-| Dirt | MMBTA18 (or BC847C) + 1N4148W | SOT-23 / SOD-123 |
+| Dirt | MMBTA13 darlington + 1N4148W (classic Bazz Fuss velcro) | SOT-23 / SOD-123 |
 | Output JFET stage | MMBFJ201 | SOT-23 |
 | Ladder diodes | 1N4148W array (asym −3/−6 network per v0.24 curves) | SOD-123 |
 | OTA (SVF + VCAs) | LM13700 ×2 | SOIC-16 |
-| Digipots | MCP42100 (dual 100k, SPI) ×2 | SOIC-14 |
-| Analog mux (timing caps) | 74HC4052 | TSSOP-16 |
+| Digipots | REMOVED at schematic capture — all continuous controls are LM13700 OTAs (control current has no voltage-window limit; digipot terminals are bounded by their 5 V supply while audio rides VREF up to 9 V) |
+| Analog mux (timing caps) | CD4052B (NOT 74HC — must run on the 9 V V567 rail; HC tops out at 6 V). Address lines level-shifted 3.3 V→V567 by 2× MMBT3904 (inverting; firmware flips bits) | SOIC-16 |
 | Reverse protection | AO3401A P-FET + zener gate clamp | SOT-23 |
 | 9 V reg | 78L09 | SOT-89 |
 | 5 V | MP1584EN buck (or 78M05 DPAK if EMI testing says so) | SOIC-8 |

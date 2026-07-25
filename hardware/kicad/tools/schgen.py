@@ -88,7 +88,7 @@ class Sheet:
         self.sch.titleBlock = tb
         self._embedded = {}
         self._refcount = {}
-    def add(self, libid, ref, value, at, angle=0, mirror=None, unit=1, footprint='', fields=None, value_offset=None):
+    def add(self, libid, ref, value, at, angle=0, mirror=None, unit=1, footprint='', fields=None, value_offset=None, dnp=False):
         if libid not in self._embedded:
             sym = _resolve_parent(get_symbol(libid), libid.split(':')[0])
             self._embedded[libid] = sym
@@ -98,7 +98,7 @@ class Sheet:
         inst.libraryNickname, inst.entryName = libid.split(':')
         inst.position = Position(X=at[0], Y=at[1], angle=angle)
         inst.unit = unit
-        inst.inBom, inst.onBoard, inst.dnp = True, True, False
+        inst.inBom, inst.onBoard, inst.dnp = (not dnp), True, dnp
         inst.mirror = mirror
         inst.uuid = str(uuidlib.uuid4())
         def prop(key, val, pid, hide=False, dy=0):
