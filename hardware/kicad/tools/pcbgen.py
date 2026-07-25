@@ -92,7 +92,7 @@ class Board:
                 x = ax + r*math.cos(th); y = ay + r*math.sin(th)
                 if not (2+w/2 < x < board_w-2-w/2 and 2+h/2 < y < board_h-2-h/2):
                     continue
-                if not self.collides(x-w/2, y-h/2, x+w/2, y+h/2):
+                if not self.collides(x-w/2, y-h/2, x+w/2, y+h/2, margin=1.05):
                     best = (x, y); break
             if best: break
         if best is None:

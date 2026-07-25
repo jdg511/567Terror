@@ -73,9 +73,14 @@ place('SW1', 18, 76, 0); place('SW2', 26, 76, 0); place('SW3', 34, 76, 0)
 place('U20', 46, 97, 90)      # Pico, long axis horizontal
 place('U21', 78, 96, 0)       # 74HC4067
 place('U22', 66, 108, 0)      # AHCT1G125
-place('U17', 97, 99, 0)       # env follower TL074
+place('U17', 124, 78, 0)       # env follower TL074
 place('J10', 96, 104, 90)      # control header
-place('RV1', 116, 96, 0); place('RV2', 124, 96, 0); place('RV3', 132, 96, 0)
+place('RV1', 116, 90, 0); place('RV2', 124, 90, 0); place('RV3', 132, 90, 0)
+# env follower output chain - explicit with routing room (ENV_B was walled)
+place('R137', 113, 99, 90)
+place('R138', 119, 102, 90)
+place('R139', 119, 96, 90)
+place('D83', 124, 99, 90)
 
 # ---- auto-place everything else near an anchor ----------------------------
 placed = set(b.fps.keys())
