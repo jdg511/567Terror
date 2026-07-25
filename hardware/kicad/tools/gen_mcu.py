@@ -74,7 +74,7 @@ C(s.add('Device:C','C120','1n',(256.54,63.5)), {1:'ADC_MUXED', 2:'GND'})
 C(s.add('Device:C','C121','100n',(256.54,83.82)), {1:'3V3', 2:'GND'})
 # gate trims (main board, under the lid like the sim's internal panel)
 for i,(tnet,ref,x) in enumerate([('TRIM_TH','RV1',256.54),('TRIM_HO','RV2',276.86),('TRIM_FA','RV3',297.18)]):
-    C(s.add('Device:R_Potentiometer',ref,'10k trim (3364W)',(x,116.84)), {1:'3V3', 2:tnet, 3:'GND'})
+    C(s.add('Device:R_Potentiometer',ref,'10k trim (3224W)',(x,116.84)), {1:'3V3', 2:tnet, 3:'GND'})
 s.text('RV1-3: gate THRESH / HOLD / FADE - the "inside the pedal" trims from the sim.', (243.84, 137.16), 1.5)
 
 # ---- stomps, WS2812 buffer, control header --------------------------------

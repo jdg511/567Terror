@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "Glitchwave")(type "KiCad")(uri "${KIPRJMOD}/../Glitchwave.pretty")(options "")(descr "Glitchwave custom footprints"))
+)

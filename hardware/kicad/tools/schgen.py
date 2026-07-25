@@ -89,6 +89,8 @@ class Sheet:
         self._embedded = {}
         self._refcount = {}
     def add(self, libid, ref, value, at, angle=0, mirror=None, unit=1, footprint='', fields=None, value_offset=None, dnp=False):
+        if not footprint:
+            footprint = _auto_footprint(libid, value, ref)
         if libid not in self._embedded:
             sym = _resolve_parent(get_symbol(libid), libid.split(':')[0])
             self._embedded[libid] = sym
@@ -300,3 +302,72 @@ def verify_netlist(sch_path, expected, allow_extra_unconnected=True):
     if floating - exp_float:
         ok = False; lines.append(f'FLOATING PINS: {sorted(floating - exp_float)}')
     return ok, ('\n'.join(lines) if lines else 'NETLIST MATCHES EXPECTED')
+
+# ---------------------------------------------------------------------------
+# automatic footprint assignment (applied in add() when footprint=='')
+# ---------------------------------------------------------------------------
+def _auto_footprint(libid, value, ref):
+    v = value.lower()
+    lib, entry = libid.split(':')
+    if entry == 'R':
+        return 'Resistor_SMD:R_0603_1608Metric'
+    if entry == 'R_Potentiometer':
+        if 'trim' in v: return 'Potentiometer_SMD:Potentiometer_Bourns_3224W_Vertical'
+        return 'Glitchwave:ALPS_RK09K1130'
+    if entry == 'C':
+        if '10u/50' in v or 'x7r' in v: return 'Capacitor_SMD:C_1206_3216Metric'
+        if v.startswith(('10u','22u')): return 'Capacitor_SMD:C_0805_2012Metric'
+        return 'Capacitor_SMD:C_0603_1608Metric'
+    if entry == 'C_Polarized':
+        if '220u' in v: return 'Capacitor_SMD:CP_Elec_8x10.2'
+        if '470u' in v: return 'Capacitor_SMD:CP_Elec_10x10.2'
+        if '100u' in v: return 'Capacitor_SMD:CP_Elec_6.3x7.7'
+        if '47u' in v:  return 'Capacitor_SMD:CP_Elec_6.3x5.4'
+        if '22u' in v:  return 'Capacitor_SMD:CP_Elec_5x5.4'
+        return 'Capacitor_SMD:CP_Elec_4x5.4'
+    if entry in ('D','D_Zener'):
+        return 'Diode_SMD:D_SOD-123'
+    if entry == 'D_Schottky':
+        if 'ss34' in v or 'ss14' in v: return 'Diode_SMD:D_SMA'
+        return 'Diode_SMD:D_SOD-123'
+    if entry == 'D_TVS':
+        return 'Diode_SMD:D_SMA'
+    if entry in ('Q_NPN_Darlington_BCE','Q_NJFET_DGS','MMBT3904','AO3401A'):
+        return 'Package_TO_SOT_SMD:SOT-23'
+    if entry == 'BCP56':
+        return 'Package_TO_SOT_SMD:SOT-223-3_TabPin2'
+    if entry == 'L78L09_SOT89':
+        return 'Package_TO_SOT_SMD:SOT-89-3'
+    if entry == 'TL074':
+        return 'Package_SO:SOIC-14_3.9x8.7mm_P1.27mm'
+    if entry in ('LM13700','CD4052B','CD4051B'):
+        return 'Package_SO:SOIC-16_3.9x9.9mm_P1.27mm'
+    if entry == 'LM567':
+        return 'Package_SO:SOIC-8_3.9x4.9mm_P1.27mm'
+    if entry == 'MP1584EN':
+        return 'Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x3mm'
+    if entry == 'CD74HC4067M':
+        return 'Package_SO:SOIC-24W_7.5x15.4mm_P1.27mm'
+    if entry == '74AHCT1G125':
+        return 'Package_TO_SOT_SMD:SOT-23-5'
+    if entry == 'L':
+        return 'Inductor_SMD:L_Bourns-SRN8040_8x8.15mm'
+    if entry == 'FerriteBead':
+        return 'Inductor_SMD:L_1206_3216Metric'
+    if entry == 'WS2812B':
+        return 'LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm'
+    if entry == 'SW_SPDT':
+        return 'Button_Switch_SMD:SW_SPDT_PCM12'
+    if entry == 'SW_Push':
+        return 'Glitchwave:SSWFS-S01'
+    if entry == 'Conn_02x08_Odd_Even':
+        return 'Connector_PinHeader_2.54mm:PinHeader_2x08_P2.54mm_Vertical'
+    if entry.startswith('Barrel_Jack'):
+        return 'Glitchwave:DC-044A'
+    if entry.startswith('AudioJack'):
+        return 'Glitchwave:PJ-603A' if '6.35' in v else 'Glitchwave:PJ-3410'
+    if entry == 'RPi_Pico':
+        return 'Glitchwave:RPi_Pico_SMD'
+    if entry == 'PWR_FLAG':
+        return ''
+    return ''

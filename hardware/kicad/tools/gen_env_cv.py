@@ -34,7 +34,7 @@ C(s.add('Amplifier_Operational:TL074','U17','TL074',(228.6,45.72),unit=3), {10:'
 # level shift VREF-referenced env down to 0..3.3 for ADC: divider + clamp
 C(s.add('Device:R','R137','100k',(243.84,45.72),angle=90), {1:'ENV_B', 2:'ENV_DIV'})
 C(s.add('Device:R','R138','47k',(256.54,63.5)), {1:'ENV_DIV', 2:'GND'})
-C(s.add('Device:D_Schottky','D83','BAT54 (clamp 3V3)',(269.24,38.1),angle=90), {2:'ENV_DIV', 1:'3V3'})
+C(s.add('Device:D_Schottky','D83','1N5819W (clamp 3V3)',(269.24,38.1),angle=90), {2:'ENV_DIV', 1:'3V3'})
 C(s.add('Device:R','R139','1k',(281.94,45.72),angle=90), {1:'ENV_DIV', 2:'ENV_ADC'})
 s.text('VERIFY at review: rectifier is VREF-referenced; divider maps env swing into 0-3.3V; BAT54 hard clamp.', (215.9, 78.74), 1.5)
 
@@ -44,7 +44,7 @@ for i,(tip, adc, y) in enumerate([('CV1_TIP','CV1_ADC',116.84), ('CV2_TIP','CV2_
     p = 130+10*i
     C(s.add('Device:R',f'R14{i*3}','100k',(33.02,y),angle=90), {1:tip, 2:f'CVD{i}'})
     C(s.add('Device:R',f'R14{i*3+1}','47k',(45.72,y+17.78)), {1:f'CVD{i}', 2:'GND'})
-    C(s.add('Device:D_Schottky',f'D8{4+i}','BAT54S',(58.42,y-7.62),angle=90), {2:f'CVD{i}', 1:'3V3'})
+    C(s.add('Device:D_Schottky',f'D8{4+i}','1N5819W',(58.42,y-7.62),angle=90), {2:f'CVD{i}', 1:'3V3'})
     C(s.add('Device:R',f'R14{i*3+2}','10k',(71.12,y),angle=90), {1:f'CVD{i}', 2:adc})
     C(s.add('Device:C',f'C8{1+i}','10n',(83.82,y+17.78)), {1:adc, 2:'GND'})
 
