@@ -62,8 +62,15 @@ match the Daier soft-touch exactly, feel inferred. Rejected: Gorva (no
 distributor stock), Bulgin MPI002 (19.2 mm, 35k cycles, ~$25, 12 N heavy),
 E-Switch PV6F240SS kept as anti-vandal fallback (Mouser, $11.45).
 
+## CAD files — OBTAINED 2026-07-25
+
+`1590XX_cad/` now holds the official Hammond CAD set (downloaded from
+hammfg.com on Jason's machine): **1590XX.stp** (STEP, 2.9 MB),
+**1590XX.igs** (IGES), **1590XX.dwg** (2D drawing — the "DXF" zip ships a
+DWG). Source zips kept alongside (`1590XX_step.zip`, `1590XX_dxf.zip`).
+Use the STEP for the enclosure/board-stack fit check.
+
 ## Not obtained / to do
 
-- Hammond 1590XX STEP + DXF (URLs above) — grab before enclosure 3D check.
 - RK09K1130A5R + PBS-24B factory drawings saved locally.
 - XKB DC-044A axis height confirmation (3D model or sample measurement).
