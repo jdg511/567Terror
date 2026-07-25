@@ -8,7 +8,7 @@ must reproduce.
 
 | Decision | Choice |
 |---|---|
-| Assembly | **PCBWay SMT assembly** for all small parts; Jason hand-solders only the mechanical parts (pots, stomps, jacks, Pico module, WS2812 if needed) |
+| Assembly | **PCBWay full turnkey** — PCBWay sources and solders EVERY part including pots, stomp switches, jacks, and the Pico module. Consequence: all mechanical parts must be LCSC/PCBWay-sourceable, and enclosure drilling must match the board exactly (1:1 drill template is a hard deliverable). Jason's only build steps: drill the 1590XX, drop the board in, tighten the nuts. |
 | Board count | **Single board**, everything board-mounted (pots, stomps, jacks), screws in behind the face of the enclosure |
 | Enclosure | **Hammond 1590XX** (dimensions verified against Hammond drawing during layout) |
 | CV jacks | **2 CV inputs + 1 CV output**, on the side walls |
