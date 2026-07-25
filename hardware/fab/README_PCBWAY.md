@@ -1,5 +1,10 @@
 # Glitchwave 567 — PCBWay ordering guide (rev 0.1, 2026-07-25)
 
+> **⛔ HOLD (2026-07-25): do not order yet.** The enclosure fit check
+> (`hardware/ENCLOSURE_FIT.md`) found the PC-pin stomp mounting buries the
+> pot knobs; the CONTROL board needs two stomp cutouts + mounting holes and
+> the stomp BOM line changes to the wire variant. Order after that rev.
+
 Two boards, one enclosure (Hammond 1590XX). Order both as **4-layer, full
 turnkey assembly**. Gerbers/drill/pos live next to this file; BOMs are the
 sheets of `hardware/BOM.xlsx` (MAIN = 297 lines, CONTROL = 22 lines).
