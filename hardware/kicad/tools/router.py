@@ -182,12 +182,16 @@ class Router:
                 c0 = self._passable(L2, gx, gy, code) and \
                      (self.owner[L2, gx, gy] == code or not self.is_pad[L2, gx, gy])
                 if not c0: via_clear = False; break
-                for ex, ey in ((1,0),(-1,0),(0,1),(0,-1)):
-                    px, py = gx+ex, gy+ey
-                    if 0 <= px < self.nx and 0 <= py < self.ny:
+                for ex in (-1,0,1):
+                    for ey in (-1,0,1):
+                        if ex == 0 and ey == 0: continue
+                        px, py = gx+ex, gy+ey
+                        if not (0 <= px < self.nx and 0 <= py < self.ny): continue
                         o = self.owner[L2, px, py]
-                        if o > 0 and o != code and not self.is_pad[L2, px, py]:
-                            via_clear = False; break
+                        if o > 0 and o != code:
+                            if self.is_pad[L2, px, py] or not (ex and ey):
+                                via_clear = False; break
+                    if not via_clear: break
                 if not via_clear: break
             if via_clear:
                 for oL in (0,1,2):
@@ -200,8 +204,9 @@ class Router:
         return None
 
     def commit(self, code, width, paths):
-        netinfo = self.b.FindNet(code) if hasattr(self.b,'FindNet') else None
-        nets = {i.GetNetCode(): i for _, i in self.b.GetNetsByName().items()}
+        nets = getattr(self, 'nets_cache', None)
+        if nets is None:
+            nets = {i.GetNetCode(): i for _, i in self.b.GetNetsByName().items()}
         ni = nets[code]
         for path in paths:
             # mark ownership + emit segments
@@ -415,7 +420,8 @@ def full_route(pcb_path, W, H, order_mode='asc', priority=(), max_rip_rounds=6):
         jobs.append((pri, spread if order_mode=='asc' else -spread, code, nm, w))
     jobs.sort()
     width_of = {code: w for _,_,code,_,w in jobs}
-    r.protected = frozenset(code for _,_,code,nm,_ in jobs if nm in POWER)
+    gnd_codes = frozenset(c for c, nm2 in names.items() if nm2 == 'GND')
+    r.protected = frozenset(code for _,_,code,nm,_ in jobs if nm in POWER) | gnd_codes
     def rip_net(vc):
         keep = []
         for t in list(board.GetTracks()):

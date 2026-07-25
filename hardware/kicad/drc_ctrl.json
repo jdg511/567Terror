@@ -1,11 +1,15 @@
 {
     "$schema": "https://schemas.kicad.org/drc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-07-25T06:50:03",
+    "date": "2026-07-25T08:16:15",
     "ignored_checks": [
         {
             "description": "Footprint has no courtyard defined",
             "key": "missing_courtyard"
+        },
+        {
+            "description": "Solder mask aperture bridges items with different nets",
+            "key": "solder_mask_bridge"
         },
         {
             "description": "Track endpoint not centered on via",
@@ -20,12 +24,22 @@
             "key": "footprint_filters_mismatch"
         },
         {
+            "description": "PTH inside courtyard",
+            "key": "pth_inside_courtyard"
+        },
+        {
+            "description": "NPTH inside courtyard",
+            "key": "npth_inside_courtyard"
+        },
+        {
             "description": "Footprint component type doesn't match footprint pads",
             "key": "footprint_type_mismatch"
         }
     ],
     "included_severities": [
-        "error"
+        "error",
+        "warning",
+        "exclusion"
     ],
     "kicad_version": "10.0.4",
     "schematic_parity": [],
@@ -33,510 +47,142 @@
     "unconnected_items": [],
     "violations": [
         {
-            "description": "Items shorting two nets (nets +5V and /WSD3)",
+            "description": "Silkscreen clearance",
             "items": [
                 {
-                    "description": "Track [+5V] on F.Cu, length 0.7778 mm",
+                    "description": "Reference field of C1",
                     "pos": {
-                        "x": 62.15,
-                        "y": 52.8
+                        "x": 69.0,
+                        "y": 59.37
                     },
-                    "uuid": "21e06281-9722-4620-a0d8-e64ea7cc042d"
+                    "uuid": "75f6ee9d-9b5a-486a-b5c1-b58393489ec7"
                 },
                 {
-                    "description": "Via [/WSD3] on F.Cu - B.Cu",
+                    "description": "PCB text 'FIZZ         Q          VOL' on F.Silkscreen",
                     "pos": {
-                        "x": 62.7,
-                        "y": 52.8
+                        "x": 69.0,
+                        "y": 58.0
                     },
-                    "uuid": "4a329321-8366-464b-bfe1-bfbf23c5cab9"
+                    "uuid": "bce1200e-7740-4056-b255-42a71a8968e1"
                 }
             ],
-            "severity": "error",
-            "type": "shorting_items"
+            "severity": "warning",
+            "type": "silk_overlap"
         },
         {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1000 mm)",
+            "description": "Silkscreen clipped by solder mask",
             "items": [
                 {
-                    "description": "Track [+5V] on F.Cu, length 31.3500 mm",
+                    "description": "PCB text 'BYPASS' on F.Silkscreen",
                     "pos": {
-                        "x": 33.55,
-                        "y": 36.3
+                        "x": 104.0,
+                        "y": 104.0
                     },
-                    "uuid": "36311fb2-8d33-4e9e-b963-b75c004c2333"
+                    "uuid": "34c47d48-7175-4b54-92ca-28528a9eead3"
                 },
                 {
-                    "description": "Via [/WSD1] on F.Cu - B.Cu",
+                    "description": "PTH pad 7 [/POT3_W] of J1",
                     "pos": {
-                        "x": 65.45,
-                        "y": 36.3
+                        "x": 103.62,
+                        "y": 104.0
                     },
-                    "uuid": "bf7cfd8a-4da9-49c1-bb0e-9becda6d79d5"
+                    "uuid": "e3d42a3e-166d-40a4-8178-e657c7cab0d8"
                 }
             ],
-            "severity": "error",
-            "type": "clearance"
+            "severity": "warning",
+            "type": "silk_over_copper"
         },
         {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1000 mm)",
+            "description": "Silkscreen clipped by solder mask",
             "items": [
                 {
-                    "description": "Via [/WSD3] on F.Cu - B.Cu",
+                    "description": "PCB text 'BYPASS' on F.Silkscreen",
                     "pos": {
-                        "x": 62.7,
-                        "y": 52.8
+                        "x": 104.0,
+                        "y": 104.0
                     },
-                    "uuid": "4a329321-8366-464b-bfe1-bfbf23c5cab9"
+                    "uuid": "34c47d48-7175-4b54-92ca-28528a9eead3"
                 },
                 {
-                    "description": "Track [+5V] on F.Cu, length 5.5000 mm",
+                    "description": "PTH pad 9 [/POT5_W] of J1",
                     "pos": {
-                        "x": 62.15,
-                        "y": 47.3
+                        "x": 106.16,
+                        "y": 104.0
                     },
-                    "uuid": "55862730-27ae-47dc-b446-3abcc530feb1"
+                    "uuid": "08665ed7-1dd0-4e34-b797-f0ee276bed08"
                 }
             ],
-            "severity": "error",
-            "type": "clearance"
+            "severity": "warning",
+            "type": "silk_over_copper"
         },
         {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.0639 mm)",
+            "description": "Silkscreen clipped by solder mask",
             "items": [
                 {
-                    "description": "Track [/WSD1] on F.Cu, length 3.8500 mm",
+                    "description": "PCB text 'BYPASS' on F.Silkscreen",
                     "pos": {
-                        "x": 69.3,
-                        "y": 36.3
+                        "x": 104.0,
+                        "y": 104.0
                     },
-                    "uuid": "6d927b6a-9bf9-4427-8d04-02a99c972d0f"
+                    "uuid": "34c47d48-7175-4b54-92ca-28528a9eead3"
                 },
                 {
-                    "description": "Track [+5V] on F.Cu, length 2.3335 mm",
+                    "description": "PTH pad 11 [/STOMP1] of J1",
                     "pos": {
-                        "x": 66.55,
-                        "y": 34.65
+                        "x": 108.7,
+                        "y": 104.0
                     },
-                    "uuid": "cd97495d-64c3-4739-990d-7fcd1f210c59"
+                    "uuid": "3fa0a16b-342f-4fe5-a89a-f1e8ee33c589"
                 }
             ],
-            "severity": "error",
-            "type": "clearance"
+            "severity": "warning",
+            "type": "silk_over_copper"
         },
         {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.0639 mm)",
+            "description": "Silkscreen clipped by solder mask",
             "items": [
                 {
-                    "description": "Track [3V3] on B.Cu, length 1.6500 mm",
+                    "description": "PCB text 'BYPASS' on F.Silkscreen",
                     "pos": {
-                        "x": 97.9,
-                        "y": 104.5
+                        "x": 104.0,
+                        "y": 104.0
                     },
-                    "uuid": "0bc16704-422d-4510-a559-254a04d0211b"
+                    "uuid": "34c47d48-7175-4b54-92ca-28528a9eead3"
                 },
                 {
-                    "description": "Track [/POT1_W] on B.Cu, length 0.7778 mm",
+                    "description": "PTH pad 5 [/POT1_W] of J1",
                     "pos": {
-                        "x": 97.9,
-                        "y": 106.7
+                        "x": 101.08,
+                        "y": 104.0
                     },
-                    "uuid": "eec7e9e6-cf0e-431d-9cb9-e5754c663dbd"
+                    "uuid": "39fcb5ca-ff25-4ab5-b013-6027557ddf24"
                 }
             ],
-            "severity": "error",
-            "type": "clearance"
+            "severity": "warning",
+            "type": "silk_over_copper"
         },
         {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1750 mm)",
+            "description": "Silkscreen clipped by solder mask",
             "items": [
                 {
-                    "description": "Via [/WS_IN] on F.Cu - B.Cu",
+                    "description": "PCB text 'FIZZ         Q          VOL' on F.Silkscreen",
                     "pos": {
-                        "x": 93.5,
-                        "y": 106.7
+                        "x": 69.0,
+                        "y": 58.0
                     },
-                    "uuid": "c06a7253-52d7-494b-b80e-c8c58e042e9a"
+                    "uuid": "bce1200e-7740-4056-b255-42a71a8968e1"
                 },
                 {
-                    "description": "Track [/POT1_W] on B.Cu, length 1.1000 mm",
+                    "description": "PTH pad 2 [/POT5_W] of RV5",
                     "pos": {
-                        "x": 93.5,
-                        "y": 105.05
+                        "x": 69.0,
+                        "y": 57.0
                     },
-                    "uuid": "ea86c475-397b-4544-b9f7-3154d30c1c92"
+                    "uuid": "e72a9bd8-6e87-47b3-8786-5955e9f94f2e"
                 }
             ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.0139 mm)",
-            "items": [
-                {
-                    "description": "Via [/POT4_W] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 95.7,
-                        "y": 95.7
-                    },
-                    "uuid": "6c5edd7a-cc29-4d03-9b38-8e2635ef23ee"
-                },
-                {
-                    "description": "Track [/POT2_W] on In2.Cu, length 17.8898 mm",
-                    "pos": {
-                        "x": 99.0,
-                        "y": 98.45
-                    },
-                    "uuid": "a9dbfdf1-f839-44e4-8d9f-490928fc33c9"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1389 mm)",
-            "items": [
-                {
-                    "description": "Track [/WS_IN] on B.Cu, length 4.6669 mm",
-                    "pos": {
-                        "x": 89.65,
-                        "y": 101.75
-                    },
-                    "uuid": "4deabce3-6356-45f3-9ac9-ce954d117d93"
-                },
-                {
-                    "description": "Track [/POT1_W] on B.Cu, length 15.9500 mm",
-                    "pos": {
-                        "x": 90.2,
-                        "y": 85.8
-                    },
-                    "uuid": "e2fee1e3-5204-4744-a57d-ddcfedea9caf"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1750 mm)",
-            "items": [
-                {
-                    "description": "Track [/POT1_W] on B.Cu, length 3.8500 mm",
-                    "pos": {
-                        "x": 94.05,
-                        "y": 106.7
-                    },
-                    "uuid": "a5479ce3-416d-4366-af3c-7d41104e9033"
-                },
-                {
-                    "description": "Via [/WS_IN] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 93.5,
-                        "y": 106.7
-                    },
-                    "uuid": "c06a7253-52d7-494b-b80e-c8c58e042e9a"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1389 mm)",
-            "items": [
-                {
-                    "description": "Track [/WSD1] on F.Cu, length 3.8500 mm",
-                    "pos": {
-                        "x": 69.3,
-                        "y": 36.3
-                    },
-                    "uuid": "6d927b6a-9bf9-4427-8d04-02a99c972d0f"
-                },
-                {
-                    "description": "Track [/WSD2] on F.Cu, length 1.5556 mm",
-                    "pos": {
-                        "x": 69.3,
-                        "y": 36.85
-                    },
-                    "uuid": "f4caf8f4-e9c0-4894-9e5c-31b79387c153"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1000 mm)",
-            "items": [
-                {
-                    "description": "Track [+5V] on F.Cu, length 15.9500 mm",
-                    "pos": {
-                        "x": 33.0,
-                        "y": 72.6
-                    },
-                    "uuid": "4058fd88-8a70-4fce-9a88-8003208ba79c"
-                },
-                {
-                    "description": "Via [/WSD3] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 42.35,
-                        "y": 73.15
-                    },
-                    "uuid": "bc2d34b0-3301-4072-8d27-a4796b2d2919"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1389 mm)",
-            "items": [
-                {
-                    "description": "Track [/WSD1] on F.Cu, length 3.1113 mm",
-                    "pos": {
-                        "x": 71.5,
-                        "y": 34.1
-                    },
-                    "uuid": "b6354ae3-8b6d-498f-bfc6-c8007ad30f07"
-                },
-                {
-                    "description": "Track [/WSD2] on F.Cu, length 34.1000 mm",
-                    "pos": {
-                        "x": 70.4,
-                        "y": 35.75
-                    },
-                    "uuid": "f53520ab-c225-44ea-8888-7f09386694ed"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1389 mm)",
-            "items": [
-                {
-                    "description": "Track [/WSD1] on F.Cu, length 3.1113 mm",
-                    "pos": {
-                        "x": 71.5,
-                        "y": 34.1
-                    },
-                    "uuid": "b6354ae3-8b6d-498f-bfc6-c8007ad30f07"
-                },
-                {
-                    "description": "Track [/WSD2] on F.Cu, length 1.5556 mm",
-                    "pos": {
-                        "x": 69.3,
-                        "y": 36.85
-                    },
-                    "uuid": "f4caf8f4-e9c0-4894-9e5c-31b79387c153"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1750 mm)",
-            "items": [
-                {
-                    "description": "Track [/WSD5] on F.Cu, length 13.2000 mm",
-                    "pos": {
-                        "x": 88.55,
-                        "y": 77.55
-                    },
-                    "uuid": "4b6ed23c-764e-43bf-9d99-11715f39ff42"
-                },
-                {
-                    "description": "Via [/WSD4] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 99.55,
-                        "y": 78.1
-                    },
-                    "uuid": "aa227a28-f29f-47cb-89e1-a76d1629d001"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1389 mm)",
-            "items": [
-                {
-                    "description": "Track [/WS_IN] on F.Cu, length 0.7778 mm",
-                    "pos": {
-                        "x": 107.8,
-                        "y": 106.7
-                    },
-                    "uuid": "246a8ddf-7626-4f55-8997-3e736d26dc49"
-                },
-                {
-                    "description": "Track [/STOMP1] on F.Cu, length 1.1000 mm",
-                    "pos": {
-                        "x": 107.8,
-                        "y": 106.15
-                    },
-                    "uuid": "4d62b693-068d-450f-85be-dae3b35c03de"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1750 mm)",
-            "items": [
-                {
-                    "description": "Track [/POT6_W] on B.Cu, length 40.7000 mm",
-                    "pos": {
-                        "x": 103.95,
-                        "y": 97.9
-                    },
-                    "uuid": "2b258872-4d12-483f-bec0-fadbc73c9b12"
-                },
-                {
-                    "description": "Via [/WSD4] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 103.4,
-                        "y": 74.25
-                    },
-                    "uuid": "2c53582e-ce3f-4532-8753-aac78599f1ab"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1000 mm)",
-            "items": [
-                {
-                    "description": "Track [+5V] on F.Cu, length 13.7500 mm",
-                    "pos": {
-                        "x": 96.25,
-                        "y": 101.2
-                    },
-                    "uuid": "53df9529-2bb5-42be-be95-193d09bb3ab9"
-                },
-                {
-                    "description": "Via [/POT4_W] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 95.7,
-                        "y": 95.7
-                    },
-                    "uuid": "6c5edd7a-cc29-4d03-9b38-8e2635ef23ee"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.0639 mm)",
-            "items": [
-                {
-                    "description": "Track [3V3] on B.Cu, length 3.8500 mm",
-                    "pos": {
-                        "x": 97.9,
-                        "y": 106.15
-                    },
-                    "uuid": "12e4dee8-8256-4774-a7dd-f35030280b85"
-                },
-                {
-                    "description": "Track [/POT1_W] on B.Cu, length 0.7778 mm",
-                    "pos": {
-                        "x": 93.5,
-                        "y": 106.15
-                    },
-                    "uuid": "1db091f2-b4e0-403d-aefb-83ec922143ec"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1389 mm)",
-            "items": [
-                {
-                    "description": "Track [/POT1_W] on B.Cu, length 4.6669 mm",
-                    "pos": {
-                        "x": 90.2,
-                        "y": 101.75
-                    },
-                    "uuid": "2782b189-bb15-48f8-b9c8-9d179e979183"
-                },
-                {
-                    "description": "Track [/WS_IN] on B.Cu, length 1.1000 mm",
-                    "pos": {
-                        "x": 92.95,
-                        "y": 105.05
-                    },
-                    "uuid": "7fcfe4aa-e555-4fe5-964e-9b0959a50e15"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1000 mm)",
-            "items": [
-                {
-                    "description": "Via [/WSD3] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 62.7,
-                        "y": 52.8
-                    },
-                    "uuid": "4a329321-8366-464b-bfe1-bfbf23c5cab9"
-                },
-                {
-                    "description": "Track [+5V] on F.Cu, length 8.2500 mm",
-                    "pos": {
-                        "x": 62.7,
-                        "y": 53.35
-                    },
-                    "uuid": "aa4d2ac6-a848-4f46-85cd-bc7b78286bd7"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1000 mm)",
-            "items": [
-                {
-                    "description": "Via [/WSD1] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 64.35,
-                        "y": 37.4
-                    },
-                    "uuid": "5f62bad5-875a-4b52-be83-55b3a0281e55"
-                },
-                {
-                    "description": "Track [+5V] on F.Cu, length 8.2500 mm",
-                    "pos": {
-                        "x": 64.9,
-                        "y": 36.3
-                    },
-                    "uuid": "c3d6ceb5-8e4f-42e3-b7d7-33ab665cb876"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1750 mm)",
-            "items": [
-                {
-                    "description": "Track [/STOMP1] on F.Cu, length 67.1000 mm",
-                    "pos": {
-                        "x": 40.7,
-                        "y": 106.15
-                    },
-                    "uuid": "9592597e-0d45-419f-992d-79a31675eed4"
-                },
-                {
-                    "description": "Via [/WS_IN] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 93.5,
-                        "y": 106.7
-                    },
-                    "uuid": "c06a7253-52d7-494b-b80e-c8c58e042e9a"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
+            "severity": "warning",
+            "type": "silk_over_copper"
         }
     ]
 }
