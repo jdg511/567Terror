@@ -166,8 +166,12 @@ LEFT WALL:                                            RIGHT WALL:
 - Stomps: **soft-touch momentary SPST** confirmed.
 - 1590XX drawing + pot/stomp/jack heights: DONE 2026-07-25 (see
   vendor_assets/MANIFEST.md). Residual items: download Hammond STEP/DXF,
-  verify DC-044A axis height, confirm PBS-24B 12 mm thread from a drawing.
-- NEW ISSUE from sourcing: LCSC has NO soft-touch footswitch — the stomps
-  (Daier PBS-24B-2 style) cannot be part of the turnkey order. Decision
-  pending with Jason: hand-wire 2 wires/stomp after assembly (recommended)
-  vs consigning switches to PCBWay.
+  verify DC-044A axis height.
+- Stomp turnkey gap: **RESOLVED** — PCBWay turnkey sources from Digi-Key/
+  Mouser/Arrow/Avnet, not just LCSC. Selected: **Suntsu SSWFS-S01 soft-touch
+  SPST momentary stomp** (PBS-24B-2 form factor, M12×1.0 bushing, 100k
+  cycles, $2.95, Digi-Key stocked). Control board gets the PC-pin footprint
+  (variant SSWFS-S01-AA09/AC09-HWH, Digi-Key Marketplace — confirm PCBWay
+  will buy Marketplace-fulfilled at order time); fallback = solder-lug
+  SSWFS-S01-AC05-HWH from Digi-Key's own stock, shipped loose, 2 wires to
+  the same control-board pads. Footprint carries both options.

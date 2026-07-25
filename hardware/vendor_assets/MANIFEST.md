@@ -43,17 +43,24 @@ control board must be retained by standoffs. All 6 controls become B10k
 linear; the Pico applies tapers in firmware (audio-taper VOL curve etc.), so
 this is sonically identical to the plugin.
 
-## Stomp switches — TURNKEY GAP (decision needed)
+## Stomp switches — RESOLVED (2026-07-25)
 
-LCSC stocks NO soft-touch momentary footswitch (full pushbutton category
-searched). The standard part is Daier PBS-24B-2 style soft-touch SPST
-momentary (12 mm bushing, solder lug; PCB-pin "PRO" variant exists at
-lovemyswitches.com). Options:
-(a) hand-wire 2 wires per stomp to control-board pads after turnkey assembly
-    (standard pedal practice, lowest risk);
-(b) consign switches to PCBWay for assembly (extra cost/lead time).
-Thread = 12 mm per retailer claims — NO factory drawing found; confirm
-before finalizing the drill template.
+LCSC stocks NO soft-touch momentary footswitch, but PCBWay turnkey also
+sources from Digi-Key/Mouser/Arrow/Avnet (per pcbway.com assembly pages).
+
+Selected: **Suntsu SSWFS-S01 series** — soft-touch SPST OFF-(ON) momentary
+stomp, PBS-24B-2 form factor: 25.5×13.0 mm body, **M12×1.0 thread** (14.3 mm
+hex bushing), 6 A/125 VAC, 100k mech cycles.
+- Primary: SSWFS-S01-AA09/AC09-HWH (PC-mount pins → control board footprint).
+  Digi-Key MARKETPLACE listing — confirm PCBWay buys Marketplace items
+  before ordering (unverified).
+- Fallback: SSWFS-S01-AC05-HWH (solder lug), Digi-Key own stock, $2.95,
+  ships loose with the order → 2 wires to the same control-board pads.
+Datasheet: https://suntsu.com/wp-content/uploads/2021/02/SSWFS-S01-AE11-0HWH0-C20.pdf
+Caveat: datasheet doesn't literally say "soft touch"; form factor/construction
+match the Daier soft-touch exactly, feel inferred. Rejected: Gorva (no
+distributor stock), Bulgin MPI002 (19.2 mm, 35k cycles, ~$25, 12 N heavy),
+E-Switch PV6F240SS kept as anti-vandal fallback (Mouser, $11.45).
 
 ## Not obtained / to do
 
