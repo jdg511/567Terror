@@ -31,12 +31,14 @@ place('C7', 122, 76, 0)   # 100u bulk
 
 placed = set(b.fps.keys())
 def anchor_for(ref):
+    xs, ys = [], []
     for pin, net in padnets.get(ref, {}).items():
         if net in ('GND','+5V','3V3'): continue
         for r2, pn2 in padnets.items():
             if r2 in placed and r2 != ref and net in pn2.values():
                 p = b.fps[r2].GetPosition()
-                return (pcbnew.ToMM(p.x), pcbnew.ToMM(p.y))
+                xs.append(pcbnew.ToMM(p.x)); ys.append(pcbnew.ToMM(p.y))
+    if xs: return (sum(xs)/len(xs), sum(ys)/len(ys))
     return (69, 60)
 for ref in sorted(r for r in comps if r not in placed):
     c = comps[ref]

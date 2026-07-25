@@ -33,6 +33,7 @@ def load_fp(fpid):
 class Board:
     def __init__(self, out_path):
         self.b = pcbnew.CreateEmptyBoard()
+        self.b.SetCopperLayerCount(4)
         self.out_path = out_path
         self.netmap = {}
         self.fps = {}
@@ -92,7 +93,7 @@ class Board:
                 x = ax + r*math.cos(th); y = ay + r*math.sin(th)
                 if not (2+w/2 < x < board_w-2-w/2 and 2+h/2 < y < board_h-2-h/2):
                     continue
-                if not self.collides(x-w/2, y-h/2, x+w/2, y+h/2, margin=1.05):
+                if not self.collides(x-w/2, y-h/2, x+w/2, y+h/2, margin=1.6):
                     best = (x, y); break
             if best: break
         if best is None:
@@ -106,6 +107,8 @@ class Board:
 
     def outline_notched(self, W, H, notch=11.0):
         """rectangle with 4 corner notches (for enclosure screw bosses)"""
+        n = notch + 1.0   # keep parts out of the notches (placement-level keepout)
+        self.occupied += [(-5,-5,n,n), (W-n,-5,W+5,n), (-5,H-n,n,H+5), (W-n,H-n,W+5,H+5)]
         pts = [(notch,0),(W-notch,0),(W-notch,notch),(W,notch),(W,H-notch),
                (W-notch,H-notch),(W-notch,H),(notch,H),(notch,H-notch),(0,H-notch),
                (0,notch),(notch,notch),(notch,0)]
@@ -119,11 +122,11 @@ class Board:
             self.b.Add(seg)
 
     def gnd_zones(self, W, H):
-        for layer in (pcbnew.F_Cu, pcbnew.B_Cu):
+        for layer in (pcbnew.F_Cu, pcbnew.In1_Cu, pcbnew.B_Cu):
             z = pcbnew.ZONE(self.b)
             z.SetLayer(layer)
             z.SetNet(self.netmap['GND'])
-            pts = [(1,1),(W-1,1),(W-1,H-1),(1,H-1)]
+            pts = [(1.3,1.3),(W-1.3,1.3),(W-1.3,H-1.3),(1.3,H-1.3)]
             chain = pcbnew.SHAPE_LINE_CHAIN()
             for (x,y) in pts:
                 chain.Append(pcbnew.VECTOR2I(pcbnew.FromMM(x), pcbnew.FromMM(y)))
@@ -131,7 +134,7 @@ class Board:
             z.Outline().AddOutline(chain)
             z.SetLocalClearance(pcbnew.FromMM(0.3))
             z.SetMinThickness(pcbnew.FromMM(0.25))
-            z.SetPadConnection(pcbnew.ZONE_CONNECTION_THERMAL)
+            z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)
             z.SetIsFilled(False)
             self.b.Add(z)
 
@@ -143,5 +146,21 @@ class Board:
         t.SetTextSize(pcbnew.VECTOR2I(pcbnew.FromMM(size), pcbnew.FromMM(size)))
         self.b.Add(t)
 
+    def design_rules(self):
+        bds = self.b.GetDesignSettings()
+        bds.m_TrackMinWidth = pcbnew.FromMM(0.2)
+        bds.m_ViasMinSize = pcbnew.FromMM(0.45)
+        bds.m_MinThroughDrill = pcbnew.FromMM(0.3)
+        bds.m_MinClearance = pcbnew.FromMM(0.13)
+        try:
+            nc = bds.m_NetSettings.m_DefaultNetClass
+            nc.SetClearance(pcbnew.FromMM(0.13))
+            nc.SetTrackWidth(pcbnew.FromMM(0.25))
+            nc.SetViaDiameter(pcbnew.FromMM(0.5))
+            nc.SetViaDrill(pcbnew.FromMM(0.3))
+        except Exception as e:
+            print('netclass set skipped:', e)
+
     def save(self):
+        self.design_rules()
         pcbnew.SaveBoard(self.out_path, self.b)
