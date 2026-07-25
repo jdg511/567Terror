@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><style>body{margin:0;background:#101216}a{color:#ffd166}a:hover{color:#fff}@keyframes breathe{0%,100%{opacity:.45}50%{opacity:1}}@keyframes blink2{0%,49%{opacity:1}50%,100%{opacity:.06}}</style></helmet>
+
+<div style="position:relative;width:1060px;height:764px;background:#1d1f24;font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;user-select:none;-webkit-font-smoothing:antialiased">
+
+  <div style="position:absolute;left:20px;top:10px;width:400px;height:30px;display:flex;align-items:center;color:#ffd166;font-size:26px;font-weight:700">GLITCHWAVE 567</div>
+  <div style="position:absolute;left:20px;top:38px;width:500px;height:16px;display:flex;align-items:center;color:#9aa0a6;font-size:12px">LM567 glitch pedal — hardware layout — v0.32</div>
+
+  <div style="position:absolute;left:12px;top:60px;width:1034px;height:204px;background:#26292f;border:1px solid #3a3f47;border-radius:10px"></div>
+  <div style="position:absolute;left:24px;top:66px;width:1012px;height:14px;display:flex;align-items:center;color:#9aa0a6;font-size:12px;font-weight:700">PEDAL</div>
+
+  <div style="position:absolute;left:12px;top:274px;width:330px;height:250px;background:#26292f;border:1px solid #3a3f47;border-radius:10px"></div>
+  <div style="position:absolute;left:24px;top:280px;width:308px;height:14px;display:flex;align-items:center;color:#9aa0a6;font-size:12px;font-weight:700">LFO 1 · UNI ↑</div>
+
+  <div style="position:absolute;left:352px;top:274px;width:330px;height:250px;background:#26292f;border:1px solid #3a3f47;border-radius:10px"></div>
+  <div style="position:absolute;left:364px;top:280px;width:308px;height:14px;display:flex;align-items:center;color:#9aa0a6;font-size:12px;font-weight:700">LFO 2 · BIPOLAR</div>
+
+  <div style="position:absolute;left:692px;top:274px;width:354px;height:250px;background:#26292f;border:1px solid #3a3f47;border-radius:10px"></div>
+  <div style="position:absolute;left:704px;top:280px;width:332px;height:14px;display:flex;align-items:center;color:#9aa0a6;font-size:12px;font-weight:700">ENVELOPE FOLLOWER</div>
+
+  <div style="position:absolute;left:12px;top:534px;width:330px;height:152px;background:#26292f;border:1px solid #3a3f47;border-radius:10px"></div>
+  <div style="position:absolute;left:24px;top:540px;width:308px;height:14px;display:flex;align-items:center;color:#9aa0a6;font-size:12px;font-weight:700">CV 1 JACK  (SIDECHAIN L)</div>
+
+  <div style="position:absolute;left:352px;top:534px;width:330px;height:152px;background:#26292f;border:1px solid #3a3f47;border-radius:10px"></div>
+  <div style="position:absolute;left:364px;top:540px;width:308px;height:14px;display:flex;align-items:center;color:#9aa0a6;font-size:12px;font-weight:700">CV 2 JACK  (SIDECHAIN R)</div>
+
+  <div style="position:absolute;left:12px;top:696px;width:1034px;height:54px;background:#26292f;border:1px solid #3a3f47;border-radius:10px"></div>
+  <div style="position:absolute;left:24px;top:702px;width:1012px;height:14px;display:flex;align-items:center;color:#9aa0a6;font-size:12px;font-weight:700">FOOTSWITCHES  ·  POWER</div>
+
+  <div style="position:absolute;left:90px;top:82px;width:130px;height:18px;display:flex;align-items:center;justify-content:center;color:#e8e8e8;font-size:16px;font-weight:700">FREQ</div>
+  <div style="position:absolute;left:90px;top:100px;width:130px;height:140px">
+    <div style="position:absolute;left:14px;top:0;width:102px;height:102px;border-radius:50%;background:conic-gradient(from 216deg,#ffd166 0 25.6deg,#3a3f47 25.6deg 288deg,transparent 288deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 42.9px,#000 43px 51px,transparent 51.1px);mask:radial-gradient(circle at 50% 50%,transparent 42.9px,#000 43px 51px,transparent 51.1px)"></div>
+    <div style="position:absolute;left:65px;top:51px;width:0;height:0;transform:rotate(241.6deg)"><div style="position:absolute;left:-8px;top:-55px;width:16px;height:16px;border-radius:50%;background:#ffd166"></div></div>
+    <div style="position:absolute;left:17px;top:122px;width:96px;height:18px;display:flex;align-items:center;justify-content:center;color:#e8e8e8;font-size:13.5px">0.50 Hz</div>
+  </div>
+
+  <div style="position:absolute;left:320px;top:82px;width:130px;height:18px;display:flex;align-items:center;justify-content:center;color:#e8e8e8;font-size:16px;font-weight:700">LPF</div>
+  <div style="position:absolute;left:320px;top:100px;width:130px;height:140px">
+    <div style="position:absolute;left:14px;top:0;width:102px;height:102px;border-radius:50%;background:conic-gradient(from 216deg,#ffd166 0 82.1deg,#3a3f47 82.1deg 288deg,transparent 288deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 42.9px,#000 43px 51px,transparent 51.1px);mask:radial-gradient(circle at 50% 50%,transparent 42.9px,#000 43px 51px,transparent 51.1px)"></div>
+    <div style="position:absolute;left:65px;top:51px;width:0;height:0;transform:rotate(298.1deg)"><div style="position:absolute;left:-8px;top:-55px;width:16px;height:16px;border-radius:50%;background:#ffd166"></div></div>
+    <div style="position:absolute;left:17px;top:122px;width:96px;height:18px;display:flex;align-items:center;justify-content:center;color:#e8e8e8;font-size:13.5px">200 Hz</div>
+  </div>
+
+  <div style="position:absolute;left:550px;top:82px;width:130px;height:18px;display:flex;align-items:center;justify-content:center;color:#e8e8e8;font-size:16px;font-weight:700">MIX</div>
+  <div style="position:absolute;left:550px;top:100px;width:130px;height:140px">
+    <div style="position:absolute;left:14px;top:0;width:102px;height:102px;border-radius:50%;background:conic-gradient(from 216deg,#ffd166 0 36deg,#3a3f47 36deg 288deg,transparent 288deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 42.9px,#000 43px 51px,transparent 51.1px);mask:radial-gradient(circle at 50% 50%,transparent 42.9px,#000 43px 51px,transparent 51.1px)"></div>
+    <div style="position:absolute;left:65px;top:51px;width:0;height:0;transform:rotate(252deg)"><div style="position:absolute;left:-8px;top:-55px;width:16px;height:16px;border-radius:50%;background:#ffd166"></div></div>
+    <div style="position:absolute;left:17px;top:122px;width:96px;height:18px;display:flex;align-items:center;justify-content:center;color:#e8e8e8;font-size:13.5px">D100 / FX25</div>
+  </div>
+
+  <div style="position:absolute;left:764px;top:112px;width:110px;height:16px;display:flex;align-items:center;color:#e8e8e8;font-size:13px;font-weight:700">BAZZ FUSS</div>
+  <div style="position:absolute;left:764px;top:130px;width:110px;height:12px;display:flex;align-items:center;color:#9aa0a6;font-size:9.5px">always on</div>
+
+  <div style="position:absolute;left:700px;top:150px;width:260px;height:11px;display:flex;align-items:center;color:#e8e8e8;font-size:9.5px;font-weight:700">KNOB LAYERS</div>
+  <div style="position:absolute;left:700px;top:164px;width:340px;height:10px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px;white-space:pre">X              FREQ    LPF      MIX       RATE  RATE  GAIN</div>
+  <div style="position:absolute;left:700px;top:176px;width:340px;height:10px;display:flex;align-items:center;color:#6fa8dc;font-size:8.5px;white-space:pre">Y  TAP / INS   GAIN    RES      VOL       SHP   SHP   MODE</div>
+  <div style="position:absolute;left:700px;top:188px;width:340px;height:10px;display:flex;align-items:center;color:#d9a441;font-size:8.5px;white-space:pre">Z  BYP / DEL   L1 DEP  L2 DEP   DRV/RNG   TGT   TGT   TGT</div>
+  <div style="position:absolute;left:700px;top:200px;width:340px;height:10px;display:flex;align-items:center;color:#d95050;font-size:8.5px">A  BOTH: MIX = STARVE (secret), other knobs dead</div>
+  <div style="position:absolute;left:700px;top:212px;width:340px;height:10px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px">hold the key or the stomp - or RIGHT-CLICK a stomp to latch it</div>
+
+  <div style="position:absolute;left:976px;top:84px;width:24px;height:12px;display:flex;align-items:center;justify-content:center;color:#9aa0a6;font-size:11px;font-weight:700">IN</div>
+  <div style="position:absolute;left:1006px;top:84px;width:30px;height:12px;display:flex;align-items:center;justify-content:center;color:#9aa0a6;font-size:11px;font-weight:700">OUT</div>
+  <div style="position:absolute;left:980px;top:98px;width:16px;height:150px;background:#121418;border-radius:2px">
+    <div style="position:absolute;left:2px;right:2px;bottom:2px;height:64px;background:linear-gradient(to top,#4caf6d 0,#4caf6d 74%,#d9a441 74%,#d9a441 95%,#d95050 95%)"></div>
+  </div>
+  <div style="position:absolute;left:1012px;top:98px;width:16px;height:150px;background:#121418;border-radius:2px">
+    <div style="position:absolute;left:2px;right:2px;bottom:2px;height:92px;background:linear-gradient(to top,#4caf6d 0,#4caf6d 52%,#d9a441 52%,#d9a441 87%,#d95050 87%)"></div>
+  </div>
+
+  <div style="position:absolute;left:24px;top:306px;width:80px;height:12px;display:flex;align-items:center;justify-content:center;color:#9aa0a6;font-size:11px;font-weight:700">RATE</div>
+  <div style="position:absolute;left:24px;top:318px;width:80px;height:90px">
+    <div style="position:absolute;left:12px;top:10px;width:56px;height:56px;border-radius:50%;background:conic-gradient(from 216deg,#ffd166 0 66.5deg,#3a3f47 66.5deg 288deg,transparent 288deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 19.9px,#000 20px 28px,transparent 28.1px);mask:radial-gradient(circle at 50% 50%,transparent 19.9px,#000 20px 28px,transparent 28.1px)"></div>
+    <div style="position:absolute;left:40px;top:38px;width:0;height:0;transform:rotate(282.5deg)"><div style="position:absolute;left:-8px;top:-32px;width:16px;height:16px;border-radius:50%;background:#ffd166"></div></div>
+    <div style="position:absolute;left:3px;top:76px;width:74px;height:14px;display:flex;align-items:center;justify-content:center;color:#e8e8e8;font-size:10.5px">0.50 Hz</div>
+  </div>
+  <div style="position:absolute;left:148px;top:300px;width:34px;height:34px;border-radius:50%;background:rgb(156,156,158);border:1px solid rgba(0,0,0,.5);box-sizing:border-box;box-shadow:0 0 0 6px rgba(255,255,255,.12);animation:breathe 2.2s ease-in-out infinite"></div>
+  <div style="position:absolute;left:16px;top:414px;width:96px;height:14px;display:flex;align-items:center;justify-content:center;color:#9aa0a6;font-size:11px">0.50 Hz · 50 %</div>
+
+  <div style="position:absolute;left:364px;top:306px;width:80px;height:12px;display:flex;align-items:center;justify-content:center;color:#9aa0a6;font-size:11px;font-weight:700">RATE</div>
+  <div style="position:absolute;left:364px;top:318px;width:80px;height:90px">
+    <div style="position:absolute;left:12px;top:10px;width:56px;height:56px;border-radius:50%;background:conic-gradient(from 216deg,#3a3f47 0 288deg,transparent 288deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 19.9px,#000 20px 28px,transparent 28.1px);mask:radial-gradient(circle at 50% 50%,transparent 19.9px,#000 20px 28px,transparent 28.1px)"></div>
+    <div style="position:absolute;left:40px;top:38px;width:0;height:0;transform:rotate(216deg)"><div style="position:absolute;left:-8px;top:-32px;width:16px;height:16px;border-radius:50%;background:#ffd166"></div></div>
+    <div style="position:absolute;left:3px;top:76px;width:74px;height:14px;display:flex;align-items:center;justify-content:center;color:#e8e8e8;font-size:10.5px">0.20 Hz</div>
+  </div>
+  <div style="position:absolute;left:492px;top:300px;width:34px;height:34px;border-radius:50%;background:rgb(156,156,158);border:1px solid rgba(0,0,0,.5);box-sizing:border-box;box-shadow:0 0 0 6px rgba(255,255,255,.12);animation:breathe 3.4s ease-in-out infinite"></div>
+  <div style="position:absolute;left:356px;top:414px;width:96px;height:14px;display:flex;align-items:center;justify-content:center;color:#9aa0a6;font-size:11px">0.20 Hz · 15 %</div>
+
+  <div style="position:absolute;left:704px;top:306px;width:76px;height:12px;display:flex;align-items:center;justify-content:center;color:#9aa0a6;font-size:11px;font-weight:700">GAIN</div>
+  <div style="position:absolute;left:704px;top:318px;width:76px;height:90px">
+    <div style="position:absolute;left:10px;top:10px;width:56px;height:56px;border-radius:50%;background:conic-gradient(from 216deg,#ffd166 0 189.5deg,#3a3f47 189.5deg 288deg,transparent 288deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 19.9px,#000 20px 28px,transparent 28.1px);mask:radial-gradient(circle at 50% 50%,transparent 19.9px,#000 20px 28px,transparent 28.1px)"></div>
+    <div style="position:absolute;left:38px;top:38px;width:0;height:0;transform:rotate(405.5deg)"><div style="position:absolute;left:-8px;top:-32px;width:16px;height:16px;border-radius:50%;background:#ffd166"></div></div>
+    <div style="position:absolute;left:1px;top:76px;width:74px;height:14px;display:flex;align-items:center;justify-content:center;color:#e8e8e8;font-size:10.5px">x10.0</div>
+  </div>
+  <div style="position:absolute;left:836px;top:300px;width:34px;height:34px;border-radius:50%;background:rgb(156,156,158);border:1px solid rgba(0,0,0,.5);box-sizing:border-box;box-shadow:0 0 0 6px rgba(255,255,255,.12);animation:breathe 2.8s ease-in-out infinite"></div>
+
+  <div style="position:absolute;left:122px;top:344px;width:110px">
+    <div style="height:10px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px;font-weight:700">SHAPE (Y) A=2Hz B=5Hz</div>
+    <div style="margin-top:2px"></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff4444;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Ramp Up / Lorenz</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff8c00;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Ramp Dn / Rossler</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ffd400;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Square / Drunk</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#44dd66;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Triangle / Perlin</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#33cccc;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Sine / Wobble</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#4488ff;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Sweep / Glitch</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#9955ff;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">R.Slope / White</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff55bb;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">S&amp;H / Pink</div></div>
+  </div>
+
+  <div style="position:absolute;left:232px;top:344px;width:110px">
+    <div style="height:10px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px;font-weight:700">TARGET (Z) solid</div>
+    <div style="margin-top:2px"></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#3a3f47;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Off</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff8c00;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Freq</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ffd400;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">LPF</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#44dd66;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Res</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#33cccc;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Mix</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#4488ff;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Gain</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#9955ff;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Env Gain</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff55bb;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Env Level</div></div>
+  </div>
+
+  <div style="position:absolute;left:466px;top:344px;width:110px">
+    <div style="height:10px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px;font-weight:700">SHAPE (Y) A=2Hz B=5Hz</div>
+    <div style="margin-top:2px"></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff4444;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Ramp Up / Lorenz</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff8c00;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Ramp Dn / Rossler</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ffd400;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Square / Drunk</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#44dd66;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Triangle / Perlin</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#33cccc;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Sine / Wobble</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#4488ff;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Sweep / Glitch</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#9955ff;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">R.Slope / White</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff55bb;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">S&amp;H / Pink</div></div>
+  </div>
+
+  <div style="position:absolute;left:576px;top:344px;width:110px">
+    <div style="height:10px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px;font-weight:700">TARGET (Z) solid</div>
+    <div style="margin-top:2px"></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#3a3f47;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Off</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff8c00;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Freq</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ffd400;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">LPF</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#44dd66;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Res</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#33cccc;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Mix</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#4488ff;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">LFO1 Rate</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#9955ff;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">LFO1 Depth</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff55bb;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Env Gain</div></div>
+  </div>
+
+  <div style="position:absolute;left:800px;top:330px;width:110px">
+    <div style="height:10px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px;font-weight:700">TARGET (Z) solid</div>
+    <div style="margin-top:2px"></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#3a3f47;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Off</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff8c00;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Freq</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ffd400;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">LPF</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#44dd66;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Res</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#33cccc;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Mix</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#4488ff;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Gain</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#9955ff;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">LFO1 Rate</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff55bb;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">LFO1 Depth</div></div>
+  </div>
+
+  <div style="position:absolute;left:912px;top:330px;width:110px">
+    <div style="height:10px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px;font-weight:700">MODE (Y) 3Hz</div>
+    <div style="margin-top:2px"></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff4444;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Off</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff8c00;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">LP</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ffd400;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">BP</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#44dd66;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">HP</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#33cccc;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Notch</div></div>
+  </div>
+
+  <div style="position:absolute;left:912px;top:414px;width:110px">
+    <div style="height:10px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px;font-weight:700">DRV/RNG (Z) solid</div>
+    <div style="margin-top:2px"></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff4444;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Up-Hi</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ff8c00;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Up-Lo</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#ffd400;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Dn-Hi</div></div>
+    <div style="height:13px;display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#44dd66;flex:none"></div><div style="color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">Dn-Lo</div></div>
+  </div>
+
+  <div style="position:absolute;left:122px;top:458px;width:110px;height:10px;display:flex;align-items:center;color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">LED white = LFO wave</div>
+  <div style="position:absolute;left:122px;top:470px;width:110px;height:10px;display:flex;align-items:center;color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">LED blue = depth %</div>
+  <div style="position:absolute;left:466px;top:458px;width:110px;height:10px;display:flex;align-items:center;color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">LED white = LFO wave</div>
+  <div style="position:absolute;left:466px;top:470px;width:110px;height:10px;display:flex;align-items:center;color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">LED blue = depth %</div>
+  <div style="position:absolute;left:912px;top:486px;width:130px;height:10px;display:flex;align-items:center;color:#9aa0a6;font-size:8px;line-height:13px;white-space:nowrap">LED white = env level</div>
+
+  <div style="position:absolute;left:20px;top:502px;width:310px;height:11px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px;font-weight:700">Y RATE-KNOB = SHAPE · Z = TARGET · Z FREQ-KNOB = DEPTH</div>
+  <div style="position:absolute;left:360px;top:502px;width:310px;height:11px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px;font-weight:700">Y RATE-KNOB = SHAPE · Z = TARGET · Z LPF-KNOB = DEPTH</div>
+  <div style="position:absolute;left:704px;top:502px;width:336px;height:11px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px;font-weight:700">Y GAIN-KNOB = MODE · Z = TARGET · Z MIX-KNOB = DRV/RNG</div>
+  <div style="position:absolute;left:360px;top:490px;width:150px;height:11px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px;font-weight:700">TAP ×4 = RATE</div>
+
+  <div style="position:absolute;left:28px;top:582px;width:22px;height:22px;border-radius:50%;background:rgb(31,52,43);border:1px solid rgba(0,0,0,.5);box-sizing:border-box"></div>
+  <div style="position:absolute;left:368px;top:582px;width:22px;height:22px;border-radius:50%;background:rgb(31,52,43);border:1px solid rgba(0,0,0,.5);box-sizing:border-box"></div>
+  <div style="position:absolute;left:60px;top:584px;width:240px;height:18px;display:flex;align-items:center;color:#e8e8e8;font-size:14px;font-weight:700">→  LFO 1 DEPTH</div>
+  <div style="position:absolute;left:400px;top:584px;width:240px;height:18px;display:flex;align-items:center;color:#e8e8e8;font-size:14px;font-weight:700">→  LFO 2 DEPTH</div>
+  <div style="position:absolute;left:24px;top:610px;width:300px;height:14px;display:flex;align-items:center;color:#9aa0a6;font-size:10.5px">sidechain level opens the LFO's depth (VCA)</div>
+  <div style="position:absolute;left:24px;top:626px;width:300px;height:14px;display:flex;align-items:center;color:#9aa0a6;font-size:10.5px">no signal for 3 s = jack out, full depth</div>
+  <div style="position:absolute;left:364px;top:610px;width:300px;height:14px;display:flex;align-items:center;color:#9aa0a6;font-size:10.5px">sidechain level opens the LFO's depth (VCA)</div>
+  <div style="position:absolute;left:364px;top:626px;width:300px;height:14px;display:flex;align-items:center;color:#9aa0a6;font-size:10.5px">no signal for 3 s = jack out, full depth</div>
+
+  <div style="position:absolute;left:692px;top:534px;width:356px;height:154px;background:#2a2d34;border:1px solid #3a3f47;border-radius:10px;box-sizing:border-box">
+    <div style="position:absolute;left:11px;top:11px;width:6px;height:6px;border-radius:50%;background:#53565e"></div>
+    <div style="position:absolute;right:11px;top:11px;width:6px;height:6px;border-radius:50%;background:#53565e"></div>
+    <div style="position:absolute;left:11px;bottom:11px;width:6px;height:6px;border-radius:50%;background:#53565e"></div>
+    <div style="position:absolute;right:11px;bottom:11px;width:6px;height:6px;border-radius:50%;background:#53565e"></div>
+    <div style="position:absolute;left:172px;top:26px;width:12px;height:12px;border-radius:50%;background:#4caf6d;box-shadow:0 0 0 4px rgba(76,175,109,.3)"></div>
+    <div style="position:absolute;left:0;top:44px;width:356px;height:16px;display:flex;align-items:center;justify-content:center;color:#e8e8e8;font-size:14px;font-weight:700">INTERNAL PEDAL TRIM POTS / SWITCHES</div>
+    <div style="position:absolute;left:0;top:60px;width:356px;height:14px;display:flex;align-items:center;justify-content:center;color:#e8e8e8;font-size:14px;font-weight:700">SIMULATED INPUT VOLTAGE</div>
+    <div style="position:absolute;left:0;top:80px;width:356px;height:16px;display:flex;align-items:center;justify-content:center;color:#9aa0a6;font-size:12px">-48 dB   ·   1.0 s   ·   30 s</div>
+    <div style="position:absolute;left:0;top:132px;width:356px;height:12px;display:flex;align-items:center;justify-content:center;color:#9aa0a6;font-size:10px">click to open cover</div>
+  </div>
+
+  <div style="position:absolute;left:154px;top:716px;width:20px;height:20px;border-radius:50%;background:rgb(195,161,83);border:1px solid rgba(0,0,0,.5);box-sizing:border-box;box-shadow:0 0 0 5px rgba(255,209,102,.18);animation:blink2 2s steps(1,end) infinite"></div>
+  <div style="position:absolute;left:189px;top:705px;width:42px;height:42px;border-radius:50%;background:#15171b"></div>
+  <div style="position:absolute;left:192px;top:708px;width:36px;height:36px;border-radius:50%;background:#2e3340;border:1.5px solid #9aa0a6;box-sizing:border-box"></div>
+  <div style="position:absolute;left:236px;top:722px;width:40px;height:14px;display:flex;align-items:center;color:#e8e8e8;font-size:12px;font-weight:700">TAP</div>
+  <div style="position:absolute;left:299px;top:705px;width:42px;height:42px;border-radius:50%;background:#15171b"></div>
+  <div style="position:absolute;left:302px;top:708px;width:36px;height:36px;border-radius:50%;background:#2e3340;border:1.5px solid #9aa0a6;box-sizing:border-box"></div>
+  <div style="position:absolute;left:354px;top:716px;width:20px;height:20px;border-radius:50%;background:#4caf6d;border:1px solid rgba(0,0,0,.5);box-sizing:border-box;box-shadow:0 0 0 7px rgba(76,175,109,.25)"></div>
+  <div style="position:absolute;left:378px;top:722px;width:60px;height:14px;display:flex;align-items:center;color:#e8e8e8;font-size:12px;font-weight:700">BYPASS</div>
+
+  <div style="position:absolute;left:450px;top:712px;width:330px;height:12px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px">TAP ×3 avg = LFO1 RATE · BYPASS held: LFO2 RATE · 0.2–20 Hz · LED = tempo</div>
+  <div style="position:absolute;left:450px;top:725px;width:330px;height:12px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px">Y = TAP/INS held, Z = BYPASS/DEL held, A = both = STARVE</div>
+  <div style="position:absolute;left:450px;top:738px;width:330px;height:12px;display:flex;align-items:center;color:#9aa0a6;font-size:8.5px">internal switches + sim voltage: under the cover (click it)</div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1060,&quot;height&quot;:764}}"></script>
+</body>
+</html>

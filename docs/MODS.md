@@ -1,4 +1,49 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.32)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.34)
+
+## v0.34 — "Terror" glitch-art face (Jason's Claude Design restyle; graphics only)
+
+**v0.33 was the design project's intermediate polish pass — the shipped jump is
+v0.32 → v0.34 so the plugin title matches the design file ("v0.34 Terror").**
+
+Zero functional changes: every parameter, the X/Y/Z/A layer machine, tap tempo,
+latches, gate and DSP are byte-for-byte v0.32 behaviour. The +6 dB internal
+switch STAYS — Jason: "have it as the actual pcb has it", and the PCB carries
+that stage on an internal DIP switch (ships ON). (The design bundle's notes had
+proposed removing it; overruled.)
+
+### The new face (source: docs/ui/, from Jason's Claude Design project)
+* Window 1060×640 logical at **setScaleFactor(2.5)** → 2650×1600 on screen
+  (25 % bigger type than v0.32, per the design).
+* "Illicit Apothecary" branding: baked-invert logo with chromatic aberration,
+  mosaic-static photographic face (docs/ui/assets → downscaled + veil/scanlines
+  pre-baked into assets/bg_face.jpg), "Where the Fuzz Meets the Funk" tagline
+  with CRT tear, rainbow hairline, Barlow Semi Condensed + IBM Plex Mono
+  embedded via juce_add_binary_data (OFL).
+* Layer chips X/Y/Z/A in the header (white/cyan/yellow/red), KNOB LAYERS chart
+  printed on the pedal face, IN/OUT PPMs restyled.
+* Per-knob live value line (uses the real parameter text), knob rings in
+  section colours (yellow / cyan / magenta / green) with the design's 216°–504°
+  sweep, selector knobs unchanged (place-zone parking from v0.31).
+* NeoPixel **swatch rulers** show every SHAPE / TARGET / MODE / DRV-RNG
+  selection persistently (display only; knobs still do the choosing), with
+  two-tone name labels ("Sine / Wobble").
+* Starve goes fully secret: A-layer caption is a red **"?"** and the readout is
+  the sagging rail voltage (supply → 5 V floor, real DSP formula).
+* Cover redesigned: full-width INTERNAL strip (live summary line + gate LED +
+  OPEN COVER) → opens a green-bordered panel over the LFO row with gate
+  trimmers, PCB SWITCHES rows (JFET / −3/−6 LADDER / **+6 dB BOOST**), SIM
+  SUPPLY 9/12/15/18 V, and a HINTS toggle (all hint text ships hidden).
+* CV jack panels dropped from the face (the design removed them; the hardwired
+  sidechain→depth VCAs still function — they're just not drawn).
+* Timed glitch decoration: 7 s CRT scan sweep, colour-bar burst every 33 s,
+  full-face "major glitch" every 11 min, tagline tear every 5.5 s.
+
+### Plumbing
+* CMake: VERSION 0.34.0, COMPANY_NAME "Illicit Apothecary" (was JasonDIY —
+  standalone audio settings re-select once), VST3_CATEGORIES Fx **Filter**,
+  new GwAssets binary-data target (art + 5 fonts, ~1.3 MB).
+* docs/ui/ carries the design source: three .dc.html screens, support.js,
+  original logo + mosaic assets, github.md (with the +6 dB resolution note).
 
 ## v0.32 — THE PEDAL TAKES ITS FINAL SHAPE (clip decided, ship defaults)
 

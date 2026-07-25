@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics=""><meta name="design_doc_mode" content="canvas"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"><style>body{margin:0;background:#000}a{color:#ffe600}a:hover{color:#fff}@keyframes gwLedC{0%,100%{background-color:rgb(4,39,44);box-shadow:0 0 0 1px #000}50%{background-color:#00eaff;box-shadow:0 0 0 1px #000,0 0 14px #00eaff,0 0 34px #00eaff88}}
+@keyframes gwLedM{0%,100%{background-color:rgb(43,11,38);box-shadow:0 0 0 1px #000}50%{background-color:#ff2bd6;box-shadow:0 0 0 1px #000,0 0 14px #ff2bd6,0 0 34px #ff2bd688}}
+@keyframes gwLedG{0%,100%{background-color:rgb(16,43,15);box-shadow:0 0 0 1px #000}50%{background-color:#4dff3a;box-shadow:0 0 0 1px #000,0 0 14px #4dff3a,0 0 34px #4dff3a88}}@keyframes gwLedTempo{0%,49%{background-color:#ffe600;box-shadow:0 0 0 4px rgba(255,230,0,.18),0 0 11px rgba(255,230,0,.6)}50%,100%{background-color:rgb(43,39,6);box-shadow:0 0 0 1px #000}}@keyframes gwscan{0%{transform:translateY(0)}100%{transform:translateY(-140px)}}@keyframes gwtear{0%,92%,100%{transform:translateX(0);opacity:1}93%{transform:translateX(-7px);opacity:.85}95%{transform:translateX(5px)}97%{transform:translateX(-2px)}}@keyframes gwband{0%{transform:translateX(0)}100%{transform:translateX(-160px)}}
+@keyframes gwLight{0%,99.35%,100%{transform:scale(1.25) translate(0,0)}99.4%{transform:scale(1.25) translate(-5px,1px)}99.5%{transform:scale(1.25) translate(4px,-1.6px)}99.6%{transform:scale(1.25) translate(-2.4px,1px)}99.7%{transform:scale(1.25) translate(0,0)}}
+@keyframes gwLightBar{0%,99.35%,100%{opacity:0;transform:translateX(0)}99.4%{opacity:.85;transform:translateX(-22px)}99.5%{opacity:.65;transform:translateX(16px)}99.6%{opacity:.45;transform:translateX(-7px)}99.7%{opacity:0;transform:translateX(0)}}
+@keyframes gwMajor{0%,99%,100%{filter:none}99.02%{filter:invert(1) hue-rotate(90deg)}99.05%{filter:hue-rotate(220deg) saturate(3)}99.08%{filter:invert(1) contrast(2.2)}99.11%{filter:hue-rotate(-130deg) saturate(4)}99.14%{filter:none}99.17%{filter:invert(1)}99.19%{filter:saturate(6) hue-rotate(60deg)}99.21%{filter:none}}
+@keyframes gwVeil{0%,99%,100%{opacity:0}99.02%{opacity:.9}99.06%{opacity:.3}99.1%{opacity:.85}99.14%{opacity:.15}99.18%{opacity:.7}99.21%{opacity:0}}
+@keyframes gwTearA{0%,99%,100%{opacity:0;transform:translateX(0)}99.02%{opacity:1;transform:translateX(-130px)}99.06%{opacity:.9;transform:translateX(95px)}99.1%{opacity:1;transform:translateX(-45px)}99.15%{opacity:.6;transform:translateX(160px)}99.2%{opacity:0;transform:translateX(0)}}
+@keyframes gwTearB{0%,99.01%,100%{opacity:0;transform:translateX(0)}99.03%{opacity:.95;transform:translateX(170px)}99.07%{opacity:.8;transform:translateX(-110px)}99.12%{opacity:1;transform:translateX(60px)}99.17%{opacity:.5;transform:translateX(-180px)}99.21%{opacity:0;transform:translateX(0)}}
+@keyframes gwTearC{0%,99.005%,100%{opacity:0;transform:translateX(0)}99.04%{opacity:.9;transform:translateX(-70px)}99.09%{opacity:1;transform:translateX(210px)}99.14%{opacity:.7;transform:translateX(-150px)}99.19%{opacity:.9;transform:translateX(35px)}99.22%{opacity:0;transform:translateX(0)}}</style></helmet>
+
+<div style="position:relative;width:1325px;height:800px;overflow:hidden;background:#000">
+<div style="position:relative;width:1060px;height:640px;transform:scale(1.25);transform-origin:0 0;background:#000 url(assets/mosaic_static.png) center/cover no-repeat;font-family:'Barlow Semi Condensed',system-ui,sans-serif;overflow:hidden;user-select:none;-webkit-font-smoothing:antialiased;color:#f2f4f8;white-space:nowrap;animation:gwLight 33s steps(1,end) infinite,gwMajor 666s steps(1,end) infinite" data-face="1">
+
+  <div style="position:absolute;left:0;top:70px;width:1060px;height:1px;pointer-events:none;background:linear-gradient(90deg,#ff2bd6,#00eaff 35%,#4dff3a 62%,#ffe600 100%);opacity:.6"></div>
+
+  <div style="position:absolute;inset:0;pointer-events:none;background:rgba(0,0,0,.72)"></div>
+  <div style="position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.3) 0 1px,transparent 1px 3px)"></div>
+  <div style="position:absolute;inset:0;pointer-events:none;opacity:.055;background:repeating-radial-gradient(circle at 22% 78%,#ff2bd6 0 2px,transparent 2px 5px),repeating-radial-gradient(circle at 81% 24%,#00eaff 0 2px,transparent 2px 6px)"></div>
+  <div style="position:absolute;left:0;top:0;width:100%;height:140px;pointer-events:none;opacity:.06;background:linear-gradient(180deg,transparent,#fff 45%,transparent);animation:gwscan 7s linear infinite"></div>
+
+  <img src="assets/illicit_apothecary_logo.png" alt="Illicit Apothecary" style="position:absolute;left:4.66px;top:-4.93px;width:173px;height:86.5px;object-fit:contain;filter:invert(1) drop-shadow(1.5px 0 0 rgba(255,0,190,.7)) drop-shadow(-1.5px 0 0 rgba(0,234,255,.7)) drop-shadow(0 0 10px rgba(255,230,0,.25))">
+
+  <div style="position:absolute;left:184px;top:0;height:70px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:6px">
+    <div style="display:flex;gap:6px">
+      <div data-chip="0" style="width:36px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:13.2px;font-weight:600;background:#f2f4f8;color:#000;box-shadow:inset 0 0 0 1px #f2f4f8,0 0 14px rgba(242,244,248,.4)">X</div>
+      <div data-chip="1" style="width:36px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:13.2px;font-weight:600;background:transparent;color:#7c838d;box-shadow:inset 0 0 0 1px #1f2430">Y</div>
+      <div data-chip="2" style="width:36px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:13.2px;font-weight:600;background:transparent;color:#7c838d;box-shadow:inset 0 0 0 1px #1f2430">Z</div>
+      <div data-chip="3" style="width:36px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:13.2px;font-weight:600;background:transparent;color:#7c838d;box-shadow:inset 0 0 0 1px #1f2430">A</div>
+    </div>
+    <div data-hint="1" style="font-family:'IBM Plex Mono',monospace;font-size:10.2px;color:#949aa2;letter-spacing:.03em">HOLD TAP → Y · HOLD BYPASS → Z · BOTH → A</div>
+  </div>
+
+  <div style="position:absolute;right:22px;top:0;height:70px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;gap:2px">
+    <div style="position:relative;font-size:27.6px;font-weight:700;letter-spacing:.02em;color:#f2f4f8;text-shadow:2px 0 0 rgba(255,0,190,.85),-2px 0 0 rgba(0,234,255,.85),0 0 22px rgba(255,230,0,.35);animation:gwtear 5.5s steps(1,end) infinite">Where the Fuzz Meets the Funk</div>
+    <div style="display:flex;align-items:baseline;gap:11px;font-family:'IBM Plex Mono',monospace;font-size:11.4px;letter-spacing:.06em">
+      <span style="color:#98a2b3">ILLICIT APOTHECARY</span>
+      <span style="color:#7c838d">·</span>
+      <span style="color:#4dff3a">FILTER</span>
+      <span style="color:#7c838d">·</span>
+      <span style="color:#7c838d">v0.34</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:12px;top:74px;width:1036px;height:200px;border-radius:12px;background:rgba(3,3,5,.75);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);box-sizing:border-box;border:1px solid #1b1f28"></div>
+  <div style="position:absolute;left:12px;top:74px;width:1036px;height:2px;background:#ffe600;box-shadow:0 0 12px #ffe600;border-radius:2px 2px 0 0"></div>
+  <div style="position:absolute;left:28px;top:86px;font-size:11px;font-weight:700;letter-spacing:.18em;color:#98a2b3">PEDAL</div>
+
+  <div style="position:absolute;left:50px;top:110px;width:120px;height:14px;display:flex;align-items:center;justify-content:center"><span data-cap="0" style="font-size:14px;font-weight:700;letter-spacing:.16em;color:#f2f4f8">FREQ</span></div>
+  <div data-knob="0" style="position:absolute;left:50px;top:128px;width:120px;height:120px;cursor:ns-resize">
+    <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 216deg,#ffe600 0 25.6deg,#14161c 25.6deg 288deg,transparent 288deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 53.9px,#000 54px 60px,transparent 60.1px);mask:radial-gradient(circle at 50% 50%,transparent 53.9px,#000 54px 60px,transparent 60.1px)"></div>
+    <div style="position:absolute;left:16px;top:16px;width:88px;height:88px;border-radius:50%;background:radial-gradient(circle at 34% 26%,#1e1e28,#050508 76%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -2px 4px rgba(0,0,0,.5),0 7px 16px rgba(0,0,0,.5);border:1px solid #39415280;box-sizing:border-box"></div>
+    <div style="position:absolute;left:60px;top:60px;width:0;height:0;transform:rotate(241.6deg)"><div style="position:absolute;left:-1.5px;top:-50px;width:3px;height:17px;border-radius:2px;background:#ffe600;box-shadow:0 0 7px rgba(255,230,0,.55)"></div></div>
+  </div>
+  <div data-val="0" style="position:absolute;left:50px;top:254px;width:120px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;color:#f2f4f8">0.50 Hz</div>
+
+  <div style="position:absolute;left:190px;top:110px;width:120px;height:14px;display:flex;align-items:center;justify-content:center"><span data-cap="1" style="font-size:14px;font-weight:700;letter-spacing:.16em;color:#f2f4f8">LPF</span></div>
+  <div data-knob="1" style="position:absolute;left:190px;top:128px;width:120px;height:120px;cursor:ns-resize">
+    <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 216deg,#ffe600 0 82.1deg,#14161c 82.1deg 288deg,transparent 288deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 53.9px,#000 54px 60px,transparent 60.1px);mask:radial-gradient(circle at 50% 50%,transparent 53.9px,#000 54px 60px,transparent 60.1px)"></div>
+    <div style="position:absolute;left:16px;top:16px;width:88px;height:88px;border-radius:50%;background:radial-gradient(circle at 34% 26%,#1e1e28,#050508 76%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -2px 4px rgba(0,0,0,.5),0 7px 16px rgba(0,0,0,.5);border:1px solid #39415280;box-sizing:border-box"></div>
+    <div style="position:absolute;left:60px;top:60px;width:0;height:0;transform:rotate(298.1deg)"><div style="position:absolute;left:-1.5px;top:-50px;width:3px;height:17px;border-radius:2px;background:#ffe600;box-shadow:0 0 7px rgba(255,230,0,.55)"></div></div>
+  </div>
+  <div data-val="1" style="position:absolute;left:190px;top:254px;width:120px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;color:#f2f4f8">91 Hz / 200 Hz</div>
+
+  <div style="position:absolute;left:330px;top:110px;width:120px;height:14px;display:flex;align-items:center;justify-content:center"><span data-cap="2" style="font-size:14px;font-weight:700;letter-spacing:.16em;color:#f2f4f8">MIX</span></div>
+  <div data-knob="2" style="position:absolute;left:330px;top:128px;width:120px;height:120px;cursor:ns-resize">
+    <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 216deg,#ffe600 0 36deg,#14161c 36deg 288deg,transparent 288deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 53.9px,#000 54px 60px,transparent 60.1px);mask:radial-gradient(circle at 50% 50%,transparent 53.9px,#000 54px 60px,transparent 60.1px)"></div>
+    <div style="position:absolute;left:16px;top:16px;width:88px;height:88px;border-radius:50%;background:radial-gradient(circle at 34% 26%,#1e1e28,#050508 76%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -2px 4px rgba(0,0,0,.5),0 7px 16px rgba(0,0,0,.5);border:1px solid #39415280;box-sizing:border-box"></div>
+    <div style="position:absolute;left:60px;top:60px;width:0;height:0;transform:rotate(252deg)"><div style="position:absolute;left:-1.5px;top:-50px;width:3px;height:17px;border-radius:2px;background:#ffe600;box-shadow:0 0 7px rgba(255,230,0,.55)"></div></div>
+  </div>
+  <div data-val="2" style="position:absolute;left:330px;top:254px;width:120px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;color:#f2f4f8">D100 / FX25</div>
+
+  <div style="position:absolute;left:480px;top:106px;width:1px;height:150px;background:linear-gradient(180deg,transparent,#33373f 20%,#33373f 80%,transparent)"></div>
+
+  <div style="position:absolute;left:510px;top:108px;font-size:10px;font-weight:700;letter-spacing:.18em;color:#98a2b3">KNOB LAYERS</div>
+  <div style="position:absolute;left:510px;top:126px;width:452px;font-family:'IBM Plex Mono',monospace;font-size:9.5px">
+    <div style="display:grid;grid-template-columns:104px repeat(6,1fr);align-items:center;height:16px;color:#949aa2;letter-spacing:.04em">
+      <div></div><div>FREQ</div><div>LPF</div><div>MIX</div><div>RATE 1</div><div>RATE 2</div><div>GAIN</div>
+    </div>
+    <div style="display:grid;grid-template-columns:104px repeat(6,1fr);align-items:center;height:19px;color:#f2f4f8;border-top:1px solid #14171e">
+      <div style="color:#98a2b3">X · NOTHING</div><div>Freq</div><div>LPF</div><div>Mix</div><div>Rate</div><div>Rate</div><div>Gain</div>
+    </div>
+    <div style="display:grid;grid-template-columns:104px repeat(6,1fr);align-items:center;height:19px;color:#00eaff;border-top:1px solid #14171e">
+      <div style="opacity:.72">Y · TAP / INS</div><div>Gain</div><div>Res</div><div>Vol</div><div>Shape</div><div>Shape</div><div>Mode</div>
+    </div>
+    <div style="display:grid;grid-template-columns:104px repeat(6,1fr);align-items:center;height:19px;color:#ffe600;border-top:1px solid #14171e">
+      <div style="opacity:.72">Z · BYP / DEL</div><div>L1 Depth</div><div>L2 Depth</div><div>Drv/Rng</div><div>Target</div><div>Target</div><div>Target</div>
+    </div>
+    <div style="display:grid;grid-template-columns:104px repeat(6,1fr);align-items:center;height:19px;color:#ff2b5e;border-top:1px solid #14171e">
+      <div style="opacity:.72">A · BOTH</div><div style="color:#7c838d">—</div><div style="color:#7c838d">—</div><div>?</div><div style="color:#7c838d">—</div><div style="color:#7c838d">—</div><div style="color:#7c838d">—</div>
+    </div>
+  </div>
+  <div data-hint="1" style="position:absolute;left:510px;top:234px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:#949aa2;letter-spacing:.03em">Hold the stomp or its key — or right-click a stomp to latch it.</div>
+
+  <div style="position:absolute;left:940px;top:106px;width:96px;display:flex;gap:10px;justify-content:flex-end;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:#949aa2"><span style="width:18px;text-align:center">IN</span><span style="width:18px;text-align:center">OUT</span></div>
+  <div style="position:absolute;left:990px;top:122px;width:18px;height:126px;border-radius:3px;background:#000;box-shadow:inset 0 0 0 1px #1b1f28">
+    <div style="position:absolute;left:3px;right:3px;bottom:3px;height:52px;border-radius:2px;background:linear-gradient(to top,#4dff3a 0,#4dff3a 74%,#ffe600 74%,#ffe600 95%,#ff2b5e 95%)"></div>
+  </div>
+  <div style="position:absolute;left:1018px;top:122px;width:18px;height:126px;border-radius:3px;background:#000;box-shadow:inset 0 0 0 1px #1b1f28">
+    <div style="position:absolute;left:3px;right:3px;bottom:3px;height:78px;border-radius:2px;background:linear-gradient(to top,#4dff3a 0,#4dff3a 52%,#ffe600 52%,#ffe600 87%,#ff2b5e 87%)"></div>
+  </div>
+
+  <div style="position:absolute;left:12px;top:279px;width:330px;height:210px;border-radius:12px;background:rgba(3,3,5,.75);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);box-sizing:border-box;border:1px solid #1b1f28"></div>
+  
+  <div style="position:absolute;left:12px;top:279px;width:330px;height:2px;background:#00eaff;box-shadow:0 0 12px #00eaff;border-radius:2px 2px 0 0"></div>
+  <div style="position:absolute;left:28px;top:293px;display:flex;align-items:baseline;gap:9px">
+    <div style="font-size:12px;font-weight:700;letter-spacing:.18em;color:#f2f4f8">LFO 1</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.09em;color:#949aa2">UNIPOLAR ↑ · SC→DEPTH</div>
+  </div>
+  <div style="position:absolute;left:298px;top:291px;width:28px;height:28px;border-radius:50%;background-color:rgb(4,39,44);box-shadow:0 0 0 1px #000;animation:gwLedC 2.2s ease-in-out infinite"></div>
+  <div style="position:absolute;left:30px;top:333px;width:76px;height:12px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.14em"><span data-cap="3" style="color:#98a2b3">RATE</span></div>
+  <div data-knob="3" style="position:absolute;left:30px;top:351px;width:76px;height:76px;cursor:ns-resize">
+    <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 216deg,#00eaff 0 66.5deg,#14161c 66.5deg 288deg,transparent 288deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 32.9px,#000 33px 38px,transparent 38.1px);mask:radial-gradient(circle at 50% 50%,transparent 32.9px,#000 33px 38px,transparent 38.1px)"></div>
+    <div style="position:absolute;left:11px;top:11px;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 34% 26%,#1e1e28,#050508 76%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -2px 3px rgba(0,0,0,.5),0 5px 12px rgba(0,0,0,.45);border:1px solid #39415280;box-sizing:border-box"></div>
+    <div style="position:absolute;left:38px;top:38px;width:0;height:0;transform:rotate(282.5deg)"><div style="position:absolute;left:-1.25px;top:-31px;width:2.5px;height:11px;border-radius:2px;background:#00eaff;box-shadow:0 0 10px #00eaff"></div></div>
+  </div>
+  <div data-val="3" style="position:absolute;left:30px;top:435px;width:76px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#f2f4f8">0.50 Hz</div>
+  <div data-dep="lfo1depth" style="position:absolute;left:30px;top:452px;width:76px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#949aa2;letter-spacing:.06em">DEPTH 50 %</div>
+
+  <div data-col="lfo1" style="position:absolute;left:142px;top:333px;width:184px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:9.5px;font-weight:700;letter-spacing:.16em;color:#98a2b3">SHAPE</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c838d">Y · RATE KNOB</span></div>
+    <div style="display:flex;gap:3px;margin-top:6px">
+      <div style="flex:1;height:9px;border-radius:2px;background:#ff4444;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#ff8c00;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#ffd400;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#44dd66;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#33cccc;box-shadow:0 0 0 1.5px #000,0 0 0 2.5px #f2f4f8,0 0 9px rgba(51,204,204,.7)"></div><div style="flex:1;height:9px;border-radius:2px;background:#4488ff;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#9955ff;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#ff55bb;opacity:.34"></div>
+    </div>
+    <div style="margin-top:7px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#33cccc">Sine <span style="color:#7c838d">/ Wobble</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:16px"><span style="font-size:9.5px;font-weight:700;letter-spacing:.16em;color:#98a2b3">TARGET</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c838d">Z · RATE KNOB</span></div>
+    <div style="display:flex;gap:3px;margin-top:6px">
+      <div style="flex:1;height:9px;border-radius:2px;background:#14161c"></div><div style="flex:1;height:9px;border-radius:2px;background:#ff8c00;box-shadow:0 0 0 1.5px #000,0 0 0 2.5px #f2f4f8,0 0 9px rgba(255,140,0,.7)"></div><div style="flex:1;height:9px;border-radius:2px;background:#ffd400;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#44dd66;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#33cccc;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#4488ff;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#9955ff;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#ff55bb;opacity:.34"></div>
+    </div>
+    <div style="margin-top:7px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#ff8c00">Freq</div>
+  </div>
+  <div data-hint="1" style="position:absolute;left:28px;top:467px;width:298px;overflow:hidden;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#949aa2;letter-spacing:.03em">Z · FREQ knob = depth · LED: wave / depth %</div>
+
+  <div style="position:absolute;left:352px;top:279px;width:330px;height:210px;border-radius:12px;background:rgba(3,3,5,.75);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);box-sizing:border-box;border:1px solid #1b1f28"></div>
+  
+  <div style="position:absolute;left:352px;top:279px;width:330px;height:2px;background:#ff2bd6;box-shadow:0 0 12px #ff2bd6;border-radius:2px 2px 0 0"></div>
+  <div style="position:absolute;left:368px;top:293px;display:flex;align-items:baseline;gap:9px">
+    <div style="font-size:12px;font-weight:700;letter-spacing:.18em;color:#f2f4f8">LFO 2</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.09em;color:#949aa2">BIPOLAR · SC→DEPTH</div>
+  </div>
+  <div style="position:absolute;left:638px;top:291px;width:28px;height:28px;border-radius:50%;background-color:rgb(43,11,38);box-shadow:0 0 0 1px #000;animation:gwLedM 3.4s ease-in-out infinite"></div>
+  <div style="position:absolute;left:370px;top:333px;width:76px;height:12px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.14em"><span data-cap="4" style="color:#98a2b3">RATE</span></div>
+  <div data-knob="4" style="position:absolute;left:370px;top:351px;width:76px;height:76px;cursor:ns-resize">
+    <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 216deg,#ff2bd6 0 0.5deg,#14161c 0.5deg 288deg,transparent 288deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 32.9px,#000 33px 38px,transparent 38.1px);mask:radial-gradient(circle at 50% 50%,transparent 32.9px,#000 33px 38px,transparent 38.1px)"></div>
+    <div style="position:absolute;left:11px;top:11px;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 34% 26%,#1e1e28,#050508 76%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -2px 3px rgba(0,0,0,.5),0 5px 12px rgba(0,0,0,.45);border:1px solid #39415280;box-sizing:border-box"></div>
+    <div style="position:absolute;left:38px;top:38px;width:0;height:0;transform:rotate(216deg)"><div style="position:absolute;left:-1.25px;top:-31px;width:2.5px;height:11px;border-radius:2px;background:#ff2bd6;box-shadow:0 0 10px #ff2bd6"></div></div>
+  </div>
+  <div data-val="4" style="position:absolute;left:370px;top:435px;width:76px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#f2f4f8">0.20 Hz</div>
+  <div data-dep="lfo2depth" style="position:absolute;left:370px;top:452px;width:76px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#949aa2;letter-spacing:.06em">DEPTH 15 %</div>
+
+  <div data-col="lfo2" style="position:absolute;left:482px;top:333px;width:184px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:9.5px;font-weight:700;letter-spacing:.16em;color:#98a2b3">SHAPE</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c838d">Y · RATE KNOB</span></div>
+    <div style="display:flex;gap:3px;margin-top:6px">
+      <div style="flex:1;height:9px;border-radius:2px;background:#ff4444;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#ff8c00;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#ffd400;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#44dd66;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#33cccc;box-shadow:0 0 0 1.5px #000,0 0 0 2.5px #f2f4f8,0 0 9px rgba(51,204,204,.7)"></div><div style="flex:1;height:9px;border-radius:2px;background:#4488ff;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#9955ff;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#ff55bb;opacity:.34"></div>
+    </div>
+    <div style="margin-top:7px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#33cccc">Sine <span style="color:#7c838d">/ Wobble</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:16px"><span style="font-size:9.5px;font-weight:700;letter-spacing:.16em;color:#98a2b3">TARGET</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c838d">Z · RATE KNOB</span></div>
+    <div style="display:flex;gap:3px;margin-top:6px">
+      <div style="flex:1;height:9px;border-radius:2px;background:#14161c"></div><div style="flex:1;height:9px;border-radius:2px;background:#ff8c00;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#ffd400;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#44dd66;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#33cccc;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#4488ff;box-shadow:0 0 0 1.5px #000,0 0 0 2.5px #f2f4f8,0 0 9px rgba(68,136,255,.7)"></div><div style="flex:1;height:9px;border-radius:2px;background:#9955ff;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#ff55bb;opacity:.34"></div>
+    </div>
+    <div style="margin-top:7px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#4488ff">LFO 1 Rate</div>
+  </div>
+  <div data-hint="1" style="position:absolute;left:368px;top:467px;width:298px;overflow:hidden;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#949aa2;letter-spacing:.03em">Z · LPF knob = depth · TAP ×3 + BYPASS = rate</div>
+
+  <div style="position:absolute;left:692px;top:279px;width:356px;height:210px;border-radius:12px;background:rgba(3,3,5,.75);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);box-sizing:border-box;border:1px solid #1b1f28"></div>
+  
+  <div style="position:absolute;left:692px;top:279px;width:356px;height:2px;background:#4dff3a;box-shadow:0 0 12px #4dff3a;border-radius:2px 2px 0 0"></div>
+  <div style="position:absolute;left:708px;top:293px;display:flex;align-items:baseline;gap:9px">
+    <div style="font-size:12px;font-weight:700;letter-spacing:.18em;color:#f2f4f8">ENVELOPE</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.09em;color:#949aa2">FOLLOWER + FILTER</div>
+  </div>
+  <div style="position:absolute;left:1004px;top:291px;width:28px;height:28px;border-radius:50%;background-color:rgb(16,43,15);box-shadow:0 0 0 1px #000;animation:gwLedG 2.8s ease-in-out infinite"></div>
+  <div style="position:absolute;left:710px;top:333px;width:76px;height:12px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.14em"><span data-cap="5" style="color:#98a2b3">GAIN</span></div>
+  <div data-knob="5" style="position:absolute;left:710px;top:351px;width:76px;height:76px;cursor:ns-resize">
+    <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 216deg,#4dff3a 0 189.5deg,#14161c 189.5deg 288deg,transparent 288deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 32.9px,#000 33px 38px,transparent 38.1px);mask:radial-gradient(circle at 50% 50%,transparent 32.9px,#000 33px 38px,transparent 38.1px)"></div>
+    <div style="position:absolute;left:11px;top:11px;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 34% 26%,#1e1e28,#050508 76%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -2px 3px rgba(0,0,0,.5),0 5px 12px rgba(0,0,0,.45);border:1px solid #39415280;box-sizing:border-box"></div>
+    <div style="position:absolute;left:38px;top:38px;width:0;height:0;transform:rotate(405.5deg)"><div style="position:absolute;left:-1.25px;top:-31px;width:2.5px;height:11px;border-radius:2px;background:#4dff3a;box-shadow:0 0 10px #4dff3a"></div></div>
+  </div>
+  <div data-val="5" style="position:absolute;left:710px;top:435px;width:76px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#f2f4f8">×10.0</div>
+  <div style="position:absolute;left:710px;top:452px;width:76px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#949aa2;letter-spacing:.06em">ENV → LPF</div>
+
+  <div data-col="env" style="position:absolute;left:822px;top:321px;width:210px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:9.5px;font-weight:700;letter-spacing:.16em;color:#98a2b3">FILTER MODE</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c838d">Y · GAIN KNOB</span></div>
+    <div style="display:flex;gap:3px;margin-top:6px">
+      <div style="flex:1;height:9px;border-radius:2px;background:#14161c"></div><div style="flex:1;height:9px;border-radius:2px;background:#ff8c00;box-shadow:0 0 0 1.5px #000,0 0 0 2.5px #f2f4f8,0 0 9px rgba(255,140,0,.7)"></div><div style="flex:1;height:9px;border-radius:2px;background:#ffd400;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#44dd66;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#33cccc;opacity:.34"></div>
+    </div>
+    <div style="margin-top:7px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#ff8c00">LP <span style="color:#7c838d">· Q 4.0 · Range Hi</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px"><span style="font-size:9.5px;font-weight:700;letter-spacing:.16em;color:#98a2b3">TARGET</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c838d">Z · GAIN KNOB</span></div>
+    <div style="display:flex;gap:3px;margin-top:6px">
+      <div style="flex:1;height:9px;border-radius:2px;background:#14161c"></div><div style="flex:1;height:9px;border-radius:2px;background:#ff8c00;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#ffd400;box-shadow:0 0 0 1.5px #000,0 0 0 2.5px #f2f4f8,0 0 9px rgba(255,212,0,.7)"></div><div style="flex:1;height:9px;border-radius:2px;background:#44dd66;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#33cccc;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#4488ff;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#9955ff;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#ff55bb;opacity:.34"></div>
+    </div>
+    <div style="margin-top:7px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#ffd400">LPF</div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px"><span style="font-size:9.5px;font-weight:700;letter-spacing:.16em;color:#98a2b3">DRIVE / RANGE</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c838d">Z · MIX KNOB</span></div>
+    <div style="display:flex;gap:3px;margin-top:6px">
+      <div style="flex:1;height:9px;border-radius:2px;background:#ff4444;box-shadow:0 0 0 1.5px #000,0 0 0 2.5px #f2f4f8,0 0 9px rgba(255,68,68,.7)"></div><div style="flex:1;height:9px;border-radius:2px;background:#ff8c00;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#ffd400;opacity:.34"></div><div style="flex:1;height:9px;border-radius:2px;background:#44dd66;opacity:.34"></div>
+    </div>
+    <div style="margin-top:5px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#ff4444">Up-Hi <span style="color:#7c838d">· drive up, range hi</span></div>
+  </div>
+
+  <div style="position:absolute;left:12px;top:494px;width:1036px;height:74px;border-radius:12px;background:rgba(3,3,5,.75);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);box-sizing:border-box;border:1px solid #1b1f28"></div>
+  <div style="position:absolute;left:24px;top:506px;width:5px;height:5px;border-radius:50%;background:#1f2430;box-shadow:inset 0 1px 1px rgba(0,0,0,.9)"></div>
+  <div style="position:absolute;left:1031px;top:506px;width:5px;height:5px;border-radius:50%;background:#1f2430;box-shadow:inset 0 1px 1px rgba(0,0,0,.9)"></div>
+  <div style="position:absolute;left:24px;top:550px;width:5px;height:5px;border-radius:50%;background:#1f2430;box-shadow:inset 0 1px 1px rgba(0,0,0,.9)"></div>
+  <div style="position:absolute;left:1031px;top:550px;width:5px;height:5px;border-radius:50%;background:#1f2430;box-shadow:inset 0 1px 1px rgba(0,0,0,.9)"></div>
+  <div style="position:absolute;left:44px;top:525px;width:11px;height:11px;border-radius:50%;background:#4dff3a;box-shadow:0 0 0 1px #000,0 0 12px #4dff3a,0 0 28px rgba(77,255,58,.55)"></div>
+  <div style="position:absolute;left:70px;top:510px;font-size:11.5px;font-weight:700;letter-spacing:.16em;color:#f2f4f8">INTERNAL · UNDER THE COVER</div>
+  <div style="position:absolute;left:70px;top:532px;display:flex;gap:18px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#98a2b3">
+    <span>GATE <span data-sum="gatethresh" style="color:#f2f4f8">−48 dB</span> · <span data-sum="gatehold" style="color:#f2f4f8">1.0 s</span> · <span data-sum="gatefade" style="color:#f2f4f8">30 s</span></span>
+    <span style="color:#7c838d">|</span>
+    <span>JFET <span data-sum="jfet" style="color:#4dff3a">ON</span></span>
+    <span>LADDER <span data-sum="ladder" style="color:#949aa2">OFF</span></span>
+    <span>SUPPLY <span data-sum="supply" style="color:#f2f4f8">9 V</span></span>
+    <span>HINTS <span data-sum="hints" style="color:#949aa2">OFF</span></span>
+  </div>
+  <div style="position:absolute;left:918px;top:518px;width:106px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;letter-spacing:.14em;color:#f2f4f8;background:#0a0a0e;box-shadow:inset 0 0 0 1px rgba(255,230,0,.25);border:1px solid #39415280;box-sizing:border-box;cursor:pointer" style-hover="background:#14141c" data-cover-open="1">OPEN COVER</div>
+
+  <div data-cover-panel="1" style="position:absolute;left:12px;top:279px;width:1036px;height:292px;display:none;border-radius:12px;background:#000;border:1px solid #4dff3a;box-sizing:border-box;box-shadow:0 0 26px rgba(77,255,58,.22),0 0 0 900px rgba(0,0,0,.78)">
+    <div style="position:absolute;left:0;top:0;width:1034px;height:2px;background:#4dff3a;box-shadow:0 0 12px #4dff3a;border-radius:2px 2px 0 0"></div>
+    <div style="position:absolute;left:24px;top:20px;width:11px;height:11px;border-radius:50%;background:#4dff3a;box-shadow:0 0 0 1px #000,0 0 12px #4dff3a,0 0 28px rgba(77,255,58,.55)"></div>
+    <div style="position:absolute;left:48px;top:16px;font-size:12px;font-weight:700;letter-spacing:.18em;color:#f2f4f8">UNDER THE COVER · TRIM POTS / SWITCHES / SIM VOLTAGE</div>
+    <div style="position:absolute;left:48px;top:36px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#98a2b3;letter-spacing:.03em">Not on the pedal face — set once with a trimmer and forget.</div>
+    <div data-hints-btn="1" style="position:absolute;right:142px;top:16px;width:114px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;letter-spacing:.14em;color:#f2f4f8;background:#0a0a0e;box-shadow:inset 0 0 0 1px rgba(255,230,0,.4);border:1px solid #2b3140;box-sizing:border-box;cursor:pointer" style-hover="background:#14141c">HINTS: OFF</div>
+    <div data-cover-close="1" style="position:absolute;right:20px;top:16px;width:114px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;letter-spacing:.14em;color:#f2f4f8;background:#0a0a0e;box-shadow:inset 0 0 0 1px rgba(77,255,58,.4);border:1px solid #2b3140;box-sizing:border-box;cursor:pointer" style-hover="background:#14141c">CLOSE COVER</div>
+
+    <div style="position:absolute;left:24px;top:74px;font-size:9.5px;font-weight:700;letter-spacing:.16em;color:#98a2b3">OUTPUT GATE</div>
+    <div style="position:absolute;left:24px;top:92px;width:414px;height:1px;background:#1b1f28"></div>
+
+    <div style="position:absolute;left:40px;top:106px;width:76px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.14em;color:#f2f4f8">THRESH</div>
+    <div data-gknob="gatethresh" style="position:absolute;left:40px;top:124px;width:76px;height:76px;cursor:ns-resize">
+      <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 216deg,#4dff3a 0 144deg,#14161c 144deg 288deg,transparent 288deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 32.9px,#000 33px 38px,transparent 38.1px);mask:radial-gradient(circle at 50% 50%,transparent 32.9px,#000 33px 38px,transparent 38.1px)"></div>
+      <div style="position:absolute;left:11px;top:11px;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 34% 26%,#1e1e28,#050508 76%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -2px 3px rgba(0,0,0,.5),0 5px 12px rgba(0,0,0,.45);border:1px solid #39415280;box-sizing:border-box"></div>
+      <div style="position:absolute;left:38px;top:38px;width:0;height:0;transform:rotate(360deg)"><div style="position:absolute;left:-1.25px;top:-31px;width:2.5px;height:11px;border-radius:2px;background:#4dff3a;box-shadow:0 0 10px #4dff3a"></div></div>
+    </div>
+    <div data-gval="gatethresh" style="position:absolute;left:40px;top:208px;width:76px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#f2f4f8">−48.0 dB</div>
+    <div style="position:absolute;left:40px;top:225px;width:76px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c838d">−96 … 0</div>
+
+    <div style="position:absolute;left:172px;top:106px;width:76px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.14em;color:#f2f4f8">HOLD</div>
+    <div data-gknob="gatehold" style="position:absolute;left:172px;top:124px;width:76px;height:76px;cursor:ns-resize">
+      <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 216deg,#4dff3a 0 110.3deg,#14161c 110.3deg 288deg,transparent 288deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 32.9px,#000 33px 38px,transparent 38.1px);mask:radial-gradient(circle at 50% 50%,transparent 32.9px,#000 33px 38px,transparent 38.1px)"></div>
+      <div style="position:absolute;left:11px;top:11px;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 34% 26%,#1e1e28,#050508 76%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -2px 3px rgba(0,0,0,.5),0 5px 12px rgba(0,0,0,.45);border:1px solid #39415280;box-sizing:border-box"></div>
+      <div style="position:absolute;left:38px;top:38px;width:0;height:0;transform:rotate(326.3deg)"><div style="position:absolute;left:-1.25px;top:-31px;width:2.5px;height:11px;border-radius:2px;background:#4dff3a;box-shadow:0 0 10px #4dff3a"></div></div>
+    </div>
+    <div data-gval="gatehold" style="position:absolute;left:172px;top:208px;width:76px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#f2f4f8">1.0 s</div>
+    <div style="position:absolute;left:172px;top:225px;width:76px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c838d">0.1 … 10</div>
+
+    <div style="position:absolute;left:304px;top:106px;width:76px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.14em;color:#f2f4f8">FADE</div>
+    <div data-gknob="gatefade" style="position:absolute;left:304px;top:124px;width:76px;height:76px;cursor:ns-resize">
+      <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 216deg,#4dff3a 0 218deg,#14161c 218deg 288deg,transparent 288deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 32.9px,#000 33px 38px,transparent 38.1px);mask:radial-gradient(circle at 50% 50%,transparent 32.9px,#000 33px 38px,transparent 38.1px)"></div>
+      <div style="position:absolute;left:11px;top:11px;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 34% 26%,#1e1e28,#050508 76%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -2px 3px rgba(0,0,0,.5),0 5px 12px rgba(0,0,0,.45);border:1px solid #39415280;box-sizing:border-box"></div>
+      <div style="position:absolute;left:38px;top:38px;width:0;height:0;transform:rotate(434deg)"><div style="position:absolute;left:-1.25px;top:-31px;width:2.5px;height:11px;border-radius:2px;background:#4dff3a;box-shadow:0 0 10px #4dff3a"></div></div>
+    </div>
+    <div data-gval="gatefade" style="position:absolute;left:304px;top:208px;width:76px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#f2f4f8">30 s</div>
+    <div style="position:absolute;left:304px;top:225px;width:76px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c838d">0.1 … 60</div>
+
+    <div style="position:absolute;left:462px;top:100px;width:1px;height:150px;background:#1b1f28"></div>
+
+    <div style="position:absolute;left:512px;top:74px;font-size:9.5px;font-weight:700;letter-spacing:.16em;color:#98a2b3">PCB SWITCHES</div>
+    <div style="position:absolute;left:512px;top:92px;width:500px;height:1px;background:#1b1f28"></div>
+
+    <div style="position:absolute;left:512px;top:112px;width:224px;height:36px;border-radius:6px;background:#050508;border:1px solid #2b3140;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;padding:0 14px;cursor:pointer">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.13em;color:#f2f4f8">JFET STAGE</span><span data-sw="jfet" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#4dff3a;text-shadow:0 0 9px rgba(77,255,58,.7)">ON</span>
+    </div>
+    <div style="position:absolute;left:512px;top:158px;width:224px;height:36px;border-radius:6px;background:#050508;border:1px solid #2b3140;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;padding:0 14px;cursor:pointer">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.13em;color:#f2f4f8">−3/−6 LADDER</span><span data-sw="ladder" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#7c838d">OFF</span>
+    </div>
+
+    <div style="position:absolute;left:770px;top:112px;font-size:9.5px;font-weight:700;letter-spacing:.16em;color:#98a2b3">SIM SUPPLY</div>
+    <div style="position:absolute;left:770px;top:134px;display:flex;gap:7px">
+      <div style="width:52px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;background:#4dff3a;color:#000;box-shadow:0 0 16px rgba(77,255,58,.55);cursor:pointer" data-supply="9V">9V</div>
+      <div style="width:52px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;background:#050508;color:#98a2b3;border:1px solid #2b3140;box-sizing:border-box;cursor:pointer" data-supply="12V">12V</div>
+      <div style="width:52px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;background:#050508;color:#98a2b3;border:1px solid #2b3140;box-sizing:border-box;cursor:pointer" data-supply="15V">15V</div>
+      <div style="width:52px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;background:#050508;color:#98a2b3;border:1px solid #2b3140;box-sizing:border-box;cursor:pointer" data-supply="18V">18V</div>
+    </div>
+    <div style="position:absolute;left:512px;top:222px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7c838d;letter-spacing:.03em">Gate LED: green = open · amber = fading · red = fully closed</div>
+  </div>
+
+  <div style="position:absolute;left:12px;top:573px;width:1036px;height:56px;border-radius:12px;background:rgba(3,3,5,.75);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);box-sizing:border-box;border:1px solid #1b1f28"></div>
+  <div style="position:absolute;left:34px;top:593px;width:16px;height:16px;border-radius:50%;background-color:#ffe600;box-shadow:0 0 0 4px rgba(255,230,0,.18),0 0 11px rgba(255,230,0,.6);animation:gwLedTempo 2s steps(1,end) infinite"></div>
+  <div data-stomp="tap" style="position:absolute;left:62px;top:582px;width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 38% 30%,#1a1a24,#000 75%);border:1.5px solid #4b5364;box-sizing:border-box;box-shadow:0 0 14px rgba(255,230,0,.18),inset 0 1px 0 rgba(255,255,255,.06);cursor:pointer"></div>
+  <div style="position:absolute;left:110px;top:594px;font-size:12px;font-weight:700;letter-spacing:.16em;color:#f2f4f8">TAP</div>
+  <div data-stomp="byp" style="position:absolute;left:182px;top:582px;width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 38% 30%,#1a1a24,#000 75%);border:1.5px solid #4b5364;box-sizing:border-box;box-shadow:0 0 14px rgba(255,230,0,.18),inset 0 1px 0 rgba(255,255,255,.06);cursor:pointer"></div>
+  <div style="position:absolute;left:230px;top:593px;width:16px;height:16px;border-radius:50%;background:#4dff3a;box-shadow:0 0 0 1px #000,0 0 14px #4dff3a,0 0 32px rgba(77,255,58,.55)"></div>
+  <div style="position:absolute;left:256px;top:594px;font-size:12px;font-weight:700;letter-spacing:.16em;color:#f2f4f8">BYPASS</div>
+  <div data-hint="1" style="position:absolute;left:360px;top:588px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#98a2b3;letter-spacing:.03em">TAP ×3 avg = LFO 1 rate · hold BYPASS while tapping = LFO 2 rate · 0.2–20 Hz</div>
+  <div data-hint="1" style="position:absolute;left:360px;top:603px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#949aa2;letter-spacing:.03em">Amber LED blinks the tempo · green LED = effect active</div>
+  <div style="position:absolute;right:28px;top:587px;display:flex;align-items:center;gap:10px"><span style="font-family:'IBM Plex Mono',monospace;font-size:6.4px;color:#7c838d;letter-spacing:.08em">MADE ON… EARTH?</span><img src="assets/illicit_apothecary_logo.png" alt="Illicit Apothecary" style="width:66px;height:33px;object-fit:contain;filter:invert(1);opacity:.55"></div>
+
+
+  <div data-glitch="light" style="position:absolute;left:0;top:210px;width:1060px;height:9px;pointer-events:none;opacity:0;mix-blend-mode:screen;background:repeating-linear-gradient(90deg,#00eaff 0 4px,transparent 4px 11px,#ff2bd6 11px 14px,transparent 14px 26px);animation:gwLightBar 33s steps(1,end) infinite"></div>
+  <div data-glitch="light" style="position:absolute;left:0;top:415px;width:1060px;height:6px;pointer-events:none;opacity:0;mix-blend-mode:screen;background:repeating-linear-gradient(90deg,#4dff3a 0 3px,transparent 3px 9px,#ffe600 9px 11px,transparent 11px 22px);animation:gwLightBar 33s steps(1,end) infinite"></div>
+
+  <div data-glitch="major" style="position:absolute;inset:0;pointer-events:none;opacity:0;mix-blend-mode:screen;background:repeating-linear-gradient(0deg,rgba(255,43,214,.5) 0 2px,transparent 2px 5px,rgba(0,234,255,.5) 5px 7px,transparent 7px 13px);animation:gwVeil 666s steps(1,end) infinite"></div>
+  <div data-glitch="major" style="position:absolute;left:0;top:102px;width:1060px;height:54px;pointer-events:none;opacity:0;mix-blend-mode:screen;background:repeating-linear-gradient(90deg,#4dff3a 0 5px,#ff2bd6 5px 9px,#00eaff 9px 16px,#000 16px 29px);animation:gwTearA 666s steps(1,end) infinite"></div>
+  <div data-glitch="major" style="position:absolute;left:0;top:311px;width:1060px;height:88px;pointer-events:none;opacity:0;mix-blend-mode:screen;background:repeating-linear-gradient(90deg,#ffe600 0 3px,#00eaff 3px 8px,#000 8px 15px,#ff2bd6 15px 19px,#000 19px 34px);animation:gwTearB 666s steps(1,end) infinite"></div>
+  <div data-glitch="major" style="position:absolute;left:0;top:500px;width:1060px;height:120px;pointer-events:none;opacity:0;mix-blend-mode:screen;background:repeating-linear-gradient(90deg,#ff2b5e 0 4px,#000 4px 12px,#4dff3a 12px 15px,#00eaff 15px 21px,#000 21px 38px);animation:gwTearC 666s steps(1,end) infinite"></div>
+
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1325,&quot;height&quot;:800},&quot;showHints&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Panel&quot;,&quot;label&quot;:&quot;Hints on at open&quot;},&quot;fastGlitch&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Glitch&quot;,&quot;label&quot;:&quot;Preview speed (10× faster)&quot;}}">
+const CAPS = [
+  ["FREQ","LPF","MIX","RATE","RATE","GAIN"],
+  ["GAIN","RES","VOL","SHAPE","SHAPE","MODE"],
+  ["L1 DEPTH","L2 DEPTH","DRV/RNG","TARGET","TARGET","TARGET"],
+  ["—","—","?","—","—","—"]
+];
+const BIG = ["#f2f4f8","#00eaff","#ffe600","#5a6070"];
+const SMALL = ["#98a2b3","#00eaff","#ffe600","#5a6070"];
+
+// knob slot -> parameter id, per layer (X / Y / Z / A)
+const SLOT = [
+  ["freq","fizz","dry","lfo1rate","lfo2rate","envgain"],
+  ["dirtgain","lpfq","vol","lfo1shape","lfo2shape","lpfmode"],
+  ["lfo1depth","lfo2depth","drvrng","lfo1target","lfo2target","envtarget"],
+  [null,null,"starve",null,null,null]
+];
+
+const SHAPES = ["Ramp Up","Ramp Dn","Square","Triangle","Sine","Sweep","Rand Slope","S&H",
+                "Lorenz","Rossler","Drunk Walk","Perlin","Wobble","Glitch","White Noise","Pink Noise"];
+const T1 = ["Off","Freq","LPF","Res","Mix","Gain","Env Gain","Env Level"];
+const T2 = ["Off","Freq","LPF","Res","Mix","LFO 1 Rate","LFO 1 Depth","Env Gain"];
+const TE = ["Off","Freq","LPF","Res","Mix","Gain","LFO 1 Rate","LFO 1 Depth"];
+const MODES = ["Off","LP","BP","HP","Notch"];
+const COMBO = ["Up-Hi","Up-Lo","Dn-Hi","Dn-Lo"];
+const CHOICE = { lfo1shape: SHAPES, lfo2shape: SHAPES, lpfmode: MODES,
+                 lfo1target: T1, lfo2target: T2, envtarget: TE, drvrng: COMBO };
+const HUES = ["#ff4444","#ff8c00","#ffd400","#44dd66","#33cccc","#4488ff","#9955ff","#ff55bb"];
+
+let SUPPLY = 9;   // volts, set under the cover
+
+const hz = v => v < 1 ? v.toFixed(2) + " Hz" : v < 1000 ? Math.round(v) + " Hz" : (v / 1000).toFixed(2) + " kHz";
+const pct = p => Math.round(p * 100) + " %";
+const skew = (p, lo, hi, s) => lo + (hi - lo) * Math.pow(p, 1 / s);
+
+const FMT = {
+  freq: p => hz(0.2 * Math.pow(30000, p)),
+  fizz: p => { const lo = 20 * Math.pow(200, p); return hz(lo) + " / " + hz(lo * 2.21); },
+  lpfq: p => "Q " + (0.25 * Math.pow(32, p)).toFixed(2),
+  dry:  p => "D" + Math.round((p <= .5 ? 1 : 2 * (1 - p)) * 100) + " / FX" + Math.round((p >= .5 ? 1 : 2 * p) * 100),
+  vol:  pct,
+  dirtgain: p => { const g = 1.1 * Math.pow(272.727, p); return "×" + g.toFixed(g < 10 ? 1 : 0); },
+  lfo1rate: p => skew(p, .2, 20, .35).toFixed(2) + " Hz",
+  lfo2rate: p => skew(p, .2, 20, .35).toFixed(2) + " Hz",
+  lfo1depth: pct, lfo2depth: pct,
+  envgain: p => { const v = skew(p, .125, 40, .3); return "×" + v.toFixed(v < 2 ? 2 : 1); },
+  starve: p => (5 + (SUPPLY - 5) * p).toFixed(1) + " V",
+  gatethresh: p => (-96 + 96 * p).toFixed(1) + " dB",
+  gatehold: p => { const v = skew(p, .1, 10, .4); return v.toFixed(v < 1 ? 2 : 1) + " s"; },
+  gatefade: p => { const v = skew(p, .1, 60, .4); return v.toFixed(v < 1 ? 2 : 1) + " s"; }
+};
+
+// ship defaults, as normalised positions
+const DEF = {
+  freq: 0.088883, fizz: 0.28494, dry: 0.125, lfo1rate: 0.2308, lfo2rate: 0, envgain: 0.658,
+  dirtgain: 0, lpfq: 0.8, vol: 0.9, lfo1depth: 0.5, lfo2depth: 0.15, starve: 0,
+  gatethresh: 0.5, gatehold: 0.383, gatefade: 0.757,
+  lfo1shape: 4, lfo2shape: 4, lpfmode: 1, lfo1target: 1, lfo2target: 5, envtarget: 2, drvrng: 0
+};
+
+const RING = { "0": "#ffe600", "1": "#ffe600", "2": "#ffe600", "3": "#00eaff", "4": "#ff2bd6", "5": "#4dff3a" };
+
+class Component extends DCLogic {
+  componentDidMount() {
+    this.st = { tapMouse:false, tapKey:false, tapLatch:false, bypMouse:false, bypKey:false, bypLatch:false };
+    this.layer = 0;
+    this.p = Object.assign({}, DEF);
+    this.caps  = [...document.querySelectorAll("[data-cap]")];
+    this.vals  = [...document.querySelectorAll("[data-val]")];
+    this.chips = [...document.querySelectorAll("[data-chip]")];
+
+    // --- stomps ---
+    [...document.querySelectorAll("[data-stomp]")].forEach(el => {
+      const k = el.getAttribute("data-stomp");
+      const paint = () => {
+        const latch = this.st[k + "Latch"];
+        const held = this.st[k + "Mouse"] || this.st[k + "Key"] || latch;
+        el.style.borderColor = held ? "#ffe600" : "#4b5364";
+        el.style.borderWidth = held ? "2.5px" : "1.5px";
+        el.style.boxShadow = (latch ? "0 0 20px rgba(255,230,0,.6)," : "0 0 14px rgba(255,230,0,.18),")
+                           + "inset 0 1px 0 rgba(255,255,255,.06)";
+      };
+      this.st[k + "Paint"] = paint;
+      el.addEventListener("contextmenu", e => e.preventDefault());
+      el.addEventListener("mousedown", e => {
+        e.preventDefault();
+        if (e.button === 2) {   // right-click latches, like TapHoldButton::isLatched()
+          this.st[k + "Latch"] = !this.st[k + "Latch"];
+          paint(); this.apply();
+          return;
+        }
+        if (e.button !== 0) return;
+        this.st[k + "Mouse"] = true;
+        paint(); this.apply();
+        // scoped to THIS press, so a knob drag's mouseup can never clear it
+        const up = () => {
+          window.removeEventListener("mouseup", up);
+          this.st[k + "Mouse"] = false;
+          paint(); this.apply();
+        };
+        window.addEventListener("mouseup", up);
+      });
+    });
+    const setKey = (which, down) => {
+      if (this.st[which + "Key"] === down) return;
+      this.st[which + "Key"] = down;
+      if (this.st[which + "Paint"]) this.st[which + "Paint"]();
+      this.apply();
+    };
+    this._kd = e => { if (e.key === "Insert") setKey("tap", true); if (e.key === "Delete") setKey("byp", true); };
+    this._ku = e => { if (e.key === "Insert") setKey("tap", false); if (e.key === "Delete") setKey("byp", false); };
+    window.addEventListener("keydown", this._kd);
+    window.addEventListener("keyup", this._ku);
+
+    // --- ruler columns: [label, swatches, name] x N ---
+    this.rulers = {};
+    const bind = (col, specs) => {
+      const host = document.querySelector('[data-col="' + col + '"]');
+      if (!host) return;
+      const kids = [...host.children];
+      specs.forEach(([id, li]) => { this.rulers[id] = { sw: kids[li], name: kids[li + 1] }; });
+    };
+    bind("lfo1", [["lfo1shape", 1], ["lfo1target", 4]]);
+    bind("lfo2", [["lfo2shape", 1], ["lfo2target", 4]]);
+    bind("env",  [["lpfmode", 1], ["envtarget", 4], ["drvrng", 7]]);
+
+    // --- knobs ---
+    [...document.querySelectorAll("[data-knob]")].forEach(el => this.wire(el, () => SLOT[this.layer][+el.getAttribute("data-knob")], RING[el.getAttribute("data-knob")]));
+    [...document.querySelectorAll("[data-gknob]")].forEach(el => this.wire(el, () => el.getAttribute("data-gknob"), "#4dff3a"));
+
+    // --- internal switches ---
+    [...document.querySelectorAll("[data-sw]")].forEach(el => {
+      const id = el.getAttribute("data-sw");
+      this.p[id] = id === "jfet";
+      el.parentElement.addEventListener("click", () => {
+        this.p[id] = !this.p[id];
+        const on = this.p[id];
+        el.textContent = on ? "ON" : "OFF";
+        el.style.color = on ? "#4dff3a" : "#7c838d";
+        el.style.textShadow = on ? "0 0 9px rgba(77,255,58,.7)" : "none";
+        const s = document.querySelector('[data-sum="' + id + '"]');
+        if (s) { s.textContent = on ? "ON" : "OFF"; s.style.color = on ? "#4dff3a" : "#949aa2"; }
+      });
+    });
+    const supplies = [...document.querySelectorAll("[data-supply]")];
+    supplies.forEach(el => el.addEventListener("click", () => {
+      supplies.forEach(o => {
+        const on = o === el;
+        o.style.background = on ? "#4dff3a" : "#050508";
+        o.style.color = on ? "#000" : "#98a2b3";
+        o.style.boxShadow = on ? "0 0 16px rgba(77,255,58,.55)" : "none";
+        o.style.border = on ? "1px solid #4dff3a" : "1px solid #2b3140";
+      });
+      const v = el.getAttribute("data-supply");
+      SUPPLY = parseInt(v, 10);
+      const s = document.querySelector('[data-sum="supply"]');
+      if (s) s.textContent = v.replace("V", " V");
+      this.readout("starve");
+    }));
+
+    // --- cover ---
+    const panel = document.querySelector("[data-cover-panel]");
+    const ob = document.querySelector("[data-cover-open]");
+    const cb = document.querySelector("[data-cover-close]");
+    if (panel && ob) ob.addEventListener("click", e => { e.stopPropagation(); panel.style.display = "block"; });
+    if (panel && cb) cb.addEventListener("click", () => { panel.style.display = "none"; });
+    const hb = document.querySelector("[data-hints-btn]");
+    if (hb) hb.addEventListener("click", () => { this.hints = !this.hints; this.paintHints(); });
+    if (panel) {
+      panel.addEventListener("mousedown", e => e.stopPropagation());
+      window.addEventListener("mousedown", () => {
+        if (panel.style.display === "block") panel.style.display = "none";
+      });
+    }
+
+    this.applyProps();
+  }
+
+  componentDidUpdate() { this.applyProps(); }
+  componentWillUnmount() {
+    window.removeEventListener("keydown", this._kd);
+    window.removeEventListener("keyup", this._ku);
+  }
+
+  wire(el, idOf, col) {
+    const ring = el.children[0], ptr = el.children[2];
+    el.__paint = id => {
+      const ch = id ? CHOICE[id] : null;
+      const n = !id ? 0 : (ch ? (this.p[id] + 0.5) / ch.length : this.p[id]);
+      const deg = Math.max(0, Math.min(1, n)) * 288;
+      ring.style.background = "conic-gradient(from 216deg," + col + " 0 " + deg.toFixed(1) + "deg,#14161c " + deg.toFixed(1) + "deg 288deg,transparent 288deg)";
+      ptr.style.transform = "rotate(" + (216 + deg).toFixed(1) + "deg)";
+      const dot = ptr.firstElementChild;
+      if (dot) { dot.style.background = col; dot.style.boxShadow = "0 0 10px " + col; }
+    };
+    el.addEventListener("mousedown", e => {
+      const id = idOf();
+      if (!id) return;
+      e.preventDefault();
+      const ch = CHOICE[id];
+      const start = e.clientY + e.clientX;
+      const from = ch ? (this.p[id] + 0.5) / ch.length : this.p[id];
+      const move = ev => {
+        const n = Math.max(0, Math.min(1, from + (start - (ev.clientY + ev.clientX)) / 260));
+        this.p[id] = ch ? Math.max(0, Math.min(ch.length - 1, Math.floor(n * ch.length))) : n;
+        el.__paint(id);
+        this.readout(id);
+      };
+      const up = () => { window.removeEventListener("mousemove", move); window.removeEventListener("mouseup", up); };
+      window.addEventListener("mousemove", move);
+      window.addEventListener("mouseup", up);
+    });
+  }
+
+  readout(id) {
+    const ch = CHOICE[id];
+    // face knob value line for the active layer
+    const i = SLOT[this.layer].indexOf(id);
+    if (i >= 0 && this.vals[i]) this.vals[i].textContent = ch ? ch[this.p[id]] : FMT[id](this.p[id]);
+    // gate knob + internal-strip summary
+    const g = document.querySelector('[data-gval="' + id + '"]');
+    if (g) g.textContent = FMT[id](this.p[id]).replace("-", "−");
+    const s = document.querySelector('[data-sum="' + id + '"]');
+    if (s) s.textContent = FMT[id](this.p[id]).replace(".0 dB", " dB").replace("-", "−");
+    // depth caption under an LFO knob
+    const d = document.querySelector('[data-dep="' + id + '"]');
+    if (d) d.textContent = "DEPTH " + pct(this.p[id]);
+    // swatch ruler + choice name
+    const r = this.rulers[id];
+    if (r && ch) {
+      const idx = this.p[id], sw = [...r.sw.children], live = idx % sw.length;
+      sw.forEach((c, k) => {
+        const base = HUES[k % 8];
+        const off = ch === T1 || ch === T2 || ch === TE ? k === 0 : false;
+        c.style.opacity = k === live ? "1" : ".34";
+        c.style.boxShadow = k === live ? "0 0 0 1.5px #000,0 0 0 2.5px #f2f4f8,0 0 9px " + base : "none";
+        if (off) { c.style.background = "#14161c"; c.style.opacity = k === live ? "1" : "1"; }
+      });
+      const hue = (ch === T1 || ch === T2 || ch === TE) && idx === 0 ? "#98a2b3" : HUES[live % 8];
+      r.name.innerHTML = '<span style="color:' + hue + '">' + ch[idx] + "</span>";
+    }
+  }
+
+  applyProps() {
+    const m = this.props.fastGlitch ? 0.1 : 1;
+    const light = (33 * m) + "s", major = (666 * m) + "s";
+    const face = document.querySelector("[data-face]");
+    if (face) face.style.animationDuration = light + "," + major;
+    document.querySelectorAll('[data-glitch="light"]').forEach(el => { el.style.animationDuration = light; });
+    document.querySelectorAll('[data-glitch="major"]').forEach(el => { el.style.animationDuration = major; });
+    if (this.hints === undefined) this.hints = this.props.showHints === true;
+    this.paintHints();
+  }
+
+  paintHints() {
+    const on = !!this.hints;
+    document.querySelectorAll("[data-hint]").forEach(el => { el.style.display = on ? "" : "none"; });
+    const btn = document.querySelector("[data-hints-btn]");
+    if (btn) {
+      btn.textContent = "HINTS: " + (on ? "ON" : "OFF");
+      btn.style.boxShadow = "inset 0 0 0 1px " + (on ? "rgba(255,230,0,.75)" : "rgba(255,230,0,.25)");
+    }
+    const s = document.querySelector('[data-sum="hints"]');
+    if (s) { s.textContent = on ? "ON" : "OFF"; s.style.color = on ? "#ffe600" : "#949aa2"; }
+  }
+
+  apply() {
+    const s = this.st;
+    const t = s.tapMouse || s.tapKey || s.tapLatch;
+    const b = s.bypMouse || s.bypKey || s.bypLatch;
+    const layer = (t && b) ? 3 : b ? 2 : t ? 1 : 0;
+    if (layer === this.layer) return;
+    this.layer = layer;
+    this.caps.forEach((el, i) => {
+      el.textContent = CAPS[layer][i];
+      el.style.color = (layer === 3 && i === 2) ? "#ff2b5e" : (i < 3 ? BIG[layer] : SMALL[layer]);
+    });
+    SLOT[layer].forEach((id, i) => {
+      if (!this.vals[i]) return;
+      if (!id) { this.vals[i].textContent = "—"; return; }
+      const ch = CHOICE[id];
+      this.vals[i].textContent = ch ? ch[this.p[id]] : FMT[id](this.p[id]);
+    });
+    document.querySelectorAll("[data-knob]").forEach(el => {
+      const id = SLOT[layer][+el.getAttribute("data-knob")];
+      el.style.opacity = id ? "1" : ".6";
+      if (el.__paint) el.__paint(id);
+    });
+    this.chips.forEach((el, i) => {
+      const on = i === layer;
+      const col = ["#f2f4f8","#00eaff","#ffe600","#ff2b5e"][i];
+      el.style.background = on ? col : "transparent";
+      el.style.color = on ? "#000" : "#8b93a3";
+      el.style.boxShadow = on ? "inset 0 0 0 1px " + col + ", 0 0 20px " + col + "aa" : "inset 0 0 0 1px #1f2430";
+    });
+  }
+}
+
+</script>
+</body>
+</html>

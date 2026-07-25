@@ -2,65 +2,53 @@
 
 namespace
 {
-    const juce::Colour kBackground { 0xff1d1f24 };
-    const juce::Colour kPanel      { 0xff26292f };
-    const juce::Colour kPanelLine  { 0xff3a3f47 };
-    const juce::Colour kAccent     { 0xffffd166 };
-    const juce::Colour kText       { 0xffe8e8e8 };
-    const juce::Colour kDim        { 0xff9aa0a6 };
-    const juce::Colour kGreen      { 0xff4caf6d };
-    const juce::Colour kAmber      { 0xffd9a441 };   // the C3 colour
-    const juce::Colour kRed        { 0xffd95050 };
-    const juce::Colour kBlue       { 0xff6fa8dc };   // the C2 colour + depth LED
+    double nowMs() { return juce::Time::getMillisecondCounterHiRes(); }
 
-    // NeoPixel hue per slot (same slot in Bank A and Bank B / targets / modes)
-    const juce::Colour kShapeHues[8] = {
-        juce::Colour (0xffff4444),   // 0  red      Ramp Up   / Lorenz
-        juce::Colour (0xffff8c00),   // 1  orange   Ramp Dn   / Rossler
-        juce::Colour (0xffffd400),   // 2  yellow   Square    / Drunk Walk
-        juce::Colour (0xff44dd66),   // 3  green    Triangle  / Perlin
-        juce::Colour (0xff33cccc),   // 4  cyan     Sine      / Wobble
-        juce::Colour (0xff4488ff),   // 5  blue     Sweep     / Glitch
-        juce::Colour (0xff9955ff),   // 6  violet   Rnd Slope / White Noise
-        juce::Colour (0xffff55bb),   // 7  pink     S&H       / Pink Noise
-    };
+    const char* kDash = "\xe2\x80\x94";   // em dash for dead knobs
 
-    void drawSection (juce::Graphics& g, juce::Rectangle<int> r, const juce::String& title)
+    juce::String shortMode (const juce::String& s)   // "Mode LP" -> "LP"
     {
-        g.setColour (kPanel);
-        g.fillRoundedRectangle (r.toFloat(), 10.0f);
-        g.setColour (kPanelLine);
-        g.drawRoundedRectangle (r.toFloat(), 10.0f, 1.0f);
-        g.setColour (kDim);
-        g.setFont (juce::FontOptions (12.0f, juce::Font::bold));
-        g.drawText (title, r.getX() + 12, r.getY() + 6, r.getWidth() - 24, 14,
-                    juce::Justification::centredLeft);
+        return s.startsWith ("Mode ") ? s.substring (5) : s;
     }
 
-    double nowMs() { return juce::Time::getMillisecondCounterHiRes(); }
+    // panel chrome straight from the design: translucent black card, hairline
+    // border, glowing 2 px accent bar across the top
+    void panel (juce::Graphics& g, juce::Rectangle<int> r, juce::Colour accent)
+    {
+        g.setColour (gw::kPanelBg);
+        g.fillRoundedRectangle (r.toFloat(), 12.0f);
+        g.setColour (gw::kHairline);
+        g.drawRoundedRectangle (r.toFloat().reduced (0.5f), 12.0f, 1.0f);
+        g.setColour (juce::Colours::white.withAlpha (0.05f));
+        g.drawRoundedRectangle (r.toFloat().reduced (1.5f), 11.0f, 1.0f);
+        if (! accent.isTransparent())
+        {
+            g.setColour (accent.withAlpha (0.22f));
+            g.fillRect (r.getX(), r.getY() - 2, r.getWidth(), 7);
+            g.setColour (accent);
+            g.fillRect (r.getX() + 2, r.getY(), r.getWidth() - 4, 2);
+        }
+    }
 }
 
 GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
-    lnf.setColour (juce::Slider::rotarySliderFillColourId, kAccent);
-    lnf.setColour (juce::Slider::rotarySliderOutlineColourId, kPanelLine);
-    lnf.setColour (juce::Slider::thumbColourId, kAccent);
-    lnf.setColour (juce::Slider::textBoxTextColourId, kText);
-    lnf.setColour (juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
-    lnf.setColour (juce::TextButton::buttonColourId, juce::Colour (0xff2e3340));
-    lnf.setColour (juce::TextButton::textColourOffId, kText);
     setLookAndFeel (&lnf);
+
+    bgImage   = juce::ImageCache::getFromMemory (BinaryData::bg_face_jpg,    BinaryData::bg_face_jpgSize);
+    logoFx    = juce::ImageCache::getFromMemory (BinaryData::logo_fx_png,    BinaryData::logo_fx_pngSize);
+    logoPlain = juce::ImageCache::getFromMemory (BinaryData::logo_plain_png, BinaryData::logo_plain_pngSize);
 
     auto& apvts = processor.apvts;
 
     // ---- the six knobs (v0.24: all layer-switched, no section buttons) ------
-    setupKnob (freqKnob, freqLabel, "FREQ", true);   // C2 GAIN   C3 LFO1 DEPTH
-    setupKnob (lpfKnob,  lpfLabel,  "LPF",  true);   // C2 RES    C3 LFO2 DEPTH
-    setupKnob (mixKnob,  mixLabel,  "MIX",  true);   // C2 VOL    C3 DRV/RNG  (both: STARVE)
-    setupKnob (lfo1RateKnob, lfo1RateLabel, "RATE", false); // C2 TARGET  C3 SHAPE
-    setupKnob (lfo2RateKnob, lfo2RateLabel, "RATE", false); // C2 TARGET  C3 SHAPE
-    setupKnob (envGainKnob,  envGainLabel,  "GAIN", false); // C2 TARGET  C3 MODE
+    setupKnob (freqKnob, freqLabel, "FREQ", true,  gw::kYellow);
+    setupKnob (lpfKnob,  lpfLabel,  "LPF",  true,  gw::kYellow);
+    setupKnob (mixKnob,  mixLabel,  "MIX",  true,  gw::kYellow);
+    setupKnob (lfo1RateKnob, lfo1RateLabel, "RATE", false, gw::kCyan);
+    setupKnob (lfo2RateKnob, lfo2RateLabel, "RATE", false, gw::kMagenta);
+    setupKnob (envGainKnob,  envGainLabel,  "GAIN", false, gw::kGreen);
     freqAtt     = std::make_unique<SliderAttachment> (apvts, "freq",     freqKnob);
     lpfAtt      = std::make_unique<SliderAttachment> (apvts, "fizz",     lpfKnob);
     mixAtt      = std::make_unique<SliderAttachment> (apvts, "dry",      mixKnob);
@@ -72,7 +60,7 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     {
         if (suppressSliderCb) return;
         knobTouched();
-        if (knobLayer == 2)   // writing lfo1depth: LED shows blue @ depth
+        if (knobLayer == 2)   // writing lfo1depth: LED shows depth
         { lfo1Ctx = kCtxDepth; lfo1CtxUntil = nowMs() + 1500.0; }
     };
     lpfKnob.onValueChange = [this]
@@ -87,7 +75,7 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
         if (suppressSliderCb) return;
         knobTouched();
         if (knobLayer == 2)
-            applyComboFromMixKnob();          // C3: knob quarters pick DRV x RNG
+            applyComboFromMixKnob();          // Z: knob quarters pick DRV x RNG
     };
     // v0.30: Y (layer 1) = SHAPE / SHAPE / MODE, Z (layer 2) = TARGET x3
     lfo1RateKnob.onValueChange = [this]
@@ -118,19 +106,43 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
                                             envCtx, envCtxUntil, kCtxTarget);
     };
 
-    addAndMakeVisible (meterIn);
-    addAndMakeVisible (meterOut);
-
-    for (auto* l : { &lfo1ValueLabel, &lfo2ValueLabel })
+    // live value line under each knob
+    for (int i = 0; i < 6; ++i)
+    {
+        vals[i].setJustificationType (juce::Justification::centred);
+        vals[i].setFont (i < 3 ? gw::mono (13.0f, 500) : gw::mono (12.0f, 400));
+        vals[i].setColour (juce::Label::textColourId, gw::kText);
+        addAndMakeVisible (vals[i]);
+    }
+    for (auto* l : { &depth1Cap, &depth2Cap, &envSubCap })
     {
         l->setJustificationType (juce::Justification::centred);
-        l->setFont (juce::FontOptions (11.0f));
-        l->setColour (juce::Label::textColourId, kDim);
+        l->setFont (gw::mono (9.0f, 400, 0.06f));
+        l->setColour (juce::Label::textColourId, gw::kDim2);
         addAndMakeVisible (*l);
     }
 
+    addAndMakeVisible (meterIn);
+    addAndMakeVisible (meterOut);
+    addAndMakeVisible (chips);
+    addAndMakeVisible (tagline);
 
-    // cache the choice params the LEDs display
+    // selection rulers + names
+    l1ShapeRuler.configure (8, false);
+    l2ShapeRuler.configure (8, false);
+    l1TargetRuler.configure (8, true);
+    l2TargetRuler.configure (8, true);
+    envModeRuler.configure (5, true);
+    envTargetRuler.configure (8, true);
+    envComboRuler.configure (4, false);
+    for (auto* c : std::initializer_list<juce::Component*> {
+             &l1ShapeRuler, &l1TargetRuler, &l2ShapeRuler, &l2TargetRuler,
+             &envModeRuler, &envTargetRuler, &envComboRuler,
+             &l1ShapeName, &l1TargetName, &l2ShapeName, &l2TargetName,
+             &envModeName, &envTargetName, &envComboName })
+        addAndMakeVisible (*c);
+
+    // cache the choice params the LEDs + rulers display
     auto choice = [&apvts] (const char* id)
     { return dynamic_cast<juce::AudioParameterChoice*> (apvts.getParameter (id)); };
     lfo1ShapeParam  = choice ("lfo1shape5");
@@ -145,7 +157,7 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     addAndMakeVisible (lfo2Led);
     addAndMakeVisible (envLed);
 
-    // ---- the TAP TEMPO stomp (sim: CTRL = held) ------------------------------
+    // ---- the TAP TEMPO stomp -------------------------------------------------
     tapStompBtn.onPress = [this]
     {
         tapPressMs     = nowMs();
@@ -159,7 +171,7 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     tapStompBtn.onRelease = [this] { tapPressMs = 0.0; updateKnobModes(); };
     addAndMakeVisible (tapStompBtn);
 
-    // ---- the BYPASS stomp (sim: ALT = held) ----------------------------------
+    // ---- the BYPASS stomp ----------------------------------------------------
     bypassBtn.onTap = [this]
     {
         if (auto* pb = processor.apvts.getParameter ("bypass"))
@@ -172,71 +184,81 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     bypassBtn.onPress   = [this] { updateKnobModes(); };
     bypassBtn.onRelease = [this] { updateKnobModes(); };
     addAndMakeVisible (bypassBtn);
-    bypassLed.setColour (kGreen);
+    bypassLed.setColour (gw::kGreen);
     addAndMakeVisible (bypassLed);
 
-    tapLed.setColour (kAccent);
+    tapLed.setColour (gw::kYellow);
     addAndMakeVisible (tapLed);
 
-    // ---- v0.32 internal switches (under the cover, like the real PCB) --------
-    auto boolToggle = [this] (juce::TextButton& b, const char* id,
-                              const char* onTxt, const char* offTxt)
+    // ---- hints (the design ships them hidden) --------------------------------
+    auto hint = [this] (juce::Label& l, const juce::String& text, float px, juce::Colour c)
     {
-        b.onClick = [this, &b, id, onTxt, offTxt]
-        {
-            if (auto* pb = processor.apvts.getParameter (id))
-            {
-                pb->beginChangeGesture();
-                pb->setValueNotifyingHost (pb->getValue() >= 0.5f ? 0.0f : 1.0f);
-                pb->endChangeGesture();
-                b.setButtonText (pb->getValue() >= 0.5f ? onTxt : offTxt);
-            }
-        };
-        if (auto* pb = processor.apvts.getParameter (id))
-            b.setButtonText (pb->getValue() >= 0.5f ? onTxt : offTxt);
-        addAndMakeVisible (b);
+        l.setText (text, juce::dontSendNotification);
+        l.setFont (gw::mono (px, 400, 0.03f));
+        l.setColour (juce::Label::textColourId, c);
+        l.setJustificationType (juce::Justification::centredLeft);
+        addAndMakeVisible (l);
     };
-    boolToggle (jfetBtn,   "jfeton",   "JFET: ON",        "JFET: OFF");
-    boolToggle (ladderBtn, "ladder36", "-3/-6 LDR: ON",   "-3/-6 LDR: OFF");
-    boolToggle (boostBtn,  "boost6",   "+6 dB: ON",       "+6 dB: OFF");
+    hint (hintChips,  juce::String::fromUTF8 ("HOLD TAP \xe2\x86\x92 Y \xc2\xb7 HOLD BYPASS \xe2\x86\x92 Z \xc2\xb7 BOTH \xe2\x86\x92 A"),
+          10.2f, gw::kDim2);
+    hint (hintLayers, juce::String::fromUTF8 ("Hold the stomp or its key \xe2\x80\x94 or right-click a stomp to latch it."),
+          8.5f, gw::kDim2);
+    hint (hintLfo1,   juce::String::fromUTF8 ("Z \xc2\xb7 FREQ knob = depth \xc2\xb7 LED: wave / depth %"),
+          9.0f, gw::kDim2);
+    hint (hintLfo2,   juce::String::fromUTF8 ("Z \xc2\xb7 LPF knob = depth \xc2\xb7 TAP \xc3\x97""3 + BYPASS = rate"),
+          9.0f, gw::kDim2);
+    hint (hintStomp1, juce::String::fromUTF8 ("TAP \xc3\x97""3 avg = LFO 1 rate \xc2\xb7 hold BYPASS while tapping = LFO 2 rate \xc2\xb7 0.2\xe2\x80\x93""20 Hz"),
+          9.0f, gw::kDim);
+    hint (hintStomp2, juce::String::fromUTF8 ("Amber LED blinks the tempo \xc2\xb7 green LED = effect active"),
+          9.0f, gw::kDim2);
 
-    supplyBtn.onClick = [this]
+    // ---- output gate + internal switches (all under the cover) ---------------
+    auto gateKnob = [this] (juce::Slider& s)
     {
-        if (auto* ps = dynamic_cast<juce::AudioParameterChoice*> (
-                          processor.apvts.getParameter ("supply4")))
-        {
-            ps->beginChangeGesture();
-            *ps = (ps->getIndex() + 1) % ps->choices.size();   // 9 -> 12 -> 15 -> 18
-            ps->endChangeGesture();
-            supplyBtn.setButtonText (ps->getCurrentChoiceName());
-        }
+        s.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+        s.setTextBoxStyle (juce::Slider::NoTextBox, false, 0, 0);
+        s.setVelocityModeParameters (1.0, 1, 0.0, false);
+        s.setRotaryParameters (gw::kAngle0, gw::kAngle1, true);
+        s.setColour (juce::Slider::rotarySliderFillColourId, gw::kGreen);
+        s.onValueChange = [this] { cover.repaint(); };
+        cover.addAndMakeVisible (s);
     };
-    addAndMakeVisible (supplyBtn);
-
-    // ---- CV jacks (hardwired to LFO depth VCAs) --------------------------------
-    cv1Led.setColour (kGreen);
-    cv2Led.setColour (kGreen);
-    addAndMakeVisible (cv1Led);
-    addAndMakeVisible (cv2Led);
-
-    // ---- output gate (under the cover) ----------------------------------------
-    setupKnob (threshKnob, threshLabel, "THRESH", false);
-    setupKnob (holdKnob,   holdLabel,   "HOLD",   false);
-    setupKnob (fadeKnob,   fadeLabel,   "FADE",   false);
+    gateKnob (threshKnob);
+    gateKnob (holdKnob);
+    gateKnob (fadeKnob);
     threshAtt = std::make_unique<SliderAttachment> (apvts, "gatethresh", threshKnob);
     holdAtt   = std::make_unique<SliderAttachment> (apvts, "gatehold",   holdKnob);
     fadeAtt   = std::make_unique<SliderAttachment> (apvts, "gatefade",   fadeKnob);
-    gateLed.setColour (kGreen);
-    addAndMakeVisible (gateLed);
-    gateCover.onToggle = [this] { setGateOpen (true); };
-    addAndMakeVisible (gateCover);
-    gateCoverBtn.onClick = [this] { setGateOpen (false); };
-    addAndMakeVisible (gateCoverBtn);
+    cover.gateKnobs[0] = &threshKnob;
+    cover.gateKnobs[1] = &holdKnob;
+    cover.gateKnobs[2] = &fadeKnob;
+
+    // the PCB switches — +6 dB kept: Jason's actual PCB carries that stage
+    jfetRow.attach   (apvts.getParameter ("jfeton"),   "JFET STAGE");
+    ladderRow.attach (apvts.getParameter ("ladder36"), juce::String::fromUTF8 ("\xe2\x88\x92""3/\xe2\x88\x92""6 LADDER"));
+    boostRow.attach  (apvts.getParameter ("boost6"),   "+6 dB BOOST");
+    supplySel.attach (choice ("supply4"));
+    cover.addAndMakeVisible (jfetRow);
+    cover.addAndMakeVisible (ladderRow);
+    cover.addAndMakeVisible (boostRow);
+    cover.addAndMakeVisible (supplySel);
+
+    strip.onOpen = [this] { setGateOpen (true); };
+    addAndMakeVisible (strip);
+
+    coverDim.onDismiss = [this] { setGateOpen (false); };
+    addChildComponent (coverDim);
+    cover.onClose = [this] { setGateOpen (false); };
+    cover.onHintsToggle = [this] { showHints = ! showHints; applyHints(); };
+    addChildComponent (cover);
+
+    addAndMakeVisible (fx);   // decoration on top, mouse-transparent
     setGateOpen (false);
+    applyHints();
 
     startTimerHz (60);
-    setSize (1060, 764);
-    setScaleFactor (2.0f);   // v0.32: 2x UI — all text doubles and fits
+    setSize (1060, 640);
+    setScaleFactor (2.5f);   // v0.34: matches the design's 25 % bigger type
 }
 
 GlitchwaveAudioProcessorEditor::~GlitchwaveAudioProcessorEditor()
@@ -245,31 +267,33 @@ GlitchwaveAudioProcessorEditor::~GlitchwaveAudioProcessorEditor()
 }
 
 void GlitchwaveAudioProcessorEditor::setupKnob (juce::Slider& s, juce::Label& l,
-                                                const juce::String& name, bool big)
+                                                const juce::String& name, bool big,
+                                                juce::Colour ring)
 {
     s.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
-    s.setTextBoxStyle (juce::Slider::TextBoxBelow, false, big ? 96 : 74, big ? 18 : 14);
-    // v0.25: CTRL/ALT are the C2/C3 layer keys — stop JUCE from hijacking a
-    // modifier-held drag into its "velocity" fine-adjust mode (which makes the
-    // knob appear frozen while a layer key is held)
+    s.setTextBoxStyle (juce::Slider::NoTextBox, false, 0, 0);
+    // v0.25: stop JUCE from hijacking a modifier-held drag into its
+    // "velocity" fine-adjust mode (which makes the knob appear frozen
+    // while a layer key is held)
     s.setVelocityModeParameters (1.0, 1, 0.0, false);
+    s.setRotaryParameters (gw::kAngle0, gw::kAngle1, true);
+    s.setColour (juce::Slider::rotarySliderFillColourId, ring);
     addAndMakeVisible (s);
 
     l.setText (name, juce::dontSendNotification);
     l.setJustificationType (juce::Justification::centred);
-    l.setFont (juce::FontOptions (big ? 16.0f : 11.0f, juce::Font::bold));
-    l.setColour (juce::Label::textColourId, big ? kText : kDim);
+    l.setFont (big ? gw::barlow (14.0f, true, 0.16f) : gw::barlow (10.0f, true, 0.14f));
+    l.setColour (juce::Label::textColourId, big ? gw::kText : gw::kDim);
     addAndMakeVisible (l);
 }
 
 // ---------------------------------------------------------------------------
-// v0.24 layer machinery
+// v0.24 layer machinery — UNCHANGED from v0.32
 // ---------------------------------------------------------------------------
 bool GlitchwaveAudioProcessorEditor::tapStompDown() const
 {
     // v0.30 (Jason's X/Y/Z/A spec): Y = TAP held = INS, Z = BYPASS held =
-    // DEL. Polled globally via GetAsyncKeyState; right-click LATCH remains
-    // the mouse-only hold.
+    // DEL. Polled globally; right-click LATCH remains the mouse-only hold.
     return tapStompBtn.isDown() || tapStompBtn.isLatched()
         || juce::KeyPress::isKeyCurrentlyDown (juce::KeyPress::insertKey);
 }
@@ -294,9 +318,7 @@ void GlitchwaveAudioProcessorEditor::updateKnobModes()
 
     // v0.27: NEVER swap attachments while a knob is being dragged. A drag
     // latches the function it started on; the layer switch lands only after
-    // every knob is released. (Before this, releasing the layer key a beat
-    // before the mouse re-attached the knob to its C1 param MID-DRAG, and
-    // the tail of the drag slammed that param — VOL to 0, rates to 20 Hz...)
+    // every knob is released.
     for (auto* s : { &freqKnob, &lpfKnob, &mixKnob,
                      &lfo1RateKnob, &lfo2RateKnob, &envGainKnob })
         if (s->isMouseButtonDown())
@@ -309,7 +331,7 @@ void GlitchwaveAudioProcessorEditor::updateKnobModes()
 
     switch (layer)
     {
-        case 0:   // C1 — the printed panel
+        case 0:   // X — the printed panel
             freqAtt     = std::make_unique<SliderAttachment> (ap, "freq",     freqKnob);
             lpfAtt      = std::make_unique<SliderAttachment> (ap, "fizz",     lpfKnob);
             mixAtt      = std::make_unique<SliderAttachment> (ap, "dry",      mixKnob);
@@ -317,12 +339,12 @@ void GlitchwaveAudioProcessorEditor::updateKnobModes()
             lfo2RateAtt = std::make_unique<SliderAttachment> (ap, "lfo2rate", lfo2RateKnob);
             envGainAtt  = std::make_unique<SliderAttachment> (ap, "envgain",  envGainKnob);
             break;
-        case 1:   // C2 (TAP held) — Gain / Res / Vol / Target x3 (zone-select)
+        case 1:   // Y (TAP held) — Gain / Res / Vol + zone-select Shape/Shape/Mode
             freqAtt = std::make_unique<SliderAttachment> (ap, "dirtgain", freqKnob);
             lpfAtt  = std::make_unique<SliderAttachment> (ap, "lpfq",     lpfKnob);
             mixAtt  = std::make_unique<SliderAttachment> (ap, "vol",      mixKnob);
             break;
-        case 2:   // C3 (BYPASS held) — L1 Depth / L2 Depth / DrvRng / Shape x2 / Mode
+        case 2:   // Z (BYPASS held) — L1/L2 Depth, DrvRng, Target x3
             freqAtt = std::make_unique<SliderAttachment> (ap, "lfo1depth", freqKnob);
             lpfAtt  = std::make_unique<SliderAttachment> (ap, "lfo2depth", lpfKnob);
             break;
@@ -331,12 +353,9 @@ void GlitchwaveAudioProcessorEditor::updateKnobModes()
             break;
     }
 
-    // v0.31 (Jason's find): the zone-select knobs have no attachment, so on
-    // re-entering Y/Z they still SHOWED the X position even though the
-    // selection was intact — and the first touch teleported it. Now every
-    // layer entry parks each selector knob at the CENTRE of its current
-    // selection's zone, so the position always tells the truth and a small
-    // turn steps to the neighbouring choice.
+    // v0.31 (Jason's find): every layer entry parks each selector knob at the
+    // CENTRE of its current selection's zone, so the position always tells
+    // the truth and a small turn steps to the neighbouring choice.
     auto placeZone = [] (juce::Slider& s, juce::AudioParameterChoice* pc, int zones)
     {
         if (pc != nullptr)
@@ -412,13 +431,11 @@ void GlitchwaveAudioProcessorEditor::applyComboFromMixKnob()
 }
 
 // ---------------------------------------------------------------------------
-// v0.24 tap tempo: rolling average of the last 4 taps. 1-3 taps arm only;
-// the 4th (and every one after) commits. A gap > 5 s starts a new chain.
+// v0.32 tap tempo: rolling average of the last THREE presses (2 intervals);
+// 1-2 presses arm only, the 3rd (and every press after) commits.
 // ---------------------------------------------------------------------------
 void GlitchwaveAudioProcessorEditor::recordTap (bool lfo2, double pressMs)
 {
-    // v0.32: rolling average of the last THREE presses (2 intervals);
-    // 1-2 presses arm only, the 3rd (and every press after) commits.
     if (pressMs <= 0.0)
         return;
     double* h = lfo2 ? tapHist2 : tapHist1;
@@ -449,12 +466,165 @@ void GlitchwaveAudioProcessorEditor::recordTap (bool lfo2, double pressMs)
 void GlitchwaveAudioProcessorEditor::setGateOpen (bool shouldBeOpen)
 {
     gateOpen = shouldBeOpen;
-    gateCover.setVisible (! gateOpen);
-    gateCoverBtn.setVisible (gateOpen);
-    for (auto* c : std::initializer_list<juce::Component*> {
-             &threshKnob, &threshLabel, &holdKnob, &holdLabel, &fadeKnob, &fadeLabel,
-             &gateLed, &jfetBtn, &ladderBtn, &boostBtn, &supplyBtn })
-        c->setVisible (gateOpen);
+    coverDim.setVisible (gateOpen);
+    cover.setVisible (gateOpen);
+}
+
+void GlitchwaveAudioProcessorEditor::applyHints()
+{
+    for (auto* l : { &hintChips, &hintLayers, &hintLfo1, &hintLfo2,
+                     &hintStomp1, &hintStomp2 })
+        l->setVisible (showHints);
+    cover.hintsOn = showHints;
+    cover.repaint();
+}
+
+// ---------------------------------------------------------------------------
+// the live readouts: captions, value lines, rulers + names, per active layer
+// ---------------------------------------------------------------------------
+void GlitchwaveAudioProcessorEditor::refreshReadouts (int layer)
+{
+    auto& apvts = processor.apvts;
+    auto pTxt = [&apvts] (const char* id) -> juce::String
+    {
+        if (auto* p = apvts.getParameter (id))
+            return p->getCurrentValueAsText();
+        return {};
+    };
+    auto idxOf = [] (juce::AudioParameterChoice* pc) { return pc != nullptr ? pc->getIndex() : 0; };
+
+    const int shape1 = idxOf (lfo1ShapeParam), shape2 = idxOf (lfo2ShapeParam);
+    const int targ1  = idxOf (lfo1TargetParam), targ2 = idxOf (lfo2TargetParam);
+    const int mode   = idxOf (lpfModeParam),   targE  = idxOf (envTargetParam);
+    const int combo  = idxOf (envDriveParam) * 2 + (idxOf (lpfRangeParam) == 1 ? 0 : 1);
+
+    // ---- captions ----------------------------------------------------------
+    struct Cap { const char* t[6]; };
+    static const Cap caps[4] = {
+        {{ "FREQ",     "LPF",      "MIX",     "RATE",  "RATE",  "GAIN" }},    // X
+        {{ "GAIN",     "RES",      "VOL",     "SHAPE", "SHAPE", "MODE" }},    // Y
+        {{ "L1 DEPTH", "L2 DEPTH", "DRV/RNG", "TARGET","TARGET","TARGET" }},  // Z
+        {{ kDash,      kDash,      "?",       kDash,   kDash,   kDash }},     // A
+    };
+    static const juce::Colour bigCols[4]   = { gw::kText, gw::kCyan, gw::kYellow, gw::kDead };
+    static const juce::Colour smallCols[4] = { gw::kDim,  gw::kCyan, gw::kYellow, gw::kDead };
+    juce::Label* ls[6] = { &freqLabel, &lpfLabel, &mixLabel,
+                           &lfo1RateLabel, &lfo2RateLabel, &envGainLabel };
+    for (int i = 0; i < 6; ++i)
+    {
+        ls[i]->setText (juce::String::fromUTF8 (caps[layer].t[i]), juce::dontSendNotification);
+        auto c = i < 3 ? bigCols[layer] : smallCols[layer];
+        if (layer == 3 && i == 2)
+            c = gw::kRed;                       // the secret "?" burns red
+        ls[i]->setColour (juce::Label::textColourId, c);
+    }
+
+    // ---- value lines -------------------------------------------------------
+    juce::String text[6];
+    juce::Colour col[6] { gw::kText, gw::kText, gw::kText, gw::kText, gw::kText, gw::kText };
+    switch (layer)
+    {
+        case 0:
+            text[0] = pTxt ("freq");     text[1] = pTxt ("fizz");     text[2] = pTxt ("dry");
+            text[3] = pTxt ("lfo1rate"); text[4] = pTxt ("lfo2rate"); text[5] = pTxt ("envgain");
+            break;
+        case 1:
+            text[0] = pTxt ("dirtgain"); text[1] = pTxt ("lpfq");     text[2] = pTxt ("vol");
+            text[3] = lfo1ShapeParam != nullptr ? lfo1ShapeParam->getCurrentChoiceName() : juce::String();
+            col[3]  = gw::kHues[shape1 % 8];
+            text[4] = lfo2ShapeParam != nullptr ? lfo2ShapeParam->getCurrentChoiceName() : juce::String();
+            col[4]  = gw::kHues[shape2 % 8];
+            text[5] = shortMode (lpfModeParam != nullptr ? lpfModeParam->getCurrentChoiceName() : juce::String());
+            col[5]  = mode == 0 ? gw::kGrey : gw::kHues[juce::jlimit (0, 7, mode)];
+            break;
+        case 2:
+        {
+            static const char* comboNames[4] = { "Up-Hi", "Up-Lo", "Dn-Hi", "Dn-Lo" };
+            text[0] = pTxt ("lfo1depth"); text[1] = pTxt ("lfo2depth");
+            text[2] = comboNames[juce::jlimit (0, 3, combo)];
+            col[2]  = gw::kHues[juce::jlimit (0, 3, combo)];
+            auto tName = [] (juce::AudioParameterChoice* pc, int idx) -> juce::String
+            { return pc != nullptr ? pc->getCurrentChoiceName() : juce::String (idx); };
+            text[3] = tName (lfo1TargetParam, targ1);
+            col[3]  = targ1 == 0 ? gw::kGrey : gw::kHues[juce::jlimit (0, 7, targ1)];
+            text[4] = tName (lfo2TargetParam, targ2);
+            col[4]  = targ2 == 0 ? gw::kGrey : gw::kHues[juce::jlimit (0, 7, targ2)];
+            text[5] = tName (envTargetParam, targE);
+            col[5]  = targE == 0 ? gw::kGrey : gw::kHues[juce::jlimit (0, 7, targE)];
+            break;
+        }
+        case 3:
+        {
+            for (int i = 0; i < 6; ++i) { text[i] = juce::String::fromUTF8 (kDash); col[i] = gw::kGrey; }
+            // the "?" reads out as the sagging rail: supply .. 5 V floor
+            static constexpr float kVolts[4] = { 9.0f, 12.0f, 15.0f, 18.0f };
+            float volts = kVolts[0];
+            if (auto* ps = dynamic_cast<juce::AudioParameterChoice*> (apvts.getParameter ("supply4")))
+                volts = kVolts[juce::jlimit (0, 3, ps->getIndex())];
+            float sv = 0.0f;
+            if (auto* p = apvts.getParameter ("starve"))
+                sv = p->getValue();
+            text[2] = juce::String (volts - sv * (volts - 5.0f), 1) + " V";
+            col[2]  = gw::kText;
+            break;
+        }
+    }
+    for (int i = 0; i < 6; ++i)
+    {
+        vals[i].setText (text[i], juce::dontSendNotification);
+        vals[i].setColour (juce::Label::textColourId, col[i]);
+    }
+
+    // ---- rulers + names ----------------------------------------------------
+    l1ShapeRuler.setSelected (shape1 % 8);
+    l2ShapeRuler.setSelected (shape2 % 8);
+    l1TargetRuler.setSelected (targ1);
+    l2TargetRuler.setSelected (targ2);
+    envModeRuler.setSelected (mode);
+    envTargetRuler.setSelected (targE);
+    envComboRuler.setSelected (combo);
+
+    auto shapePair = [] (juce::AudioParameterChoice* pc, int idx) -> juce::String
+    {
+        if (pc == nullptr) return {};
+        return "/ " + pc->choices[(idx + 8) % 16];
+    };
+    l1ShapeName.set (lfo1ShapeParam != nullptr ? lfo1ShapeParam->getCurrentChoiceName() : juce::String(),
+                     gw::kHues[shape1 % 8], shapePair (lfo1ShapeParam, shape1));
+    l2ShapeName.set (lfo2ShapeParam != nullptr ? lfo2ShapeParam->getCurrentChoiceName() : juce::String(),
+                     gw::kHues[shape2 % 8], shapePair (lfo2ShapeParam, shape2));
+    l1TargetName.set (lfo1TargetParam != nullptr ? lfo1TargetParam->getCurrentChoiceName() : juce::String(),
+                      targ1 == 0 ? gw::kDim : gw::kHues[juce::jlimit (0, 7, targ1)]);
+    l2TargetName.set (lfo2TargetParam != nullptr ? lfo2TargetParam->getCurrentChoiceName() : juce::String(),
+                      targ2 == 0 ? gw::kDim : gw::kHues[juce::jlimit (0, 7, targ2)]);
+    envModeName.set (shortMode (lpfModeParam != nullptr ? lpfModeParam->getCurrentChoiceName() : juce::String()),
+                     mode == 0 ? gw::kDim : gw::kHues[juce::jlimit (0, 7, mode)],
+                     juce::String::fromUTF8 ("\xc2\xb7 ") + pTxt ("lpfq")
+                         + juce::String::fromUTF8 (" \xc2\xb7 ")
+                         + (lpfRangeParam != nullptr ? lpfRangeParam->getCurrentChoiceName() : juce::String()));
+    envTargetName.set (envTargetParam != nullptr ? envTargetParam->getCurrentChoiceName() : juce::String(),
+                       targE == 0 ? gw::kDim : gw::kHues[juce::jlimit (0, 7, targE)]);
+    {
+        static const char* comboNames[4] = { "Up-Hi", "Up-Lo", "Dn-Hi", "Dn-Lo" };
+        const int cb = juce::jlimit (0, 3, combo);
+        envComboName.set (comboNames[cb], gw::kHues[cb],
+                          juce::String::fromUTF8 ("\xc2\xb7 drive ") + (cb < 2 ? "up" : "down")
+                              + ", range " + (cb % 2 == 0 ? "hi" : "lo"));
+    }
+
+    // depth captions + env routing caption
+    auto pctOf = [&apvts] (const char* id)
+    {
+        if (auto* p = apvts.getParameter (id))
+            return juce::String (juce::roundToInt (p->getValue() * 100.0f));
+        return juce::String();
+    };
+    depth1Cap.setText ("DEPTH " + pctOf ("lfo1depth") + " %", juce::dontSendNotification);
+    depth2Cap.setText ("DEPTH " + pctOf ("lfo2depth") + " %", juce::dontSendNotification);
+    envSubCap.setText (juce::String::fromUTF8 ("ENV \xe2\x86\x92 ")
+                           + (envTargetParam != nullptr ? envTargetParam->getCurrentChoiceName()
+                                                        : juce::String()),
+                       juce::dontSendNotification);
 }
 
 void GlitchwaveAudioProcessorEditor::timerCallback()
@@ -470,24 +640,25 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     updateKnobModes();
     const int layer = knobLayer;
 
-    // stomp held-indicators (readout removed in v0.32 — controls signed off)
+    // stomp held-indicators
     tapStompBtn.setIndicated (tapStompDown());
     bypassBtn.setIndicated (bypassStompDown());
+    chips.setLayer (layer);
 
     // v0.32 tempo LED: blinks at the tapped LFO1 rate, full flash on a press
+    const double t = nowMs();
     {
-        const double t0 = nowMs();
         float rate = 0.5f;
         if (auto* pr = processor.apvts.getParameter ("lfo1rate"))
             rate = pr->convertFrom0to1 (pr->getValue());
-        const double phase = std::fmod (t0 * rate / 1000.0, 1.0);
-        const bool flash = (t0 - lastTapFlashMs) < 120.0;
+        const double phase = std::fmod (t * rate / 1000.0, 1.0);
+        const bool flash = (t - lastTapFlashMs) < 120.0;
         tapLed.setLevel (flash ? 1.0f : (phase < 0.5 ? 0.7f : 0.05f));
     }
 
     const bool filterOn = lpfModeParam != nullptr && lpfModeParam->getIndex() > 0;
 
-    // knob enables per layer. The env-gain knob must stay alive in C3 even
+    // knob enables per layer. The env-gain knob must stay alive in Y even
     // with the filter Off — it's how the Mode gets turned back on.
     freqKnob.setEnabled     (layer != 3);
     lpfKnob.setEnabled      (layer == 2 ? true : (layer == 3 ? false : filterOn));
@@ -496,33 +667,9 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     lfo2RateKnob.setEnabled (layer != 3);
     envGainKnob.setEnabled  (layer == 0 ? filterOn : layer != 3);
 
-    // ---- knob labels follow the active layer ---------------------------------
-    struct Cap { const char* t[6]; };
-    static const Cap caps[4] = {
-        {{ "FREQ",     "LPF",      "MIX",     "RATE",  "RATE",  "GAIN" }},    // X
-        {{ "GAIN",     "RES",      "VOL",     "SHAPE", "SHAPE", "MODE" }},    // Y
-        {{ "L1 DEPTH", "L2 DEPTH", "DRV/RNG", "TARGET","TARGET","TARGET" }},  // Z
-        {{ "-",        "-",        "STARVE",  "-",     "-",     "-" }},       // A
-    };
-    const juce::Colour layerCol = layer == 1 ? kBlue : layer >= 2 ? kAmber : kText;
-    const juce::Colour smallCol = layer == 0 ? kDim  : layerCol;
-    juce::Label* ls[6] = { &freqLabel, &lpfLabel, &mixLabel,
-                           &lfo1RateLabel, &lfo2RateLabel, &envGainLabel };
-    for (int i = 0; i < 6; ++i)
-    {
-        ls[i]->setText (caps[layer].t[i], juce::dontSendNotification);
-        ls[i]->setColour (juce::Label::textColourId, i < 3 ? layerCol : smallCol);
-    }
-    if (layer == 3)   // secret starve: MIX label burns red, dead knobs dim
-    {
-        mixLabel.setColour (juce::Label::textColourId, kRed);
-        for (int i = 0; i < 6; ++i)
-            if (i != 2)
-                ls[i]->setColour (juce::Label::textColourId, juce::Colour (0xff53565e));
-    }
+    refreshReadouts (layer);
 
     // ---- the three section LEDs: live value colour of the active layer -------
-    const double t = nowMs();
     const bool f2 = ((int) (t / 250.0))   % 2 == 0;   // 2 Hz — Bank A
     const bool f5 = ((int) (t / 100.0))   % 2 == 0;   // 5 Hz — Bank B
     const bool f3 = ((int) (t / 166.67))  % 2 == 0;   // 3 Hz — filter mode
@@ -537,25 +684,25 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     auto shapeShow = [&] (LedIndicator& led, juce::AudioParameterChoice* pc)
     {
         const int idx = pc != nullptr ? pc->getIndex() : 0;
-        led.setColour (kShapeHues[idx % 8]);
+        led.setColour (gw::kHues[idx % 8]);
         led.setLevel ((idx >= 8 ? f5 : f2) ? 1.0f : 0.0f);   // A = 2 Hz, B = 5 Hz
     };
     auto targetShow = [&] (LedIndicator& led, juce::AudioParameterChoice* pc)
     {
         const int idx = pc != nullptr ? pc->getIndex() : 0;
         if (idx == 0) { led.setColour (kWhite); led.setLevel (0.12f); }   // Off = dim
-        else          { led.setColour (kShapeHues[idx]); led.setLevel (1.0f); }
+        else          { led.setColour (gw::kHues[idx]); led.setLevel (1.0f); }
     };
     auto depthShow = [&] (LedIndicator& led, const char* id)
     {
-        led.setColour (kBlue);
+        led.setColour (juce::Colour (0xff4488ff));
         if (auto* pd = processor.apvts.getParameter (id))
             led.setLevel (pd->getValue());
     };
     auto modeShow = [&] (LedIndicator& led)
     {
         const int m = lpfModeParam != nullptr ? lpfModeParam->getIndex() : 0;
-        led.setColour (kShapeHues[juce::jlimit (0, 4, m)]);
+        led.setColour (gw::kHues[juce::jlimit (0, 4, m)]);
         led.setLevel (f3 ? 1.0f : 0.0f);
     };
     auto comboShow = [&] (LedIndicator& led)   // v0.24: SOLID, no blink
@@ -563,21 +710,21 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
         const int d = envDriveParam != nullptr ? envDriveParam->getIndex() : 0;
         const int r = lpfRangeParam != nullptr ? lpfRangeParam->getIndex() : 0;
         const int combo = d * 2 + (r == 1 ? 0 : 1);   // ring order up&hi..dn&lo
-        led.setColour (kShapeHues[juce::jlimit (0, 3, combo)]);
+        led.setColour (gw::kHues[juce::jlimit (0, 3, combo)]);
         led.setLevel (1.0f);
     };
 
-    // LFO 1 — Y shows SHAPE, Z shows TARGET (or blue depth while the Z
-    // depth knob is being turned)
+    // LFO 1 — Y shows SHAPE, Z shows TARGET (or depth while the Z depth
+    // knob is being turned)
     if (layer == 1)      shapeShow (lfo1Led, lfo1ShapeParam);
     else if (layer == 2) (lfo1Ctx == kCtxDepth ? depthShow (lfo1Led, "lfo1depth")
                                                : targetShow (lfo1Led, lfo1TargetParam));
     else if (layer == 0 && lfo1Ctx == kCtxShape)  shapeShow  (lfo1Led, lfo1ShapeParam);
     else if (layer == 0 && lfo1Ctx == kCtxTarget) targetShow (lfo1Led, lfo1TargetParam);
     else if (layer == 0 && lfo1Ctx == kCtxDepth)  depthShow  (lfo1Led, "lfo1depth");
-    else   // idle (and the dead starve layer): WHITE breathing at the LFO wave
+    else   // idle (and the dead starve layer): breathing at the LFO wave
     {
-        lfo1Led.setColour (kWhite);
+        lfo1Led.setColour (gw::kCyan);
         lfo1Led.setLevel (juce::jlimit (0.0f, 1.0f, processor.readVis (0)));
     }
 
@@ -590,7 +737,7 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     else if (layer == 0 && lfo2Ctx == kCtxDepth)  depthShow  (lfo2Led, "lfo2depth");
     else
     {
-        lfo2Led.setColour (kWhite);
+        lfo2Led.setColour (gw::kMagenta);
         lfo2Led.setLevel ((processor.readVis (1) + 1.0f) * 0.5f);
     }
 
@@ -604,7 +751,7 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     else if (layer == 0 && envCtx == kCtxCombo)  comboShow (envLed);
     else
     {
-        envLed.setColour (kWhite);
+        envLed.setColour (gw::kGreen);
         envLed.setLevel (juce::jlimit (0.0f, 1.0f, processor.readVis (2)));
     }
 
@@ -612,252 +759,282 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     if (auto* pb = processor.apvts.getParameter ("bypass"))
         bypassLed.setLevel (pb->getValue() >= 0.5f ? 0.0f : 1.0f);
 
-    // live rate · depth readouts
-    auto readout = [this] (juce::Label& l, const char* rateId, const char* depthId)
-    {
-        auto* pr = processor.apvts.getParameter (rateId);
-        auto* pd = processor.apvts.getParameter (depthId);
-        if (pr != nullptr && pd != nullptr)
-            l.setText (juce::String (pr->convertFrom0to1 (pr->getValue()), 2)
-                           + juce::String::fromUTF8 (" Hz \xc2\xb7 ")
-                           + juce::String (juce::roundToInt (pd->getValue() * 100.0f)) + " %",
-                       juce::dontSendNotification);
-    };
-    readout (lfo1ValueLabel, "lfo1rate", "lfo1depth");
-    readout (lfo2ValueLabel, "lfo2rate", "lfo2depth");
-
-    cv1Led.setLevel (juce::jmin (1.0f, processor.readVis (3) * 1.5f));
-    cv2Led.setLevel (juce::jmin (1.0f, processor.readVis (4) * 1.5f));
-
     // gate LED: green = open, amber blinking = fading, red = fully closed
     const float atten = processor.readVis (5);
     const bool  blink = ((frame / 14) % 2) == 0;
     juce::Colour gc; float gl;
-    if (atten > -0.5f)       { gc = kGreen; gl = 1.0f; }
-    else if (atten > -95.0f) { gc = kAmber; gl = blink ? 1.0f : 0.15f; }
-    else                     { gc = kRed;   gl = 1.0f; }
-    gateLed.setColour (gc);
-    gateLed.setLevel (gl);
-    gateCover.setLedState (gc, gl);
+    if (atten > -0.5f)       { gc = gw::kGreen;  gl = 1.0f; }
+    else if (atten > -95.0f) { gc = gw::kYellow; gl = blink ? 1.0f : 0.15f; }
+    else                     { gc = gw::kRed;    gl = 1.0f; }
+    strip.setLedState (gc, gl);
+    cover.setLedState (gc, gl);
 
-    gateCover.setSummary (juce::String (threshKnob.getValue(), 0) + juce::String::fromUTF8 (" dB   ·   ")
-                        + juce::String (holdKnob.getValue(), 1) + juce::String::fromUTF8 (" s   ·   ")
-                        + juce::String (fadeKnob.getValue(), 0) + " s");
+    // the strip's live summary line
+    {
+        InternalStrip::Summary s;
+        s.gate = (juce::String (threshKnob.getValue(), 0) + " dB"
+                  + juce::String::fromUTF8 (" \xc2\xb7 ")
+                  + juce::String (holdKnob.getValue(), 1) + " s"
+                  + juce::String::fromUTF8 (" \xc2\xb7 ")
+                  + juce::String (fadeKnob.getValue(), 0) + " s")
+                     .replace ("-", juce::String::fromUTF8 ("\xe2\x88\x92"));
+        auto onOf = [this] (const char* id)
+        {
+            auto* pp = processor.apvts.getParameter (id);
+            return pp != nullptr && pp->getValue() >= 0.5f;
+        };
+        s.jfet   = onOf ("jfeton");
+        s.ladder = onOf ("ladder36");
+        s.boost  = onOf ("boost6");
+        s.hints  = showHints;
+        if (auto* ps = dynamic_cast<juce::AudioParameterChoice*> (
+                           processor.apvts.getParameter ("supply4")))
+            s.supply = ps->getCurrentChoiceName().replace ("V", " V");
+        strip.setSummary (s);
+    }
+
+    // switches can also move under host automation — keep the rows honest
+    jfetRow.refresh();
+    ladderRow.refresh();
+    boostRow.refresh();
+    supplySel.refresh();
+
+    // ---- decoration ----------------------------------------------------------
+    fx.tick (t);
+    {
+        const double ph = std::fmod (t, 5500.0);
+        float tear = 0.0f;
+        if (ph < 240.0)
+        {
+            static const float offs[4] = { -7.0f, 5.0f, -2.0f, 0.0f };
+            tear = offs[juce::jlimit (0, 3, (int) (ph / 60.0))];
+        }
+        tagline.setTear (tear);
+    }
 }
 
 void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    g.fillAll (kBackground);
+    // the baked mosaic face (dark veil + scanlines already in the art)
+    g.drawImage (bgImage, { 0.0f, 0.0f, 1060.0f, 640.0f });
 
-    g.setColour (kAccent);
-    g.setFont (juce::FontOptions (26.0f, juce::Font::bold));
-    g.drawText ("GLITCHWAVE 567", 20, 10, 400, 30, juce::Justification::centredLeft);
-    g.setColour (kDim);
-    g.setFont (juce::FontOptions (12.0f));
-    g.drawText (juce::String::fromUTF8 ("LM567 glitch pedal — hardware layout — v0.32"),
-                20, 38, 500, 16, juce::Justification::centredLeft);
+    {   // rainbow hairline under the header
+        juce::ColourGradient grad (gw::kMagenta, 0.0f, 70.0f, gw::kYellow, 1060.0f, 70.0f, false);
+        grad.addColour (0.35, gw::kCyan);
+        grad.addColour (0.62, gw::kGreen);
+        g.setGradientFill (grad);
+        g.setOpacity (0.6f);
+        g.fillRect (0.0f, 70.0f, 1060.0f, 1.0f);
+        g.setOpacity (1.0f);
+    }
 
-    drawSection (g, { 12,  60, 1036, 206 }, "PEDAL");
-    drawSection (g, { 12, 274, 332, 252 }, juce::String::fromUTF8 ("LFO 1  \xc2\xb7  UNI \xe2\x86\x91"));
-    drawSection (g, { 352, 274, 332, 252 }, juce::String::fromUTF8 ("LFO 2  \xc2\xb7  BIPOLAR"));
-    drawSection (g, { 692, 274, 356, 252 }, "ENVELOPE FOLLOWER");
-    drawSection (g, { 12, 534, 332, 154 }, "CV 1 JACK  (SIDECHAIN L)");
-    drawSection (g, { 352, 534, 332, 154 }, "CV 2 JACK  (SIDECHAIN R)");
-    if (gateOpen)
-        drawSection (g, { 692, 534, 356, 154 },
-                     juce::String::fromUTF8 ("INTERNAL \xc2\xb7 TRIM POTS / SWITCHES / SIM VOLTAGE"));
-    drawSection (g, { 12, 696, 1036, 56 }, juce::String::fromUTF8 ("FOOTSWITCHES  ·  POWER"));
+    // logo (pre-baked invert + chromatic aberration + glow; 16 px pad in the art)
+    g.drawImage (logoFx, { 4.66f - 16.0f, -4.93f - 16.0f, 173.0f + 32.0f, 86.5f + 32.0f });
 
-    // ---- the C1/C2/C3 layer chart, printed on the pedal face ---------------
-    g.setColour (kText);
-    g.setFont (juce::FontOptions (9.5f, juce::Font::bold));
-    g.drawText ("KNOB LAYERS", 700, 150, 260, 11, juce::Justification::centredLeft);
-    g.setFont (juce::FontOptions (8.5f));
-    g.setColour (kDim);
-    g.drawText ("X              FREQ    LPF      MIX       RATE  RATE  GAIN",
-                700, 164, 340, 10, juce::Justification::centredLeft);
-    g.setColour (kBlue);
-    g.drawText ("Y  TAP / INS   GAIN    RES      VOL       SHP   SHP   MODE",
-                700, 176, 340, 10, juce::Justification::centredLeft);
-    g.setColour (kAmber);
-    g.drawText ("Z  BYP / DEL   L1 DEP  L2 DEP   DRV/RNG   TGT   TGT   TGT",
-                700, 188, 340, 10, juce::Justification::centredLeft);
-    g.setColour (kRed);
-    g.drawText ("A  BOTH: MIX = STARVE (secret), other knobs dead",
-                700, 200, 340, 10, juce::Justification::centredLeft);
-    g.setColour (kDim);
-    g.drawText ("hold the key or the stomp - or RIGHT-CLICK a stomp to latch it",
-                700, 212, 340, 10, juce::Justification::centredLeft);
+    // ---- PEDAL panel ---------------------------------------------------------
+    panel (g, { 12, 74, 1036, 200 }, gw::kYellow);
+    g.setColour (gw::kDim);
+    g.setFont (gw::barlow (11.0f, true, 0.18f));
+    g.drawText ("PEDAL", 28, 84, 200, 13, juce::Justification::centredLeft);
 
-    g.setColour (kText);
-    g.setFont (juce::FontOptions (13.0f, juce::Font::bold));
-    g.drawText ("BAZZ FUSS", 764, 112, 110, 16, juce::Justification::centredLeft);
-    g.setColour (kDim);
-    g.setFont (juce::FontOptions (9.5f));
-    g.drawText ("always on", 764, 130, 110, 12, juce::Justification::centredLeft);
-    g.setColour (kDim);
-    g.setFont (juce::FontOptions (11.0f, juce::Font::bold));
-    g.drawText ("IN",  976, 84, 24, 12, juce::Justification::centred);
-    g.drawText ("OUT", 1006, 84, 30, 12, juce::Justification::centred);
+    {   // vertical divider
+        juce::ColourGradient grad (juce::Colours::transparentBlack, 480.0f, 106.0f,
+                                   juce::Colours::transparentBlack, 480.0f, 256.0f, false);
+        grad.addColour (0.2, juce::Colour (0xff33373f));
+        grad.addColour (0.8, juce::Colour (0xff33373f));
+        g.setGradientFill (grad);
+        g.fillRect (480.0f, 106.0f, 1.0f, 150.0f);
+    }
 
-    // ---- legend charts: what the one LED is telling you ---------------------
-    auto chart = [&g] (int x, int yHdr, const char* title, const char* const* names,
-                       int n, int hueOffset, bool dimFirst)
+    // ---- KNOB LAYERS chart ---------------------------------------------------
+    g.setColour (gw::kDim);
+    g.setFont (gw::barlow (10.0f, true, 0.18f));
+    g.drawText ("KNOB LAYERS", 510, 106, 200, 12, juce::Justification::centredLeft);
     {
-        g.setColour (kDim);
-        g.setFont (juce::FontOptions (8.5f, juce::Font::bold));
-        g.drawText (title, x, yHdr, 110, 10, juce::Justification::centredLeft);
-        g.setFont (juce::FontOptions (8.0f));
-        for (int i = 0; i < n; ++i)
+        const char* head[6] = { "FREQ", "LPF", "MIX", "RATE 1", "RATE 2", "GAIN" };
+        struct Row { const char* label; const char* c[6]; };
+        static const Row rows[4] = {
+            { "X \xc2\xb7 NOTHING",   { "Freq", "LPF", "Mix", "Rate", "Rate", "Gain" } },
+            { "Y \xc2\xb7 TAP / INS", { "Gain", "Res", "Vol", "Shape", "Shape", "Mode" } },
+            { "Z \xc2\xb7 BYP / DEL", { "L1 Depth", "L2 Depth", "Drv/Rng", "Target", "Target", "Target" } },
+            { "A \xc2\xb7 BOTH",      { "\xe2\x80\x94", "\xe2\x80\x94", "?", "\xe2\x80\x94", "\xe2\x80\x94", "\xe2\x80\x94" } },
+        };
+        const juce::Colour rowCols[4] = { gw::kText, gw::kCyan, gw::kYellow, gw::kRed };
+        const juce::Colour labCols[4] = { gw::kDim,
+                                          gw::kCyan.withAlpha (0.72f),
+                                          gw::kYellow.withAlpha (0.72f),
+                                          gw::kRed.withAlpha (0.72f) };
+        auto cellX = [] (int i) { return 510 + 104 + i * 58; };
+        g.setFont (gw::mono (9.5f, 400, 0.04f));
+        g.setColour (gw::kDim2);
+        for (int i = 0; i < 6; ++i)
+            g.drawText (head[i], cellX (i), 126, 56, 16, juce::Justification::centredLeft);
+        for (int rI = 0; rI < 4; ++rI)
         {
-            const int ry = yHdr + 12 + i * 13;
-            if (dimFirst && i == 0)
-                g.setColour (juce::Colour (0xff3a3f47));
-            else
-                g.setColour (kShapeHues[(i + hueOffset) & 7]);
-            g.fillEllipse ((float) x, (float) ry + 3.0f, 7.0f, 7.0f);
-            g.setColour (kDim);
-            g.drawText (names[i], x + 11, ry, 96, 13, juce::Justification::centredLeft);
+            const int y = 142 + rI * 19;
+            g.setColour (gw::kRowLine);
+            g.fillRect (510, y, 452, 1);
+            g.setFont (gw::mono (9.5f, 400, 0.02f));
+            g.setColour (labCols[rI]);
+            g.drawText (juce::String::fromUTF8 (rows[rI].label), 510, y, 104, 19,
+                        juce::Justification::centredLeft);
+            for (int i = 0; i < 6; ++i)
+            {
+                auto c = rowCols[rI];
+                if (rI == 3)
+                    c = i == 2 ? gw::kRed : gw::kGrey;
+                g.setColour (c);
+                g.drawText (juce::String::fromUTF8 (rows[rI].c[i]), cellX (i), y, 56, 19,
+                            juce::Justification::centredLeft);
+            }
         }
+    }
+
+    // IN / OUT meter labels
+    g.setColour (gw::kDim2);
+    g.setFont (gw::mono (9.0f, 600, 0.10f));
+    g.drawText ("IN",  984, 106, 30, 11, juce::Justification::centred);
+    g.drawText ("OUT", 1012, 106, 30, 11, juce::Justification::centred);
+
+    // ---- LFO 1 / LFO 2 / ENVELOPE panels ------------------------------------
+    auto section = [&g] (juce::Rectangle<int> r, juce::Colour accent,
+                         const juce::String& title, const juce::String& sub)
+    {
+        panel (g, r, accent);
+        g.setColour (gw::kText);
+        auto f = gw::barlow (12.0f, true, 0.18f);
+        g.setFont (f);
+        g.drawText (title, r.getX() + 16, r.getY() + 13, 200, 14, juce::Justification::centredLeft);
+        g.setColour (gw::kDim2);
+        g.setFont (gw::mono (8.5f, 400, 0.09f));
+        g.drawText (sub, r.getX() + 16 + (int) gw::textW (f, title) + 9,
+                    r.getY() + 15, 260, 12, juce::Justification::centredLeft);
     };
+    section ({ 12, 279, 330, 210 }, gw::kCyan, "LFO 1",
+             juce::String::fromUTF8 ("UNIPOLAR \xe2\x86\x91 \xc2\xb7 SC\xe2\x86\x92""DEPTH"));
+    section ({ 352, 279, 330, 210 }, gw::kMagenta, "LFO 2",
+             juce::String::fromUTF8 ("BIPOLAR \xc2\xb7 SC\xe2\x86\x92""DEPTH"));
+    section ({ 692, 279, 356, 210 }, gw::kGreen, "ENVELOPE", "FOLLOWER + FILTER");
 
-    static const char* kShapeNames[8] = { "Ramp Up / Lorenz", "Ramp Dn / Rossler",
-        "Square / Drunk", "Triangle / Perlin", "Sine / Wobble", "Sweep / Glitch",
-        "R.Slope / White", "S&H / Pink" };
-    static const char* kT1[8] = { "Off", "Freq", "LPF", "Res", "Mix", "Gain",
-                                  "Env Gain", "Env Level" };
-    static const char* kT2[8] = { "Off", "Freq", "LPF", "Res", "Mix",
-                                  "LFO1 Rate", "LFO1 Depth", "Env Gain" };
-    static const char* kTE[8] = { "Off", "Freq", "LPF", "Res", "Mix", "Gain",
-                                  "LFO1 Rate", "LFO1 Depth" };
-    static const char* kModeN[5]  = { "Off", "LP", "BP", "HP", "Notch" };
-    static const char* kComboN[4] = { "Up-Hi", "Up-Lo", "Dn-Hi", "Dn-Lo" };
+    // ruler headers
+    auto rulerHead = [&g] (int x, int y, int w, const juce::String& a, const juce::String& b)
+    {
+        g.setColour (gw::kDim);
+        g.setFont (gw::barlow (9.5f, true, 0.16f));
+        g.drawText (a, x, y, w, 11, juce::Justification::centredLeft);
+        g.setColour (gw::kGrey);
+        g.setFont (gw::mono (9.0f, 400));
+        g.drawText (b, x, y, w, 11, juce::Justification::centredRight);
+    };
+    rulerHead (142, 333, 184, "SHAPE",  juce::String::fromUTF8 ("Y \xc2\xb7 RATE KNOB"));
+    rulerHead (142, 393, 184, "TARGET", juce::String::fromUTF8 ("Z \xc2\xb7 RATE KNOB"));
+    rulerHead (482, 333, 184, "SHAPE",  juce::String::fromUTF8 ("Y \xc2\xb7 RATE KNOB"));
+    rulerHead (482, 393, 184, "TARGET", juce::String::fromUTF8 ("Z \xc2\xb7 RATE KNOB"));
+    rulerHead (822, 321, 210, "FILTER MODE",   juce::String::fromUTF8 ("Y \xc2\xb7 GAIN KNOB"));
+    rulerHead (822, 372, 210, "TARGET",        juce::String::fromUTF8 ("Z \xc2\xb7 GAIN KNOB"));
+    rulerHead (822, 424, 210, "DRIVE / RANGE", juce::String::fromUTF8 ("Z \xc2\xb7 MIX KNOB"));
 
-    chart (122, 344, "SHAPE (Y) A=2Hz B=5Hz", kShapeNames, 8, 0, false);
-    chart (232, 344, "TARGET (Z) solid",      kT1,         8, 0, true);
-    chart (466, 344, "SHAPE (Y) A=2Hz B=5Hz", kShapeNames, 8, 0, false);
-    chart (576, 344, "TARGET (Z) solid",      kT2,         8, 0, true);
-    chart (800, 330, "TARGET (Z) solid",      kTE,     8, 0, true);
-    chart (912, 330, "MODE (Y) 3Hz",          kModeN,  5, 0, false);
-    chart (912, 414, "DRV/RNG (Z) solid",     kComboN, 4, 0, false);
+    // ---- stomp strip ---------------------------------------------------------
+    panel (g, { 12, 573, 1036, 56 }, juce::Colours::transparentBlack);
+    g.setColour (gw::kText);
+    g.setFont (gw::barlow (12.0f, true, 0.16f));
+    g.drawText ("TAP",    110, 594, 60, 14, juce::Justification::centredLeft);
+    g.drawText ("BYPASS", 256, 594, 80, 14, juce::Justification::centredLeft);
 
-    g.setColour (kDim);
-    g.setFont (juce::FontOptions (8.0f));
-    g.drawText ("LED white = LFO wave",           122, 458, 110, 10, juce::Justification::centredLeft);
-    g.drawText ("LED blue = depth %",             122, 470, 110, 10, juce::Justification::centredLeft);
-    g.drawText ("LED white = LFO wave",           466, 458, 110, 10, juce::Justification::centredLeft);
-    g.drawText ("LED blue = depth %",             466, 470, 110, 10, juce::Justification::centredLeft);
-    g.drawText ("LED white = env level",          912, 486, 130, 10, juce::Justification::centredLeft);
-
-    // panel hints: where each section's C2/C3 things live
-    g.setFont (juce::FontOptions (8.5f, juce::Font::bold));
-    g.drawText (juce::String::fromUTF8 ("Y RATE-KNOB = SHAPE · Z = TARGET · Z FREQ-KNOB = DEPTH"),
-                20, 502, 310, 11, juce::Justification::centredLeft);
-    g.drawText (juce::String::fromUTF8 ("Y RATE-KNOB = SHAPE · Z = TARGET · Z LPF-KNOB = DEPTH"),
-                360, 502, 310, 11, juce::Justification::centredLeft);
-    g.drawText (juce::String::fromUTF8 ("Y GAIN-KNOB = MODE · Z = TARGET · Z MIX-KNOB = DRV/RNG"),
-                704, 502, 336, 11, juce::Justification::centredLeft);
-    g.drawText (juce::String::fromUTF8 ("TAP \xc3\x97""4 = RATE"), 360, 490, 150, 11,
-                juce::Justification::centredLeft);
-
-    // footswitch strip lettering
-    g.setColour (kText);
-    g.setFont (juce::FontOptions (12.0f, juce::Font::bold));
-    g.drawText ("TAP",    236, 722, 40, 14, juce::Justification::centredLeft);
-    g.drawText ("BYPASS", 378, 722, 60, 14, juce::Justification::centredLeft);
-    g.setColour (kDim);
-    g.setFont (juce::FontOptions (8.5f));
-    g.drawText (juce::String::fromUTF8 ("TAP \xc3\x97""3 avg = LFO1 RATE · BYPASS held: LFO2 RATE · 0.2\xe2\x80\x93""20 Hz · LED = tempo"),
-                450, 712, 320, 12, juce::Justification::centredLeft);
-    g.drawText ("Y = TAP/INS held, Z = BYPASS/DEL held, A = both = STARVE",
-                450, 725, 320, 12, juce::Justification::centredLeft);
-    g.drawText ("internal switches + sim voltage: under the cover (click it)",
-                450, 738, 320, 12, juce::Justification::centredLeft);
-
-    // CV jack panels: hardwired routing, printed like a control plate
-    g.setColour (kText);
-    g.setFont (juce::FontOptions (14.0f, juce::Font::bold));
-    g.drawText (juce::String::fromUTF8 ("\xe2\x86\x92  LFO 1 DEPTH"), 60, 584, 240, 18, juce::Justification::centredLeft);
-    g.drawText (juce::String::fromUTF8 ("\xe2\x86\x92  LFO 2 DEPTH"), 400, 584, 240, 18, juce::Justification::centredLeft);
-    g.setColour (kDim);
-    g.setFont (juce::FontOptions (10.5f));
-    g.drawText ("sidechain level opens the LFO's depth (VCA)", 24, 610, 300, 14,
-                juce::Justification::centredLeft);
-    g.drawText ("no signal for 3 s = jack out, full depth", 24, 626, 300, 14,
-                juce::Justification::centredLeft);
-    g.drawText ("sidechain level opens the LFO's depth (VCA)", 364, 610, 300, 14,
-                juce::Justification::centredLeft);
-    g.drawText ("no signal for 3 s = jack out, full depth", 364, 626, 300, 14,
-                juce::Justification::centredLeft);
+    g.setColour (gw::kGrey);
+    g.setFont (gw::mono (6.4f, 400, 0.08f));
+    g.drawText (juce::String::fromUTF8 ("MADE ON\xe2\x80\xa6 EARTH?"), 848, 598, 100, 10,
+                juce::Justification::centredRight);
+    g.setOpacity (0.55f);
+    g.drawImage (logoPlain, { 958.0f, 587.0f, 66.0f, 33.0f });
+    g.setOpacity (1.0f);
 }
 
 void GlitchwaveAudioProcessorEditor::resized()
 {
-    // ---- pedal row (3 big dual-layer knobs) ----------------------------------
+    // header
+    chips.setBounds (184, 22, 162, 26);
+    hintChips.setBounds (184, 50, 430, 12);
+    tagline.setBounds (480, 8, 566, 56);
+
+    // ---- pedal row (3 big knobs + the 3 small section knobs) -----------------
     {
-        const int y = 82, knobW = 130, knobH = 140, labelH = 18;
-        const int xs[3] = { 90, 320, 550 };
+        const int xs[3] = { 50, 190, 330 };
         juce::Slider* ks[] = { &freqKnob, &lpfKnob, &mixKnob };
         juce::Label*  ls[] = { &freqLabel, &lpfLabel, &mixLabel };
         for (int i = 0; i < 3; ++i)
         {
-            ls[i]->setBounds (xs[i], y, knobW, labelH);
-            ks[i]->setBounds (xs[i], y + labelH, knobW, knobH);
+            ls[i]->setBounds  (xs[i], 104, 120, 18);
+            ks[i]->setBounds  (xs[i], 128, 120, 120);
+            vals[i].setBounds (xs[i], 252, 120, 16);
         }
-        meterIn.setBounds  (980, 98, 16, 150);
-        meterOut.setBounds (1012, 98, 16, 150);
+        meterIn.setBounds  (990, 122, 18, 126);
+        meterOut.setBounds (1018, 122, 18, 126);
+        hintLayers.setBounds (510, 232, 452, 12);
     }
 
-    // ---- LFO panels (one RATE knob + one LED each, v0.24: no buttons) --------
+    // ---- LFO panels ----------------------------------------------------------
     {
-        const int y = 296;
-        lfo1RateLabel.setBounds (24, y + 10, 80, 12);
-        lfo1RateKnob.setBounds  (24, y + 22, 80, 90);
-        lfo1Led.setBounds       (148, y + 4, 34, 34);   // THE section LED
-        lfo1ValueLabel.setBounds (16, y + 118, 96, 14);
+        lfo1RateLabel.setBounds (30, 331, 76, 14);
+        lfo1RateKnob.setBounds  (30, 351, 76, 76);
+        vals[3].setBounds       (30, 433, 76, 15);
+        depth1Cap.setBounds     (30, 450, 76, 12);
+        lfo1Led.setBounds       (298, 291, 28, 28);
+        l1ShapeRuler.setBounds  (142, 348, 184, 9);
+        l1ShapeName.setBounds   (142, 361, 184, 14);
+        l1TargetRuler.setBounds (142, 408, 184, 9);
+        l1TargetName.setBounds  (142, 421, 184, 14);
+        hintLfo1.setBounds      (28, 465, 300, 12);
 
-        lfo2RateLabel.setBounds (364, y + 10, 80, 12);
-        lfo2RateKnob.setBounds  (364, y + 22, 80, 90);
-        lfo2Led.setBounds       (492, y + 4, 34, 34);   // THE section LED
-        lfo2ValueLabel.setBounds (356, y + 118, 96, 14);
+        lfo2RateLabel.setBounds (370, 331, 76, 14);
+        lfo2RateKnob.setBounds  (370, 351, 76, 76);
+        vals[4].setBounds       (370, 433, 76, 15);
+        depth2Cap.setBounds     (370, 450, 76, 12);
+        lfo2Led.setBounds       (638, 291, 28, 28);
+        l2ShapeRuler.setBounds  (482, 348, 184, 9);
+        l2ShapeName.setBounds   (482, 361, 184, 14);
+        l2TargetRuler.setBounds (482, 408, 184, 9);
+        l2TargetName.setBounds  (482, 421, 184, 14);
+        hintLfo2.setBounds      (368, 465, 300, 12);
     }
 
-    // ---- envelope follower panel ---------------------------------------------
+    // ---- envelope panel ------------------------------------------------------
     {
-        const int y = 296;
-        envGainLabel.setBounds (704, y + 10, 76, 12);
-        envGainKnob.setBounds  (704, y + 22, 76, 90);
-        envLed.setBounds       (836, y + 4, 34, 34);    // THE section LED
+        envGainLabel.setBounds  (710, 331, 76, 14);
+        envGainKnob.setBounds   (710, 351, 76, 76);
+        vals[5].setBounds       (710, 433, 76, 15);
+        envSubCap.setBounds     (704, 450, 88, 12);
+        envLed.setBounds        (1004, 291, 28, 28);
+        envModeRuler.setBounds  (822, 336, 210, 9);
+        envModeName.setBounds   (822, 349, 210, 14);
+        envTargetRuler.setBounds(822, 387, 210, 9);
+        envTargetName.setBounds (822, 400, 210, 14);
+        envComboRuler.setBounds (822, 439, 210, 9);
+        envComboName.setBounds  (822, 451, 210, 14);
+    }
+
+    // ---- internal strip + cover ----------------------------------------------
+    strip.setBounds (12, 494, 1036, 74);
+    coverDim.setBounds (0, 0, 1060, 640);
+    cover.setBounds (12, 279, 1036, 292);
+    {
+        // cover-local children
+        threshKnob.setBounds (28, 124, 76, 76);
+        holdKnob.setBounds   (160, 124, 76, 76);
+        fadeKnob.setBounds   (292, 124, 76, 76);
+        jfetRow.setBounds    (500, 104, 224, 36);
+        ladderRow.setBounds  (500, 146, 224, 36);
+        boostRow.setBounds   (500, 188, 224, 36);
+        supplySel.setBounds  (758, 134, 229, 36);
     }
 
     // ---- footswitch strip -----------------------------------------------------
-    {
-        tapStompBtn.setBounds (190, 706, 40, 40);
-        tapLed.setBounds      (154, 716, 20, 20);   // v0.32 tempo LED
-        bypassBtn.setBounds   (300, 706, 40, 40);
-        bypassLed.setBounds   (354, 716, 20, 20);
-    }
+    tapLed.setBounds      (34, 593, 16, 16);
+    tapStompBtn.setBounds (62, 582, 38, 38);
+    bypassBtn.setBounds   (182, 582, 38, 38);
+    bypassLed.setBounds   (230, 593, 16, 16);
+    hintStomp1.setBounds  (360, 586, 620, 11);
+    hintStomp2.setBounds  (360, 601, 620, 11);
 
-    // ---- CV jack panels + gate ------------------------------------------------
-    {
-        cv1Led.setBounds (28, 582, 22, 22);
-        cv2Led.setBounds (368, 582, 22, 22);
-
-        gateCover.setBounds (692, 534, 356, 154);
-        gateCoverBtn.setBounds (930, 540, 110, 20);
-        gateLed.setBounds (706, 542, 14, 14);
-        const int gx[3] = { 704, 816, 928 };
-        juce::Slider* gk[] = { &threshKnob, &holdKnob, &fadeKnob };
-        juce::Label*  gl[] = { &threshLabel, &holdLabel, &fadeLabel };
-        for (int i = 0; i < 3; ++i)
-        {
-            gl[i]->setBounds (gx[i], 560, 88, 12);
-            gk[i]->setBounds (gx[i], 572, 88, 68);
-        }
-        // v0.32 internal switches row (under the cover)
-        jfetBtn.setBounds   (704, 650, 80, 24);
-        ladderBtn.setBounds (790, 650, 104, 24);
-        boostBtn.setBounds  (900, 650, 76, 24);
-        supplyBtn.setBounds (982, 650, 54, 24);
-    }
+    fx.setBounds (0, 0, 1060, 640);
 }
