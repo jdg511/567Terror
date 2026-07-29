@@ -1,9 +1,10 @@
-# Glitchwave 567 — PCBWay ordering guide (rev 0.1, 2026-07-25)
+# Glitchwave 567 — PCBWay ordering guide (rev 0.2, 2026-07-29)
 
-> **⛔ HOLD (2026-07-25): do not order yet.** The enclosure fit check
-> (`hardware/ENCLOSURE_FIT.md`) found the PC-pin stomp mounting buries the
-> pot knobs; the CONTROL board needs two stomp cutouts + mounting holes and
-> the stomp BOM line changes to the wire variant. Order after that rev.
+> **✅ HOLD CLEARED (2026-07-29).** The enclosure fit conflict (pot knobs
+> buried under PC-pin stomp mounting) is fixed by swapping RV1–RV6 to
+> ALPS RK09K1130A70 (30mm shaft, same footprint, LCSC C351173) — BOM-only
+> change, no board rework. See `hardware/ENCLOSURE_FIT.md`. Cleared to
+> order.
 
 Two boards, one enclosure (Hammond 1590XX). Order both as **4-layer, full
 turnkey assembly**. Gerbers/drill/pos live next to this file; BOMs are the
@@ -29,7 +30,8 @@ no action needed.
 ## Turnkey sourcing notes
 
 1. **LCSC parts** — every BOM line carries an LCSC C-number (stock verified
-   2026-07-25). Pots: ALPS RK09K1130A5R (C209779) ×6, B10k linear, snap-in.
+   2026-07-25; pot line updated 2026-07-29). Pots: ALPS RK09K1130A70
+   (C351173) ×6, B10k linear, snap-in, 30mm shaft.
 2. **Digi-Key line** — stomp switches on the CONTROL board:
    Suntsu **SSWFS-S01-AC09-HWH** (PC-pin, soft-touch momentary SPST) ×2.
    It is a Digi-Key *Marketplace* listing — confirm PCBWay will purchase

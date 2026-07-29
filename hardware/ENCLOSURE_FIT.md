@@ -1,15 +1,42 @@
-# Glitchwave 567 — Enclosure Fit Check (rev 0.1, 2026-07-25)
+# Glitchwave 567 — Enclosure Fit Check (rev 0.2, 2026-07-29)
 
 Checked against the **official Hammond 1590XX STEP model** (verified in CAD:
 external 145.2 × 121.2 × 39.3 mm, floor 2.2, cavity 115.1 × 139.1 at the
 floor growing to 116.5 × 140.5 with draft) and the **factory datasheets**
 for the Suntsu stomp and ALPS pot (both now saved in `vendor_assets/`).
 
-## ⛔ ORDER HOLD — one real conflict found, fix is cheap but needs a decision
+## ✅ HOLD CLEARED (2026-07-29) — option (c), taller pot
 
-**Do not upload the fab package to PCBWay yet.** The boards route and pass
-DRC, but the PC-pin stomp mounting makes the pot knobs unusable. Details
-and the fix below. Everything else fits.
+Jason approved **option (c)**: swap RV1–RV6 to **ALPS RK09K1130A70**
+(30mm shaft, same ALPS drawing-7 footprint as the A5R, LCSC C351173 /
+JLCPCB 7.7k stock, drop-in BOM change). PC-pin stomps stay as ordered —
+**no control-board respin, no cutouts, no M3 mounting holes.**
+
+With the A70: shaft protrudes 12.75mm past the face (vs 2.75mm with the
+A5R) — knurl fully exposed, normal push-on knobs work. Verified against
+the actual fab gerbers + Hammond STEP (see `pot_shaft_options.md` in
+project memory for the full 3D-fit re-derivation): the 470µF can → control
+board clearance (0.80mm) and main-board floor clearance (3.75mm spare) are
+**unchanged** — both boards move down together, so nothing below the
+control board is affected by the taller pot.
+
+**Remaining gate, not blocking the order**: Jason should confirm his knob
+caps' bore depth clears 12.75mm of exposed shaft (an A70 in a shallow-bore
+knob could sit slightly proud of the knob body). Order a few A70/A5R
+samples to confirm as-built if wanted — this is a knob-fit nicety, not a
+board conflict.
+
+The fab package (`hardware/fab/`) is cleared to send to PCBWay.
+
+---
+
+## Original finding (superseded by the fix above)
+
+**Original status (2026-07-25): do not upload the fab package to PCBWay
+yet.** The boards route and pass DRC, but the PC-pin stomp mounting makes
+the pot knobs unusable with the original A5R pot. Details and the
+originally-proposed fix (option a, wire-lead stomps) below, kept for
+reference — option (c) above was chosen instead and is cheaper.
 
 ## New facts measured from the CAD / datasheets
 
@@ -94,12 +121,7 @@ reach z 19.6, into the Pico).
 - Pico USB: faces the board interior between the boards; firmware loads
   by lifting the lid and using a short cable, or pre-flashing — unchanged.
 
-## Decision needed from Jason
+## Decision (resolved 2026-07-29)
 
-The stomp mounting change reverses your earlier "PC-pin" call — but the
-PC-pin geometry physically buries the pot knobs, so something had to give.
-Options: (a) approve the wire-variant fix above (recommended — I'll rev
-the control board same-day); (b) keep PC-pin stomps and accept knob-less
-recessed pots (not recommended); (c) different pots entirely (taller
-shaft, needs a new sourcing hunt and still tightens the can clearance).
-The fab package stays on hold until you pick.
+Jason chose **(c) different pots** — RK09K1130A70, 30mm shaft — over (a)
+wire-lead stomps + control-board respin. See "HOLD CLEARED" above.
