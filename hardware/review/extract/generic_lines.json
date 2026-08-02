@@ -1,0 +1,454 @@
+{
+ "main": [
+  {
+   "refs": "C48",
+   "qty": 1,
+   "value": "470u",
+   "fp": "CP_Elec_10x10.2",
+   "mpn": "SMD alu electrolytic 470u"
+  },
+  {
+   "refs": "C75,C90",
+   "qty": 2,
+   "value": "10u",
+   "fp": "CP_Elec_4x5.4",
+   "mpn": "SMD alu electrolytic 10u"
+  },
+  {
+   "refs": "C2",
+   "qty": 1,
+   "value": "4.7u",
+   "fp": "CP_Elec_4x5.4",
+   "mpn": "SMD alu electrolytic 4.7u"
+  },
+  {
+   "refs": "C47",
+   "qty": 1,
+   "value": "22u",
+   "fp": "CP_Elec_5x5.4",
+   "mpn": "SMD alu electrolytic 22u"
+  },
+  {
+   "refs": "C109,C110",
+   "qty": 2,
+   "value": "47u",
+   "fp": "CP_Elec_6.3x5.4",
+   "mpn": "SMD alu electrolytic 47u"
+  },
+  {
+   "refs": "C100",
+   "qty": 1,
+   "value": "220u/35V",
+   "fp": "CP_Elec_8x10.2",
+   "mpn": "SMD alu electrolytic 220u/35V"
+  },
+  {
+   "refs": "C101,C106,C107,C111,C121,C122,C123,C124,C20,C21,C22,C23,C30,C31,C33,C34,C35,C40,C49,C50,C63,C64,C65,C66,C67,C70,C71,C73,C76,C77,C78,C83,C84,C85,C91,C910,C911,C93,C94,C95,C96,C97,C98,C99",
+   "qty": 44,
+   "value": "100n",
+   "fp": "C_0603_1608Metric",
+   "mpn": "MLCC 100n"
+  },
+  {
+   "refs": "C81,C82",
+   "qty": 2,
+   "value": "10n",
+   "fp": "C_0603_1608Metric",
+   "mpn": "MLCC 10n"
+  },
+  {
+   "refs": "C120",
+   "qty": 1,
+   "value": "1n",
+   "fp": "C_0603_1608Metric",
+   "mpn": "MLCC 1n"
+  },
+  {
+   "refs": "C102,C103,C44,C46,C74,C80",
+   "qty": 6,
+   "value": "1u",
+   "fp": "C_0603_1608Metric",
+   "mpn": "MLCC 1u"
+  },
+  {
+   "refs": "C1,C3,C60,C8",
+   "qty": 4,
+   "value": "220n",
+   "fp": "C_0603_1608Metric",
+   "mpn": "MLCC 220n"
+  },
+  {
+   "refs": "C43,C61,C62",
+   "qty": 3,
+   "value": "220p",
+   "fp": "C_0603_1608Metric",
+   "mpn": "MLCC 220p"
+  },
+  {
+   "refs": "C32",
+   "qty": 1,
+   "value": "3.9n",
+   "fp": "C_0603_1608Metric",
+   "mpn": "MLCC 3.9n"
+  },
+  {
+   "refs": "C105",
+   "qty": 1,
+   "value": "3n3",
+   "fp": "C_0603_1608Metric",
+   "mpn": "MLCC 3n3"
+  },
+  {
+   "refs": "C45,C72",
+   "qty": 2,
+   "value": "47n",
+   "fp": "C_0603_1608Metric",
+   "mpn": "MLCC 47n"
+  },
+  {
+   "refs": "C72A",
+   "qty": 1,
+   "value": "56n",
+   "fp": "C_0603_1608Metric",
+   "mpn": "MLCC 56n"
+  },
+  {
+   "refs": "C41",
+   "qty": 1,
+   "value": "DNP-LFIL",
+   "fp": "C_0603_1608Metric",
+   "mpn": "MLCC DNP-LFIL"
+  },
+  {
+   "refs": "C42",
+   "qty": 1,
+   "value": "DNP-OFIL",
+   "fp": "C_0603_1608Metric",
+   "mpn": "MLCC DNP-OFIL"
+  },
+  {
+   "refs": "C107,C108",
+   "qty": 2,
+   "value": "22u",
+   "fp": "C_0805_2012Metric",
+   "mpn": "MLCC 22u"
+  },
+  {
+   "refs": "C104",
+   "qty": 1,
+   "value": "10u/50V X7R",
+   "fp": "C_1206_3216Metric",
+   "mpn": "MLCC 10u/50V X7R"
+  },
+  {
+   "refs": "J10",
+   "qty": 1,
+   "value": "CTRL 2x8",
+   "fp": "PinHeader_2x08_P2.54mm_Vertical",
+   "mpn": "2.54 pin header 2x8"
+  },
+  {
+   "refs": "FB100",
+   "qty": 1,
+   "value": "600R/3A",
+   "fp": "L_1206_3216Metric",
+   "mpn": "ferrite bead 1206 600R@100MHz 3A"
+  },
+  {
+   "refs": "R40",
+   "qty": 1,
+   "value": "0R",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 0R"
+  },
+  {
+   "refs": "R173",
+   "qty": 1,
+   "value": "100R",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 100R"
+  },
+  {
+   "refs": "R100,R101,R103,R112,R12,R127A,R130,R131,R132,R134,R137,R140,R143,R16,R22,R38,R41,R70,R71,R72,R73,R84,R85,R86",
+   "qty": 24,
+   "value": "100k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 100k"
+  },
+  {
+   "refs": "R106A,R107A,R110,R111,R112A,R113A,R117A,R121A,R125A,R142,R145,R146,R147,R148,R161,R162,R163,R164,R165,R166,R167,R168,R169,R171,R172,R174,R25,R33,R35,R48,R49,R51,R64,R68,R76,R79,R83,R88,R90,R92",
+   "qty": 40,
+   "value": "10k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 10k"
+  },
+  {
+   "refs": "R98,R99",
+   "qty": 2,
+   "value": "10k (buffer DC load)",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 10k"
+  },
+  {
+   "refs": "R109",
+   "qty": 1,
+   "value": "147k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 147k"
+  },
+  {
+   "refs": "R136",
+   "qty": 1,
+   "value": "150k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 150k"
+  },
+  {
+   "refs": "R110A,R23",
+   "qty": 2,
+   "value": "15k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 15k"
+  },
+  {
+   "refs": "R101A",
+   "qty": 1,
+   "value": "18k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 18k"
+  },
+  {
+   "refs": "R108A,R37,R60",
+   "qty": 3,
+   "value": "1M",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 1M"
+  },
+  {
+   "refs": "R1,R139,R150,R170",
+   "qty": 4,
+   "value": "1k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 1k"
+  },
+  {
+   "refs": "R53",
+   "qty": 1,
+   "value": "1k (pin3 clamp-current limit)",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 1k"
+  },
+  {
+   "refs": "R2,R3",
+   "qty": 2,
+   "value": "2.2M",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 2.2M"
+  },
+  {
+   "refs": "R5",
+   "qty": 1,
+   "value": "2.2k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 2.2k"
+  },
+  {
+   "refs": "R133",
+   "qty": 1,
+   "value": "200k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 200k"
+  },
+  {
+   "refs": "R149",
+   "qty": 1,
+   "value": "20k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 20k"
+  },
+  {
+   "refs": "R111A,R118A,R122A,R126A,R30,R45,R65,R69,R74,R77,R80,R94,R96",
+   "qty": 13,
+   "value": "220k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 220k"
+  },
+  {
+   "refs": "R113",
+   "qty": 1,
+   "value": "22k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 22k"
+  },
+  {
+   "refs": "R114",
+   "qty": 1,
+   "value": "24k9 (EN divider - EN abs max 6V!)",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 24k9"
+  },
+  {
+   "refs": "R114A",
+   "qty": 1,
+   "value": "3.3k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 3.3k"
+  },
+  {
+   "refs": "R102A",
+   "qty": 1,
+   "value": "3.6k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 3.6k"
+  },
+  {
+   "refs": "R135",
+   "qty": 1,
+   "value": "3.9k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 3.9k"
+  },
+  {
+   "refs": "R34",
+   "qty": 1,
+   "value": "330k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 330k"
+  },
+  {
+   "refs": "R108",
+   "qty": 1,
+   "value": "33k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 33k"
+  },
+  {
+   "refs": "R21",
+   "qty": 1,
+   "value": "36k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 36k"
+  },
+  {
+   "refs": "R100A",
+   "qty": 1,
+   "value": "39k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 39k"
+  },
+  {
+   "refs": "R103A",
+   "qty": 1,
+   "value": "4.3k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 4.3k"
+  },
+  {
+   "refs": "R116A,R36",
+   "qty": 2,
+   "value": "4.7k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 4.7k"
+  },
+  {
+   "refs": "R104",
+   "qty": 1,
+   "value": "40k2 1%",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 40k2"
+  },
+  {
+   "refs": "R20",
+   "qty": 1,
+   "value": "43k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 43k"
+  },
+  {
+   "refs": "R13",
+   "qty": 1,
+   "value": "470R",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 470R"
+  },
+  {
+   "refs": "R4,R61",
+   "qty": 2,
+   "value": "470k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 470k"
+  },
+  {
+   "refs": "R106,R107,R138,R141,R144,R24,R42,R43,R44,R50,R52,R89,R91,R93",
+   "qty": 14,
+   "value": "47k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 47k"
+  },
+  {
+   "refs": "R87",
+   "qty": 1,
+   "value": "51k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 51k"
+  },
+  {
+   "refs": "R102",
+   "qty": 1,
+   "value": "51k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 51k"
+  },
+  {
+   "refs": "R115A",
+   "qty": 1,
+   "value": "6.8k",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 6.8k"
+  },
+  {
+   "refs": "R119A,R120A,R123A,R124A,R31,R32,R46,R47,R62,R63,R66,R67,R75,R78,R81,R82,R95,R97",
+   "qty": 18,
+   "value": "680",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 680"
+  },
+  {
+   "refs": "R105",
+   "qty": 1,
+   "value": "7k68 1%",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 7k68"
+  },
+  {
+   "refs": "R109A",
+   "qty": 1,
+   "value": "845R 1% (Fetzer Rs)",
+   "fp": "R_0603_1608Metric",
+   "mpn": "0603 1% resistor 845R"
+  }
+ ],
+ "ctrl": [
+  {
+   "refs": "C7",
+   "qty": 1,
+   "value": "100u",
+   "fp": "CP_Elec_6.3x7.7",
+   "mpn": "SMD alu electrolytic 100u"
+  },
+  {
+   "refs": "C1,C2,C3,C4,C5,C6",
+   "qty": 6,
+   "value": "100n",
+   "fp": "C_0603_1608Metric",
+   "mpn": "MLCC 100n"
+  },
+  {
+   "refs": "J1",
+   "qty": 1,
+   "value": "to MAIN 2x8",
+   "fp": "PinHeader_2x08_P2.54mm_Vertical",
+   "mpn": "2.54 socket/header 2x8"
+  }
+ ]
+}

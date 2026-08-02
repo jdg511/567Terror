@@ -24,6 +24,18 @@
 > must be produced before any enclosure is drilled. This does not block the
 > PCB order — it is not a fab deliverable.
 
+> **✅ PRE-ORDER BLOCKERS CLEARED 2026-08-02.** Four things were resolved:
+> 1. **Stomp path: PC-pin variant.** No board cutouts are needed — ENCLOSURE_FIT's
+>    two 27 × 14.5 mm cutouts were only required on the wire-lead path.
+> 2. **CONTROL board now has its four M3 standoff holes** at (17, 9.5), (121, 9.5),
+>    (17, 108.5), (121, 108.5) — Ø3.2 mm NPTH, ≥3.69 mm to the nearest copper and
+>    ≥5.5 mm to the board edge. ENCLOSURE_FIT required these ("control-board retention
+>    must come from standoffs") and they had never been added. MAIN board deliberately
+>    has none: six jack bushings with nuts through the walls retain it.
+> 3. **Board-to-board connector chosen** — see the assembly notes below.
+> 4. **BOM is complete.** Every line on both sheets now carries a real, orderable
+>    part number; the 64 lines that said `generic` were backfilled.
+
 Two boards, one enclosure (Hammond 1590XX). Order both as **4-layer, full
 turnkey assembly**. Gerbers/drill/pos live next to this file; BOMs are the
 sheets of `hardware/BOM.xlsx` (MAIN = 297 lines, CONTROL = 22 lines).
@@ -85,8 +97,27 @@ on both boards. MAIN = 72 warnings + 4 courtyard errors; CONTROL = 6 warnings,
   PinHeader_2x08 footprint on this part** — flipping the stock one permutes
   the pin numbers (1↔15, 2↔16, 3↔13, …) and reverses the whole connector.
   Same header on MAIN (J10) mounts topside at (96, 104) — only DC nets cross.
-  ⚠️ The BOM still lists this as generic "2.54 socket/header 2x8": pick the
-  actual male-header / female-socket pair before ordering.
+  **The pair is now chosen and gives exactly the 11.00 mm gap the enclosure needs:**
+
+  | Board | Half | Part | LCSC | Key dimension |
+  |---|---|---|---|---|
+  | MAIN, J10, **top** side | female socket | XFCN **PM254V-12-16-H85** | C46595985 | body **8.50 ±0.15 mm** |
+  | CONTROL, J1, **bottom** side | male header | XFCN **PZ254V-12-16P** | C492425 | insulator **2.50 mm**, mating pin 6.0 ±0.20 mm |
+
+  2.50 + 8.50 = **11.00 mm**, plastic face to plastic face — a positive mechanical
+  stop, not a nominal. Worst-case tolerance 10.70–11.30 mm. The 6 mm pin sits inside
+  the socket's 3.68–6.35 mm insertion-depth window and does **not** bottom out, which
+  is what makes the plastics the datum. Verified against both manufacturers' drawings;
+  the two datasheets name each other as the mate.
+
+  ⚠️ **Do not substitute a long-pin or "stacking" header** (e.g. 13.5 mm pins). It
+  would exceed the socket's maximum insertion depth, bottom out internally, hold the
+  plastics apart and leave the gap indeterminate.
+
+  ⚠️ **The socket goes on MAIN deliberately.** MAIN carries the DC jack, so its half is
+  live whenever power is applied — recessed socket contacts can't be shorted by a
+  dropped screw or a probe, 16 exposed pins at 18 V can. It also puts the lighter half
+  on the board that hangs upside down.
 - MAIN board: wall-mounted jacks (2× PJ-603A, 3× PJ-3410, 1× DC-044A) are
   right-angle parts hanging off board edges — verify they sit flush before
   wave/hand solder.

@@ -1,0 +1,12 @@
+﻿Item,Designator,Qty,Manufacturer Part Number,Manufacturer,Description / Value,Package / Footprint,Mounting,Supplier,Supplier Part Number,DNP,Notes
+1,C7,1,RVE100UF35V67RV0072,,100u,CP_Elec_6.3x7.7,THT,LCSC,C2836437,,>=25V (35V on VA rails)
+2,"C1,C2,C3,C4,C5,C6",6,CC0603KRX7R9BB104,,100n,C_0603_1608Metric,SMT,LCSC,C14663,,"X7R/C0G per value; >=25V on VA nets, 50V for C104"
+3,J1,1,PZ254V-12-16P,,to MAIN 2x8,PinHeader_2x08_P2.54mm_Vertical,THT,LCSC,C492425,,mates J10 - pick header+socket pair
+4,RV4,1,RK09K1130A70,,B10k (FIZZ),ALPS_RK09K1130,THT,LCSC,C351173,,"GENUINE ALPS B10k linear snap-in, 30mm shaft (was A5R/20mm - fixes knob protrusion, same footprint), JLC 7.7k stock"
+5,RV1,1,RK09K1130A70,,B10k (FREQ),ALPS_RK09K1130,THT,LCSC,C351173,,"GENUINE ALPS B10k linear snap-in, 30mm shaft (was A5R/20mm - fixes knob protrusion, same footprint), JLC 7.7k stock"
+6,RV2,1,RK09K1130A70,,B10k (GAIN),ALPS_RK09K1130,THT,LCSC,C351173,,"GENUINE ALPS B10k linear snap-in, 30mm shaft (was A5R/20mm - fixes knob protrusion, same footprint), JLC 7.7k stock"
+7,RV3,1,RK09K1130A70,,B10k (MIX),ALPS_RK09K1130,THT,LCSC,C351173,,"GENUINE ALPS B10k linear snap-in, 30mm shaft (was A5R/20mm - fixes knob protrusion, same footprint), JLC 7.7k stock"
+8,RV5,1,RK09K1130A70,,B10k (Q),ALPS_RK09K1130,THT,LCSC,C351173,,"GENUINE ALPS B10k linear snap-in, 30mm shaft (was A5R/20mm - fixes knob protrusion, same footprint), JLC 7.7k stock"
+9,RV6,1,RK09K1130A70,,B10k (VOL),ALPS_RK09K1130,THT,LCSC,C351173,,"GENUINE ALPS B10k linear snap-in, 30mm shaft (was A5R/20mm - fixes knob protrusion, same footprint), JLC 7.7k stock"
+10,"SW1,SW2",2,SSWFS-S01-AC09-HWH (PC-pin) or Amplified Parts P-H604 equivalent,,Suntsu SSWFS-S01 (TAP/BYP),SSWFS-S01,THT,DIGI-KEY,CUSTOMER SUPPLIED,DNP,"DO NOT SOURCE - no fab-side distributor stocks this class of part (Digi-Key Marketplace only; Mouser none; JLCPCB has no foot-switch category). Commodity pedal part: Love My Switches PCB-mount \.99, Amplified Parts P-H604 dimensions match (12mm x 1mm bushing, 14.3 long, body 25.3 x 12.6). Fitted by Jason at final assembly. PC-pin variant chosen 2026-08-02 - no board cutouts needed."
+11,"LED1,LED2,LED3,LED4,LED5,LED6",6,WS2812B-B/T,,WS2812B,LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm,SMT,LCSC,C2761795,,"Worldsemi 5050, 422k stock"
