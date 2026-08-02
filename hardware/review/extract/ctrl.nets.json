@@ -1,0 +1,496 @@
+{
+ "+5V": [
+  {
+   "ref": "C1",
+   "pin": "1",
+   "pinname": "",
+   "pintype": "passive"
+  },
+  {
+   "ref": "C2",
+   "pin": "1",
+   "pinname": "",
+   "pintype": "passive"
+  },
+  {
+   "ref": "C3",
+   "pin": "1",
+   "pinname": "",
+   "pintype": "passive"
+  },
+  {
+   "ref": "C4",
+   "pin": "1",
+   "pinname": "",
+   "pintype": "passive"
+  },
+  {
+   "ref": "C5",
+   "pin": "1",
+   "pinname": "",
+   "pintype": "passive"
+  },
+  {
+   "ref": "C6",
+   "pin": "1",
+   "pinname": "",
+   "pintype": "passive"
+  },
+  {
+   "ref": "C7",
+   "pin": "1",
+   "pinname": "",
+   "pintype": "passive"
+  },
+  {
+   "ref": "J1",
+   "pin": "2",
+   "pinname": "Pin_2_2",
+   "pintype": "passive"
+  },
+  {
+   "ref": "LED1",
+   "pin": "1",
+   "pinname": "VDD_1",
+   "pintype": "power_in"
+  },
+  {
+   "ref": "LED2",
+   "pin": "1",
+   "pinname": "VDD_1",
+   "pintype": "power_in"
+  },
+  {
+   "ref": "LED3",
+   "pin": "1",
+   "pinname": "VDD_1",
+   "pintype": "power_in"
+  },
+  {
+   "ref": "LED4",
+   "pin": "1",
+   "pinname": "VDD_1",
+   "pintype": "power_in"
+  },
+  {
+   "ref": "LED5",
+   "pin": "1",
+   "pinname": "VDD_1",
+   "pintype": "power_in"
+  },
+  {
+   "ref": "LED6",
+   "pin": "1",
+   "pinname": "VDD_1",
+   "pintype": "power_in"
+  }
+ ],
+ "/POT1_W": [
+  {
+   "ref": "J1",
+   "pin": "5",
+   "pinname": "Pin_5_5",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV1",
+   "pin": "2",
+   "pinname": "2_2",
+   "pintype": "passive"
+  }
+ ],
+ "/POT2_W": [
+  {
+   "ref": "J1",
+   "pin": "6",
+   "pinname": "Pin_6_6",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV2",
+   "pin": "2",
+   "pinname": "2_2",
+   "pintype": "passive"
+  }
+ ],
+ "/POT3_W": [
+  {
+   "ref": "J1",
+   "pin": "7",
+   "pinname": "Pin_7_7",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV3",
+   "pin": "2",
+   "pinname": "2_2",
+   "pintype": "passive"
+  }
+ ],
+ "/POT4_W": [
+  {
+   "ref": "J1",
+   "pin": "8",
+   "pinname": "Pin_8_8",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV4",
+   "pin": "2",
+   "pinname": "2_2",
+   "pintype": "passive"
+  }
+ ],
+ "/POT5_W": [
+  {
+   "ref": "J1",
+   "pin": "9",
+   "pinname": "Pin_9_9",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV5",
+   "pin": "2",
+   "pinname": "2_2",
+   "pintype": "passive"
+  }
+ ],
+ "/POT6_W": [
+  {
+   "ref": "J1",
+   "pin": "10",
+   "pinname": "Pin_10_10",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV6",
+   "pin": "2",
+   "pinname": "2_2",
+   "pintype": "passive"
+  }
+ ],
+ "/STOMP1": [
+  {
+   "ref": "J1",
+   "pin": "11",
+   "pinname": "Pin_11_11",
+   "pintype": "passive"
+  },
+  {
+   "ref": "SW1",
+   "pin": "1",
+   "pinname": "1_1",
+   "pintype": "passive"
+  }
+ ],
+ "/STOMP2": [
+  {
+   "ref": "J1",
+   "pin": "12",
+   "pinname": "Pin_12_12",
+   "pintype": "passive"
+  },
+  {
+   "ref": "SW2",
+   "pin": "1",
+   "pinname": "1_1",
+   "pintype": "passive"
+  }
+ ],
+ "/WSD1": [
+  {
+   "ref": "LED1",
+   "pin": "2",
+   "pinname": "DOUT_2",
+   "pintype": "output"
+  },
+  {
+   "ref": "LED2",
+   "pin": "4",
+   "pinname": "DIN_4",
+   "pintype": "input"
+  }
+ ],
+ "/WSD2": [
+  {
+   "ref": "LED2",
+   "pin": "2",
+   "pinname": "DOUT_2",
+   "pintype": "output"
+  },
+  {
+   "ref": "LED3",
+   "pin": "4",
+   "pinname": "DIN_4",
+   "pintype": "input"
+  }
+ ],
+ "/WSD3": [
+  {
+   "ref": "LED3",
+   "pin": "2",
+   "pinname": "DOUT_2",
+   "pintype": "output"
+  },
+  {
+   "ref": "LED4",
+   "pin": "4",
+   "pinname": "DIN_4",
+   "pintype": "input"
+  }
+ ],
+ "/WSD4": [
+  {
+   "ref": "LED4",
+   "pin": "2",
+   "pinname": "DOUT_2",
+   "pintype": "output"
+  },
+  {
+   "ref": "LED5",
+   "pin": "4",
+   "pinname": "DIN_4",
+   "pintype": "input"
+  }
+ ],
+ "/WSD5": [
+  {
+   "ref": "LED5",
+   "pin": "2",
+   "pinname": "DOUT_2",
+   "pintype": "output"
+  },
+  {
+   "ref": "LED6",
+   "pin": "4",
+   "pinname": "DIN_4",
+   "pintype": "input"
+  }
+ ],
+ "/WS_IN": [
+  {
+   "ref": "J1",
+   "pin": "13",
+   "pinname": "Pin_13_13",
+   "pintype": "passive"
+  },
+  {
+   "ref": "LED1",
+   "pin": "4",
+   "pinname": "DIN_4",
+   "pintype": "input"
+  }
+ ],
+ "3V3": [
+  {
+   "ref": "J1",
+   "pin": "3",
+   "pinname": "Pin_3_3",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV1",
+   "pin": "1",
+   "pinname": "1_1",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV2",
+   "pin": "1",
+   "pinname": "1_1",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV3",
+   "pin": "1",
+   "pinname": "1_1",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV4",
+   "pin": "1",
+   "pinname": "1_1",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV5",
+   "pin": "1",
+   "pinname": "1_1",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV6",
+   "pin": "1",
+   "pinname": "1_1",
+   "pintype": "passive"
+  }
+ ],
+ "GND": [
+  {
+   "ref": "C1",
+   "pin": "2",
+   "pinname": "",
+   "pintype": "passive"
+  },
+  {
+   "ref": "C2",
+   "pin": "2",
+   "pinname": "",
+   "pintype": "passive"
+  },
+  {
+   "ref": "C3",
+   "pin": "2",
+   "pinname": "",
+   "pintype": "passive"
+  },
+  {
+   "ref": "C4",
+   "pin": "2",
+   "pinname": "",
+   "pintype": "passive"
+  },
+  {
+   "ref": "C5",
+   "pin": "2",
+   "pinname": "",
+   "pintype": "passive"
+  },
+  {
+   "ref": "C6",
+   "pin": "2",
+   "pinname": "",
+   "pintype": "passive"
+  },
+  {
+   "ref": "C7",
+   "pin": "2",
+   "pinname": "",
+   "pintype": "passive"
+  },
+  {
+   "ref": "J1",
+   "pin": "1",
+   "pinname": "Pin_1_1",
+   "pintype": "passive"
+  },
+  {
+   "ref": "J1",
+   "pin": "14",
+   "pinname": "Pin_14_14",
+   "pintype": "passive"
+  },
+  {
+   "ref": "J1",
+   "pin": "16",
+   "pinname": "Pin_16_16",
+   "pintype": "passive"
+  },
+  {
+   "ref": "J1",
+   "pin": "4",
+   "pinname": "Pin_4_4",
+   "pintype": "passive"
+  },
+  {
+   "ref": "LED1",
+   "pin": "3",
+   "pinname": "VSS_3",
+   "pintype": "power_in"
+  },
+  {
+   "ref": "LED2",
+   "pin": "3",
+   "pinname": "VSS_3",
+   "pintype": "power_in"
+  },
+  {
+   "ref": "LED3",
+   "pin": "3",
+   "pinname": "VSS_3",
+   "pintype": "power_in"
+  },
+  {
+   "ref": "LED4",
+   "pin": "3",
+   "pinname": "VSS_3",
+   "pintype": "power_in"
+  },
+  {
+   "ref": "LED5",
+   "pin": "3",
+   "pinname": "VSS_3",
+   "pintype": "power_in"
+  },
+  {
+   "ref": "LED6",
+   "pin": "3",
+   "pinname": "VSS_3",
+   "pintype": "power_in"
+  },
+  {
+   "ref": "RV1",
+   "pin": "3",
+   "pinname": "3_3",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV2",
+   "pin": "3",
+   "pinname": "3_3",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV3",
+   "pin": "3",
+   "pinname": "3_3",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV4",
+   "pin": "3",
+   "pinname": "3_3",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV5",
+   "pin": "3",
+   "pinname": "3_3",
+   "pintype": "passive"
+  },
+  {
+   "ref": "RV6",
+   "pin": "3",
+   "pinname": "3_3",
+   "pintype": "passive"
+  },
+  {
+   "ref": "SW1",
+   "pin": "2",
+   "pinname": "2_2",
+   "pintype": "passive"
+  },
+  {
+   "ref": "SW2",
+   "pin": "2",
+   "pinname": "2_2",
+   "pintype": "passive"
+  }
+ ],
+ "unconnected-(J1-Pin_15-Pad15)": [
+  {
+   "ref": "J1",
+   "pin": "15",
+   "pinname": "Pin_15_15",
+   "pintype": "passive+no_connect"
+  }
+ ],
+ "unconnected-(LED6-DOUT-Pad2)": [
+  {
+   "ref": "LED6",
+   "pin": "2",
+   "pinname": "DOUT_2",
+   "pintype": "output+no_connect"
+  }
+ ]
+}

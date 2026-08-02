@@ -1,0 +1,4146 @@
+{
+ "C100": {
+  "ref": "C100",
+  "value": "220u/35V",
+  "footprint": "Capacitor_SMD:CP_Elec_8x10.2",
+  "datasheet": "",
+  "libsource": "Device:C_Polarized",
+  "description": "Polarized capacitor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:CP_Elec_8x10.2",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C101": {
+  "ref": "C101",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C102": {
+  "ref": "C102",
+  "value": "1u",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C103": {
+  "ref": "C103",
+  "value": "1u",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C104": {
+  "ref": "C104",
+  "value": "10u/50V X7R",
+  "footprint": "Capacitor_SMD:C_1206_3216Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_1206_3216Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C105": {
+  "ref": "C105",
+  "value": "3n3",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C106": {
+  "ref": "C106",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C107": {
+  "ref": "C107",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C108": {
+  "ref": "C108",
+  "value": "22u",
+  "footprint": "Capacitor_SMD:C_0805_2012Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C109": {
+  "ref": "C109",
+  "value": "47u",
+  "footprint": "Capacitor_SMD:CP_Elec_6.3x5.4",
+  "datasheet": "",
+  "libsource": "Device:C_Polarized",
+  "description": "Polarized capacitor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:CP_Elec_6.3x5.4",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C110": {
+  "ref": "C110",
+  "value": "47u",
+  "footprint": "Capacitor_SMD:CP_Elec_6.3x5.4",
+  "datasheet": "",
+  "libsource": "Device:C_Polarized",
+  "description": "Polarized capacitor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:CP_Elec_6.3x5.4",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C111": {
+  "ref": "C111",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D100": {
+  "ref": "D100",
+  "value": "BZT52C10",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D_Zener",
+  "description": "Zener diode",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D101": {
+  "ref": "D101",
+  "value": "SS34",
+  "footprint": "Diode_SMD:D_SMA",
+  "datasheet": "",
+  "libsource": "Device:D_Schottky",
+  "description": "Schottky diode",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SMA",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D102": {
+  "ref": "D102",
+  "value": "1N4148W",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D",
+  "description": "Diode",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D103": {
+  "ref": "D103",
+  "value": "BZT52C6V2",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D_Zener",
+  "description": "Zener diode",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D104": {
+  "ref": "D104",
+  "value": "1N4148W",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D",
+  "description": "Diode",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D105": {
+  "ref": "D105",
+  "value": "1N4148W (drop: LM567C abs max 9V vs 78L09 +5% tol)",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D",
+  "description": "Diode",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D106": {
+  "ref": "D106",
+  "value": "SMAJ18A (VA transient clamp)",
+  "footprint": "Diode_SMD:D_SMA",
+  "datasheet": "",
+  "libsource": "Device:D_TVS",
+  "description": "Bidirectional transient-voltage-suppression diode",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SMA",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "FB100": {
+  "ref": "FB100",
+  "value": "600R/3A",
+  "footprint": "Inductor_SMD:L_1206_3216Metric",
+  "datasheet": "",
+  "libsource": "Device:FerriteBead",
+  "description": "Ferrite bead",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Inductor_SMD:L_1206_3216Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "J5": {
+  "ref": "J5",
+  "value": "DC_2.1mm",
+  "footprint": "Glitchwave:DC-044A",
+  "datasheet": "",
+  "libsource": "Connector:Barrel_Jack_Switch",
+  "description": "DC Barrel Jack with an internal switch",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Glitchwave:DC-044A",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "L100": {
+  "ref": "L100",
+  "value": "22uH/3A SMDRI127",
+  "footprint": "Inductor_SMD:L_12x12mm_H8mm",
+  "datasheet": "",
+  "libsource": "Device:L",
+  "description": "Inductor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Inductor_SMD:L_12x12mm_H8mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "Q10": {
+  "ref": "Q10",
+  "value": "AO3401A",
+  "footprint": "Package_TO_SOT_SMD:SOT-23",
+  "datasheet": "",
+  "libsource": "Transistor_FET:AO3401A",
+  "description": "-4.0A Id, -30V Vds, P-Channel MOSFET, SOT-23",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Package_TO_SOT_SMD:SOT-23",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "Q11": {
+  "ref": "Q11",
+  "value": "BCP56",
+  "footprint": "Package_TO_SOT_SMD:SOT-223-3_TabPin2",
+  "datasheet": "",
+  "libsource": "Transistor_BJT:BCP56",
+  "description": "1A Ic, 80V Vce, NPN Medium Power Transistor, SOT-223",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Package_TO_SOT_SMD:SOT-223-3_TabPin2",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R100": {
+  "ref": "R100",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R101": {
+  "ref": "R101",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R102": {
+  "ref": "R102",
+  "value": "51k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R103": {
+  "ref": "R103",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R104": {
+  "ref": "R104",
+  "value": "40k2 1%",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R105": {
+  "ref": "R105",
+  "value": "7k68 1%",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R106": {
+  "ref": "R106",
+  "value": "47k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R107": {
+  "ref": "R107",
+  "value": "47k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R108": {
+  "ref": "R108",
+  "value": "33k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R109": {
+  "ref": "R109",
+  "value": "147k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R110": {
+  "ref": "R110",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R111": {
+  "ref": "R111",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R112": {
+  "ref": "R112",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R113": {
+  "ref": "R113",
+  "value": "22k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R114": {
+  "ref": "R114",
+  "value": "24k9 (EN divider - EN abs max 6V!)",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U6": {
+  "ref": "U6",
+  "value": "TL074",
+  "footprint": "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Amplifier_Operational:TL074",
+  "description": "Quad Low-Noise JFET-Input Operational Amplifiers, DIP-14/SOIC-14",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U18": {
+  "ref": "U18",
+  "value": "L78L09",
+  "footprint": "Package_TO_SOT_SMD:SOT-89-3",
+  "datasheet": "",
+  "libsource": "Regulator_Linear:L78L09_SOT89",
+  "description": "Positive 100mA 30V Linear Regulator, Fixed Output 9V, SOT-89",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Package_TO_SOT_SMD:SOT-89-3",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U19": {
+  "ref": "U19",
+  "value": "MP1584EN",
+  "footprint": "Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x3mm",
+  "datasheet": "",
+  "libsource": "Glitchwave:MP1584EN",
+  "description": "",
+  "sheet": "/power/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x3mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C8": {
+  "ref": "C8",
+  "value": "220n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C70": {
+  "ref": "C70",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C71": {
+  "ref": "C71",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C72": {
+  "ref": "C72",
+  "value": "47n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C72A": {
+  "ref": "C72A",
+  "value": "56n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C73": {
+  "ref": "C73",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C74": {
+  "ref": "C74",
+  "value": "1u",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C75": {
+  "ref": "C75",
+  "value": "10u",
+  "footprint": "Capacitor_SMD:CP_Elec_4x5.4",
+  "datasheet": "",
+  "libsource": "Device:C_Polarized",
+  "description": "Polarized capacitor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:CP_Elec_4x5.4",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C76": {
+  "ref": "C76",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C77": {
+  "ref": "C77",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C78": {
+  "ref": "C78",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D70": {
+  "ref": "D70",
+  "value": "1N4148W",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D",
+  "description": "Diode",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D71": {
+  "ref": "D71",
+  "value": "1N4148W",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D",
+  "description": "Diode",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D72": {
+  "ref": "D72",
+  "value": "1N4148W",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D",
+  "description": "Diode",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D73": {
+  "ref": "D73",
+  "value": "1N4148W",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D",
+  "description": "Diode",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D74": {
+  "ref": "D74",
+  "value": "1N4148W",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D",
+  "description": "Diode",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D75": {
+  "ref": "D75",
+  "value": "1N4148W",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D",
+  "description": "Diode",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "QJ1": {
+  "ref": "QJ1",
+  "value": "MMBFJ201",
+  "footprint": "Package_TO_SOT_SMD:SOT-23",
+  "datasheet": "",
+  "libsource": "Device:Q_NJFET_DGS",
+  "description": "N-JFET transistor, drain/gate/source",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Package_TO_SOT_SMD:SOT-23",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R12": {
+  "ref": "R12",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R13": {
+  "ref": "R13",
+  "value": "470R",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R100A": {
+  "ref": "R100A",
+  "value": "39k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R101A": {
+  "ref": "R101A",
+  "value": "18k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R102A": {
+  "ref": "R102A",
+  "value": "3.6k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R103A": {
+  "ref": "R103A",
+  "value": "4.3k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R106A": {
+  "ref": "R106A",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R107A": {
+  "ref": "R107A",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R108A": {
+  "ref": "R108A",
+  "value": "1M",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R109A": {
+  "ref": "R109A",
+  "value": "845R 1% (Fetzer Rs)",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R110A": {
+  "ref": "R110A",
+  "value": "15k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R111A": {
+  "ref": "R111A",
+  "value": "220k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R112A": {
+  "ref": "R112A",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R113A": {
+  "ref": "R113A",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R114A": {
+  "ref": "R114A",
+  "value": "3.3k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R115A": {
+  "ref": "R115A",
+  "value": "6.8k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R116A": {
+  "ref": "R116A",
+  "value": "4.7k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R117A": {
+  "ref": "R117A",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R118A": {
+  "ref": "R118A",
+  "value": "220k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R119A": {
+  "ref": "R119A",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R120A": {
+  "ref": "R120A",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R121A": {
+  "ref": "R121A",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R122A": {
+  "ref": "R122A",
+  "value": "220k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R123A": {
+  "ref": "R123A",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R124A": {
+  "ref": "R124A",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R125A": {
+  "ref": "R125A",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R126A": {
+  "ref": "R126A",
+  "value": "220k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R127A": {
+  "ref": "R127A",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "SW1": {
+  "ref": "SW1",
+  "value": "+6dB (short=OFF)",
+  "footprint": "Button_Switch_SMD:SW_SPDT_PCM12",
+  "datasheet": "",
+  "libsource": "Switch:SW_SPDT",
+  "description": "Switch, single pole double throw",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Button_Switch_SMD:SW_SPDT_PCM12",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "SW2": {
+  "ref": "SW2",
+  "value": "JFET in/out",
+  "footprint": "Button_Switch_SMD:SW_SPDT_PCM12",
+  "datasheet": "",
+  "libsource": "Switch:SW_SPDT",
+  "description": "Switch, single pole double throw",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Button_Switch_SMD:SW_SPDT_PCM12",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "SW3": {
+  "ref": "SW3",
+  "value": "ladder in/out",
+  "footprint": "Button_Switch_SMD:SW_SPDT_PCM12",
+  "datasheet": "",
+  "libsource": "Switch:SW_SPDT",
+  "description": "Switch, single pole double throw",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Button_Switch_SMD:SW_SPDT_PCM12",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U14": {
+  "ref": "U14",
+  "value": "TL074",
+  "footprint": "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Amplifier_Operational:TL074",
+  "description": "Quad Low-Noise JFET-Input Operational Amplifiers, DIP-14/SOIC-14",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U15": {
+  "ref": "U15",
+  "value": "LM13700",
+  "footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Amplifier_Operational:LM13700",
+  "description": "Dual Operational Transconductance Amplifiers with Linearizing Diodes and Buffers, DIP-16/SOIC-16",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U16": {
+  "ref": "U16",
+  "value": "TL074",
+  "footprint": "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Amplifier_Operational:TL074",
+  "description": "Quad Low-Noise JFET-Input Operational Amplifiers, DIP-14/SOIC-14",
+  "sheet": "/output/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C1": {
+  "ref": "C1",
+  "value": "220n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C2": {
+  "ref": "C2",
+  "value": "4.7u",
+  "footprint": "Capacitor_SMD:CP_Elec_4x5.4",
+  "datasheet": "",
+  "libsource": "Device:C_Polarized",
+  "description": "Polarized capacitor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:CP_Elec_4x5.4",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C20": {
+  "ref": "C20",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C21": {
+  "ref": "C21",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C22": {
+  "ref": "C22",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C23": {
+  "ref": "C23",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C30": {
+  "ref": "C30",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C31": {
+  "ref": "C31",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C32": {
+  "ref": "C32",
+  "value": "3.9n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C33": {
+  "ref": "C33",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C34": {
+  "ref": "C34",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C35": {
+  "ref": "C35",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D1": {
+  "ref": "D1",
+  "value": "1N4148W",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D",
+  "description": "Diode",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "Q1": {
+  "ref": "Q1",
+  "value": "MMBTA13",
+  "footprint": "Package_TO_SOT_SMD:SOT-23",
+  "datasheet": "",
+  "libsource": "Device:Q_NPN_Darlington_BCE",
+  "description": "NPN Darlington transistor, base/collector/emitter",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Package_TO_SOT_SMD:SOT-23",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R1": {
+  "ref": "R1",
+  "value": "1k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R2": {
+  "ref": "R2",
+  "value": "2.2M",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R3": {
+  "ref": "R3",
+  "value": "2.2M",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R4": {
+  "ref": "R4",
+  "value": "470k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R5": {
+  "ref": "R5",
+  "value": "2.2k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R20": {
+  "ref": "R20",
+  "value": "43k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R21": {
+  "ref": "R21",
+  "value": "36k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R22": {
+  "ref": "R22",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R23": {
+  "ref": "R23",
+  "value": "15k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R24": {
+  "ref": "R24",
+  "value": "47k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R25": {
+  "ref": "R25",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R30": {
+  "ref": "R30",
+  "value": "220k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R31": {
+  "ref": "R31",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R32": {
+  "ref": "R32",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R33": {
+  "ref": "R33",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R34": {
+  "ref": "R34",
+  "value": "330k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R35": {
+  "ref": "R35",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R36": {
+  "ref": "R36",
+  "value": "4.7k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R37": {
+  "ref": "R37",
+  "value": "1M",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U1": {
+  "ref": "U1",
+  "value": "TL074",
+  "footprint": "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Amplifier_Operational:TL074",
+  "description": "Quad Low-Noise JFET-Input Operational Amplifiers, DIP-14/SOIC-14",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U2": {
+  "ref": "U2",
+  "value": "TL074",
+  "footprint": "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Amplifier_Operational:TL074",
+  "description": "Quad Low-Noise JFET-Input Operational Amplifiers, DIP-14/SOIC-14",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U3": {
+  "ref": "U3",
+  "value": "LM13700",
+  "footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Amplifier_Operational:LM13700",
+  "description": "Dual Operational Transconductance Amplifiers with Linearizing Diodes and Buffers, DIP-16/SOIC-16",
+  "sheet": "/input_dirt/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C80": {
+  "ref": "C80",
+  "value": "1u",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C81": {
+  "ref": "C81",
+  "value": "10n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C82": {
+  "ref": "C82",
+  "value": "10n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C83": {
+  "ref": "C83",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C84": {
+  "ref": "C84",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C85": {
+  "ref": "C85",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D80": {
+  "ref": "D80",
+  "value": "1N4148W",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D",
+  "description": "Diode",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D81": {
+  "ref": "D81",
+  "value": "1N4148W",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D",
+  "description": "Diode",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D82": {
+  "ref": "D82",
+  "value": "1N4148W",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D",
+  "description": "Diode",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D83": {
+  "ref": "D83",
+  "value": "1N5819W (clamp 3V3)",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D_Schottky",
+  "description": "Schottky diode",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D84": {
+  "ref": "D84",
+  "value": "1N5819W",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D_Schottky",
+  "description": "Schottky diode",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D85": {
+  "ref": "D85",
+  "value": "1N5819W",
+  "footprint": "Diode_SMD:D_SOD-123",
+  "datasheet": "",
+  "libsource": "Device:D_Schottky",
+  "description": "Schottky diode",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SOD-123",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R130": {
+  "ref": "R130",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R131": {
+  "ref": "R131",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R132": {
+  "ref": "R132",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R133": {
+  "ref": "R133",
+  "value": "200k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R134": {
+  "ref": "R134",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R135": {
+  "ref": "R135",
+  "value": "3.9k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R136": {
+  "ref": "R136",
+  "value": "150k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R137": {
+  "ref": "R137",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R138": {
+  "ref": "R138",
+  "value": "47k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R139": {
+  "ref": "R139",
+  "value": "1k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R140": {
+  "ref": "R140",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R141": {
+  "ref": "R141",
+  "value": "47k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R142": {
+  "ref": "R142",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R143": {
+  "ref": "R143",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R144": {
+  "ref": "R144",
+  "value": "47k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R145": {
+  "ref": "R145",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R146": {
+  "ref": "R146",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R147": {
+  "ref": "R147",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R148": {
+  "ref": "R148",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R149": {
+  "ref": "R149",
+  "value": "20k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R150": {
+  "ref": "R150",
+  "value": "1k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U17": {
+  "ref": "U17",
+  "value": "TL074",
+  "footprint": "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Amplifier_Operational:TL074",
+  "description": "Quad Low-Noise JFET-Input Operational Amplifiers, DIP-14/SOIC-14",
+  "sheet": "/env_cv/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C3": {
+  "ref": "C3",
+  "value": "220n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C40": {
+  "ref": "C40",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C41": {
+  "ref": "C41",
+  "value": "DNP-LFIL",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C42": {
+  "ref": "C42",
+  "value": "DNP-OFIL",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C43": {
+  "ref": "C43",
+  "value": "220p",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C44": {
+  "ref": "C44",
+  "value": "1u",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C45": {
+  "ref": "C45",
+  "value": "47n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C46": {
+  "ref": "C46",
+  "value": "1u",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C47": {
+  "ref": "C47",
+  "value": "22u",
+  "footprint": "Capacitor_SMD:CP_Elec_5x5.4",
+  "datasheet": "",
+  "libsource": "Device:C_Polarized",
+  "description": "Polarized capacitor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:CP_Elec_5x5.4",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C48": {
+  "ref": "C48",
+  "value": "470u",
+  "footprint": "Capacitor_SMD:CP_Elec_10x10.2",
+  "datasheet": "",
+  "libsource": "Device:C_Polarized",
+  "description": "Polarized capacitor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:CP_Elec_10x10.2",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C49": {
+  "ref": "C49",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C50": {
+  "ref": "C50",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "Q2": {
+  "ref": "Q2",
+  "value": "MMBT3904",
+  "footprint": "Package_TO_SOT_SMD:SOT-23",
+  "datasheet": "",
+  "libsource": "Transistor_BJT:MMBT3904",
+  "description": "0.2A Ic, 40V Vce, Small Signal NPN Transistor, SOT-23",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Package_TO_SOT_SMD:SOT-23",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "Q3": {
+  "ref": "Q3",
+  "value": "MMBT3904",
+  "footprint": "Package_TO_SOT_SMD:SOT-23",
+  "datasheet": "",
+  "libsource": "Transistor_BJT:MMBT3904",
+  "description": "0.2A Ic, 40V Vce, Small Signal NPN Transistor, SOT-23",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Package_TO_SOT_SMD:SOT-23",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R16": {
+  "ref": "R16",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R38": {
+  "ref": "R38",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R40": {
+  "ref": "R40",
+  "value": "0R",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R41": {
+  "ref": "R41",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R42": {
+  "ref": "R42",
+  "value": "47k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R43": {
+  "ref": "R43",
+  "value": "47k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R44": {
+  "ref": "R44",
+  "value": "47k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R45": {
+  "ref": "R45",
+  "value": "220k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R46": {
+  "ref": "R46",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R47": {
+  "ref": "R47",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R48": {
+  "ref": "R48",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R49": {
+  "ref": "R49",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R50": {
+  "ref": "R50",
+  "value": "47k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R51": {
+  "ref": "R51",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R52": {
+  "ref": "R52",
+  "value": "47k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R53": {
+  "ref": "R53",
+  "value": "1k (pin3 clamp-current limit)",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U5": {
+  "ref": "U5",
+  "value": "LM567 (SO-8)",
+  "footprint": "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Glitchwave:LM567",
+  "description": "",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U7": {
+  "ref": "U7",
+  "value": "LM13700",
+  "footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Amplifier_Operational:LM13700",
+  "description": "Dual Operational Transconductance Amplifiers with Linearizing Diodes and Buffers, DIP-16/SOIC-16",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U8": {
+  "ref": "U8",
+  "value": "CD4052B",
+  "footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Analog_Switch:CD4052B",
+  "description": "CMOS double 4-channel analog multiplexer/demultiplexer, TSSOP-16/DIP-16/SOIC-16",
+  "sheet": "/core567/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C90": {
+  "ref": "C90",
+  "value": "10u",
+  "footprint": "Capacitor_SMD:CP_Elec_4x5.4",
+  "datasheet": "",
+  "libsource": "Device:C_Polarized",
+  "description": "Polarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:CP_Elec_4x5.4",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C91": {
+  "ref": "C91",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C93": {
+  "ref": "C93",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C94": {
+  "ref": "C94",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C95": {
+  "ref": "C95",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C96": {
+  "ref": "C96",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C97": {
+  "ref": "C97",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C98": {
+  "ref": "C98",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C99": {
+  "ref": "C99",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C120": {
+  "ref": "C120",
+  "value": "1n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C121": {
+  "ref": "C121",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C122": {
+  "ref": "C122",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C123": {
+  "ref": "C123",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C124": {
+  "ref": "C124",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C910": {
+  "ref": "C910",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C911": {
+  "ref": "C911",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "D90": {
+  "ref": "D90",
+  "value": "SS14 (+5V->VSYS)",
+  "footprint": "Diode_SMD:D_SMA",
+  "datasheet": "",
+  "libsource": "Device:D_Schottky",
+  "description": "Schottky diode",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Diode_SMD:D_SMA",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "J10": {
+  "ref": "J10",
+  "value": "CTRL 2x8",
+  "footprint": "Connector_PinHeader_2.54mm:PinHeader_2x08_P2.54mm_Vertical",
+  "datasheet": "",
+  "libsource": "Connector_Generic:Conn_02x08_Odd_Even",
+  "description": "Generic connector, double row, 02x08, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Connector_PinHeader_2.54mm:PinHeader_2x08_P2.54mm_Vertical",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R161": {
+  "ref": "R161",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R162": {
+  "ref": "R162",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R163": {
+  "ref": "R163",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R164": {
+  "ref": "R164",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R165": {
+  "ref": "R165",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R166": {
+  "ref": "R166",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R167": {
+  "ref": "R167",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R168": {
+  "ref": "R168",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R169": {
+  "ref": "R169",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R170": {
+  "ref": "R170",
+  "value": "1k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R171": {
+  "ref": "R171",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R172": {
+  "ref": "R172",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R173": {
+  "ref": "R173",
+  "value": "100R",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R174": {
+  "ref": "R174",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "RV1": {
+  "ref": "RV1",
+  "value": "10k trim (3224W)",
+  "footprint": "Potentiometer_SMD:Potentiometer_Bourns_3224W_Vertical",
+  "datasheet": "",
+  "libsource": "Device:R_Potentiometer",
+  "description": "Potentiometer",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Potentiometer_SMD:Potentiometer_Bourns_3224W_Vertical",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "RV2": {
+  "ref": "RV2",
+  "value": "10k trim (3224W)",
+  "footprint": "Potentiometer_SMD:Potentiometer_Bourns_3224W_Vertical",
+  "datasheet": "",
+  "libsource": "Device:R_Potentiometer",
+  "description": "Potentiometer",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Potentiometer_SMD:Potentiometer_Bourns_3224W_Vertical",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "RV3": {
+  "ref": "RV3",
+  "value": "10k trim (3224W)",
+  "footprint": "Potentiometer_SMD:Potentiometer_Bourns_3224W_Vertical",
+  "datasheet": "",
+  "libsource": "Device:R_Potentiometer",
+  "description": "Potentiometer",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Potentiometer_SMD:Potentiometer_Bourns_3224W_Vertical",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U20": {
+  "ref": "U20",
+  "value": "Raspberry Pi Pico",
+  "footprint": "Glitchwave:RPi_Pico_SMD",
+  "datasheet": "",
+  "libsource": "Glitchwave:RPi_Pico",
+  "description": "",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Glitchwave:RPi_Pico_SMD",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U21": {
+  "ref": "U21",
+  "value": "74HC4067",
+  "footprint": "Package_SO:SOIC-24W_7.5x15.4mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "74xx:CD74HC4067M",
+  "description": "High-Speed CMOS Logic 16-Channel Analog Multiplexer/Demultiplexer, SOIC-24",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-24W_7.5x15.4mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U22": {
+  "ref": "U22",
+  "value": "74AHCT1G125",
+  "footprint": "Package_TO_SOT_SMD:SOT-23-5",
+  "datasheet": "",
+  "libsource": "74xGxx:74AHCT1G125",
+  "description": "Single Buffer Gate Tri-State, Low-Voltage CMOS",
+  "sheet": "/mcu/",
+  "fields": {
+   "Footprint": "Package_TO_SOT_SMD:SOT-23-5",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C60": {
+  "ref": "C60",
+  "value": "220n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C61": {
+  "ref": "C61",
+  "value": "220p",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C62": {
+  "ref": "C62",
+  "value": "220p",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C63": {
+  "ref": "C63",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C64": {
+  "ref": "C64",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C65": {
+  "ref": "C65",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C66": {
+  "ref": "C66",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C67": {
+  "ref": "C67",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "Q4": {
+  "ref": "Q4",
+  "value": "MMBT3904",
+  "footprint": "Package_TO_SOT_SMD:SOT-23",
+  "datasheet": "",
+  "libsource": "Transistor_BJT:MMBT3904",
+  "description": "0.2A Ic, 40V Vce, Small Signal NPN Transistor, SOT-23",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Package_TO_SOT_SMD:SOT-23",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "Q5": {
+  "ref": "Q5",
+  "value": "MMBT3904",
+  "footprint": "Package_TO_SOT_SMD:SOT-23",
+  "datasheet": "",
+  "libsource": "Transistor_BJT:MMBT3904",
+  "description": "0.2A Ic, 40V Vce, Small Signal NPN Transistor, SOT-23",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Package_TO_SOT_SMD:SOT-23",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "Q6": {
+  "ref": "Q6",
+  "value": "MMBT3904",
+  "footprint": "Package_TO_SOT_SMD:SOT-23",
+  "datasheet": "",
+  "libsource": "Transistor_BJT:MMBT3904",
+  "description": "0.2A Ic, 40V Vce, Small Signal NPN Transistor, SOT-23",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Package_TO_SOT_SMD:SOT-23",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R60": {
+  "ref": "R60",
+  "value": "1M",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R61": {
+  "ref": "R61",
+  "value": "470k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R62": {
+  "ref": "R62",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R63": {
+  "ref": "R63",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R64": {
+  "ref": "R64",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R65": {
+  "ref": "R65",
+  "value": "220k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R66": {
+  "ref": "R66",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R67": {
+  "ref": "R67",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R68": {
+  "ref": "R68",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R69": {
+  "ref": "R69",
+  "value": "220k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R70": {
+  "ref": "R70",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R71": {
+  "ref": "R71",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R72": {
+  "ref": "R72",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R73": {
+  "ref": "R73",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R74": {
+  "ref": "R74",
+  "value": "220k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R75": {
+  "ref": "R75",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R76": {
+  "ref": "R76",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R77": {
+  "ref": "R77",
+  "value": "220k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R78": {
+  "ref": "R78",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R79": {
+  "ref": "R79",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R80": {
+  "ref": "R80",
+  "value": "220k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R81": {
+  "ref": "R81",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R82": {
+  "ref": "R82",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R83": {
+  "ref": "R83",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R84": {
+  "ref": "R84",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R85": {
+  "ref": "R85",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R86": {
+  "ref": "R86",
+  "value": "100k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R87": {
+  "ref": "R87",
+  "value": "51k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R88": {
+  "ref": "R88",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R89": {
+  "ref": "R89",
+  "value": "47k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R90": {
+  "ref": "R90",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R91": {
+  "ref": "R91",
+  "value": "47k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R92": {
+  "ref": "R92",
+  "value": "10k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R93": {
+  "ref": "R93",
+  "value": "47k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R94": {
+  "ref": "R94",
+  "value": "220k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R95": {
+  "ref": "R95",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R96": {
+  "ref": "R96",
+  "value": "220k",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R97": {
+  "ref": "R97",
+  "value": "680",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R98": {
+  "ref": "R98",
+  "value": "10k (buffer DC load)",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "R99": {
+  "ref": "R99",
+  "value": "10k (buffer DC load)",
+  "footprint": "Resistor_SMD:R_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:R",
+  "description": "Resistor",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U9": {
+  "ref": "U9",
+  "value": "TL074",
+  "footprint": "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Amplifier_Operational:TL074",
+  "description": "Quad Low-Noise JFET-Input Operational Amplifiers, DIP-14/SOIC-14",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U10": {
+  "ref": "U10",
+  "value": "LM13700",
+  "footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Amplifier_Operational:LM13700",
+  "description": "Dual Operational Transconductance Amplifiers with Linearizing Diodes and Buffers, DIP-16/SOIC-16",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U11": {
+  "ref": "U11",
+  "value": "LM13700",
+  "footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Amplifier_Operational:LM13700",
+  "description": "Dual Operational Transconductance Amplifiers with Linearizing Diodes and Buffers, DIP-16/SOIC-16",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U12": {
+  "ref": "U12",
+  "value": "LM13700",
+  "footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Amplifier_Operational:LM13700",
+  "description": "Dual Operational Transconductance Amplifiers with Linearizing Diodes and Buffers, DIP-16/SOIC-16",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "U13": {
+  "ref": "U13",
+  "value": "CD4051B",
+  "footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+  "datasheet": "",
+  "libsource": "Analog_Switch:CD4051B",
+  "description": "CMOS single 8-channel analog multiplexer demultiplexer, TSSOP-16/DIP-16/SOIC-16",
+  "sheet": "/mix_svf/",
+  "fields": {
+   "Footprint": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "J1": {
+  "ref": "J1",
+  "value": "IN 6.35mm PJ-603A",
+  "footprint": "Glitchwave:PJ-603A",
+  "datasheet": "",
+  "libsource": "Connector_Audio:AudioJack2_SwitchT",
+  "description": "Audio Jack, 2 Poles (Mono / TS), Switched T Pole (Normalling)",
+  "sheet": "/jacks/",
+  "fields": {
+   "Footprint": "Glitchwave:PJ-603A",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "J2": {
+  "ref": "J2",
+  "value": "OUT 6.35mm PJ-603A",
+  "footprint": "Glitchwave:PJ-603A",
+  "datasheet": "",
+  "libsource": "Connector_Audio:AudioJack2",
+  "description": "Audio Jack, 2 Poles (Mono / TS)",
+  "sheet": "/jacks/",
+  "fields": {
+   "Footprint": "Glitchwave:PJ-603A",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "J3": {
+  "ref": "J3",
+  "value": "CV1 IN 3.5mm PJ-3410",
+  "footprint": "Glitchwave:PJ-3410",
+  "datasheet": "",
+  "libsource": "Connector_Audio:AudioJack2_SwitchT",
+  "description": "Audio Jack, 2 Poles (Mono / TS), Switched T Pole (Normalling)",
+  "sheet": "/jacks/",
+  "fields": {
+   "Footprint": "Glitchwave:PJ-3410",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "J4": {
+  "ref": "J4",
+  "value": "CV2 IN 3.5mm PJ-3410",
+  "footprint": "Glitchwave:PJ-3410",
+  "datasheet": "",
+  "libsource": "Connector_Audio:AudioJack2_SwitchT",
+  "description": "Audio Jack, 2 Poles (Mono / TS), Switched T Pole (Normalling)",
+  "sheet": "/jacks/",
+  "fields": {
+   "Footprint": "Glitchwave:PJ-3410",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "J6": {
+  "ref": "J6",
+  "value": "CV OUT 3.5mm PJ-3410",
+  "footprint": "Glitchwave:PJ-3410",
+  "datasheet": "",
+  "libsource": "Connector_Audio:AudioJack2",
+  "description": "Audio Jack, 2 Poles (Mono / TS)",
+  "sheet": "/jacks/",
+  "fields": {
+   "Footprint": "Glitchwave:PJ-3410",
+   "Datasheet": "",
+   "Description": ""
+  }
+ }
+}

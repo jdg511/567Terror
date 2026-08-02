@@ -1,0 +1,5084 @@
+{
+ "C107": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "FREQ_CV"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C108": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "+5V"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C122": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "+5V"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "D90": {
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "+5V"
+  },
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/mcu/PICO_VSYS"
+  }
+ },
+ "J10": {
+  "2": {
+   "name": "Pin_2_2",
+   "type": "passive",
+   "net": "+5V"
+  },
+  "5": {
+   "name": "Pin_5_5",
+   "type": "passive",
+   "net": "/mcu/POT1_W"
+  },
+  "6": {
+   "name": "Pin_6_6",
+   "type": "passive",
+   "net": "/mcu/POT2_W"
+  },
+  "7": {
+   "name": "Pin_7_7",
+   "type": "passive",
+   "net": "/mcu/POT3_W"
+  },
+  "8": {
+   "name": "Pin_8_8",
+   "type": "passive",
+   "net": "/mcu/POT4_W"
+  },
+  "9": {
+   "name": "Pin_9_9",
+   "type": "passive",
+   "net": "/mcu/POT5_W"
+  },
+  "10": {
+   "name": "Pin_10_10",
+   "type": "passive",
+   "net": "/mcu/POT6_W"
+  },
+  "11": {
+   "name": "Pin_11_11",
+   "type": "passive",
+   "net": "/mcu/STOMP1"
+  },
+  "12": {
+   "name": "Pin_12_12",
+   "type": "passive",
+   "net": "/mcu/STOMP2"
+  },
+  "13": {
+   "name": "Pin_13_13",
+   "type": "passive",
+   "net": "/mcu/WS_HDR"
+  },
+  "3": {
+   "name": "Pin_3_3",
+   "type": "passive",
+   "net": "3V3"
+  },
+  "1": {
+   "name": "Pin_1_1",
+   "type": "passive",
+   "net": "GND"
+  },
+  "14": {
+   "name": "Pin_14_14",
+   "type": "passive",
+   "net": "GND"
+  },
+  "16": {
+   "name": "Pin_16_16",
+   "type": "passive",
+   "net": "GND"
+  },
+  "4": {
+   "name": "Pin_4_4",
+   "type": "passive",
+   "net": "GND"
+  },
+  "15": {
+   "name": "Pin_15_15",
+   "type": "passive+no_connect",
+   "net": "unconnected-(J10-Pin_15-Pad15)"
+  }
+ },
+ "L100": {
+  "2": {
+   "name": "2_2",
+   "type": "passive",
+   "net": "+5V"
+  },
+  "1": {
+   "name": "1_1",
+   "type": "passive",
+   "net": "/power/BUCK_SW"
+  }
+ },
+ "R104": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "+5V"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/BUCK_FB"
+  }
+ },
+ "U22": {
+  "5": {
+   "name": "VCC_5",
+   "type": "power_in",
+   "net": "+5V"
+  },
+  "2": {
+   "name": "",
+   "type": "input",
+   "net": "/mcu/WS_DATA_3V3"
+  },
+  "4": {
+   "name": "",
+   "type": "tri_state",
+   "net": "/mcu/WS_DATA_5V"
+  },
+  "1": {
+   "name": "",
+   "type": "input",
+   "net": "GND"
+  },
+  "3": {
+   "name": "GND_3",
+   "type": "power_in",
+   "net": "GND"
+  }
+ },
+ "R38": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/CT_NODE"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/RT_SQ"
+  }
+ },
+ "U5": {
+  "6": {
+   "name": "CT_6",
+   "type": "passive",
+   "net": "/core567/CT_NODE"
+  },
+  "3": {
+   "name": "IN_3",
+   "type": "input",
+   "net": "/core567/IN567"
+  },
+  "2": {
+   "name": "LFIL_2",
+   "type": "passive",
+   "net": "/core567/LFIL_PAD"
+  },
+  "1": {
+   "name": "OFIL_1",
+   "type": "passive",
+   "net": "/core567/OFIL_PAD"
+  },
+  "8": {
+   "name": "OUT_8",
+   "type": "open_collector",
+   "net": "/core567/Q_OC"
+  },
+  "5": {
+   "name": "RT_5",
+   "type": "passive",
+   "net": "/core567/RT_SQ"
+  },
+  "7": {
+   "name": "GND_7",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "4": {
+   "name": "VCC_4",
+   "type": "power_in",
+   "net": "V567"
+  }
+ },
+ "U7": {
+  "5": {
+   "name": "",
+   "type": "output",
+   "net": "/core567/CT_NODE"
+  },
+  "1": {
+   "name": "",
+   "type": "input",
+   "net": "/core567/FREQ_IABC"
+  },
+  "4": {
+   "name": "-_4",
+   "type": "input",
+   "net": "/core567/OTA2_INM"
+  },
+  "3": {
+   "name": "+_3",
+   "type": "input",
+   "net": "/core567/OTA2_INP"
+  },
+  "10": {
+   "name": "",
+   "type": "input",
+   "net": "GND"
+  },
+  "16": {
+   "name": "",
+   "type": "input",
+   "net": "GND"
+  },
+  "6": {
+   "name": "V-_6",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "7": {
+   "name": "",
+   "type": "input",
+   "net": "GND"
+  },
+  "11": {
+   "name": "V+_11",
+   "type": "power_in",
+   "net": "VA"
+  },
+  "13": {
+   "name": "-_13",
+   "type": "input",
+   "net": "VREF"
+  },
+  "14": {
+   "name": "+_14",
+   "type": "input",
+   "net": "VREF"
+  },
+  "8": {
+   "name": "",
+   "type": "output+no_connect",
+   "net": "unconnected-(U7-Pad8)"
+  },
+  "9": {
+   "name": "",
+   "type": "output+no_connect",
+   "net": "unconnected-(U7-Pad9)"
+  },
+  "12": {
+   "name": "",
+   "type": "output+no_connect",
+   "net": "unconnected-(U7-Pad12)"
+  },
+  "15": {
+   "name": "DIODE_BIAS_15",
+   "type": "input+no_connect",
+   "net": "unconnected-(U7A-DIODE_BIAS-Pad15)"
+  },
+  "2": {
+   "name": "DIODE_BIAS_2",
+   "type": "input+no_connect",
+   "net": "unconnected-(U7C-DIODE_BIAS-Pad2)"
+  }
+ },
+ "U8": {
+  "13": {
+   "name": "X_13",
+   "type": "bidirectional",
+   "net": "/core567/CT_NODE"
+  },
+  "10": {
+   "name": "A_10",
+   "type": "input",
+   "net": "/core567/FREQ_A_S"
+  },
+  "9": {
+   "name": "B_9",
+   "type": "input",
+   "net": "/core567/FREQ_B_S"
+  },
+  "12": {
+   "name": "X0_12",
+   "type": "bidirectional",
+   "net": "/core567/TC_A"
+  },
+  "14": {
+   "name": "X1_14",
+   "type": "bidirectional",
+   "net": "/core567/TC_B"
+  },
+  "15": {
+   "name": "X2_15",
+   "type": "bidirectional",
+   "net": "/core567/TC_C"
+  },
+  "11": {
+   "name": "X3_11",
+   "type": "bidirectional",
+   "net": "/core567/TC_D"
+  },
+  "6": {
+   "name": "INH_6",
+   "type": "input",
+   "net": "GND"
+  },
+  "7": {
+   "name": "VEE_7",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "8": {
+   "name": "VSS_8",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "16": {
+   "name": "VDD_16",
+   "type": "power_in",
+   "net": "V567"
+  },
+  "3": {
+   "name": "Y_3",
+   "type": "bidirectional+no_connect",
+   "net": "unconnected-(U8-Y-Pad3)"
+  },
+  "1": {
+   "name": "Y0_1",
+   "type": "bidirectional+no_connect",
+   "net": "unconnected-(U8-Y0-Pad1)"
+  },
+  "5": {
+   "name": "Y1_5",
+   "type": "bidirectional+no_connect",
+   "net": "unconnected-(U8-Y1-Pad5)"
+  },
+  "2": {
+   "name": "Y2_2",
+   "type": "bidirectional+no_connect",
+   "net": "unconnected-(U8-Y2-Pad2)"
+  },
+  "4": {
+   "name": "Y3_4",
+   "type": "bidirectional+no_connect",
+   "net": "unconnected-(U8-Y3-Pad4)"
+  }
+ },
+ "Q2": {
+  "2": {
+   "name": "E_2",
+   "type": "passive",
+   "net": "/core567/FREQ_A_S"
+  },
+  "1": {
+   "name": "B_1",
+   "type": "input",
+   "net": "/core567/Q2_B"
+  },
+  "3": {
+   "name": "C_3",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R50": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/FREQ_A_S"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "V567"
+  }
+ },
+ "Q3": {
+  "2": {
+   "name": "E_2",
+   "type": "passive",
+   "net": "/core567/FREQ_B_S"
+  },
+  "1": {
+   "name": "B_1",
+   "type": "input",
+   "net": "/core567/Q3_B"
+  },
+  "3": {
+   "name": "C_3",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R52": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/FREQ_B_S"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "V567"
+  }
+ },
+ "R48": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/FREQ_IABC"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "FREQ_CV"
+  }
+ },
+ "R53": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/IN567"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/IN567A"
+  }
+ },
+ "C3": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/IN567A"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "V567_DRIVE"
+  }
+ },
+ "C41": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/LFIL_PAD"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C42": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/OFIL_PAD"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R47": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/OTA2_INM"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/V567_MID"
+  }
+ },
+ "R45": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/OTA2_INP"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/RT_SQ"
+  }
+ },
+ "R46": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/OTA2_INP"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/V567_MID"
+  }
+ },
+ "R49": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/Q2_B"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "FREQ_A"
+  }
+ },
+ "R51": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/Q3_B"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "FREQ_B"
+  }
+ },
+ "R40": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/Q_OC"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "Q_OUT"
+  }
+ },
+ "C45": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/TC_A"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C46": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/TC_B"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C47": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/TC_C"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C48": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/TC_D"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C44": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/V567_MID"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R43": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/V567_MID"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "V567"
+  }
+ },
+ "R44": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/core567/V567_MID"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "D82": {
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/env_cv/BAL_A"
+  },
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/env_cv/RECT_OUT"
+  }
+ },
+ "R135": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/BAL_A"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/ENV_C"
+  }
+ },
+ "D84": {
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/env_cv/CVD0"
+  },
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "3V3"
+  }
+ },
+ "R140": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/CVD0"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "CV1_TIP"
+  }
+ },
+ "R141": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/CVD0"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R142": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/CVD0"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "CV1_ADC"
+  }
+ },
+ "D85": {
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/env_cv/CVD1"
+  },
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "3V3"
+  }
+ },
+ "R143": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/CVD1"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "CV2_TIP"
+  }
+ },
+ "R144": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/CVD1"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R145": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/CVD1"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "CV2_ADC"
+  }
+ },
+ "C83": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/CVF1"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R146": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/CVF1"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "CVOUT_PWM"
+  }
+ },
+ "R147": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/CVF1"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/CVF2"
+  }
+ },
+ "C84": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/CVF2"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "U17": {
+  "12": {
+   "name": "+_12",
+   "type": "input",
+   "net": "/env_cv/CVF2"
+  },
+  "13": {
+   "name": "-_13",
+   "type": "input",
+   "net": "/env_cv/CVO_FB"
+  },
+  "14": {
+   "name": "",
+   "type": "output",
+   "net": "/env_cv/CVO_OUT"
+  },
+  "8": {
+   "name": "",
+   "type": "output",
+   "net": "/env_cv/ENV_B"
+  },
+  "9": {
+   "name": "-_9",
+   "type": "input",
+   "net": "/env_cv/ENV_B"
+  },
+  "10": {
+   "name": "+_10",
+   "type": "input",
+   "net": "/env_cv/ENV_C"
+  },
+  "1": {
+   "name": "",
+   "type": "output",
+   "net": "/env_cv/FW_A"
+  },
+  "2": {
+   "name": "-_2",
+   "type": "input",
+   "net": "/env_cv/FW_IN"
+  },
+  "6": {
+   "name": "-_6",
+   "type": "input",
+   "net": "/env_cv/FW_SUM"
+  },
+  "7": {
+   "name": "",
+   "type": "output",
+   "net": "/env_cv/RECT_OUT"
+  },
+  "11": {
+   "name": "V-_11",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "4": {
+   "name": "V+_4",
+   "type": "power_in",
+   "net": "VA"
+  },
+  "3": {
+   "name": "+_3",
+   "type": "input",
+   "net": "VREF"
+  },
+  "5": {
+   "name": "+_5",
+   "type": "input",
+   "net": "VREF"
+  }
+ },
+ "R148": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/CVO_FB"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/CVO_OUT"
+  }
+ },
+ "R149": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/CVO_FB"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R150": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/CVO_OUT"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "CVOUT_TIP"
+  }
+ },
+ "R137": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/ENV_B"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/ENV_DIV"
+  }
+ },
+ "C80": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/ENV_C"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R136": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/ENV_C"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "D83": {
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/env_cv/ENV_DIV"
+  },
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "3V3"
+  }
+ },
+ "R138": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/ENV_DIV"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R139": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/ENV_DIV"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "ENV_ADC"
+  }
+ },
+ "D80": {
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/env_cv/FW_A"
+  },
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/env_cv/FW_N"
+  }
+ },
+ "D81": {
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/env_cv/FW_A"
+  },
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/env_cv/FW_IN"
+  }
+ },
+ "R130": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/FW_IN"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "DRY_CLEAN"
+  }
+ },
+ "R131": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/FW_IN"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/FW_N"
+  }
+ },
+ "R133": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/FW_IN"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/FW_SUM"
+  }
+ },
+ "R132": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/FW_N"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/FW_SUM"
+  }
+ },
+ "R134": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/FW_SUM"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/env_cv/RECT_OUT"
+  }
+ },
+ "C31": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/BF_AC"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/BF_COL"
+  }
+ },
+ "R36": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/BF_AC"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "DIRT_OUT"
+  }
+ },
+ "C30": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/BF_BASE"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/DIRT_PRE"
+  }
+ },
+ "D1": {
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/input_dirt/BF_BASE"
+  },
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/input_dirt/BF_COL"
+  }
+ },
+ "Q1": {
+  "1": {
+   "name": "B_1",
+   "type": "input",
+   "net": "/input_dirt/BF_BASE"
+  },
+  "2": {
+   "name": "C_2",
+   "type": "passive",
+   "net": "/input_dirt/BF_COL"
+  },
+  "3": {
+   "name": "E_3",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R35": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/BF_COL"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VDIRT"
+  }
+ },
+ "C20": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/BUF_OUT"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/HP1_M"
+  }
+ },
+ "U1": {
+  "1": {
+   "name": "",
+   "type": "output",
+   "net": "/input_dirt/BUF_OUT"
+  },
+  "2": {
+   "name": "-_2",
+   "type": "input",
+   "net": "/input_dirt/BUF_OUT"
+  },
+  "13": {
+   "name": "-_13",
+   "type": "input",
+   "net": "/input_dirt/GAIN_FB"
+  },
+  "6": {
+   "name": "-_6",
+   "type": "input",
+   "net": "/input_dirt/HP1_OUT"
+  },
+  "7": {
+   "name": "",
+   "type": "output",
+   "net": "/input_dirt/HP1_OUT"
+  },
+  "5": {
+   "name": "+_5",
+   "type": "input",
+   "net": "/input_dirt/HP1_P"
+  },
+  "10": {
+   "name": "+_10",
+   "type": "input",
+   "net": "/input_dirt/HP2_P"
+  },
+  "3": {
+   "name": "+_3",
+   "type": "input",
+   "net": "/input_dirt/IN_B"
+  },
+  "12": {
+   "name": "+_12",
+   "type": "input",
+   "net": "/input_dirt/TRIM_OUT"
+  },
+  "8": {
+   "name": "",
+   "type": "output",
+   "net": "DRY_CLEAN"
+  },
+  "9": {
+   "name": "-_9",
+   "type": "input",
+   "net": "DRY_CLEAN"
+  },
+  "11": {
+   "name": "V-_11",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "14": {
+   "name": "",
+   "type": "output",
+   "net": "V567_DRIVE"
+  },
+  "4": {
+   "name": "V+_4",
+   "type": "power_in",
+   "net": "VA"
+  }
+ },
+ "R33": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/DIRT_IABC"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "DIRT_CV"
+  }
+ },
+ "U3": {
+  "1": {
+   "name": "",
+   "type": "input",
+   "net": "/input_dirt/DIRT_IABC"
+  },
+  "4": {
+   "name": "-_4",
+   "type": "input",
+   "net": "/input_dirt/OTA_INM"
+  },
+  "3": {
+   "name": "+_3",
+   "type": "input",
+   "net": "/input_dirt/OTA_INP"
+  },
+  "5": {
+   "name": "",
+   "type": "output",
+   "net": "/input_dirt/OTA_OUT"
+  },
+  "10": {
+   "name": "",
+   "type": "input",
+   "net": "GND"
+  },
+  "16": {
+   "name": "",
+   "type": "input",
+   "net": "GND"
+  },
+  "6": {
+   "name": "V-_6",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "7": {
+   "name": "",
+   "type": "input",
+   "net": "GND"
+  },
+  "11": {
+   "name": "V+_11",
+   "type": "power_in",
+   "net": "VA"
+  },
+  "13": {
+   "name": "-_13",
+   "type": "input",
+   "net": "VREF"
+  },
+  "14": {
+   "name": "+_14",
+   "type": "input",
+   "net": "VREF"
+  },
+  "8": {
+   "name": "",
+   "type": "output+no_connect",
+   "net": "unconnected-(U3-Pad8)"
+  },
+  "9": {
+   "name": "",
+   "type": "output+no_connect",
+   "net": "unconnected-(U3-Pad9)"
+  },
+  "12": {
+   "name": "",
+   "type": "output+no_connect",
+   "net": "unconnected-(U3-Pad12)"
+  },
+  "15": {
+   "name": "DIODE_BIAS_15",
+   "type": "input+no_connect",
+   "net": "unconnected-(U3A-DIODE_BIAS-Pad15)"
+  },
+  "2": {
+   "name": "DIODE_BIAS_2",
+   "type": "input+no_connect",
+   "net": "unconnected-(U3C-DIODE_BIAS-Pad2)"
+  }
+ },
+ "R34": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/DIRT_PRE"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/OTA_OUT"
+  }
+ },
+ "U2": {
+  "7": {
+   "name": "",
+   "type": "output",
+   "net": "/input_dirt/DIRT_PRE"
+  },
+  "6": {
+   "name": "-_6",
+   "type": "input",
+   "net": "/input_dirt/OTA_OUT"
+  },
+  "2": {
+   "name": "-_2",
+   "type": "input",
+   "net": "/input_dirt/TRIM_FB"
+  },
+  "1": {
+   "name": "",
+   "type": "output",
+   "net": "/input_dirt/TRIM_OUT"
+  },
+  "8": {
+   "name": "",
+   "type": "output",
+   "net": "/input_dirt/U2C_FB"
+  },
+  "9": {
+   "name": "-_9",
+   "type": "input",
+   "net": "/input_dirt/U2C_FB"
+  },
+  "13": {
+   "name": "-_13",
+   "type": "input",
+   "net": "/input_dirt/U2D_FB"
+  },
+  "14": {
+   "name": "",
+   "type": "output",
+   "net": "/input_dirt/U2D_FB"
+  },
+  "3": {
+   "name": "+_3",
+   "type": "input",
+   "net": "DRY_CLEAN"
+  },
+  "11": {
+   "name": "V-_11",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "4": {
+   "name": "V+_4",
+   "type": "power_in",
+   "net": "VA"
+  },
+  "10": {
+   "name": "+_10",
+   "type": "input",
+   "net": "VREF"
+  },
+  "12": {
+   "name": "+_12",
+   "type": "input",
+   "net": "VREF"
+  },
+  "5": {
+   "name": "+_5",
+   "type": "input",
+   "net": "VREF"
+  }
+ },
+ "R4": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/GAIN_FB"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "V567_DRIVE"
+  }
+ },
+ "R5": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/GAIN_FB"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/GAIN_SH"
+  }
+ },
+ "C2": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/GAIN_SH"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "C21": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/HP1_M"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/HP1_P"
+  }
+ },
+ "R20": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/HP1_M"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/HP1_OUT"
+  }
+ },
+ "C22": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/HP1_OUT"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/HP2_M"
+  }
+ },
+ "R21": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/HP1_P"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "C23": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/HP2_M"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/HP2_P"
+  }
+ },
+ "R22": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/HP2_M"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "DRY_CLEAN"
+  }
+ },
+ "R23": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/HP2_P"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "C1": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/IN_A"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/IN_B"
+  }
+ },
+ "R1": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/IN_A"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "IN_TIP"
+  }
+ },
+ "R2": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/IN_A"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R3": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/IN_B"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R32": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/OTA_INM"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R30": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/OTA_INP"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "DRY_CLEAN"
+  }
+ },
+ "R31": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/OTA_INP"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R24": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/TRIM_FB"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/TRIM_OUT"
+  }
+ },
+ "R25": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/input_dirt/TRIM_FB"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "C120": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/ADC_MUXED"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R170": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/ADC_MUXED"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/ADC_MUX_C"
+  }
+ },
+ "U20": {
+  "31": {
+   "name": "GP26_A0_31",
+   "type": "bidirectional",
+   "net": "/mcu/ADC_MUXED"
+  },
+  "24": {
+   "name": "GP18_24",
+   "type": "bidirectional",
+   "net": "/mcu/MUX_S0"
+  },
+  "25": {
+   "name": "GP19_25",
+   "type": "bidirectional",
+   "net": "/mcu/MUX_S1"
+  },
+  "26": {
+   "name": "GP20_26",
+   "type": "bidirectional",
+   "net": "/mcu/MUX_S2"
+  },
+  "27": {
+   "name": "GP21_27",
+   "type": "bidirectional",
+   "net": "/mcu/MUX_S3"
+  },
+  "39": {
+   "name": "VSYS_39",
+   "type": "power_in",
+   "net": "/mcu/PICO_VSYS"
+  },
+  "10": {
+   "name": "GP7_10",
+   "type": "bidirectional",
+   "net": "/mcu/PWM_BYP"
+  },
+  "2": {
+   "name": "GP1_2",
+   "type": "bidirectional",
+   "net": "/mcu/PWM_DIRT"
+  },
+  "1": {
+   "name": "GP0_1",
+   "type": "bidirectional",
+   "net": "/mcu/PWM_FREQ"
+  },
+  "9": {
+   "name": "GP6_9",
+   "type": "bidirectional",
+   "net": "/mcu/PWM_GATE"
+  },
+  "5": {
+   "name": "GP3_5",
+   "type": "bidirectional",
+   "net": "/mcu/PWM_MIXD"
+  },
+  "4": {
+   "name": "GP2_4",
+   "type": "bidirectional",
+   "net": "/mcu/PWM_MIXW"
+  },
+  "11": {
+   "name": "GP8_11",
+   "type": "bidirectional",
+   "net": "/mcu/PWM_STARVE"
+  },
+  "6": {
+   "name": "GP4_6",
+   "type": "bidirectional",
+   "net": "/mcu/PWM_SVFF"
+  },
+  "7": {
+   "name": "GP5_7",
+   "type": "bidirectional",
+   "net": "/mcu/PWM_SVFQ"
+  },
+  "21": {
+   "name": "GP16_21",
+   "type": "bidirectional",
+   "net": "/mcu/STOMP1"
+  },
+  "22": {
+   "name": "GP17_22",
+   "type": "bidirectional",
+   "net": "/mcu/STOMP2"
+  },
+  "20": {
+   "name": "GP15_20",
+   "type": "bidirectional",
+   "net": "/mcu/WS_DATA_3V3"
+  },
+  "36": {
+   "name": "3V3_OUT_36",
+   "type": "power_out",
+   "net": "3V3"
+  },
+  "32": {
+   "name": "GP27_A1_32",
+   "type": "bidirectional",
+   "net": "CV1_ADC"
+  },
+  "34": {
+   "name": "GP28_A2_34",
+   "type": "bidirectional",
+   "net": "CV2_ADC"
+  },
+  "12": {
+   "name": "GP9_12",
+   "type": "bidirectional",
+   "net": "CVOUT_PWM"
+  },
+  "16": {
+   "name": "GP12_16",
+   "type": "bidirectional",
+   "net": "FMODE_A"
+  },
+  "17": {
+   "name": "GP13_17",
+   "type": "bidirectional",
+   "net": "FMODE_B"
+  },
+  "19": {
+   "name": "GP14_19",
+   "type": "bidirectional",
+   "net": "FMODE_C"
+  },
+  "14": {
+   "name": "GP10_14",
+   "type": "bidirectional",
+   "net": "FREQ_A"
+  },
+  "15": {
+   "name": "GP11_15",
+   "type": "bidirectional",
+   "net": "FREQ_B"
+  },
+  "13": {
+   "name": "GND_13",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "18": {
+   "name": "GND_18",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "23": {
+   "name": "GND_23",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "28": {
+   "name": "GND_28",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "3": {
+   "name": "GND_3",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "33": {
+   "name": "AGND_33",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "38": {
+   "name": "GND_38",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "8": {
+   "name": "GND_8",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "37": {
+   "name": "3V3_EN_37",
+   "type": "bidirectional+no_connect",
+   "net": "unconnected-(U20-3V3_EN-Pad37)"
+  },
+  "35": {
+   "name": "ADC_VREF_35",
+   "type": "bidirectional+no_connect",
+   "net": "unconnected-(U20-ADC_VREF-Pad35)"
+  },
+  "29": {
+   "name": "GP22_29",
+   "type": "bidirectional+no_connect",
+   "net": "unconnected-(U20-GP22-Pad29)"
+  },
+  "30": {
+   "name": "RUN_30",
+   "type": "bidirectional+no_connect",
+   "net": "unconnected-(U20-RUN-Pad30)"
+  },
+  "40": {
+   "name": "VBUS_40",
+   "type": "power_in+no_connect",
+   "net": "unconnected-(U20-VBUS-Pad40)"
+  }
+ },
+ "U21": {
+  "1": {
+   "name": "COM_1",
+   "type": "passive",
+   "net": "/mcu/ADC_MUX_C"
+  },
+  "10": {
+   "name": "S0_10",
+   "type": "input",
+   "net": "/mcu/MUX_S0"
+  },
+  "11": {
+   "name": "S1_11",
+   "type": "input",
+   "net": "/mcu/MUX_S1"
+  },
+  "14": {
+   "name": "S2_14",
+   "type": "input",
+   "net": "/mcu/MUX_S2"
+  },
+  "13": {
+   "name": "S3_13",
+   "type": "input",
+   "net": "/mcu/MUX_S3"
+  },
+  "9": {
+   "name": "I0_9",
+   "type": "passive",
+   "net": "/mcu/POT1_W"
+  },
+  "8": {
+   "name": "I1_8",
+   "type": "passive",
+   "net": "/mcu/POT2_W"
+  },
+  "7": {
+   "name": "I2_7",
+   "type": "passive",
+   "net": "/mcu/POT3_W"
+  },
+  "6": {
+   "name": "I3_6",
+   "type": "passive",
+   "net": "/mcu/POT4_W"
+  },
+  "5": {
+   "name": "I4_5",
+   "type": "passive",
+   "net": "/mcu/POT5_W"
+  },
+  "4": {
+   "name": "I5_4",
+   "type": "passive",
+   "net": "/mcu/POT6_W"
+  },
+  "20": {
+   "name": "I11_20",
+   "type": "passive",
+   "net": "/mcu/TRIM_FA"
+  },
+  "21": {
+   "name": "I10_21",
+   "type": "passive",
+   "net": "/mcu/TRIM_HO"
+  },
+  "22": {
+   "name": "I9_22",
+   "type": "passive",
+   "net": "/mcu/TRIM_TH"
+  },
+  "24": {
+   "name": "VCC_24",
+   "type": "power_in",
+   "net": "3V3"
+  },
+  "3": {
+   "name": "I6_3",
+   "type": "passive",
+   "net": "ENV_ADC"
+  },
+  "12": {
+   "name": "GND_12",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "15": {
+   "name": "~{E}_15",
+   "type": "input",
+   "net": "GND"
+  },
+  "16": {
+   "name": "I15_16",
+   "type": "passive",
+   "net": "GND"
+  },
+  "17": {
+   "name": "I14_17",
+   "type": "passive",
+   "net": "GND"
+  },
+  "18": {
+   "name": "I13_18",
+   "type": "passive",
+   "net": "GND"
+  },
+  "19": {
+   "name": "I12_19",
+   "type": "passive",
+   "net": "GND"
+  },
+  "23": {
+   "name": "I8_23",
+   "type": "passive",
+   "net": "LOCK_SENSE"
+  },
+  "2": {
+   "name": "I7_2",
+   "type": "passive",
+   "net": "VA_SENSE"
+  }
+ },
+ "C93": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/FREQ_F1"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R161": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/FREQ_F1"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/PWM_FREQ"
+  }
+ },
+ "R174": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/FREQ_F1"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "FREQ_CV"
+  }
+ },
+ "C90": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/PICO_VSYS"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R168": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/PWM_BYP"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "BYPASS_CV"
+  }
+ },
+ "R162": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/PWM_DIRT"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "DIRT_CV"
+  }
+ },
+ "R167": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/PWM_GATE"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GATE_VOL_CV"
+  }
+ },
+ "R164": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/PWM_MIXD"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "MIX_DRY_CV"
+  }
+ },
+ "R163": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/PWM_MIXW"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "MIX_WET_CV"
+  }
+ },
+ "R169": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/PWM_STARVE"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "STARVE_CV"
+  }
+ },
+ "R165": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/PWM_SVFF"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "SVF_F_CV"
+  }
+ },
+ "R166": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/PWM_SVFQ"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "SVF_Q_CV"
+  }
+ },
+ "C123": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/STOMP1"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R171": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/STOMP1"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "3V3"
+  }
+ },
+ "C124": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/STOMP2"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R172": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/STOMP2"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "3V3"
+  }
+ },
+ "RV3": {
+  "2": {
+   "name": "2_2",
+   "type": "passive",
+   "net": "/mcu/TRIM_FA"
+  },
+  "1": {
+   "name": "1_1",
+   "type": "passive",
+   "net": "3V3"
+  },
+  "3": {
+   "name": "3_3",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "RV2": {
+  "2": {
+   "name": "2_2",
+   "type": "passive",
+   "net": "/mcu/TRIM_HO"
+  },
+  "1": {
+   "name": "1_1",
+   "type": "passive",
+   "net": "3V3"
+  },
+  "3": {
+   "name": "3_3",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "RV1": {
+  "2": {
+   "name": "2_2",
+   "type": "passive",
+   "net": "/mcu/TRIM_TH"
+  },
+  "1": {
+   "name": "1_1",
+   "type": "passive",
+   "net": "3V3"
+  },
+  "3": {
+   "name": "3_3",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R173": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/WS_DATA_5V"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mcu/WS_HDR"
+  }
+ },
+ "R67": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/DOTA_M"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "U10": {
+  "13": {
+   "name": "-_13",
+   "type": "input",
+   "net": "/mix_svf/DOTA_M"
+  },
+  "14": {
+   "name": "+_14",
+   "type": "input",
+   "net": "/mix_svf/DOTA_P"
+  },
+  "16": {
+   "name": "",
+   "type": "input",
+   "net": "/mix_svf/DRY_IABC"
+  },
+  "12": {
+   "name": "",
+   "type": "output",
+   "net": "/mix_svf/MIX_SUM"
+  },
+  "5": {
+   "name": "",
+   "type": "output",
+   "net": "/mix_svf/MIX_SUM"
+  },
+  "1": {
+   "name": "",
+   "type": "input",
+   "net": "/mix_svf/WET_IABC"
+  },
+  "4": {
+   "name": "-_4",
+   "type": "input",
+   "net": "/mix_svf/WOTA_M"
+  },
+  "3": {
+   "name": "+_3",
+   "type": "input",
+   "net": "/mix_svf/WOTA_P"
+  },
+  "10": {
+   "name": "",
+   "type": "input",
+   "net": "GND"
+  },
+  "6": {
+   "name": "V-_6",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "7": {
+   "name": "",
+   "type": "input",
+   "net": "GND"
+  },
+  "11": {
+   "name": "V+_11",
+   "type": "power_in",
+   "net": "VA"
+  },
+  "8": {
+   "name": "",
+   "type": "output+no_connect",
+   "net": "unconnected-(U10-Pad8)"
+  },
+  "9": {
+   "name": "",
+   "type": "output+no_connect",
+   "net": "unconnected-(U10-Pad9)"
+  },
+  "15": {
+   "name": "DIODE_BIAS_15",
+   "type": "input+no_connect",
+   "net": "unconnected-(U10A-DIODE_BIAS-Pad15)"
+  },
+  "2": {
+   "name": "DIODE_BIAS_2",
+   "type": "input+no_connect",
+   "net": "unconnected-(U10C-DIODE_BIAS-Pad2)"
+  }
+ },
+ "R65": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/DOTA_P"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "DIRT_OUT"
+  }
+ },
+ "R66": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/DOTA_P"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R68": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/DRY_IABC"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "MIX_DRY_CV"
+  }
+ },
+ "Q4": {
+  "2": {
+   "name": "E_2",
+   "type": "passive",
+   "net": "/mix_svf/FMODE_A_S"
+  },
+  "1": {
+   "name": "B_1",
+   "type": "input",
+   "net": "/mix_svf/Q4_B"
+  },
+  "3": {
+   "name": "C_3",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R89": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/FMODE_A_S"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "U13": {
+  "11": {
+   "name": "A_11",
+   "type": "input",
+   "net": "/mix_svf/FMODE_A_S"
+  },
+  "10": {
+   "name": "B_10",
+   "type": "input",
+   "net": "/mix_svf/FMODE_B_S"
+  },
+  "9": {
+   "name": "C_9",
+   "type": "input",
+   "net": "/mix_svf/FMODE_C_S"
+  },
+  "13": {
+   "name": "X0_13",
+   "type": "bidirectional",
+   "net": "/mix_svf/MIX_OUT"
+  },
+  "15": {
+   "name": "X2_15",
+   "type": "bidirectional",
+   "net": "/mix_svf/SVF_BP"
+  },
+  "12": {
+   "name": "X3_12",
+   "type": "bidirectional",
+   "net": "/mix_svf/SVF_HP"
+  },
+  "14": {
+   "name": "X1_14",
+   "type": "bidirectional",
+   "net": "/mix_svf/SVF_LP"
+  },
+  "1": {
+   "name": "X4_1",
+   "type": "bidirectional",
+   "net": "/mix_svf/SVF_NOTCH"
+  },
+  "3": {
+   "name": "X_3",
+   "type": "bidirectional",
+   "net": "FILT_OUT"
+  },
+  "6": {
+   "name": "INH_6",
+   "type": "input",
+   "net": "GND"
+  },
+  "7": {
+   "name": "VEE_7",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "8": {
+   "name": "VSS_8",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "16": {
+   "name": "VDD_16",
+   "type": "power_in",
+   "net": "VA"
+  },
+  "5": {
+   "name": "X5_5",
+   "type": "bidirectional+no_connect",
+   "net": "unconnected-(U13-X5-Pad5)"
+  },
+  "2": {
+   "name": "X6_2",
+   "type": "bidirectional+no_connect",
+   "net": "unconnected-(U13-X6-Pad2)"
+  },
+  "4": {
+   "name": "X7_4",
+   "type": "bidirectional+no_connect",
+   "net": "unconnected-(U13-X7-Pad4)"
+  }
+ },
+ "Q5": {
+  "2": {
+   "name": "E_2",
+   "type": "passive",
+   "net": "/mix_svf/FMODE_B_S"
+  },
+  "1": {
+   "name": "B_1",
+   "type": "input",
+   "net": "/mix_svf/Q5_B"
+  },
+  "3": {
+   "name": "C_3",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R91": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/FMODE_B_S"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "Q6": {
+  "2": {
+   "name": "E_2",
+   "type": "passive",
+   "net": "/mix_svf/FMODE_C_S"
+  },
+  "1": {
+   "name": "B_1",
+   "type": "input",
+   "net": "/mix_svf/Q6_B"
+  },
+  "3": {
+   "name": "C_3",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R93": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/FMODE_C_S"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "R76": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/F_IABC1"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "SVF_F_CV"
+  }
+ },
+ "U11": {
+  "1": {
+   "name": "",
+   "type": "input",
+   "net": "/mix_svf/F_IABC1"
+  },
+  "16": {
+   "name": "",
+   "type": "input",
+   "net": "/mix_svf/F_IABC2"
+  },
+  "4": {
+   "name": "-_4",
+   "type": "input",
+   "net": "/mix_svf/I1_M"
+  },
+  "5": {
+   "name": "",
+   "type": "output",
+   "net": "/mix_svf/I1_OUT"
+  },
+  "7": {
+   "name": "",
+   "type": "input",
+   "net": "/mix_svf/I1_OUT"
+  },
+  "3": {
+   "name": "+_3",
+   "type": "input",
+   "net": "/mix_svf/I1_P"
+  },
+  "13": {
+   "name": "-_13",
+   "type": "input",
+   "net": "/mix_svf/I2_M"
+  },
+  "10": {
+   "name": "",
+   "type": "input",
+   "net": "/mix_svf/I2_OUT"
+  },
+  "12": {
+   "name": "",
+   "type": "output",
+   "net": "/mix_svf/I2_OUT"
+  },
+  "14": {
+   "name": "+_14",
+   "type": "input",
+   "net": "/mix_svf/I2_P"
+  },
+  "8": {
+   "name": "",
+   "type": "output",
+   "net": "/mix_svf/SVF_BP"
+  },
+  "9": {
+   "name": "",
+   "type": "output",
+   "net": "/mix_svf/SVF_LP"
+  },
+  "6": {
+   "name": "V-_6",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "11": {
+   "name": "V+_11",
+   "type": "power_in",
+   "net": "VA"
+  },
+  "15": {
+   "name": "DIODE_BIAS_15",
+   "type": "input+no_connect",
+   "net": "unconnected-(U11A-DIODE_BIAS-Pad15)"
+  },
+  "2": {
+   "name": "DIODE_BIAS_2",
+   "type": "input+no_connect",
+   "net": "unconnected-(U11C-DIODE_BIAS-Pad2)"
+  }
+ },
+ "R79": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/F_IABC2"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "SVF_F_CV"
+  }
+ },
+ "R94": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/I1_M"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_BP"
+  }
+ },
+ "R95": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/I1_M"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "C61": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/I1_OUT"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R74": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/I1_P"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_HP"
+  }
+ },
+ "R75": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/I1_P"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R96": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/I2_M"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_LP"
+  }
+ },
+ "R97": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/I2_M"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "C62": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/I2_OUT"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R77": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/I2_P"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_BP"
+  }
+ },
+ "R78": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/I2_P"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R69": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/MIX_OUT"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/MIX_SUM"
+  }
+ },
+ "R70": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/MIX_OUT"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_SUM"
+  }
+ },
+ "U9": {
+  "1": {
+   "name": "",
+   "type": "output",
+   "net": "/mix_svf/MIX_OUT"
+  },
+  "2": {
+   "name": "-_2",
+   "type": "input",
+   "net": "/mix_svf/MIX_SUM"
+  },
+  "13": {
+   "name": "-_13",
+   "type": "input",
+   "net": "/mix_svf/NOTCH_SUM"
+  },
+  "9": {
+   "name": "-_9",
+   "type": "input",
+   "net": "/mix_svf/QFB_I"
+  },
+  "8": {
+   "name": "",
+   "type": "output",
+   "net": "/mix_svf/QFB_OUT"
+  },
+  "7": {
+   "name": "",
+   "type": "output",
+   "net": "/mix_svf/SVF_HP"
+  },
+  "14": {
+   "name": "",
+   "type": "output",
+   "net": "/mix_svf/SVF_NOTCH"
+  },
+  "6": {
+   "name": "-_6",
+   "type": "input",
+   "net": "/mix_svf/SVF_SUM"
+  },
+  "11": {
+   "name": "V-_11",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "4": {
+   "name": "V+_4",
+   "type": "power_in",
+   "net": "VA"
+  },
+  "10": {
+   "name": "+_10",
+   "type": "input",
+   "net": "VREF"
+  },
+  "12": {
+   "name": "+_12",
+   "type": "input",
+   "net": "VREF"
+  },
+  "3": {
+   "name": "+_3",
+   "type": "input",
+   "net": "VREF"
+  },
+  "5": {
+   "name": "+_5",
+   "type": "input",
+   "net": "VREF"
+  }
+ },
+ "R85": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/NOTCH_SUM"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_LP"
+  }
+ },
+ "R86": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/NOTCH_SUM"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_HP"
+  }
+ },
+ "R87": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/NOTCH_SUM"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_NOTCH"
+  }
+ },
+ "R88": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/Q4_B"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "FMODE_A"
+  }
+ },
+ "R90": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/Q5_B"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "FMODE_B"
+  }
+ },
+ "R92": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/Q6_B"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "FMODE_C"
+  }
+ },
+ "R84": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/QFB_I"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/QFB_OUT"
+  }
+ },
+ "U12": {
+  "5": {
+   "name": "",
+   "type": "output",
+   "net": "/mix_svf/QFB_I"
+  },
+  "4": {
+   "name": "-_4",
+   "type": "input",
+   "net": "/mix_svf/QOTA_M"
+  },
+  "3": {
+   "name": "+_3",
+   "type": "input",
+   "net": "/mix_svf/QOTA_P"
+  },
+  "1": {
+   "name": "",
+   "type": "input",
+   "net": "/mix_svf/Q_IABC"
+  },
+  "16": {
+   "name": "",
+   "type": "input",
+   "net": "GND"
+  },
+  "6": {
+   "name": "V-_6",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "7": {
+   "name": "",
+   "type": "input",
+   "net": "GND"
+  },
+  "11": {
+   "name": "V+_11",
+   "type": "power_in",
+   "net": "VA"
+  },
+  "13": {
+   "name": "-_13",
+   "type": "input",
+   "net": "VREF"
+  },
+  "14": {
+   "name": "+_14",
+   "type": "input",
+   "net": "VREF"
+  },
+  "8": {
+   "name": "",
+   "type": "output+no_connect",
+   "net": "unconnected-(U12-Pad8)"
+  },
+  "9": {
+   "name": "",
+   "type": "output+no_connect",
+   "net": "unconnected-(U12-Pad9)"
+  },
+  "10": {
+   "name": "",
+   "type": "input+no_connect",
+   "net": "unconnected-(U12-Pad10)"
+  },
+  "12": {
+   "name": "",
+   "type": "output+no_connect",
+   "net": "unconnected-(U12-Pad12)"
+  },
+  "15": {
+   "name": "DIODE_BIAS_15",
+   "type": "input+no_connect",
+   "net": "unconnected-(U12A-DIODE_BIAS-Pad15)"
+  },
+  "2": {
+   "name": "DIODE_BIAS_2",
+   "type": "input+no_connect",
+   "net": "unconnected-(U12C-DIODE_BIAS-Pad2)"
+  }
+ },
+ "R72": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/QFB_OUT"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_SUM"
+  }
+ },
+ "R82": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/QOTA_M"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R80": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/QOTA_P"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_BP"
+  }
+ },
+ "R81": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/QOTA_P"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R83": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/Q_IABC"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "SVF_Q_CV"
+  }
+ },
+ "R98": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_BP"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R73": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_HP"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_SUM"
+  }
+ },
+ "R71": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_LP"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_SUM"
+  }
+ },
+ "R99": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/SVF_LP"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C60": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/WET_AC"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "Q_OUT"
+  }
+ },
+ "R60": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/WET_AC"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R61": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/WET_AC"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/WOTA_P"
+  }
+ },
+ "R64": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/WET_IABC"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "MIX_WET_CV"
+  }
+ },
+ "R63": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/WOTA_M"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R62": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/mix_svf/WOTA_P"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R106A": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/B6_FB"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/B6_OUT"
+  }
+ },
+ "R107A": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/B6_FB"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "SW1": {
+  "1": {
+   "name": "A_1",
+   "type": "passive",
+   "net": "/output/B6_FB"
+  },
+  "2": {
+   "name": "B_2",
+   "type": "passive",
+   "net": "/output/B6_OUT"
+  },
+  "3": {
+   "name": "C_3",
+   "type": "passive+no_connect",
+   "net": "unconnected-(SW1-C-Pad3)"
+  }
+ },
+ "U14": {
+  "9": {
+   "name": "-_9",
+   "type": "input",
+   "net": "/output/B6_FB"
+  },
+  "8": {
+   "name": "",
+   "type": "output",
+   "net": "/output/B6_OUT"
+  },
+  "6": {
+   "name": "-_6",
+   "type": "input",
+   "net": "/output/BELL_FB"
+  },
+  "10": {
+   "name": "+_10",
+   "type": "input",
+   "net": "/output/BELL_OUT"
+  },
+  "7": {
+   "name": "",
+   "type": "output",
+   "net": "/output/BELL_OUT"
+  },
+  "1": {
+   "name": "",
+   "type": "output",
+   "net": "/output/H60_OUT"
+  },
+  "2": {
+   "name": "-_2",
+   "type": "input",
+   "net": "/output/H60_OUT"
+  },
+  "5": {
+   "name": "+_5",
+   "type": "input",
+   "net": "/output/H60_OUT"
+  },
+  "3": {
+   "name": "+_3",
+   "type": "input",
+   "net": "/output/H60_P"
+  },
+  "13": {
+   "name": "-_13",
+   "type": "input",
+   "net": "/output/LAD_IN"
+  },
+  "14": {
+   "name": "",
+   "type": "output",
+   "net": "/output/LAD_OUT"
+  },
+  "11": {
+   "name": "V-_11",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "4": {
+   "name": "V+_4",
+   "type": "power_in",
+   "net": "VA"
+  },
+  "12": {
+   "name": "+_12",
+   "type": "input",
+   "net": "VREF"
+  }
+ },
+ "C73": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/B6_OUT"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/JF_G"
+  }
+ },
+ "SW2": {
+  "3": {
+   "name": "C_3",
+   "type": "passive",
+   "net": "/output/B6_OUT"
+  },
+  "1": {
+   "name": "A_1",
+   "type": "passive",
+   "net": "/output/JF_AC"
+  },
+  "2": {
+   "name": "B_2",
+   "type": "passive",
+   "net": "/output/POST_JFET"
+  }
+ },
+ "C72A": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/BELL_FB"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/BELL_OUT"
+  }
+ },
+ "R102A": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/BELL_FB"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/BELL_OUT"
+  }
+ },
+ "R103A": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/BELL_FB"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/GYR_B"
+  }
+ },
+ "R124A": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/BOTA_M"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "U15": {
+  "13": {
+   "name": "-_13",
+   "type": "input",
+   "net": "/output/BOTA_M"
+  },
+  "14": {
+   "name": "+_14",
+   "type": "input",
+   "net": "/output/BOTA_P"
+  },
+  "16": {
+   "name": "",
+   "type": "input",
+   "net": "/output/BYP_IABC"
+  },
+  "4": {
+   "name": "-_4",
+   "type": "input",
+   "net": "/output/GOTA_M"
+  },
+  "3": {
+   "name": "+_3",
+   "type": "input",
+   "net": "/output/GOTA_P"
+  },
+  "1": {
+   "name": "",
+   "type": "input",
+   "net": "/output/GV_IABC"
+  },
+  "12": {
+   "name": "",
+   "type": "output",
+   "net": "/output/OUT_SUM"
+  },
+  "5": {
+   "name": "",
+   "type": "output",
+   "net": "/output/OUT_SUM"
+  },
+  "10": {
+   "name": "",
+   "type": "input",
+   "net": "GND"
+  },
+  "6": {
+   "name": "V-_6",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "7": {
+   "name": "",
+   "type": "input",
+   "net": "GND"
+  },
+  "11": {
+   "name": "V+_11",
+   "type": "power_in",
+   "net": "VA"
+  },
+  "8": {
+   "name": "",
+   "type": "output+no_connect",
+   "net": "unconnected-(U15-Pad8)"
+  },
+  "9": {
+   "name": "",
+   "type": "output+no_connect",
+   "net": "unconnected-(U15-Pad9)"
+  },
+  "15": {
+   "name": "DIODE_BIAS_15",
+   "type": "input+no_connect",
+   "net": "unconnected-(U15A-DIODE_BIAS-Pad15)"
+  },
+  "2": {
+   "name": "DIODE_BIAS_2",
+   "type": "input+no_connect",
+   "net": "unconnected-(U15C-DIODE_BIAS-Pad2)"
+  }
+ },
+ "R122A": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/BOTA_P"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "DRY_CLEAN"
+  }
+ },
+ "R123A": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/BOTA_P"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R125A": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/BYP_IABC"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "BYPASS_CV"
+  }
+ },
+ "R120A": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/GOTA_M"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R118A": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/GOTA_P"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/POST_LAD"
+  }
+ },
+ "R119A": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/GOTA_P"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R121A": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/GV_IABC"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "GATE_VOL_CV"
+  }
+ },
+ "C72": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/GYR_B"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "C70": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/H60_M"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/ODC"
+  }
+ },
+ "C71": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/H60_M"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/H60_P"
+  }
+ },
+ "R100A": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/H60_M"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/H60_OUT"
+  }
+ },
+ "R101A": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/H60_P"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "C74": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/JF_AC"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/JF_D"
+  }
+ },
+ "R111A": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/JF_AC"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "QJ1": {
+  "1": {
+   "name": "D_1",
+   "type": "passive",
+   "net": "/output/JF_D"
+  },
+  "2": {
+   "name": "G_2",
+   "type": "input",
+   "net": "/output/JF_G"
+  },
+  "3": {
+   "name": "S_3",
+   "type": "passive",
+   "net": "/output/JF_S"
+  }
+ },
+ "R110A": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/JF_D"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "R108A": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/JF_G"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R109A": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/JF_S"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "D70": {
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/output/LAD_IN"
+  },
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/output/LP1"
+  }
+ },
+ "D71": {
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/output/LAD_IN"
+  },
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/output/LP2A"
+  }
+ },
+ "D73": {
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/output/LAD_IN"
+  },
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/output/LN1"
+  }
+ },
+ "D74": {
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/output/LAD_IN"
+  },
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/output/LN2A"
+  }
+ },
+ "R112A": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/LAD_IN"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/POST_JFET"
+  }
+ },
+ "R113A": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/LAD_IN"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/LAD_OUT"
+  }
+ },
+ "R114A": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/LAD_OUT"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/LP1"
+  }
+ },
+ "R115A": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/LAD_OUT"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/LP2"
+  }
+ },
+ "R116A": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/LAD_OUT"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/LN1"
+  }
+ },
+ "R117A": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/LAD_OUT"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/LN2"
+  }
+ },
+ "SW3": {
+  "1": {
+   "name": "A_1",
+   "type": "passive",
+   "net": "/output/LAD_OUT"
+  },
+  "3": {
+   "name": "C_3",
+   "type": "passive",
+   "net": "/output/POST_JFET"
+  },
+  "2": {
+   "name": "B_2",
+   "type": "passive",
+   "net": "/output/POST_LAD"
+  }
+ },
+ "D75": {
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/output/LN2"
+  },
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/output/LN2A"
+  }
+ },
+ "D72": {
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/output/LP2"
+  },
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/output/LP2A"
+  }
+ },
+ "C75": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/OB_FB"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/OUT_AC"
+  }
+ },
+ "U16": {
+  "6": {
+   "name": "-_6",
+   "type": "input",
+   "net": "/output/OB_FB"
+  },
+  "7": {
+   "name": "",
+   "type": "output",
+   "net": "/output/OB_FB"
+  },
+  "2": {
+   "name": "-_2",
+   "type": "input",
+   "net": "/output/OUT_SUM"
+  },
+  "1": {
+   "name": "",
+   "type": "output",
+   "net": "/output/PRE_OUT"
+  },
+  "5": {
+   "name": "+_5",
+   "type": "input",
+   "net": "/output/PRE_OUT"
+  },
+  "8": {
+   "name": "",
+   "type": "output",
+   "net": "/output/U16C_FB"
+  },
+  "9": {
+   "name": "-_9",
+   "type": "input",
+   "net": "/output/U16C_FB"
+  },
+  "13": {
+   "name": "-_13",
+   "type": "input",
+   "net": "/output/U16D_FB"
+  },
+  "14": {
+   "name": "",
+   "type": "output",
+   "net": "/output/U16D_FB"
+  },
+  "11": {
+   "name": "V-_11",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "4": {
+   "name": "V+_4",
+   "type": "power_in",
+   "net": "VA"
+  },
+  "10": {
+   "name": "+_10",
+   "type": "input",
+   "net": "VREF"
+  },
+  "12": {
+   "name": "+_12",
+   "type": "input",
+   "net": "VREF"
+  },
+  "3": {
+   "name": "+_3",
+   "type": "input",
+   "net": "VREF"
+  }
+ },
+ "C8": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/ODC"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "FILT_OUT"
+  }
+ },
+ "R12": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/ODC"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "R127A": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/OUT_AC"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R13": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/OUT_AC"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "OUT_TIP"
+  }
+ },
+ "R126A": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/OUT_SUM"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/output/PRE_OUT"
+  }
+ },
+ "C106": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/BUCK_BST"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/BUCK_SW"
+  }
+ },
+ "U19": {
+  "8": {
+   "name": "BST_8",
+   "type": "input",
+   "net": "/power/BUCK_BST"
+  },
+  "3": {
+   "name": "COMP_3",
+   "type": "input",
+   "net": "/power/BUCK_COMP"
+  },
+  "2": {
+   "name": "EN_2",
+   "type": "input",
+   "net": "/power/BUCK_EN"
+  },
+  "4": {
+   "name": "FB_4",
+   "type": "input",
+   "net": "/power/BUCK_FB"
+  },
+  "6": {
+   "name": "FREQ_6",
+   "type": "input",
+   "net": "/power/BUCK_FREQ"
+  },
+  "1": {
+   "name": "SW_1",
+   "type": "output",
+   "net": "/power/BUCK_SW"
+  },
+  "5": {
+   "name": "GND_5",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "7": {
+   "name": "VIN_7",
+   "type": "power_in",
+   "net": "VA"
+  }
+ },
+ "R102": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/BUCK_COMP"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/BUCK_COMPC"
+  }
+ },
+ "C105": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/BUCK_COMPC"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R101": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/BUCK_EN"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "R114": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/BUCK_EN"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R105": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/BUCK_FB"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R103": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/BUCK_FREQ"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "D101": {
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/power/BUCK_SW"
+  },
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "D103": {
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/power/FLOOR62"
+  },
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "D104": {
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/power/FLOOR62"
+  },
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/power/QBASE"
+  }
+ },
+ "R110": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/FLOOR62"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "D102": {
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/power/QBASE"
+  },
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/power/SRV_OUT"
+  }
+ },
+ "Q11": {
+  "1": {
+   "name": "B_1",
+   "type": "input",
+   "net": "/power/QBASE"
+  },
+  "2": {
+   "name": "C_2",
+   "type": "passive",
+   "net": "VA"
+  },
+  "4": {
+   "name": "C_4",
+   "type": "passive",
+   "net": "VA"
+  },
+  "3": {
+   "name": "E_3",
+   "type": "passive",
+   "net": "VDIRT"
+  }
+ },
+ "R111": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/QBASE"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "D100": {
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/power/QGATE"
+  },
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "/power/VPROT"
+  }
+ },
+ "Q10": {
+  "1": {
+   "name": "G_1",
+   "type": "input",
+   "net": "/power/QGATE"
+  },
+  "3": {
+   "name": "D_3",
+   "type": "passive",
+   "net": "/power/VIN_RAW"
+  },
+  "2": {
+   "name": "S_2",
+   "type": "passive",
+   "net": "/power/VPROT"
+  }
+ },
+ "R100": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/QGATE"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R108": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/SRV_FB"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R109": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/SRV_FB"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/SRV_OUT"
+  }
+ },
+ "U6": {
+  "6": {
+   "name": "-_6",
+   "type": "input",
+   "net": "/power/SRV_FB"
+  },
+  "7": {
+   "name": "",
+   "type": "output",
+   "net": "/power/SRV_OUT"
+  },
+  "8": {
+   "name": "",
+   "type": "output",
+   "net": "/power/U6C_FB"
+  },
+  "9": {
+   "name": "-_9",
+   "type": "input",
+   "net": "/power/U6C_FB"
+  },
+  "13": {
+   "name": "-_13",
+   "type": "input",
+   "net": "/power/U6D_FB"
+  },
+  "14": {
+   "name": "",
+   "type": "output",
+   "net": "/power/U6D_FB"
+  },
+  "3": {
+   "name": "+_3",
+   "type": "input",
+   "net": "/power/VREF_RAW"
+  },
+  "11": {
+   "name": "V-_11",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "5": {
+   "name": "+_5",
+   "type": "input",
+   "net": "STARVE_CV"
+  },
+  "4": {
+   "name": "V+_4",
+   "type": "power_in",
+   "net": "VA"
+  },
+  "1": {
+   "name": "",
+   "type": "output",
+   "net": "VREF"
+  },
+  "10": {
+   "name": "+_10",
+   "type": "input",
+   "net": "VREF"
+  },
+  "12": {
+   "name": "+_12",
+   "type": "input",
+   "net": "VREF"
+  },
+  "2": {
+   "name": "-_2",
+   "type": "input",
+   "net": "VREF"
+  }
+ },
+ "D105": {
+  "2": {
+   "name": "A_2",
+   "type": "passive",
+   "net": "/power/V9RAW"
+  },
+  "1": {
+   "name": "K_1",
+   "type": "passive",
+   "net": "V567"
+  }
+ },
+ "U18": {
+  "1": {
+   "name": "OUT_1",
+   "type": "power_out",
+   "net": "/power/V9RAW"
+  },
+  "2": {
+   "name": "GND_2",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "3": {
+   "name": "IN_3",
+   "type": "power_in",
+   "net": "VA"
+  }
+ },
+ "J5": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/VIN_RAW"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "3": {
+   "name": "",
+   "type": "passive+no_connect",
+   "net": "unconnected-(J5-Pad3)"
+  }
+ },
+ "FB100": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/VPROT"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C109": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/VREF_RAW"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R106": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/VREF_RAW"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "R107": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "/power/VREF_RAW"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C121": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "3V3"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C91": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "3V3"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C910": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "BYPASS_CV"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C81": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "CV1_ADC"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "J3": {
+  "T": {
+   "name": "",
+   "type": "passive",
+   "net": "CV1_TIP"
+  },
+  "S": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "TN": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C82": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "CV2_ADC"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "J4": {
+  "T": {
+   "name": "",
+   "type": "passive",
+   "net": "CV2_TIP"
+  },
+  "S": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "TN": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "J6": {
+  "T": {
+   "name": "",
+   "type": "passive",
+   "net": "CVOUT_TIP"
+  },
+  "S": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C94": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "DIRT_CV"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C32": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "DIRT_OUT"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "R37": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "DIRT_OUT"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VREF"
+  }
+ },
+ "C99": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "GATE_VOL_CV"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C100": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C101": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C102": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C103": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "V567"
+  }
+ },
+ "C104": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C110": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VDIRT"
+  }
+ },
+ "C111": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C33": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C34": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C35": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C40": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "V567"
+  }
+ },
+ "C43": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "Q_OUT"
+  }
+ },
+ "C49": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "V567"
+  }
+ },
+ "C50": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C63": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C64": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C65": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C66": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C67": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C76": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C77": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C78": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C85": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "C911": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "STARVE_CV"
+  }
+ },
+ "C95": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "MIX_WET_CV"
+  }
+ },
+ "C96": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "MIX_DRY_CV"
+  }
+ },
+ "C97": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "SVF_F_CV"
+  }
+ },
+ "C98": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "SVF_Q_CV"
+  }
+ },
+ "D106": {
+  "2": {
+   "name": "A2_2",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "A1_1",
+   "type": "passive",
+   "net": "VA"
+  }
+ },
+ "J1": {
+  "S": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "TN": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "T": {
+   "name": "",
+   "type": "passive",
+   "net": "IN_TIP"
+  }
+ },
+ "J2": {
+  "S": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "T": {
+   "name": "",
+   "type": "passive",
+   "net": "OUT_TIP"
+  }
+ },
+ "R113": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA_SENSE"
+  }
+ },
+ "R42": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "LOCK_SENSE"
+  }
+ },
+ "R41": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "LOCK_SENSE"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "Q_OUT"
+  }
+ },
+ "R16": {
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "Q_OUT"
+  },
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "V567"
+  }
+ },
+ "R112": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "VA"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "VA_SENSE"
+  }
+ }
+}

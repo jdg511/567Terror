@@ -1,0 +1,426 @@
+{
+ "C1": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "+5V"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C2": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "+5V"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C3": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "+5V"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C4": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "+5V"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C5": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "+5V"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C6": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "+5V"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "C7": {
+  "1": {
+   "name": "",
+   "type": "passive",
+   "net": "+5V"
+  },
+  "2": {
+   "name": "",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "J1": {
+  "2": {
+   "name": "Pin_2_2",
+   "type": "passive",
+   "net": "+5V"
+  },
+  "5": {
+   "name": "Pin_5_5",
+   "type": "passive",
+   "net": "/POT1_W"
+  },
+  "6": {
+   "name": "Pin_6_6",
+   "type": "passive",
+   "net": "/POT2_W"
+  },
+  "7": {
+   "name": "Pin_7_7",
+   "type": "passive",
+   "net": "/POT3_W"
+  },
+  "8": {
+   "name": "Pin_8_8",
+   "type": "passive",
+   "net": "/POT4_W"
+  },
+  "9": {
+   "name": "Pin_9_9",
+   "type": "passive",
+   "net": "/POT5_W"
+  },
+  "10": {
+   "name": "Pin_10_10",
+   "type": "passive",
+   "net": "/POT6_W"
+  },
+  "11": {
+   "name": "Pin_11_11",
+   "type": "passive",
+   "net": "/STOMP1"
+  },
+  "12": {
+   "name": "Pin_12_12",
+   "type": "passive",
+   "net": "/STOMP2"
+  },
+  "13": {
+   "name": "Pin_13_13",
+   "type": "passive",
+   "net": "/WS_IN"
+  },
+  "3": {
+   "name": "Pin_3_3",
+   "type": "passive",
+   "net": "3V3"
+  },
+  "1": {
+   "name": "Pin_1_1",
+   "type": "passive",
+   "net": "GND"
+  },
+  "14": {
+   "name": "Pin_14_14",
+   "type": "passive",
+   "net": "GND"
+  },
+  "16": {
+   "name": "Pin_16_16",
+   "type": "passive",
+   "net": "GND"
+  },
+  "4": {
+   "name": "Pin_4_4",
+   "type": "passive",
+   "net": "GND"
+  },
+  "15": {
+   "name": "Pin_15_15",
+   "type": "passive+no_connect",
+   "net": "unconnected-(J1-Pin_15-Pad15)"
+  }
+ },
+ "LED1": {
+  "1": {
+   "name": "VDD_1",
+   "type": "power_in",
+   "net": "+5V"
+  },
+  "2": {
+   "name": "DOUT_2",
+   "type": "output",
+   "net": "/WSD1"
+  },
+  "4": {
+   "name": "DIN_4",
+   "type": "input",
+   "net": "/WS_IN"
+  },
+  "3": {
+   "name": "VSS_3",
+   "type": "power_in",
+   "net": "GND"
+  }
+ },
+ "LED2": {
+  "1": {
+   "name": "VDD_1",
+   "type": "power_in",
+   "net": "+5V"
+  },
+  "4": {
+   "name": "DIN_4",
+   "type": "input",
+   "net": "/WSD1"
+  },
+  "2": {
+   "name": "DOUT_2",
+   "type": "output",
+   "net": "/WSD2"
+  },
+  "3": {
+   "name": "VSS_3",
+   "type": "power_in",
+   "net": "GND"
+  }
+ },
+ "LED3": {
+  "1": {
+   "name": "VDD_1",
+   "type": "power_in",
+   "net": "+5V"
+  },
+  "4": {
+   "name": "DIN_4",
+   "type": "input",
+   "net": "/WSD2"
+  },
+  "2": {
+   "name": "DOUT_2",
+   "type": "output",
+   "net": "/WSD3"
+  },
+  "3": {
+   "name": "VSS_3",
+   "type": "power_in",
+   "net": "GND"
+  }
+ },
+ "LED4": {
+  "1": {
+   "name": "VDD_1",
+   "type": "power_in",
+   "net": "+5V"
+  },
+  "4": {
+   "name": "DIN_4",
+   "type": "input",
+   "net": "/WSD3"
+  },
+  "2": {
+   "name": "DOUT_2",
+   "type": "output",
+   "net": "/WSD4"
+  },
+  "3": {
+   "name": "VSS_3",
+   "type": "power_in",
+   "net": "GND"
+  }
+ },
+ "LED5": {
+  "1": {
+   "name": "VDD_1",
+   "type": "power_in",
+   "net": "+5V"
+  },
+  "4": {
+   "name": "DIN_4",
+   "type": "input",
+   "net": "/WSD4"
+  },
+  "2": {
+   "name": "DOUT_2",
+   "type": "output",
+   "net": "/WSD5"
+  },
+  "3": {
+   "name": "VSS_3",
+   "type": "power_in",
+   "net": "GND"
+  }
+ },
+ "LED6": {
+  "1": {
+   "name": "VDD_1",
+   "type": "power_in",
+   "net": "+5V"
+  },
+  "4": {
+   "name": "DIN_4",
+   "type": "input",
+   "net": "/WSD5"
+  },
+  "3": {
+   "name": "VSS_3",
+   "type": "power_in",
+   "net": "GND"
+  },
+  "2": {
+   "name": "DOUT_2",
+   "type": "output+no_connect",
+   "net": "unconnected-(LED6-DOUT-Pad2)"
+  }
+ },
+ "RV1": {
+  "2": {
+   "name": "2_2",
+   "type": "passive",
+   "net": "/POT1_W"
+  },
+  "1": {
+   "name": "1_1",
+   "type": "passive",
+   "net": "3V3"
+  },
+  "3": {
+   "name": "3_3",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "RV2": {
+  "2": {
+   "name": "2_2",
+   "type": "passive",
+   "net": "/POT2_W"
+  },
+  "1": {
+   "name": "1_1",
+   "type": "passive",
+   "net": "3V3"
+  },
+  "3": {
+   "name": "3_3",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "RV3": {
+  "2": {
+   "name": "2_2",
+   "type": "passive",
+   "net": "/POT3_W"
+  },
+  "1": {
+   "name": "1_1",
+   "type": "passive",
+   "net": "3V3"
+  },
+  "3": {
+   "name": "3_3",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "RV4": {
+  "2": {
+   "name": "2_2",
+   "type": "passive",
+   "net": "/POT4_W"
+  },
+  "1": {
+   "name": "1_1",
+   "type": "passive",
+   "net": "3V3"
+  },
+  "3": {
+   "name": "3_3",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "RV5": {
+  "2": {
+   "name": "2_2",
+   "type": "passive",
+   "net": "/POT5_W"
+  },
+  "1": {
+   "name": "1_1",
+   "type": "passive",
+   "net": "3V3"
+  },
+  "3": {
+   "name": "3_3",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "RV6": {
+  "2": {
+   "name": "2_2",
+   "type": "passive",
+   "net": "/POT6_W"
+  },
+  "1": {
+   "name": "1_1",
+   "type": "passive",
+   "net": "3V3"
+  },
+  "3": {
+   "name": "3_3",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "SW1": {
+  "1": {
+   "name": "1_1",
+   "type": "passive",
+   "net": "/STOMP1"
+  },
+  "2": {
+   "name": "2_2",
+   "type": "passive",
+   "net": "GND"
+  }
+ },
+ "SW2": {
+  "1": {
+   "name": "1_1",
+   "type": "passive",
+   "net": "/STOMP2"
+  },
+  "2": {
+   "name": "2_2",
+   "type": "passive",
+   "net": "GND"
+  }
+ }
+}

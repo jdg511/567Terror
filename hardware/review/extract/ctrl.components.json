@@ -1,0 +1,310 @@
+{
+ "C1": {
+  "ref": "C1",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C2": {
+  "ref": "C2",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C3": {
+  "ref": "C3",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C4": {
+  "ref": "C4",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C5": {
+  "ref": "C5",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C6": {
+  "ref": "C6",
+  "value": "100n",
+  "footprint": "Capacitor_SMD:C_0603_1608Metric",
+  "datasheet": "",
+  "libsource": "Device:C",
+  "description": "Unpolarized capacitor",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "C7": {
+  "ref": "C7",
+  "value": "100u",
+  "footprint": "Capacitor_SMD:CP_Elec_6.3x7.7",
+  "datasheet": "",
+  "libsource": "Device:C_Polarized",
+  "description": "Polarized capacitor",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Capacitor_SMD:CP_Elec_6.3x7.7",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "J1": {
+  "ref": "J1",
+  "value": "to MAIN 2x8",
+  "footprint": "Connector_PinHeader_2.54mm:PinHeader_2x08_P2.54mm_Vertical",
+  "datasheet": "",
+  "libsource": "Connector_Generic:Conn_02x08_Odd_Even",
+  "description": "Generic connector, double row, 02x08, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Connector_PinHeader_2.54mm:PinHeader_2x08_P2.54mm_Vertical",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "LED1": {
+  "ref": "LED1",
+  "value": "WS2812B",
+  "footprint": "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm",
+  "datasheet": "",
+  "libsource": "LED:WS2812B",
+  "description": "RGB LED with integrated controller",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "LED2": {
+  "ref": "LED2",
+  "value": "WS2812B",
+  "footprint": "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm",
+  "datasheet": "",
+  "libsource": "LED:WS2812B",
+  "description": "RGB LED with integrated controller",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "LED3": {
+  "ref": "LED3",
+  "value": "WS2812B",
+  "footprint": "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm",
+  "datasheet": "",
+  "libsource": "LED:WS2812B",
+  "description": "RGB LED with integrated controller",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "LED4": {
+  "ref": "LED4",
+  "value": "WS2812B",
+  "footprint": "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm",
+  "datasheet": "",
+  "libsource": "LED:WS2812B",
+  "description": "RGB LED with integrated controller",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "LED5": {
+  "ref": "LED5",
+  "value": "WS2812B",
+  "footprint": "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm",
+  "datasheet": "",
+  "libsource": "LED:WS2812B",
+  "description": "RGB LED with integrated controller",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "LED6": {
+  "ref": "LED6",
+  "value": "WS2812B",
+  "footprint": "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm",
+  "datasheet": "",
+  "libsource": "LED:WS2812B",
+  "description": "RGB LED with integrated controller",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "RV1": {
+  "ref": "RV1",
+  "value": "B10k (FREQ)",
+  "footprint": "Glitchwave:ALPS_RK09K1130",
+  "datasheet": "",
+  "libsource": "Device:R_Potentiometer",
+  "description": "Potentiometer",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Glitchwave:ALPS_RK09K1130",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "RV2": {
+  "ref": "RV2",
+  "value": "B10k (GAIN)",
+  "footprint": "Glitchwave:ALPS_RK09K1130",
+  "datasheet": "",
+  "libsource": "Device:R_Potentiometer",
+  "description": "Potentiometer",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Glitchwave:ALPS_RK09K1130",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "RV3": {
+  "ref": "RV3",
+  "value": "B10k (MIX)",
+  "footprint": "Glitchwave:ALPS_RK09K1130",
+  "datasheet": "",
+  "libsource": "Device:R_Potentiometer",
+  "description": "Potentiometer",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Glitchwave:ALPS_RK09K1130",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "RV4": {
+  "ref": "RV4",
+  "value": "B10k (FIZZ)",
+  "footprint": "Glitchwave:ALPS_RK09K1130",
+  "datasheet": "",
+  "libsource": "Device:R_Potentiometer",
+  "description": "Potentiometer",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Glitchwave:ALPS_RK09K1130",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "RV5": {
+  "ref": "RV5",
+  "value": "B10k (Q)",
+  "footprint": "Glitchwave:ALPS_RK09K1130",
+  "datasheet": "",
+  "libsource": "Device:R_Potentiometer",
+  "description": "Potentiometer",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Glitchwave:ALPS_RK09K1130",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "RV6": {
+  "ref": "RV6",
+  "value": "B10k (VOL)",
+  "footprint": "Glitchwave:ALPS_RK09K1130",
+  "datasheet": "",
+  "libsource": "Device:R_Potentiometer",
+  "description": "Potentiometer",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Glitchwave:ALPS_RK09K1130",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "SW1": {
+  "ref": "SW1",
+  "value": "Suntsu SSWFS-S01 (TAP/BYP)",
+  "footprint": "Glitchwave:SSWFS-S01",
+  "datasheet": "",
+  "libsource": "Switch:SW_Push",
+  "description": "Push button switch, generic, two pins",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Glitchwave:SSWFS-S01",
+   "Datasheet": "",
+   "Description": ""
+  }
+ },
+ "SW2": {
+  "ref": "SW2",
+  "value": "Suntsu SSWFS-S01 (TAP/BYP)",
+  "footprint": "Glitchwave:SSWFS-S01",
+  "datasheet": "",
+  "libsource": "Switch:SW_Push",
+  "description": "Push button switch, generic, two pins",
+  "sheet": "/",
+  "fields": {
+   "Footprint": "Glitchwave:SSWFS-S01",
+   "Datasheet": "",
+   "Description": ""
+  }
+ }
+}

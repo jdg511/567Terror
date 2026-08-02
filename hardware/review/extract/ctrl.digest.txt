@@ -1,0 +1,34 @@
+SOURCE: extract\ctrl.netlist.xml
+components: 22   nets: 19
+by refdes prefix: C=7, J=1, LED=6, RV=6, SW=2
+
+=== ICs and multi-pin parts (U*, plus any part with >=5 pins) ===
+J1      to MAIN 2x8                  Connector_Generic:Conn_02x08_Odd_E pins=16  sheet=/
+        footprint: Connector_PinHeader_2.54mm:PinHeader_2x08_P2.54mm_Vertical
+        datasheet: (none)
+          pin 1    Pin_1_1          passive        -> GND
+          pin 2    Pin_2_2          passive        -> +5V
+          pin 3    Pin_3_3          passive        -> 3V3
+          pin 4    Pin_4_4          passive        -> GND
+          pin 5    Pin_5_5          passive        -> /POT1_W
+          pin 6    Pin_6_6          passive        -> /POT2_W
+          pin 7    Pin_7_7          passive        -> /POT3_W
+          pin 8    Pin_8_8          passive        -> /POT4_W
+          pin 9    Pin_9_9          passive        -> /POT5_W
+          pin 10   Pin_10_10        passive        -> /POT6_W
+          pin 11   Pin_11_11        passive        -> /STOMP1
+          pin 12   Pin_12_12        passive        -> /STOMP2
+          pin 13   Pin_13_13        passive        -> /WS_IN
+          pin 14   Pin_14_14        passive        -> GND
+          pin 15   Pin_15_15        passive+no_connect -> unconnected-(J1-Pin_15-Pad15)
+          pin 16   Pin_16_16        passive        -> GND
+
+=== nets with only ONE node (potential floating/unconnected) ===
+  unconnected-(J1-Pin_15-Pad15)                J1.15 (passive+no_connect)
+  unconnected-(LED6-DOUT-Pad2)                 LED6.2 (output+no_connect)
+  count: 2
+
+=== power/supply-ish nets (node counts) ===
+  +5V                                          14 nodes
+  3V3                                          7 nodes
+  GND                                          25 nodes

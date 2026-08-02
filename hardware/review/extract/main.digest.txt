@@ -1,0 +1,500 @@
+SOURCE: extract\main.netlist.xml
+components: 296   nets: 253
+by refdes prefix: C=77, D=21, FB=1, J=7, L=1, Q=8, QJ=1, R=153, RV=3, SW=3, U=21
+
+=== ICs and multi-pin parts (U*, plus any part with >=5 pins) ===
+J10     CTRL 2x8                     Connector_Generic:Conn_02x08_Odd_E pins=16  sheet=/mcu/
+        footprint: Connector_PinHeader_2.54mm:PinHeader_2x08_P2.54mm_Vertical
+        datasheet: (none)
+          pin 1    Pin_1_1          passive        -> GND
+          pin 2    Pin_2_2          passive        -> +5V
+          pin 3    Pin_3_3          passive        -> 3V3
+          pin 4    Pin_4_4          passive        -> GND
+          pin 5    Pin_5_5          passive        -> /mcu/POT1_W
+          pin 6    Pin_6_6          passive        -> /mcu/POT2_W
+          pin 7    Pin_7_7          passive        -> /mcu/POT3_W
+          pin 8    Pin_8_8          passive        -> /mcu/POT4_W
+          pin 9    Pin_9_9          passive        -> /mcu/POT5_W
+          pin 10   Pin_10_10        passive        -> /mcu/POT6_W
+          pin 11   Pin_11_11        passive        -> /mcu/STOMP1
+          pin 12   Pin_12_12        passive        -> /mcu/STOMP2
+          pin 13   Pin_13_13        passive        -> /mcu/WS_HDR
+          pin 14   Pin_14_14        passive        -> GND
+          pin 15   Pin_15_15        passive+no_connect -> unconnected-(J10-Pin_15-Pad15)
+          pin 16   Pin_16_16        passive        -> GND
+
+U1      TL074                        Amplifier_Operational:TL074        pins=14  sheet=/input_dirt/
+        footprint: Package_SO:SOIC-14_3.9x8.7mm_P1.27mm
+        datasheet: (none)
+          pin 1                     output         -> /input_dirt/BUF_OUT
+          pin 2    -_2              input          -> /input_dirt/BUF_OUT
+          pin 3    +_3              input          -> /input_dirt/IN_B
+          pin 4    V+_4             power_in       -> VA
+          pin 5    +_5              input          -> /input_dirt/HP1_P
+          pin 6    -_6              input          -> /input_dirt/HP1_OUT
+          pin 7                     output         -> /input_dirt/HP1_OUT
+          pin 8                     output         -> DRY_CLEAN
+          pin 9    -_9              input          -> DRY_CLEAN
+          pin 10   +_10             input          -> /input_dirt/HP2_P
+          pin 11   V-_11            power_in       -> GND
+          pin 12   +_12             input          -> /input_dirt/TRIM_OUT
+          pin 13   -_13             input          -> /input_dirt/GAIN_FB
+          pin 14                    output         -> V567_DRIVE
+
+U2      TL074                        Amplifier_Operational:TL074        pins=14  sheet=/input_dirt/
+        footprint: Package_SO:SOIC-14_3.9x8.7mm_P1.27mm
+        datasheet: (none)
+          pin 1                     output         -> /input_dirt/TRIM_OUT
+          pin 2    -_2              input          -> /input_dirt/TRIM_FB
+          pin 3    +_3              input          -> DRY_CLEAN
+          pin 4    V+_4             power_in       -> VA
+          pin 5    +_5              input          -> VREF
+          pin 6    -_6              input          -> /input_dirt/OTA_OUT
+          pin 7                     output         -> /input_dirt/DIRT_PRE
+          pin 8                     output         -> /input_dirt/U2C_FB
+          pin 9    -_9              input          -> /input_dirt/U2C_FB
+          pin 10   +_10             input          -> VREF
+          pin 11   V-_11            power_in       -> GND
+          pin 12   +_12             input          -> VREF
+          pin 13   -_13             input          -> /input_dirt/U2D_FB
+          pin 14                    output         -> /input_dirt/U2D_FB
+
+U3      LM13700                      Amplifier_Operational:LM13700      pins=16  sheet=/input_dirt/
+        footprint: Package_SO:SOIC-16_3.9x9.9mm_P1.27mm
+        datasheet: (none)
+          pin 1                     input          -> /input_dirt/DIRT_IABC
+          pin 2    DIODE_BIAS_2     input+no_connect -> unconnected-(U3C-DIODE_BIAS-Pad2)
+          pin 3    +_3              input          -> /input_dirt/OTA_INP
+          pin 4    -_4              input          -> /input_dirt/OTA_INM
+          pin 5                     output         -> /input_dirt/OTA_OUT
+          pin 6    V-_6             power_in       -> GND
+          pin 7                     input          -> GND
+          pin 8                     output+no_connect -> unconnected-(U3-Pad8)
+          pin 9                     output+no_connect -> unconnected-(U3-Pad9)
+          pin 10                    input          -> GND
+          pin 11   V+_11            power_in       -> VA
+          pin 12                    output+no_connect -> unconnected-(U3-Pad12)
+          pin 13   -_13             input          -> VREF
+          pin 14   +_14             input          -> VREF
+          pin 15   DIODE_BIAS_15    input+no_connect -> unconnected-(U3A-DIODE_BIAS-Pad15)
+          pin 16                    input          -> GND
+
+U5      LM567 (SO-8)                 Glitchwave:LM567                   pins=8   sheet=/core567/
+        footprint: Package_SO:SOIC-8_3.9x4.9mm_P1.27mm
+        datasheet: (none)
+          pin 1    OFIL_1           passive        -> /core567/OFIL_PAD
+          pin 2    LFIL_2           passive        -> /core567/LFIL_PAD
+          pin 3    IN_3             input          -> /core567/IN567
+          pin 4    VCC_4            power_in       -> V567
+          pin 5    RT_5             passive        -> /core567/RT_SQ
+          pin 6    CT_6             passive        -> /core567/CT_NODE
+          pin 7    GND_7            power_in       -> GND
+          pin 8    OUT_8            open_collector -> /core567/Q_OC
+
+U6      TL074                        Amplifier_Operational:TL074        pins=14  sheet=/power/
+        footprint: Package_SO:SOIC-14_3.9x8.7mm_P1.27mm
+        datasheet: (none)
+          pin 1                     output         -> VREF
+          pin 2    -_2              input          -> VREF
+          pin 3    +_3              input          -> /power/VREF_RAW
+          pin 4    V+_4             power_in       -> VA
+          pin 5    +_5              input          -> STARVE_CV
+          pin 6    -_6              input          -> /power/SRV_FB
+          pin 7                     output         -> /power/SRV_OUT
+          pin 8                     output         -> /power/U6C_FB
+          pin 9    -_9              input          -> /power/U6C_FB
+          pin 10   +_10             input          -> VREF
+          pin 11   V-_11            power_in       -> GND
+          pin 12   +_12             input          -> VREF
+          pin 13   -_13             input          -> /power/U6D_FB
+          pin 14                    output         -> /power/U6D_FB
+
+U7      LM13700                      Amplifier_Operational:LM13700      pins=16  sheet=/core567/
+        footprint: Package_SO:SOIC-16_3.9x9.9mm_P1.27mm
+        datasheet: (none)
+          pin 1                     input          -> /core567/FREQ_IABC
+          pin 2    DIODE_BIAS_2     input+no_connect -> unconnected-(U7C-DIODE_BIAS-Pad2)
+          pin 3    +_3              input          -> /core567/OTA2_INP
+          pin 4    -_4              input          -> /core567/OTA2_INM
+          pin 5                     output         -> /core567/CT_NODE
+          pin 6    V-_6             power_in       -> GND
+          pin 7                     input          -> GND
+          pin 8                     output+no_connect -> unconnected-(U7-Pad8)
+          pin 9                     output+no_connect -> unconnected-(U7-Pad9)
+          pin 10                    input          -> GND
+          pin 11   V+_11            power_in       -> VA
+          pin 12                    output+no_connect -> unconnected-(U7-Pad12)
+          pin 13   -_13             input          -> VREF
+          pin 14   +_14             input          -> VREF
+          pin 15   DIODE_BIAS_15    input+no_connect -> unconnected-(U7A-DIODE_BIAS-Pad15)
+          pin 16                    input          -> GND
+
+U8      CD4052B                      Analog_Switch:CD4052B              pins=16  sheet=/core567/
+        footprint: Package_SO:SOIC-16_3.9x9.9mm_P1.27mm
+        datasheet: (none)
+          pin 1    Y0_1             bidirectional+no_connect -> unconnected-(U8-Y0-Pad1)
+          pin 2    Y2_2             bidirectional+no_connect -> unconnected-(U8-Y2-Pad2)
+          pin 3    Y_3              bidirectional+no_connect -> unconnected-(U8-Y-Pad3)
+          pin 4    Y3_4             bidirectional+no_connect -> unconnected-(U8-Y3-Pad4)
+          pin 5    Y1_5             bidirectional+no_connect -> unconnected-(U8-Y1-Pad5)
+          pin 6    INH_6            input          -> GND
+          pin 7    VEE_7            power_in       -> GND
+          pin 8    VSS_8            power_in       -> GND
+          pin 9    B_9              input          -> /core567/FREQ_B_S
+          pin 10   A_10             input          -> /core567/FREQ_A_S
+          pin 11   X3_11            bidirectional  -> /core567/TC_D
+          pin 12   X0_12            bidirectional  -> /core567/TC_A
+          pin 13   X_13             bidirectional  -> /core567/CT_NODE
+          pin 14   X1_14            bidirectional  -> /core567/TC_B
+          pin 15   X2_15            bidirectional  -> /core567/TC_C
+          pin 16   VDD_16           power_in       -> V567
+
+U9      TL074                        Amplifier_Operational:TL074        pins=14  sheet=/mix_svf/
+        footprint: Package_SO:SOIC-14_3.9x8.7mm_P1.27mm
+        datasheet: (none)
+          pin 1                     output         -> /mix_svf/MIX_OUT
+          pin 2    -_2              input          -> /mix_svf/MIX_SUM
+          pin 3    +_3              input          -> VREF
+          pin 4    V+_4             power_in       -> VA
+          pin 5    +_5              input          -> VREF
+          pin 6    -_6              input          -> /mix_svf/SVF_SUM
+          pin 7                     output         -> /mix_svf/SVF_HP
+          pin 8                     output         -> /mix_svf/QFB_OUT
+          pin 9    -_9              input          -> /mix_svf/QFB_I
+          pin 10   +_10             input          -> VREF
+          pin 11   V-_11            power_in       -> GND
+          pin 12   +_12             input          -> VREF
+          pin 13   -_13             input          -> /mix_svf/NOTCH_SUM
+          pin 14                    output         -> /mix_svf/SVF_NOTCH
+
+U10     LM13700                      Amplifier_Operational:LM13700      pins=16  sheet=/mix_svf/
+        footprint: Package_SO:SOIC-16_3.9x9.9mm_P1.27mm
+        datasheet: (none)
+          pin 1                     input          -> /mix_svf/WET_IABC
+          pin 2    DIODE_BIAS_2     input+no_connect -> unconnected-(U10C-DIODE_BIAS-Pad2)
+          pin 3    +_3              input          -> /mix_svf/WOTA_P
+          pin 4    -_4              input          -> /mix_svf/WOTA_M
+          pin 5                     output         -> /mix_svf/MIX_SUM
+          pin 6    V-_6             power_in       -> GND
+          pin 7                     input          -> GND
+          pin 8                     output+no_connect -> unconnected-(U10-Pad8)
+          pin 9                     output+no_connect -> unconnected-(U10-Pad9)
+          pin 10                    input          -> GND
+          pin 11   V+_11            power_in       -> VA
+          pin 12                    output         -> /mix_svf/MIX_SUM
+          pin 13   -_13             input          -> /mix_svf/DOTA_M
+          pin 14   +_14             input          -> /mix_svf/DOTA_P
+          pin 15   DIODE_BIAS_15    input+no_connect -> unconnected-(U10A-DIODE_BIAS-Pad15)
+          pin 16                    input          -> /mix_svf/DRY_IABC
+
+U11     LM13700                      Amplifier_Operational:LM13700      pins=16  sheet=/mix_svf/
+        footprint: Package_SO:SOIC-16_3.9x9.9mm_P1.27mm
+        datasheet: (none)
+          pin 1                     input          -> /mix_svf/F_IABC1
+          pin 2    DIODE_BIAS_2     input+no_connect -> unconnected-(U11C-DIODE_BIAS-Pad2)
+          pin 3    +_3              input          -> /mix_svf/I1_P
+          pin 4    -_4              input          -> /mix_svf/I1_M
+          pin 5                     output         -> /mix_svf/I1_OUT
+          pin 6    V-_6             power_in       -> GND
+          pin 7                     input          -> /mix_svf/I1_OUT
+          pin 8                     output         -> /mix_svf/SVF_BP
+          pin 9                     output         -> /mix_svf/SVF_LP
+          pin 10                    input          -> /mix_svf/I2_OUT
+          pin 11   V+_11            power_in       -> VA
+          pin 12                    output         -> /mix_svf/I2_OUT
+          pin 13   -_13             input          -> /mix_svf/I2_M
+          pin 14   +_14             input          -> /mix_svf/I2_P
+          pin 15   DIODE_BIAS_15    input+no_connect -> unconnected-(U11A-DIODE_BIAS-Pad15)
+          pin 16                    input          -> /mix_svf/F_IABC2
+
+U12     LM13700                      Amplifier_Operational:LM13700      pins=16  sheet=/mix_svf/
+        footprint: Package_SO:SOIC-16_3.9x9.9mm_P1.27mm
+        datasheet: (none)
+          pin 1                     input          -> /mix_svf/Q_IABC
+          pin 2    DIODE_BIAS_2     input+no_connect -> unconnected-(U12C-DIODE_BIAS-Pad2)
+          pin 3    +_3              input          -> /mix_svf/QOTA_P
+          pin 4    -_4              input          -> /mix_svf/QOTA_M
+          pin 5                     output         -> /mix_svf/QFB_I
+          pin 6    V-_6             power_in       -> GND
+          pin 7                     input          -> GND
+          pin 8                     output+no_connect -> unconnected-(U12-Pad8)
+          pin 9                     output+no_connect -> unconnected-(U12-Pad9)
+          pin 10                    input+no_connect -> unconnected-(U12-Pad10)
+          pin 11   V+_11            power_in       -> VA
+          pin 12                    output+no_connect -> unconnected-(U12-Pad12)
+          pin 13   -_13             input          -> VREF
+          pin 14   +_14             input          -> VREF
+          pin 15   DIODE_BIAS_15    input+no_connect -> unconnected-(U12A-DIODE_BIAS-Pad15)
+          pin 16                    input          -> GND
+
+U13     CD4051B                      Analog_Switch:CD4051B              pins=16  sheet=/mix_svf/
+        footprint: Package_SO:SOIC-16_3.9x9.9mm_P1.27mm
+        datasheet: (none)
+          pin 1    X4_1             bidirectional  -> /mix_svf/SVF_NOTCH
+          pin 2    X6_2             bidirectional+no_connect -> unconnected-(U13-X6-Pad2)
+          pin 3    X_3              bidirectional  -> FILT_OUT
+          pin 4    X7_4             bidirectional+no_connect -> unconnected-(U13-X7-Pad4)
+          pin 5    X5_5             bidirectional+no_connect -> unconnected-(U13-X5-Pad5)
+          pin 6    INH_6            input          -> GND
+          pin 7    VEE_7            power_in       -> GND
+          pin 8    VSS_8            power_in       -> GND
+          pin 9    C_9              input          -> /mix_svf/FMODE_C_S
+          pin 10   B_10             input          -> /mix_svf/FMODE_B_S
+          pin 11   A_11             input          -> /mix_svf/FMODE_A_S
+          pin 12   X3_12            bidirectional  -> /mix_svf/SVF_HP
+          pin 13   X0_13            bidirectional  -> /mix_svf/MIX_OUT
+          pin 14   X1_14            bidirectional  -> /mix_svf/SVF_LP
+          pin 15   X2_15            bidirectional  -> /mix_svf/SVF_BP
+          pin 16   VDD_16           power_in       -> VA
+
+U14     TL074                        Amplifier_Operational:TL074        pins=14  sheet=/output/
+        footprint: Package_SO:SOIC-14_3.9x8.7mm_P1.27mm
+        datasheet: (none)
+          pin 1                     output         -> /output/H60_OUT
+          pin 2    -_2              input          -> /output/H60_OUT
+          pin 3    +_3              input          -> /output/H60_P
+          pin 4    V+_4             power_in       -> VA
+          pin 5    +_5              input          -> /output/H60_OUT
+          pin 6    -_6              input          -> /output/BELL_FB
+          pin 7                     output         -> /output/BELL_OUT
+          pin 8                     output         -> /output/B6_OUT
+          pin 9    -_9              input          -> /output/B6_FB
+          pin 10   +_10             input          -> /output/BELL_OUT
+          pin 11   V-_11            power_in       -> GND
+          pin 12   +_12             input          -> VREF
+          pin 13   -_13             input          -> /output/LAD_IN
+          pin 14                    output         -> /output/LAD_OUT
+
+U15     LM13700                      Amplifier_Operational:LM13700      pins=16  sheet=/output/
+        footprint: Package_SO:SOIC-16_3.9x9.9mm_P1.27mm
+        datasheet: (none)
+          pin 1                     input          -> /output/GV_IABC
+          pin 2    DIODE_BIAS_2     input+no_connect -> unconnected-(U15C-DIODE_BIAS-Pad2)
+          pin 3    +_3              input          -> /output/GOTA_P
+          pin 4    -_4              input          -> /output/GOTA_M
+          pin 5                     output         -> /output/OUT_SUM
+          pin 6    V-_6             power_in       -> GND
+          pin 7                     input          -> GND
+          pin 8                     output+no_connect -> unconnected-(U15-Pad8)
+          pin 9                     output+no_connect -> unconnected-(U15-Pad9)
+          pin 10                    input          -> GND
+          pin 11   V+_11            power_in       -> VA
+          pin 12                    output         -> /output/OUT_SUM
+          pin 13   -_13             input          -> /output/BOTA_M
+          pin 14   +_14             input          -> /output/BOTA_P
+          pin 15   DIODE_BIAS_15    input+no_connect -> unconnected-(U15A-DIODE_BIAS-Pad15)
+          pin 16                    input          -> /output/BYP_IABC
+
+U16     TL074                        Amplifier_Operational:TL074        pins=14  sheet=/output/
+        footprint: Package_SO:SOIC-14_3.9x8.7mm_P1.27mm
+        datasheet: (none)
+          pin 1                     output         -> /output/PRE_OUT
+          pin 2    -_2              input          -> /output/OUT_SUM
+          pin 3    +_3              input          -> VREF
+          pin 4    V+_4             power_in       -> VA
+          pin 5    +_5              input          -> /output/PRE_OUT
+          pin 6    -_6              input          -> /output/OB_FB
+          pin 7                     output         -> /output/OB_FB
+          pin 8                     output         -> /output/U16C_FB
+          pin 9    -_9              input          -> /output/U16C_FB
+          pin 10   +_10             input          -> VREF
+          pin 11   V-_11            power_in       -> GND
+          pin 12   +_12             input          -> VREF
+          pin 13   -_13             input          -> /output/U16D_FB
+          pin 14                    output         -> /output/U16D_FB
+
+U17     TL074                        Amplifier_Operational:TL074        pins=14  sheet=/env_cv/
+        footprint: Package_SO:SOIC-14_3.9x8.7mm_P1.27mm
+        datasheet: (none)
+          pin 1                     output         -> /env_cv/FW_A
+          pin 2    -_2              input          -> /env_cv/FW_IN
+          pin 3    +_3              input          -> VREF
+          pin 4    V+_4             power_in       -> VA
+          pin 5    +_5              input          -> VREF
+          pin 6    -_6              input          -> /env_cv/FW_SUM
+          pin 7                     output         -> /env_cv/RECT_OUT
+          pin 8                     output         -> /env_cv/ENV_B
+          pin 9    -_9              input          -> /env_cv/ENV_B
+          pin 10   +_10             input          -> /env_cv/ENV_C
+          pin 11   V-_11            power_in       -> GND
+          pin 12   +_12             input          -> /env_cv/CVF2
+          pin 13   -_13             input          -> /env_cv/CVO_FB
+          pin 14                    output         -> /env_cv/CVO_OUT
+
+U18     L78L09                       Regulator_Linear:L78L09_SOT89      pins=3   sheet=/power/
+        footprint: Package_TO_SOT_SMD:SOT-89-3
+        datasheet: (none)
+          pin 1    OUT_1            power_out      -> /power/V9RAW
+          pin 2    GND_2            power_in       -> GND
+          pin 3    IN_3             power_in       -> VA
+
+U19     MP1584EN                     Glitchwave:MP1584EN                pins=8   sheet=/power/
+        footprint: Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x3mm
+        datasheet: (none)
+          pin 1    SW_1             output         -> /power/BUCK_SW
+          pin 2    EN_2             input          -> /power/BUCK_EN
+          pin 3    COMP_3           input          -> /power/BUCK_COMP
+          pin 4    FB_4             input          -> /power/BUCK_FB
+          pin 5    GND_5            power_in       -> GND
+          pin 6    FREQ_6           input          -> /power/BUCK_FREQ
+          pin 7    VIN_7            power_in       -> VA
+          pin 8    BST_8            input          -> /power/BUCK_BST
+
+U20     Raspberry Pi Pico            Glitchwave:RPi_Pico                pins=40  sheet=/mcu/
+        footprint: Glitchwave:RPi_Pico_SMD
+        datasheet: (none)
+          pin 1    GP0_1            bidirectional  -> /mcu/PWM_FREQ
+          pin 2    GP1_2            bidirectional  -> /mcu/PWM_DIRT
+          pin 3    GND_3            power_in       -> GND
+          pin 4    GP2_4            bidirectional  -> /mcu/PWM_MIXW
+          pin 5    GP3_5            bidirectional  -> /mcu/PWM_MIXD
+          pin 6    GP4_6            bidirectional  -> /mcu/PWM_SVFF
+          pin 7    GP5_7            bidirectional  -> /mcu/PWM_SVFQ
+          pin 8    GND_8            power_in       -> GND
+          pin 9    GP6_9            bidirectional  -> /mcu/PWM_GATE
+          pin 10   GP7_10           bidirectional  -> /mcu/PWM_BYP
+          pin 11   GP8_11           bidirectional  -> /mcu/PWM_STARVE
+          pin 12   GP9_12           bidirectional  -> CVOUT_PWM
+          pin 13   GND_13           power_in       -> GND
+          pin 14   GP10_14          bidirectional  -> FREQ_A
+          pin 15   GP11_15          bidirectional  -> FREQ_B
+          pin 16   GP12_16          bidirectional  -> FMODE_A
+          pin 17   GP13_17          bidirectional  -> FMODE_B
+          pin 18   GND_18           power_in       -> GND
+          pin 19   GP14_19          bidirectional  -> FMODE_C
+          pin 20   GP15_20          bidirectional  -> /mcu/WS_DATA_3V3
+          pin 21   GP16_21          bidirectional  -> /mcu/STOMP1
+          pin 22   GP17_22          bidirectional  -> /mcu/STOMP2
+          pin 23   GND_23           power_in       -> GND
+          pin 24   GP18_24          bidirectional  -> /mcu/MUX_S0
+          pin 25   GP19_25          bidirectional  -> /mcu/MUX_S1
+          pin 26   GP20_26          bidirectional  -> /mcu/MUX_S2
+          pin 27   GP21_27          bidirectional  -> /mcu/MUX_S3
+          pin 28   GND_28           power_in       -> GND
+          pin 29   GP22_29          bidirectional+no_connect -> unconnected-(U20-GP22-Pad29)
+          pin 30   RUN_30           bidirectional+no_connect -> unconnected-(U20-RUN-Pad30)
+          pin 31   GP26_A0_31       bidirectional  -> /mcu/ADC_MUXED
+          pin 32   GP27_A1_32       bidirectional  -> CV1_ADC
+          pin 33   AGND_33          power_in       -> GND
+          pin 34   GP28_A2_34       bidirectional  -> CV2_ADC
+          pin 35   ADC_VREF_35      bidirectional+no_connect -> unconnected-(U20-ADC_VREF-Pad35)
+          pin 36   3V3_OUT_36       power_out      -> 3V3
+          pin 37   3V3_EN_37        bidirectional+no_connect -> unconnected-(U20-3V3_EN-Pad37)
+          pin 38   GND_38           power_in       -> GND
+          pin 39   VSYS_39          power_in       -> /mcu/PICO_VSYS
+          pin 40   VBUS_40          power_in+no_connect -> unconnected-(U20-VBUS-Pad40)
+
+U21     74HC4067                     74xx:CD74HC4067M                   pins=24  sheet=/mcu/
+        footprint: Package_SO:SOIC-24W_7.5x15.4mm_P1.27mm
+        datasheet: (none)
+          pin 1    COM_1            passive        -> /mcu/ADC_MUX_C
+          pin 2    I7_2             passive        -> VA_SENSE
+          pin 3    I6_3             passive        -> ENV_ADC
+          pin 4    I5_4             passive        -> /mcu/POT6_W
+          pin 5    I4_5             passive        -> /mcu/POT5_W
+          pin 6    I3_6             passive        -> /mcu/POT4_W
+          pin 7    I2_7             passive        -> /mcu/POT3_W
+          pin 8    I1_8             passive        -> /mcu/POT2_W
+          pin 9    I0_9             passive        -> /mcu/POT1_W
+          pin 10   S0_10            input          -> /mcu/MUX_S0
+          pin 11   S1_11            input          -> /mcu/MUX_S1
+          pin 12   GND_12           power_in       -> GND
+          pin 13   S3_13            input          -> /mcu/MUX_S3
+          pin 14   S2_14            input          -> /mcu/MUX_S2
+          pin 15   ~{E}_15          input          -> GND
+          pin 16   I15_16           passive        -> GND
+          pin 17   I14_17           passive        -> GND
+          pin 18   I13_18           passive        -> GND
+          pin 19   I12_19           passive        -> GND
+          pin 20   I11_20           passive        -> /mcu/TRIM_FA
+          pin 21   I10_21           passive        -> /mcu/TRIM_HO
+          pin 22   I9_22            passive        -> /mcu/TRIM_TH
+          pin 23   I8_23            passive        -> LOCK_SENSE
+          pin 24   VCC_24           power_in       -> 3V3
+
+U22     74AHCT1G125                  74xGxx:74AHCT1G125                 pins=5   sheet=/mcu/
+        footprint: Package_TO_SOT_SMD:SOT-23-5
+        datasheet: (none)
+          pin 1                     input          -> GND
+          pin 2                     input          -> /mcu/WS_DATA_3V3
+          pin 3    GND_3            power_in       -> GND
+          pin 4                     tri_state      -> /mcu/WS_DATA_5V
+          pin 5    VCC_5            power_in       -> +5V
+
+=== nets with only ONE node (potential floating/unconnected) ===
+  unconnected-(J10-Pin_15-Pad15)               J10.15 (passive+no_connect)
+  unconnected-(J5-Pad3)                        J5.3 (passive+no_connect)
+  unconnected-(SW1-C-Pad3)                     SW1.3 (passive+no_connect)
+  unconnected-(U10-Pad8)                       U10.8 (output+no_connect)
+  unconnected-(U10-Pad9)                       U10.9 (output+no_connect)
+  unconnected-(U10A-DIODE_BIAS-Pad15)          U10.15 (input+no_connect)
+  unconnected-(U10C-DIODE_BIAS-Pad2)           U10.2 (input+no_connect)
+  unconnected-(U11A-DIODE_BIAS-Pad15)          U11.15 (input+no_connect)
+  unconnected-(U11C-DIODE_BIAS-Pad2)           U11.2 (input+no_connect)
+  unconnected-(U12-Pad10)                      U12.10 (input+no_connect)
+  unconnected-(U12-Pad12)                      U12.12 (output+no_connect)
+  unconnected-(U12-Pad8)                       U12.8 (output+no_connect)
+  unconnected-(U12-Pad9)                       U12.9 (output+no_connect)
+  unconnected-(U12A-DIODE_BIAS-Pad15)          U12.15 (input+no_connect)
+  unconnected-(U12C-DIODE_BIAS-Pad2)           U12.2 (input+no_connect)
+  unconnected-(U13-X5-Pad5)                    U13.5 (bidirectional+no_connect)
+  unconnected-(U13-X6-Pad2)                    U13.2 (bidirectional+no_connect)
+  unconnected-(U13-X7-Pad4)                    U13.4 (bidirectional+no_connect)
+  unconnected-(U15-Pad8)                       U15.8 (output+no_connect)
+  unconnected-(U15-Pad9)                       U15.9 (output+no_connect)
+  unconnected-(U15A-DIODE_BIAS-Pad15)          U15.15 (input+no_connect)
+  unconnected-(U15C-DIODE_BIAS-Pad2)           U15.2 (input+no_connect)
+  unconnected-(U20-3V3_EN-Pad37)               U20.37 (bidirectional+no_connect)
+  unconnected-(U20-ADC_VREF-Pad35)             U20.35 (bidirectional+no_connect)
+  unconnected-(U20-GP22-Pad29)                 U20.29 (bidirectional+no_connect)
+  unconnected-(U20-RUN-Pad30)                  U20.30 (bidirectional+no_connect)
+  unconnected-(U20-VBUS-Pad40)                 U20.40 (power_in+no_connect)
+  unconnected-(U3-Pad12)                       U3.12 (output+no_connect)
+  unconnected-(U3-Pad8)                        U3.8 (output+no_connect)
+  unconnected-(U3-Pad9)                        U3.9 (output+no_connect)
+  unconnected-(U3A-DIODE_BIAS-Pad15)           U3.15 (input+no_connect)
+  unconnected-(U3C-DIODE_BIAS-Pad2)            U3.2 (input+no_connect)
+  unconnected-(U7-Pad12)                       U7.12 (output+no_connect)
+  unconnected-(U7-Pad8)                        U7.8 (output+no_connect)
+  unconnected-(U7-Pad9)                        U7.9 (output+no_connect)
+  unconnected-(U7A-DIODE_BIAS-Pad15)           U7.15 (input+no_connect)
+  unconnected-(U7C-DIODE_BIAS-Pad2)            U7.2 (input+no_connect)
+  unconnected-(U8-Y-Pad3)                      U8.3 (bidirectional+no_connect)
+  unconnected-(U8-Y0-Pad1)                     U8.1 (bidirectional+no_connect)
+  unconnected-(U8-Y1-Pad5)                     U8.5 (bidirectional+no_connect)
+  unconnected-(U8-Y2-Pad2)                     U8.2 (bidirectional+no_connect)
+  unconnected-(U8-Y3-Pad4)                     U8.4 (bidirectional+no_connect)
+  count: 42
+
+=== power/supply-ish nets (node counts) ===
+  +5V                                          8 nodes
+  /core567/V567_MID                            5 nodes
+  /mcu/WS_DATA_3V3                             2 nodes
+  /mcu/WS_DATA_5V                              2 nodes
+  /power/BUCK_BST                              2 nodes
+  /power/BUCK_COMP                             2 nodes
+  /power/BUCK_COMPC                            2 nodes
+  /power/BUCK_EN                               3 nodes
+  /power/BUCK_FB                               3 nodes
+  /power/BUCK_FREQ                             2 nodes
+  /power/BUCK_SW                               4 nodes
+  /power/FLOOR62                               3 nodes
+  /power/QBASE                                 4 nodes
+  /power/QGATE                                 3 nodes
+  /power/SRV_FB                                3 nodes
+  /power/SRV_OUT                               3 nodes
+  /power/U6C_FB                                2 nodes
+  /power/U6D_FB                                2 nodes
+  /power/V9RAW                                 2 nodes
+  /power/VIN_RAW                               2 nodes
+  /power/VPROT                                 3 nodes
+  /power/VREF_RAW                              4 nodes
+  3V3                                          13 nodes
+  GND                                          150 nodes
+  V567                                         10 nodes
+  V567_DRIVE                                   3 nodes
+  VA                                           46 nodes
+  VREF                                         55 nodes
+  unconnected-(U20-3V3_EN-Pad37)               1 nodes
+  unconnected-(U20-ADC_VREF-Pad35)             1 nodes
+  unconnected-(U20-VBUS-Pad40)                 1 nodes
