@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.kicad.org/drc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-08-01T20:09:52",
+    "date": "2026-08-01T20:51:54",
     "ignored_checks": [
         {
             "description": "Footprint has no courtyard defined",
@@ -81,12 +81,35 @@
                     "uuid": "34c47d48-7175-4b54-92ca-28528a9eead3"
                 },
                 {
+                    "description": "PTH pad 5 [/POT1_W] of J1",
+                    "pos": {
+                        "x": 101.08,
+                        "y": 104.0
+                    },
+                    "uuid": "e9a8ab57-24d2-4088-afc9-eadc2e5d351f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'BYPASS' on F.Silkscreen",
+                    "pos": {
+                        "x": 104.0,
+                        "y": 104.0
+                    },
+                    "uuid": "34c47d48-7175-4b54-92ca-28528a9eead3"
+                },
+                {
                     "description": "PTH pad 7 [/POT3_W] of J1",
                     "pos": {
                         "x": 103.62,
                         "y": 104.0
                     },
-                    "uuid": "e3d42a3e-166d-40a4-8178-e657c7cab0d8"
+                    "uuid": "bb53148b-4dfd-4638-9d2f-10bca05bf480"
                 }
             ],
             "severity": "warning",
@@ -109,7 +132,7 @@
                         "x": 106.16,
                         "y": 104.0
                     },
-                    "uuid": "08665ed7-1dd0-4e34-b797-f0ee276bed08"
+                    "uuid": "0d824909-2ca7-4712-800d-d03d303194a5"
                 }
             ],
             "severity": "warning",
@@ -132,30 +155,7 @@
                         "x": 108.7,
                         "y": 104.0
                     },
-                    "uuid": "3fa0a16b-342f-4fe5-a89a-f1e8ee33c589"
-                }
-            ],
-            "severity": "warning",
-            "type": "silk_over_copper"
-        },
-        {
-            "description": "Silkscreen clipped by solder mask",
-            "items": [
-                {
-                    "description": "PCB text 'BYPASS' on F.Silkscreen",
-                    "pos": {
-                        "x": 104.0,
-                        "y": 104.0
-                    },
-                    "uuid": "34c47d48-7175-4b54-92ca-28528a9eead3"
-                },
-                {
-                    "description": "PTH pad 5 [/POT1_W] of J1",
-                    "pos": {
-                        "x": 101.08,
-                        "y": 104.0
-                    },
-                    "uuid": "39fcb5ca-ff25-4ab5-b013-6027557ddf24"
+                    "uuid": "2fc4d027-0058-4fd3-9deb-4ec99a125945"
                 }
             ],
             "severity": "warning",
