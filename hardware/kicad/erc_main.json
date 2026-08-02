@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.kicad.org/erc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-07-25T02:54:04",
+    "date": "2026-08-01T20:09:01",
     "ignored_checks": [
         {
             "description": "Global label only appears once in the schematic",
@@ -22,13 +22,14 @@
     ],
     "included_severities": [
         "error",
-        "warning"
+        "warning",
+        "exclusion"
     ],
     "kicad_version": "10.0.4",
     "sheets": [
         {
             "path": "/",
-            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787",
+            "uuid_path": "/6b2f8bd7-3dbf-481c-b7ea-4c5aac456737",
             "violations": [
                 {
                     "description": "The current configuration does not include the symbol library 'Glitchwave'",
@@ -39,11 +40,26 @@
                                 "x": 0.635,
                                 "y": 1.27
                             },
-                            "uuid": "80275578-99be-40de-8c30-c49e461e123f"
+                            "uuid": "8724ef10-4ee8-46bb-af72-85af44159719"
                         }
                     ],
                     "severity": "warning",
                     "type": "lib_symbol_issues"
+                },
+                {
+                    "description": "Footprint 'CP_Elec_8x10.2' not found in library 'Capacitor_SMD'",
+                    "items": [
+                        {
+                            "description": "Symbol C100 [C_Polarized]",
+                            "pos": {
+                                "x": 1.0922,
+                                "y": 0.6604
+                            },
+                            "uuid": "dfc069f1-920c-4386-9e27-54233eab3bee"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
                 },
                 {
                     "description": "Symbol 'BCP56' doesn't match copy in library 'Transistor_BJT'",
@@ -54,7 +70,7 @@
                                 "x": 3.2512,
                                 "y": 1.27
                             },
-                            "uuid": "00f3d1bd-e94d-41f8-9b72-6b272d42d331"
+                            "uuid": "a54449e3-43f3-4d13-ad8a-54dcf2399dde"
                         }
                     ],
                     "severity": "warning",
@@ -69,7 +85,7 @@
                                 "x": 0.635,
                                 "y": 1.8796
                             },
-                            "uuid": "054d059b-33de-4ad9-88da-fcc608d9b39f"
+                            "uuid": "990e7d0d-9d48-4b54-a132-c292553c8e33"
                         }
                     ],
                     "severity": "warning",
@@ -84,11 +100,26 @@
                                 "x": 0.7874,
                                 "y": 0.5588
                             },
-                            "uuid": "4cb941bd-3b65-4388-9415-6264b9129825"
+                            "uuid": "5f5b511a-f978-4959-bab3-410e6ef8e396"
                         }
                     ],
                     "severity": "warning",
                     "type": "lib_symbol_issues"
+                },
+                {
+                    "description": "Footprint 'CP_Elec_10x10.2' not found in library 'Capacitor_SMD'",
+                    "items": [
+                        {
+                            "description": "Symbol C48 [C_Polarized]",
+                            "pos": {
+                                "x": 2.5908,
+                                "y": 1.4605
+                            },
+                            "uuid": "5480d20e-4ffe-405b-bc29-ae700fd65a8a"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
                 },
                 {
                     "description": "Symbol 'MMBT3904' doesn't match copy in library 'Transistor_BJT'",
@@ -99,7 +130,7 @@
                                 "x": 2.6924,
                                 "y": 1.905
                             },
-                            "uuid": "98ebd02a-e179-4dfc-9803-0e37073df43b"
+                            "uuid": "0de741d0-c651-41a5-b248-fbcdcd53353e"
                         }
                     ],
                     "severity": "warning",
@@ -114,7 +145,7 @@
                                 "x": 2.9083,
                                 "y": 1.905
                             },
-                            "uuid": "48f22b46-3b93-4b8f-a2ed-fe5b0c2e8342"
+                            "uuid": "358be9e0-88e3-4624-8db9-69b7ef83d3ee"
                         }
                     ],
                     "severity": "warning",
@@ -129,7 +160,7 @@
                                 "x": 0.762,
                                 "y": 0.889
                             },
-                            "uuid": "d69423f3-2a1a-45b0-b14b-f66cdc392895"
+                            "uuid": "f0c21e22-f580-4be8-9465-4abb70078593"
                         }
                     ],
                     "severity": "warning",
@@ -144,7 +175,7 @@
                                 "x": 2.5654,
                                 "y": 1.1684
                             },
-                            "uuid": "3d021b03-f244-42e1-b9b2-f6b32bcd70a5"
+                            "uuid": "c30b2cd9-0d50-4cf0-b8f6-f42f75551d3a"
                         }
                     ],
                     "severity": "warning",
@@ -159,7 +190,7 @@
                                 "x": 2.7686,
                                 "y": 1.1684
                             },
-                            "uuid": "cfcdfdf8-ec0a-4ac1-bbfc-1d311abbf340"
+                            "uuid": "757e508f-a822-45b3-8479-8167cb363ba2"
                         }
                     ],
                     "severity": "warning",
@@ -174,7 +205,7 @@
                                 "x": 2.9718,
                                 "y": 1.1684
                             },
-                            "uuid": "cbe34e52-8024-4dca-ab2e-0e281b9b5050"
+                            "uuid": "963ee7cb-456e-4775-a534-078e245cb843"
                         }
                     ],
                     "severity": "warning",
@@ -189,7 +220,7 @@
                                 "x": 2.667,
                                 "y": 2.159
                             },
-                            "uuid": "85a0f2af-fba6-492b-b460-24c630d3e0ab"
+                            "uuid": "00ffb796-6b24-4ddb-9430-ef5e7d3a103d"
                         }
                     ],
                     "severity": "warning",
@@ -204,7 +235,7 @@
                                 "x": 2.8702,
                                 "y": 2.159
                             },
-                            "uuid": "734d630e-8077-4c23-96df-6dda4fe1a17d"
+                            "uuid": "024ee9c3-157a-4eaa-a0b9-e120df5d5e9c"
                         }
                     ],
                     "severity": "warning",
@@ -219,97 +250,22 @@
                                 "x": 3.0734,
                                 "y": 2.159
                             },
-                            "uuid": "16920496-bb75-41cd-8689-a68cd1779998"
+                            "uuid": "dd426461-81f2-462a-8dc4-8a558709d3d0"
                         }
                     ],
                     "severity": "warning",
                     "type": "lib_symbol_mismatch"
-                },
-                {
-                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
-                    "items": [
-                        {
-                            "description": "Symbol J1 [AudioJack2_SwitchT]",
-                            "pos": {
-                                "x": 0.3302,
-                                "y": 0.4572
-                            },
-                            "uuid": "ccb12eee-e199-4611-9977-41fce395697d"
-                        }
-                    ],
-                    "severity": "warning",
-                    "type": "footprint_link_issues"
-                },
-                {
-                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
-                    "items": [
-                        {
-                            "description": "Symbol J3 [AudioJack2_SwitchT]",
-                            "pos": {
-                                "x": 0.3302,
-                                "y": 0.8636
-                            },
-                            "uuid": "cca7a931-cfcb-42a8-a56e-8f8570ed1172"
-                        }
-                    ],
-                    "severity": "warning",
-                    "type": "footprint_link_issues"
-                },
-                {
-                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
-                    "items": [
-                        {
-                            "description": "Symbol J2 [AudioJack2]",
-                            "pos": {
-                                "x": 0.8382,
-                                "y": 0.4572
-                            },
-                            "uuid": "5f6c1e40-95ba-48c2-954b-92ad8eb246de"
-                        }
-                    ],
-                    "severity": "warning",
-                    "type": "footprint_link_issues"
-                },
-                {
-                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
-                    "items": [
-                        {
-                            "description": "Symbol J4 [AudioJack2_SwitchT]",
-                            "pos": {
-                                "x": 0.8382,
-                                "y": 0.8636
-                            },
-                            "uuid": "94323cc6-88e0-4342-96e6-e23db494fe5d"
-                        }
-                    ],
-                    "severity": "warning",
-                    "type": "footprint_link_issues"
-                },
-                {
-                    "description": "The current configuration does not include the footprint library 'Glitchwave'",
-                    "items": [
-                        {
-                            "description": "Symbol J6 [AudioJack2]",
-                            "pos": {
-                                "x": 1.3462,
-                                "y": 0.8636
-                            },
-                            "uuid": "005dfef5-5ba2-4679-9fb4-6d950317f9d8"
-                        }
-                    ],
-                    "severity": "warning",
-                    "type": "footprint_link_issues"
                 }
             ]
         },
         {
             "path": "/power/",
-            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/e801c1e6-17ce-4ac2-a5fb-ac59051baef3",
+            "uuid_path": "/6b2f8bd7-3dbf-481c-b7ea-4c5aac456737/8a32f141-1a4e-45c2-94d2-45317fe7519c",
             "violations": []
         },
         {
             "path": "/output/",
-            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/76e580bd-7276-48f8-89e3-7a546b45efe9",
+            "uuid_path": "/6b2f8bd7-3dbf-481c-b7ea-4c5aac456737/e652f637-f3d1-4904-a6c3-6c9eb08d88f4",
             "violations": [
                 {
                     "description": "Pins of type Output and Output are connected",
@@ -320,7 +276,7 @@
                                 "x": 0.889,
                                 "y": 1.905
                             },
-                            "uuid": "2a4d790c-3e1a-4bd4-8673-daafa37221d9"
+                            "uuid": "0ffbb131-eac4-4e4a-bee3-bcf211836898"
                         },
                         {
                             "description": "Symbol U15 Pin 12 [Output, Line]",
@@ -328,7 +284,7 @@
                                 "x": 1.7018,
                                 "y": 1.905
                             },
-                            "uuid": "cc52e343-a6a0-44a8-944a-b626793b36b4"
+                            "uuid": "c0cc185f-a7b7-488f-8abe-c29b75e4239a"
                         }
                     ],
                     "severity": "error",
@@ -338,27 +294,43 @@
         },
         {
             "path": "/input_dirt/",
-            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/1a8319a9-a6c2-4fef-b2a8-8e073003154a",
+            "uuid_path": "/6b2f8bd7-3dbf-481c-b7ea-4c5aac456737/45d1c616-16e1-48f5-bcd2-96ad7407a39e",
             "violations": []
         },
         {
             "path": "/env_cv/",
-            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/c5e87dd4-2360-44c5-93cb-746d024435a9",
+            "uuid_path": "/6b2f8bd7-3dbf-481c-b7ea-4c5aac456737/23127f48-6236-44cc-a269-a365f966086b",
             "violations": []
         },
         {
             "path": "/core567/",
-            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/1df45449-3d65-473b-9336-38c51203ac43",
-            "violations": []
+            "uuid_path": "/6b2f8bd7-3dbf-481c-b7ea-4c5aac456737/8d1cf603-e603-4104-a80a-7beccc5a96d0",
+            "violations": [
+                {
+                    "description": "Input Power pin not driven by any Output Power pins",
+                    "items": [
+                        {
+                            "description": "Symbol U5 Pin 4 [VCC, Power input, Line]",
+                            "pos": {
+                                "x": 0.8001,
+                                "y": 0.4445
+                            },
+                            "uuid": "cbdb1c38-2658-4288-a210-8019b9d92570"
+                        }
+                    ],
+                    "severity": "error",
+                    "type": "power_pin_not_driven"
+                }
+            ]
         },
         {
             "path": "/mcu/",
-            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/42babe6a-7070-407a-b036-269c6f78cc00",
+            "uuid_path": "/6b2f8bd7-3dbf-481c-b7ea-4c5aac456737/cee75fa3-835f-4a48-a98b-6fdeadb36e54",
             "violations": []
         },
         {
             "path": "/mix_svf/",
-            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/3f9dec00-ae75-4986-b3a2-98f6d4e97a80",
+            "uuid_path": "/6b2f8bd7-3dbf-481c-b7ea-4c5aac456737/38de6a07-fa3f-4a43-875d-931fc7568c25",
             "violations": [
                 {
                     "description": "Pins of type Output and Output are connected",
@@ -369,7 +341,7 @@
                                 "x": 1.143,
                                 "y": 0.4572
                             },
-                            "uuid": "e2b1fc65-7b0a-4af3-a99d-a8c33eb97ac3"
+                            "uuid": "429ed0a0-0a20-4c76-878e-06ed445b9fc2"
                         },
                         {
                             "description": "Symbol U10 Pin 12 [Output, Line]",
@@ -377,7 +349,7 @@
                                 "x": 2.1082,
                                 "y": 0.4572
                             },
-                            "uuid": "db4fc670-ecc0-4c2b-87c4-529b045dc0a3"
+                            "uuid": "a5e02c67-b6fc-457a-9a72-6d6f5745b575"
                         }
                     ],
                     "severity": "error",
@@ -387,7 +359,7 @@
         },
         {
             "path": "/jacks/",
-            "uuid_path": "/c138e8b6-6014-4633-94fc-c3760e2ce787/481cb742-4c6a-409b-85ea-72199d372a5c",
+            "uuid_path": "/6b2f8bd7-3dbf-481c-b7ea-4c5aac456737/292e89fb-5641-4087-adb1-3a35795bc480",
             "violations": []
         }
     ],

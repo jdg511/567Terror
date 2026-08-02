@@ -23,6 +23,26 @@ def mm(v): return pcbnew.FromMM(v)
 def to_mm(v): return pcbnew.ToMM(v)
 
 
+def eff_shape(item):
+    """GetEffectiveShape() compatibility.
+
+    KiCad <=8 exposed a zero-arg overload; KiCad 10 requires a PCB_LAYER_ID
+    (TypeError: Wrong number or type of arguments for overloaded function
+    'PAD_GetEffectiveShape').  Try the old signature first so behaviour on
+    older pcbnew is byte-identical, then fall back to an explicit layer.
+    """
+    try:
+        return item.GetEffectiveShape()
+    except TypeError:
+        pass
+    for lay in (item.GetLayer(), pcbnew.F_Cu, pcbnew.B_Cu):
+        try:
+            return item.GetEffectiveShape(lay)
+        except Exception:
+            continue
+    raise RuntimeError('GetEffectiveShape failed for %r' % (item,))
+
+
 def net_clusters(board, con, nc):
     """BFS clusters of a net's pads+tracks+vias using direct-neighbour APIs."""
     pads = [p for fp in board.GetFootprints() for p in fp.Pads() if p.GetNetCode() == nc]
@@ -83,7 +103,7 @@ class Obstacles:
                         self.holes.append((to_mm(p.GetPosition().x), to_mm(p.GetPosition().y),
                                            to_mm(p.GetDrillSize().x)))
                     continue
-                sh = p.GetEffectiveShape()
+                sh = eff_shape(p)
                 add(sh, item_layers(p), p.GetBoundingBox())
                 if p.GetDrillSize().x:
                     self.holes.append((to_mm(p.GetPosition().x), to_mm(p.GetPosition().y),
@@ -94,7 +114,7 @@ class Obstacles:
                     self.holes.append((to_mm(t.GetPosition().x), to_mm(t.GetPosition().y),
                                        to_mm(t.GetDrill())))
                 continue
-            sh = t.GetEffectiveShape()
+            sh = eff_shape(t)
             if t.GetClass() == 'PCB_VIA':
                 add(sh, list(range(len(LAYERS))), t.GetBoundingBox())
                 self.holes.append((to_mm(t.GetPosition().x), to_mm(t.GetPosition().y),
@@ -102,7 +122,15 @@ class Obstacles:
             else:
                 add(sh, item_layers(t), t.GetBoundingBox())
 
-    def seg_clear(self, L, ax, ay, bx, by, width=TRACK_W, clr=CLR):
+    def seg_clear(self, L, ax, ay, bx, by, width=None, clr=None):
+        # NOTE: these used to default to `width=TRACK_W, clr=CLR`, which binds the
+        # module globals at DEFINITION time. That silently defeated the optional
+        # <clearance> command-line argument - passing 0.35 produced byte-identical
+        # routing to the 0.15 default. Resolve at CALL time instead.
+        if width is None:
+            width = TRACK_W
+        if clr is None:
+            clr = CLR
         seg = pcbnew.SHAPE_SEGMENT(pcbnew.VECTOR2I(mm(ax), mm(ay)),
                                    pcbnew.VECTOR2I(mm(bx), mm(by)), mm(width))
         cells = set()

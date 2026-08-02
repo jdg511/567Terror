@@ -1,0 +1,188 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-08-01T20:09:52",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Solder mask aperture bridges items with different nets",
+            "key": "solder_mask_bridge"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "PTH inside courtyard",
+            "key": "pth_inside_courtyard"
+        },
+        {
+            "description": "NPTH inside courtyard",
+            "key": "npth_inside_courtyard"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "10.0.4",
+    "schematic_parity": [],
+    "source": "glitchwave567_ctrl.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Reference field of C1",
+                    "pos": {
+                        "x": 69.0,
+                        "y": 59.37
+                    },
+                    "uuid": "75f6ee9d-9b5a-486a-b5c1-b58393489ec7"
+                },
+                {
+                    "description": "PCB text 'FIZZ         Q          VOL' on F.Silkscreen",
+                    "pos": {
+                        "x": 69.0,
+                        "y": 58.0
+                    },
+                    "uuid": "bce1200e-7740-4056-b255-42a71a8968e1"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'BYPASS' on F.Silkscreen",
+                    "pos": {
+                        "x": 104.0,
+                        "y": 104.0
+                    },
+                    "uuid": "34c47d48-7175-4b54-92ca-28528a9eead3"
+                },
+                {
+                    "description": "PTH pad 7 [/POT3_W] of J1",
+                    "pos": {
+                        "x": 103.62,
+                        "y": 104.0
+                    },
+                    "uuid": "e3d42a3e-166d-40a4-8178-e657c7cab0d8"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'BYPASS' on F.Silkscreen",
+                    "pos": {
+                        "x": 104.0,
+                        "y": 104.0
+                    },
+                    "uuid": "34c47d48-7175-4b54-92ca-28528a9eead3"
+                },
+                {
+                    "description": "PTH pad 9 [/POT5_W] of J1",
+                    "pos": {
+                        "x": 106.16,
+                        "y": 104.0
+                    },
+                    "uuid": "08665ed7-1dd0-4e34-b797-f0ee276bed08"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'BYPASS' on F.Silkscreen",
+                    "pos": {
+                        "x": 104.0,
+                        "y": 104.0
+                    },
+                    "uuid": "34c47d48-7175-4b54-92ca-28528a9eead3"
+                },
+                {
+                    "description": "PTH pad 11 [/STOMP1] of J1",
+                    "pos": {
+                        "x": 108.7,
+                        "y": 104.0
+                    },
+                    "uuid": "3fa0a16b-342f-4fe5-a89a-f1e8ee33c589"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'BYPASS' on F.Silkscreen",
+                    "pos": {
+                        "x": 104.0,
+                        "y": 104.0
+                    },
+                    "uuid": "34c47d48-7175-4b54-92ca-28528a9eead3"
+                },
+                {
+                    "description": "PTH pad 5 [/POT1_W] of J1",
+                    "pos": {
+                        "x": 101.08,
+                        "y": 104.0
+                    },
+                    "uuid": "39fcb5ca-ff25-4ab5-b013-6027557ddf24"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'FIZZ         Q          VOL' on F.Silkscreen",
+                    "pos": {
+                        "x": 69.0,
+                        "y": 58.0
+                    },
+                    "uuid": "bce1200e-7740-4056-b255-42a71a8968e1"
+                },
+                {
+                    "description": "PTH pad 2 [/POT5_W] of RV5",
+                    "pos": {
+                        "x": 69.0,
+                        "y": 57.0
+                    },
+                    "uuid": "e72a9bd8-6e87-47b3-8786-5955e9f94f2e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        }
+    ]
+}
