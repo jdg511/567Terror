@@ -1,4 +1,52 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.34)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.35)
+
+## v0.35 — x1 scale + Scale and Feedback window + the glitch pantheon (graphics only)
+
+Zero functional changes again: params, layers, tap tempo, gate and DSP are
+v0.32 behaviour, face is v0.34 Terror. Everything here is UI.
+
+### Scale (Jason: v0.34's 2.5x was "insanely HUGE")
+* The editor opens at **x1 (1060x640) every launch** — plugin and standalone.
+  uiScale lives on the processor (not a parameter) and the editor applies
+  changes live.
+* New standalone Options-menu item **"Scale and Feedback..."** (between
+  Audio/MIDI Settings and the separator). Built with a custom standalone app:
+  JUCE_USE_CUSTOM_PLUGIN_STANDALONE_APP=1 on the Standalone target only +
+  src/StandaloneApp.cpp (subclassed window hides the stock Options button and
+  shows the extended menu; stock items forward to handleMenuResult).
+* The window (src/ScaleFeedback.h): **x0.5 / x1 / x1.5 / x2** boxes (apply
+  instantly), the version number, and an optional feedback form — Name*,
+  Email*, Address, State, Zip*, Country, Phone #, a 10-line feedback box,
+  a 3-way notify choice (real-world pedal on sale / FREE plugins + real-world
+  products only / nothing at all — default: nothing), and a note that we would
+  never even consider selling anyone's info. SAVE writes a text file to
+  Documents/Illicit Apothecary/ locally; nothing is ever transmitted.
+
+### Face
+* The brand/version line under the tagline is gone (version now lives in the
+  Scale and Feedback window); "Where the Fuzz Meets the Funk" grew to 40 px.
+
+### The glitch pantheon (all visual only — the audio path never sees them)
+* **Major Glitch — every 33:33, 1.3 s.** Full replacement of the old veil
+  glitch (hated), built from Jason's four reference images/videos: datamosh
+  row-ripple with corrupted macroblocks → rainbow pixel-sort melt (the face
+  drips downward in hue-cycling streaks) → vertical comb tear with saturated
+  colour bands and diagonal black rips → liquid psychedelic hue-wash → snap
+  back. Snapshot-based; every strobe frame mutates.
+* **Med Glitch — every 11:11, 325 ms.** A two-act half-length cut from the
+  same reference art (comb strips with sparse rainbow drips → liquid ripple
+  with hue washes) played at double speed.
+* **Smear — every 6:06.006, 550 ms.** Quick band-tear to the right.
+* **Color bars — every 3:33, 360 ms.** Flickering cyan/magenta + green/yellow
+  dash bars.
+* **Title jiggle — every ~1:11 ± 12 s, speed ± 13 % per event.** The name
+  splits into four slices ripping in different directions (one always tears
+  the opposite way), RGB separation jumps per slice, smear trails drag behind
+  it, and dropout slivers + stray confetti cut through the text. Every
+  occurrence rolls differently.
+* The big smear (v0.35-dev interim) was auditioned and deleted. A temporary
+  on-face trigger-button test panel was used during the audition and removed
+  for ship; GlitchFx keeps its trigger methods for future test builds.
 
 ## v0.34 — "Terror" glitch-art face (Jason's Claude Design restyle; graphics only)
 

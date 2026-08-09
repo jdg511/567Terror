@@ -63,6 +63,11 @@ public:
 
     juce::AudioProcessorValueTreeState apvts;
 
+    // v0.35: UI scale chosen in the standalone's "Scale and Feedback" window.
+    // Not a parameter — every launch defaults to x1 (Jason's spec); the editor
+    // polls and applies it live.
+    std::atomic<float> uiScale { 1.0f };
+
 private:
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 

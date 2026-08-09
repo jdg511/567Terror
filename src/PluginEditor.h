@@ -837,8 +837,10 @@ public:
 };
 
 // ---------------------------------------------------------------------------
-// "Where the Fuzz Meets the Funk" — chromatic-aberration tagline with the
-// occasional horizontal tear, plus the brand line under it.
+// "Where the Fuzz Meets the Funk" — chromatic-aberration name with the
+// occasional horizontal tear. v0.35: the brand/version line below it is gone
+// (version now lives in the standalone's Scale and Feedback window) and the
+// name grew to fill the freed space.
 // ---------------------------------------------------------------------------
 class TaglineComp : public juce::Component
 {
@@ -851,32 +853,70 @@ public:
     void paint (juce::Graphics& g) override
     {
         const juce::String t = "Where the Fuzz Meets the Funk";
-        auto f = gw::barlow (27.6f, true, 0.02f);
-        auto area = getLocalBounds().withHeight (34).translated ((int) tear, 0);
-        g.setFont (f);
-        g.setColour (juce::Colour (0xffff00be).withAlpha (0.85f));
-        g.drawText (t, area.translated (2, 0), juce::Justification::centredRight);
-        g.setColour (gw::kCyan.withAlpha (0.85f));
-        g.drawText (t, area.translated (-2, 0), juce::Justification::centredRight);
-        g.setColour (gw::kText);
-        g.drawText (t, area, juce::Justification::centredRight);
+        g.setFont (gw::barlow (40.0f, true, 0.01f));
+        const bool moving = std::fabs (tear) > 0.1f;
 
-        // ILLICIT APOTHECARY · FILTER · v0.34
-        auto fm = gw::mono (11.4f, 400, 0.06f);
-        float x = (float) getWidth();
-        auto put = [&] (const juce::String& s, juce::Colour c)
+        auto draw = [&] (juce::Rectangle<int> clip, float off, int dy, int chrom)
         {
-            x -= gw::textW (fm, s);
-            g.setColour (c);
-            g.setFont (fm);
-            g.drawText (s, juce::Rectangle<float> (x, 38.0f, 600.0f, 14.0f),
-                        juce::Justification::topLeft);
+            g.saveState();
+            g.reduceClipRegion (clip);
+            auto a = getLocalBounds().translated ((int) off, dy);
+            g.setColour (juce::Colour (0xffff00be).withAlpha (0.85f));
+            g.drawText (t, a.translated (chrom, 0), juce::Justification::centredRight);
+            g.setColour (gw::kCyan.withAlpha (0.85f));
+            g.drawText (t, a.translated (-chrom, 0), juce::Justification::centredRight);
+            g.setColour (gw::kText);
+            g.drawText (t, a, juce::Justification::centredRight);
+            g.restoreState();
         };
-        put ("v0.34", gw::kGrey);
-        put (juce::String::fromUTF8 (" \xc2\xb7 "), gw::kGrey);
-        put ("FILTER", gw::kGreen);
-        put (juce::String::fromUTF8 (" \xc2\xb7 "), gw::kGrey);
-        put ("ILLICIT APOTHECARY", gw::kDim);
+        const auto r = getLocalBounds();
+
+        if (! moving)
+        {
+            draw (r, 0.0f, 0, 3);
+            return;
+        }
+
+        // v0.35: a properly glitchy jiggle — smear trails, four slices torn
+        // in different directions with jumping RGB split, plus dropouts
+        auto& rr = juce::Random::getSystemRandom();
+
+        for (int tr = 4; tr >= 1; --tr)   // the smear
+        {
+            g.setColour (gw::kText.withAlpha (0.05f + 0.20f / (float) tr));
+            g.drawText (t, getLocalBounds().translated (
+                            (int) (tear * (1.0f + 0.9f * (float) tr)), 0),
+                        juce::Justification::centredRight);
+        }
+
+        const float mult[4] = { 1.0f,
+                                -0.8f - rr.nextFloat() * 0.6f,   // slice 2 rips the other way
+                                1.7f + rr.nextFloat() * 0.8f,
+                                1.2f };
+        const int sh = r.getHeight() / 4;
+        for (int i = 0; i < 4; ++i)
+        {
+            auto slice = r.withTrimmedTop (i * sh).withHeight (i == 3 ? r.getHeight() - 3 * sh : sh);
+            draw (slice,
+                  tear * mult[i] + (float) rr.nextInt (7) - 3.0f,
+                  rr.nextInt (5) - 2,
+                  3 + rr.nextInt (7));
+        }
+
+        for (int d = 0; d < 3; ++d)       // dropout slivers through the text
+        {
+            g.setColour (juce::Colours::black.withAlpha (0.9f));
+            g.fillRect (r.getX() + rr.nextInt (juce::jmax (1, r.getWidth() - 200)),
+                        r.getY() + rr.nextInt (juce::jmax (1, r.getHeight() - 4)),
+                        60 + rr.nextInt (180), 2 + rr.nextInt (4));
+        }
+        for (int c = 0; c < 2; ++c)       // stray confetti
+        {
+            g.setColour (juce::Colour::fromHSV (rr.nextFloat(), 0.95f, 1.0f, 0.85f));
+            g.fillRect (r.getX() + rr.nextInt (juce::jmax (1, r.getWidth() - 30)),
+                        r.getY() + rr.nextInt (juce::jmax (1, r.getHeight() - 8)),
+                        8 + rr.nextInt (24), 3 + rr.nextInt (6));
+        }
     }
 
 private:
@@ -892,11 +932,26 @@ class GlitchFx : public juce::Component
 public:
     GlitchFx() { setInterceptsMouseClicks (false, false); }
 
+    // set by the editor: grabs a snapshot of the whole face for the smears
+    std::function<juce::Image()> grabFace;
+
+    // v0.35 test-panel triggers: fire any glitch immediately (same visuals
+    // the schedule produces — visual only, audio untouched)
+    void triggerBars()     { pendLight = true; }
+    void triggerMajor()    { pendMajor = true; }
+    void triggerSmear()    { pendSmall = true; }
+    void triggerMed()      { pendMed = true; }
+
     // called from the editor timer; nowMs is a steadily increasing clock
     void tick (double nowMs)
     {
         if (t0 <= 0.0) t0 = nowMs;
         const double t = nowMs - t0;
+
+        if (pendLight) { pendLight = false; manLight = t; }
+        if (pendMajor) { pendMajor = false; manMajor = t; }
+        if (pendSmall) { pendSmall = false; manSmall = t; }
+        if (pendMed)   { pendMed   = false; manMed   = t; }
 
         // 7 s scan sweep
         const float newY = (float) std::fmod (t / 7000.0, 1.0) * 780.0f - 140.0f;
@@ -907,30 +962,129 @@ public:
             repaint (oldR.getUnion ({ 0, (int) scanY - 1, getWidth(), 143 }));
         }
 
-        // light burst: every 33 s, ~0.36 s of flickering colour bars
-        const double lp = std::fmod (t, 33000.0);
-        const bool light = lp < 360.0;
-        if (light != lightOn || (light && (int) (lp / 60.0) != lightFrame))
+        // ---- digital smears (visual ONLY, audio untouched) -----------------
+        float target = 0.0f;
+        bool  wantSmear = false;
+        {
+            // small/medium tear RIGHT — every 6:06.006 (Jason), 550 ms
+            double p = std::fmod (t, 366006.0) - 365456.0;
+            if (manSmall >= 0.0)
+            {
+                const double q = t - manSmall;
+                if (q < 550.0) p = q; else manSmall = -1.0;
+            }
+            if (p >= 0.0 && p < 550.0)
+            {
+                wantSmear = true;
+                target = 95.0f * std::pow ((float) (p / 550.0), 1.7f)
+                       + (float) (((int) (t / 40.0) * 7919) % 13) - 6.0f;
+            }
+        }
+        smearOff = target;
+
+        // light burst: every 3:33 (or triggered), ~0.36 s of flickering bars
+        double lw = -1.0;
+        {
+            const double lp = std::fmod (t, 213000.0) - 212640.0;
+            if (lp >= 0.0) lw = lp;
+        }
+        if (manLight >= 0.0)
+        {
+            const double q = t - manLight;
+            if (q < 360.0) lw = q; else manLight = -1.0;
+        }
+        const bool light = lw >= 0.0;
+        if (light != lightOn || (light && (int) (lw / 60.0) != lightFrame))
         {
             lightOn = light;
-            lightFrame = (int) (lp / 60.0);
+            lightFrame = (int) (lw / 60.0);
             repaint (0, 205, getWidth(), 20);
             repaint (0, 410, getWidth(), 16);
         }
 
-        // major glitch: every 666 s, ~1.3 s of mayhem
-        const double mp = std::fmod (t, 666000.0);
-        const bool major = mp > 1000.0 && mp < 2300.0;
-        if (major != majorOn || (major && (int) (mp / 70.0) != majorFrame))
+        // major glitch v2 — every 33:33 (or triggered), 1.3 s: datamosh
+        // ripple -> rainbow pixel-sort melt -> comb/colour-band tear ->
+        // liquid hue-wash, then snap back (Jason's reference art)
+        double mw = -1.0;
+        {
+            const double mp = std::fmod (t, 2013000.0) - 2011700.0;
+            if (mp >= 0.0 && mp < 1300.0) mw = mp;
+        }
+        if (manMajor >= 0.0)
+        {
+            const double q = t - manMajor;
+            if (q < 1300.0) mw = q; else manMajor = -1.0;
+        }
+        const bool major = mw >= 0.0;
+        if (major != majorOn || (major && (int) (mw / 70.0) != majorFrame))
         {
             majorOn = major;
-            majorFrame = (int) (mp / 70.0);
+            majorFrame = (int) (mw / 70.0);
             repaint();
         }
+
+        // Med Glitch — every 11:11 (or triggered), 325 ms: the same two-act
+        // cut as before, played at double speed (Jason: literally half the
+        // time), from the major's reference art
+        double dw = -1.0;
+        {
+            const double dp = std::fmod (t, 671000.0) - 670675.0;
+            if (dp >= 0.0 && dp < 325.0) dw = dp;
+        }
+        if (manMed >= 0.0)
+        {
+            const double q = t - manMed;
+            if (q < 325.0) dw = q; else manMed = -1.0;
+        }
+        const bool med = dw >= 0.0;
+        if (med != medOn || (med && (int) (dw / 35.0) != medFrame))
+        {
+            medOn = med;
+            medFrame = (int) (dw / 35.0);
+            repaint();
+        }
+
+        // shared face snapshot for smears + major + med
+        const bool wantFace = wantSmear || major || med;
+        if (wantFace && ! snap.isValid() && grabFace)
+        {
+            snapping = true;
+            snap = grabFace();
+            snapping = false;
+        }
+        if (! wantFace && snap.isValid())
+        {
+            snap = juce::Image();
+            repaint();
+        }
+        smearing = wantSmear && snap.isValid();
+        if (smearing)
+            repaint();
     }
 
     void paint (juce::Graphics& g) override
     {
+        if (snapping)
+            return;                      // never paint into our own snapshot
+
+        if (majorOn && snap.isValid())   // the major glitch owns the frame
+        {
+            paintMajor (g);
+            return;
+        }
+
+        if (medOn && snap.isValid())     // ...as does the med glitch
+        {
+            paintMed (g);
+            return;
+        }
+
+        if (smearing && snap.isValid())  // the smear replaces the whole face
+        {
+            paintSmear (g);
+            return;
+        }
+
         {   // scan sweep, 6 % white band
             juce::ColourGradient grad (juce::Colours::transparentWhite, 0.0f, scanY,
                                        juce::Colours::transparentWhite, 0.0f, scanY + 140.0f, false);
@@ -960,48 +1114,262 @@ public:
             bar (210, 9, gw::kCyan, 4, 7, gw::kMagenta, 3, 12, 0);
             bar (415, 6, gw::kGreen, 3, 6, gw::kYellow, 2, 11, 5);
         }
-
-        if (majorOn)
-        {
-            // veil of magenta / cyan scan pairs
-            const float va = 0.10f + 0.12f * (float) (majorFrame % 3);
-            for (int y = 0; y < getHeight(); y += 13)
-            {
-                g.setColour (gw::kMagenta.withAlpha (va));
-                g.fillRect (0, y, getWidth(), 2);
-                g.setColour (gw::kCyan.withAlpha (va * 0.8f));
-                g.fillRect (0, y + 5, getWidth(), 2);
-            }
-            // three tear bands sliding pseudo-randomly
-            struct Band { int y, h; } bands[3] = { { 102, 54 }, { 311, 88 }, { 500, 120 } };
-            for (int b = 0; b < 3; ++b)
-            {
-                const int off = (((majorFrame * 131 + b * 977) % 361) - 180);
-                int x = -200 + off;
-                const juce::Colour cols[4] = { gw::kYellow, gw::kCyan, gw::kMagenta, gw::kGreen };
-                int i = 0;
-                while (x < getWidth())
-                {
-                    g.setColour (cols[(i + b) % 4].withAlpha (0.5f));
-                    const int w = 3 + ((i * 7 + b) % 5);
-                    g.fillRect (x, bands[b].y, w, bands[b].h);
-                    x += w + 8 + ((i * 3) % 9);
-                    ++i;
-                }
-            }
-            if (majorFrame % 6 == 0)   // stroboscopic full-face flash
-            {
-                g.setColour (juce::Colours::white.withAlpha (0.18f));
-                g.fillAll();
-            }
-        }
     }
 
 private:
+    // deterministic per-frame noise so each strobe frame mutates
+    static const juce::Colour* glitchPal()
+    {
+        static const juce::Colour pal[7] = {
+            juce::Colour (0xffff00ff), juce::Colour (0xff00ff44), juce::Colour (0xff00eaff),
+            juce::Colour (0xffffe600), juce::Colour (0xffff2222), juce::Colour (0xff2b6bff),
+            juce::Colour (0xffff8c00) };
+        return pal;
+    }
+
+    juce::uint32 rnd (int salt) const
+    {
+        auto h = (juce::uint32) (fxFrame + 1) * 2246822519u
+               ^ (juce::uint32) (salt + 1) * 2654435761u;
+        h ^= h >> 15; h *= 2246822519u; h ^= h >> 13;
+        return h;
+    }
+    float rf (int salt) const { return (float) (rnd (salt) & 0xffff) / 65535.0f; }
+
+    void paintMajor (juce::Graphics& g)
+    {
+        fxFrame = majorFrame;
+        const int W = getWidth(), H = getHeight();
+        const juce::Colour* pal = glitchPal();
+
+        g.fillAll (juce::Colours::black);
+        const int f = majorFrame;   // ~70 ms per frame, 0..18
+
+        if (f < 5)
+        {
+            // PHASE 1 — datamosh: wavy row displacement + corrupted blocks
+            const float amp = 18.0f + 60.0f * rf (3);
+            const float k   = 0.02f + 0.05f * rf (4);
+            const float ph  = rf (5) * 6.283f;
+            for (int y = 0; y < H; y += 4)
+            {
+                const int dx = (int) (amp * std::sin (k * (float) y + ph)
+                                    + 0.4f * amp * std::sin (2.6f * k * (float) y - ph));
+                g.drawImage (snap, dx, y, W, 4, 0, y, W, 4);
+            }
+        }
+        else if (f < 11)
+        {
+            // PHASE 2 — rainbow pixel-sort melt: columns drip downward,
+            // trails stretching longer every frame (video A)
+            const float growth = (float) (f - 4) / 6.0f;   // 0..1
+            for (int x = 0, i = 0; x < W; x += 6, ++i)
+            {
+                const float v  = rf (100 + (i % 97));
+                const int drop = (int) (v * v * 260.0f * growth);
+                const int head = 40 + (int) (rf (140 + (i % 89)) * 120.0f);
+                // the un-melted top of the column
+                g.drawImage (snap, x, 0, 6, head, x, 0, 6, head);
+                // the drip: a thin slice of the column stretched downward
+                g.drawImage (snap, x, head, 6, drop + (H - head), x, head, 6,
+                             juce::jmax (8, (H - head) / 3));
+                // rainbow tint per streak
+                const float hue = std::fmod ((float) i * 0.021f + (float) f * 0.06f, 1.0f);
+                g.setColour (juce::Colour::fromHSV (hue, 0.9f, 1.0f, 0.18f + 0.14f * v));
+                g.fillRect (x, head - 8, 6, H - head + 8);
+            }
+        }
+        else if (f < 16)
+        {
+            // PHASE 3 — vertical comb + saturated colour bands + black
+            // diagonal tears (still A)
+            for (int x = 0, i = 0; x < W; x += 6, ++i)
+            {
+                const float v = rf (200 + (i % 61));
+                const int dy = (int) ((v - 0.5f) * (60.0f + 180.0f * rf (2)));
+                g.drawImage (snap, x, dy, 6, H, x, 0, 6, H);
+            }
+            int y = 0;
+            for (int b = 0; y < H; ++b)
+            {
+                const int bh = 26 + (int) (rf (300 + b) * 90.0f);
+                g.setColour (pal[rnd (320 + b) % 7].withAlpha (0.16f + 0.22f * rf (340 + b)));
+                g.fillRect (0, y, W, bh);
+                y += bh;
+            }
+            for (int d = 0; d < 4; ++d)
+            {
+                juce::Path p;
+                const float x0 = rf (400 + d) * (float) W;
+                const float w0 = 18.0f + rf (420 + d) * 46.0f;
+                p.addQuadrilateral (x0, 0.0f, x0 + w0, 0.0f,
+                                    x0 + w0 - 240.0f, (float) H, x0 - 240.0f, (float) H);
+                g.setColour (juce::Colours::black.withAlpha (0.85f));
+                g.fillPath (p);
+            }
+        }
+        else
+        {
+            // PHASE 4 — liquid psychedelic hue-wash (video B), then snap back
+            const float amp = 50.0f + 40.0f * rf (7);
+            for (int y = 0; y < H; y += 4)
+            {
+                const int dx = (int) (amp * std::sin (0.012f * (float) y + (float) f)
+                                    + 24.0f * std::sin (0.05f * (float) y - (float) f * 1.7f));
+                g.drawImage (snap, dx, y, W, 4, 0, y, W, 4);
+            }
+            for (int b = 0; b < 7; ++b)
+            {
+                const float cx = rf (500 + b) * (float) W, cy = rf (520 + b) * (float) H;
+                const float rr = 140.0f + rf (540 + b) * 260.0f;
+                juce::ColourGradient grad (
+                    juce::Colour::fromHSV (rf (560 + b), 0.95f, 1.0f, 0.30f), cx, cy,
+                    juce::Colours::transparentBlack, cx + rr, cy + rr, true);
+                g.setGradientFill (grad);
+                g.fillEllipse (cx - rr, cy - rr, rr * 2.0f, rr * 2.0f);
+            }
+        }
+
+        // corrupted macroblocks + solid confetti, all phases
+        const int nBlocks = 8 + (int) (rf (6) * 8.0f);
+        for (int b = 0; b < nBlocks; ++b)
+        {
+            const int bw = 28 + (int) (rf (600 + b) * 80.0f);
+            const int bh = 18 + (int) (rf (620 + b) * 56.0f);
+            const int dx = (int) (rf (640 + b) * (float) (W - bw));
+            const int dy = (int) (rf (660 + b) * (float) (H - bh));
+            if ((rnd (680 + b) & 3) == 0)
+            {
+                g.setColour (pal[rnd (700 + b) % 7].withAlpha (0.85f));
+                g.fillRect (dx, dy, bw, bh);
+            }
+            else
+            {
+                const int sx = (int) (rf (720 + b) * (float) (W - bw));
+                const int sy = (int) (rf (740 + b) * (float) (H - bh));
+                g.drawImage (snap, dx, dy, bw, bh, sx, sy, bw, bh);
+            }
+        }
+
+        if (f == 5 || f == 11 || f == 16)   // flash on phase changes
+        {
+            g.setColour (juce::Colours::white.withAlpha (0.14f));
+            g.fillAll();
+        }
+    }
+
+    // Med Glitch: 650 ms two-act cut from the same reference art — comb
+    // strips with sparse rainbow drips, then liquid ripple + hue washes
+    void paintMed (juce::Graphics& g)
+    {
+        fxFrame = medFrame + 991;   // its own noise stream, distinct from major
+        const int W = getWidth(), H = getHeight();
+        const juce::Colour* pal = glitchPal();
+
+        g.fillAll (juce::Colours::black);
+        const int f = medFrame;   // ~35 ms per frame, 0..9
+
+        if (f < 5)
+        {
+            // act 1 — vertical comb with sparse rainbow melt streaks
+            for (int x = 0, i = 0; x < W; x += 8, ++i)
+            {
+                const float v = rf (900 + (i % 71));
+                const int dy = (int) ((v - 0.5f) * (40.0f + 120.0f * rf (12)));
+                g.drawImage (snap, x, dy, 8, H, x, 0, 8, H);
+                if ((rnd (930 + i) & 7) == 0)
+                {
+                    const int head = 60 + (int) (rf (950 + i) * 180.0f);
+                    g.drawImage (snap, x, head, 8, H - head, x, head, 8,
+                                 juce::jmax (8, (H - head) / 4));
+                    const float hue = std::fmod ((float) i * 0.037f + (float) f * 0.09f, 1.0f);
+                    g.setColour (juce::Colour::fromHSV (hue, 0.9f, 1.0f, 0.30f));
+                    g.fillRect (x, head, 8, H - head);
+                }
+            }
+        }
+        else
+        {
+            // act 2 — liquid ripple + saturated hue washes, then snap back
+            const float amp = 30.0f + 34.0f * rf (13);
+            for (int y = 0; y < H; y += 4)
+            {
+                const int dx = (int) (amp * std::sin (0.018f * (float) y + (float) f * 1.3f)
+                                    + 16.0f * std::sin (0.06f * (float) y - (float) f));
+                g.drawImage (snap, dx, y, W, 4, 0, y, W, 4);
+            }
+            for (int b = 0; b < 4; ++b)
+            {
+                const float cx = rf (960 + b) * (float) W, cy = rf (970 + b) * (float) H;
+                const float rr = 110.0f + rf (980 + b) * 190.0f;
+                juce::ColourGradient grad (
+                    juce::Colour::fromHSV (rf (990 + b), 0.95f, 1.0f, 0.28f), cx, cy,
+                    juce::Colours::transparentBlack, cx + rr, cy + rr, true);
+                g.setGradientFill (grad);
+                g.fillEllipse (cx - rr, cy - rr, rr * 2.0f, rr * 2.0f);
+            }
+        }
+
+        // corrupted macroblocks + confetti, both acts
+        for (int b = 0; b < 7; ++b)
+        {
+            const int bw = 24 + (int) (rf (860 + b) * 70.0f);
+            const int bh = 16 + (int) (rf (870 + b) * 48.0f);
+            const int dx = (int) (rf (880 + b) * (float) (W - bw));
+            const int dy = (int) (rf (890 + b) * (float) (H - bh));
+            if ((rnd (895 + b) & 3) == 0)
+            {
+                g.setColour (pal[rnd (897 + b) % 7].withAlpha (0.85f));
+                g.fillRect (dx, dy, bw, bh);
+            }
+            else
+                g.drawImage (snap, dx, dy, bw, bh,
+                             (int) (rf (898 + b) * (float) (W - bw)),
+                             (int) (rf (899 + b) * (float) (H - bh)), bw, bh);
+        }
+
+        if (f == 5)   // flash on the act change
+        {
+            g.setColour (juce::Colours::white.withAlpha (0.14f));
+            g.fillAll();
+        }
+    }
+
+    void paintSmear (juce::Graphics& g)
+    {
+        g.fillAll (juce::Colours::black);
+        const int W = getWidth(), H = getHeight();
+        const int bands = 16;
+        const float bh = (float) H / (float) bands;
+        const int trails = juce::jlimit (2, 5, (int) (std::fabs (smearOff) / 60.0f) + 2);
+        for (int b = 0; b < bands; ++b)
+        {
+            // deterministic per-band factor 0.55 .. 1.45 -> ragged tear edge
+            const auto h = (juce::uint32) (b + 1) * 2654435761u;
+            const float k = 0.55f + 0.9f * (float) ((h >> 16) & 1023) / 1023.0f;
+            const float off = smearOff * k;
+            const int sy = (int) (b * bh), sh = (int) bh + 1;
+            for (int tr = trails; tr >= 1; --tr)   // smear ghosts
+            {
+                g.setOpacity (0.14f);
+                g.drawImage (snap, (int) (off * (float) tr / (float) (trails + 1)), sy, W, sh,
+                             0, sy, W, sh);
+            }
+            g.setOpacity (1.0f);
+            g.drawImage (snap, (int) off, sy, W, sh, 0, sy, W, sh);
+        }
+    }
+
     double t0 = -1.0;
     float scanY = -140.0f;
-    bool lightOn = false, majorOn = false;
-    int lightFrame = 0, majorFrame = 0;
+    bool lightOn = false, majorOn = false, medOn = false;
+    int lightFrame = 0, majorFrame = 0, medFrame = 0, fxFrame = 0;
+    juce::Image snap;
+    float smearOff = 0.0f;
+    bool smearing = false, snapping = false;
+    // manual trigger state (v0.35 test panel)
+    bool pendLight = false, pendMajor = false, pendSmall = false, pendMed = false;
+    double manLight = -1.0, manMajor = -1.0, manSmall = -1.0, manMed = -1.0;
 };
 
 // ---------------------------------------------------------------------------
@@ -1118,6 +1486,15 @@ private:
 
     // decoration
     GlitchFx fx;
+
+    // v0.35: window scale, driven by the standalone's Scale and Feedback window
+    float appliedScale = 1.0f;
+
+    // v0.35: title jiggle — fires ~every 1:11 +/- 12 s of random slack, and
+    // each jiggle's speed shifts +/- 13 %
+    double nextTearAt = 0.0, tearStart = -1.0;
+    float  tearSpeed  = 1.0f;
+    juce::Random rng;
 
     int frame = 0;
 

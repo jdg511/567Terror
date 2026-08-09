@@ -253,12 +253,16 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     addChildComponent (cover);
 
     addAndMakeVisible (fx);   // decoration on top, mouse-transparent
+    fx.grabFace = [this] { return createComponentSnapshot ({ 0, 0, 1060, 640 }, false, 1.0f); };
     setGateOpen (false);
     applyHints();
 
     startTimerHz (60);
     setSize (1060, 640);
-    setScaleFactor (2.5f);   // v0.34: matches the design's 25 % bigger type
+    // v0.35: defaults to x1 every launch; the standalone's "Scale and
+    // Feedback" window (Options menu) offers x0.5 / x1 / x1.5 / x2 live.
+    appliedScale = processor.uiScale.load (std::memory_order_relaxed);
+    setScaleFactor (appliedScale);
 }
 
 GlitchwaveAudioProcessorEditor::~GlitchwaveAudioProcessorEditor()
@@ -630,6 +634,16 @@ void GlitchwaveAudioProcessorEditor::refreshReadouts (int layer)
 void GlitchwaveAudioProcessorEditor::timerCallback()
 {
     ++frame;
+
+    // v0.35: apply a scale change from the Scale and Feedback window live
+    {
+        const float ws = processor.uiScale.load (std::memory_order_relaxed);
+        if (std::fabs (ws - appliedScale) > 0.01f)
+        {
+            appliedScale = ws;
+            setScaleFactor (ws);
+        }
+    }
     constexpr float fallPerFrame = 40.0f / 60.0f;   // 60 fps
     meterIn.push  (processor.readMeterPeak (0));
     meterOut.push (processor.readMeterPeak (1));
@@ -801,13 +815,32 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
 
     // ---- decoration ----------------------------------------------------------
     fx.tick (t);
+
+    // v0.35 title jiggle: once every ~1:11, never on an exact schedule —
+    // roughly every 1:11 +/- 12 s of random slack, and each jiggle runs at a
+    // speed randomly shifted +/- 13 %.
     {
-        const double ph = std::fmod (t, 5500.0);
+        if (nextTearAt <= 0.0)
+            nextTearAt = t + 71000.0 + (rng.nextDouble() * 24000.0 - 12000.0);
+        if (tearStart < 0.0 && t >= nextTearAt)
+            tearStart = t;
+
         float tear = 0.0f;
-        if (ph < 240.0)
+        if (tearStart >= 0.0)
         {
-            static const float offs[4] = { -7.0f, 5.0f, -2.0f, 0.0f };
-            tear = offs[juce::jlimit (0, 3, (int) (ph / 60.0))];
+            const double dur = 240.0 / tearSpeed;
+            const double ph  = t - tearStart;
+            if (ph < dur)
+            {
+                static const float offs[4] = { -7.0f, 5.0f, -2.0f, 0.0f };
+                tear = offs[juce::jlimit (0, 3, (int) (ph / (dur / 4.0)))];
+            }
+            else
+            {
+                tearStart  = -1.0;
+                tearSpeed  = 1.0f + (rng.nextFloat() * 0.26f - 0.13f);
+                nextTearAt = t + 71000.0 + (rng.nextDouble() * 24000.0 - 12000.0);
+            }
         }
         tagline.setTear (tear);
     }
@@ -955,7 +988,7 @@ void GlitchwaveAudioProcessorEditor::resized()
     // header
     chips.setBounds (184, 22, 162, 26);
     hintChips.setBounds (184, 50, 430, 12);
-    tagline.setBounds (480, 8, 566, 56);
+    tagline.setBounds (400, 0, 646, 70);
 
     // ---- pedal row (3 big knobs + the 3 small section knobs) -----------------
     {

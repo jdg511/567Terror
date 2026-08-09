@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(Glitchwave567 VERSION 0.34.0 LANGUAGES C CXX)
+project(Glitchwave567 VERSION 0.35.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -47,6 +47,12 @@ target_sources(Glitchwave567 PRIVATE
     src/PluginProcessor.cpp
     src/PluginEditor.cpp
 )
+
+# v0.35: custom standalone app — adds "Scale and Feedback..." to the
+# Options menu (standalone target only; other formats untouched)
+target_compile_definitions(Glitchwave567_Standalone PRIVATE
+    JUCE_USE_CUSTOM_PLUGIN_STANDALONE_APP=1)
+target_sources(Glitchwave567_Standalone PRIVATE src/StandaloneApp.cpp)
 
 target_compile_definitions(Glitchwave567 PUBLIC
     JUCE_WEB_BROWSER=0
