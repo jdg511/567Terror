@@ -1,4 +1,18 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.35)
+# Glitchwave 567 — Step 2 Mods (v0.2 … v0.36)
+
+## v0.36 — the plugin becomes "Where The Fuzz Meets The Funk"
+
+Pure metadata/naming, zero behaviour change:
+* PRODUCT_NAME (and every bundle/file name): "Glitchwave 567" →
+  **"Where The Fuzz Meets The Funk"** — the plugin is now named after its own
+  tagline. Vendor stays **Illicit Apothecary** and the VST3 category stays
+  **Fx | Filter** (both in place since v0.34).
+* PLUGIN_CODE / MANUFACTURER_CODE unchanged, so existing DAW sessions still
+  find the renamed plugin. LV2 URI unchanged.
+* Scale-and-Feedback window title + saved-feedback files follow the new name.
+* Old "Glitchwave 567" VST3/LV2 installs are removed at install time so DAWs
+  don't list the pedal twice. Standalone settings migrate to the new app name
+  (audio device re-pick once).
 
 ## v0.35 — x1 scale + Scale and Feedback window + the glitch pantheon (graphics only)
 

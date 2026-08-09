@@ -108,11 +108,12 @@ public:
         g.setColour (gw::kText);
         auto ft = gw::barlow (22.0f, true, 0.06f);
         g.setFont (ft);
-        g.drawText ("GLITCHWAVE 567", L, 18, 400, 26, juce::Justification::centredLeft);
+        const auto title = juce::String (JucePlugin_Name).toUpperCase();
+        g.drawText (title, L, 18, 520, 26, juce::Justification::centredLeft);
         g.setColour (gw::kGrey);
         g.setFont (gw::mono (13.0f, 500));
         g.drawText ("v" JucePlugin_VersionString,
-                    L + (int) gw::textW (ft, "GLITCHWAVE 567") + 12, 24, 200, 18,
+                    L + (int) gw::textW (ft, title) + 12, 24, 200, 18,
                     juce::Justification::centredLeft);
         g.setColour (gw::kDim2);
         g.setFont (gw::mono (10.0f, 400, 0.04f));
@@ -236,7 +237,7 @@ private:
         auto dir = juce::File::getSpecialLocation (juce::File::userDocumentsDirectory)
                        .getChildFile ("Illicit Apothecary");
         dir.createDirectory();
-        auto f = dir.getChildFile ("Glitchwave567_feedback_"
+        auto f = dir.getChildFile ("FuzzMeetsFunk_feedback_"
                      + juce::Time::getCurrentTime().formatted ("%Y%m%d_%H%M%S") + ".txt");
 
         const juce::String notify =
@@ -244,7 +245,7 @@ private:
           : nFree.getToggleState() ? "Notify ONLY for new FREE plugins / real-world products"
                                    : "No notifications at all";
         juce::String out;
-        out << "Glitchwave 567 v" << JucePlugin_VersionString << " feedback\n"
+        out << JucePlugin_Name << " v" << JucePlugin_VersionString << " feedback\n"
             << "Date:     " << juce::Time::getCurrentTime().toString (true, true) << "\n"
             << "Name:     " << name.getText() << "\n"
             << "Email:    " << email.getText() << "\n"
