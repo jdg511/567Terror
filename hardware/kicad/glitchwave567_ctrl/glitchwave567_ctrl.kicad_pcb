@@ -207,6 +207,46 @@
 				)
 			)
 		)
+		(fp_line
+			(start -6.1 -5.75)
+			(end 6.1 -5.75)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "5af360d9-04b3-437b-99ca-d2e2f17b2edd")
+		)
+		(fp_line
+			(start 6.1 -5.75)
+			(end 6.1 8.15)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "56632eb6-0f23-4b9c-bc8d-23597f5ae025")
+		)
+		(fp_line
+			(start 6.1 8.15)
+			(end -6.1 8.15)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "18baa50d-53da-4980-82be-560f0733d921")
+		)
+		(fp_line
+			(start -6.1 8.15)
+			(end -6.1 -5.75)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "fd1cd379-c9d6-47a7-ae50-78a3e288c274")
+		)
 		(pad "1" thru_hole circle
 			(at -2.5 7)
 			(size 1.8 1.8)
@@ -475,6 +515,46 @@
 				)
 			)
 		)
+		(fp_line
+			(start -6.1 -5.75)
+			(end 6.1 -5.75)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "9581d3bc-2073-4017-812a-341b0f597c01")
+		)
+		(fp_line
+			(start 6.1 -5.75)
+			(end 6.1 8.15)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "93ca9f91-a3f4-4280-a42a-79c16e76d420")
+		)
+		(fp_line
+			(start 6.1 8.15)
+			(end -6.1 8.15)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "c24004f0-c475-4a2d-83f4-86ad6aa4de38")
+		)
+		(fp_line
+			(start -6.1 8.15)
+			(end -6.1 -5.75)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "6f4bd52e-0cd7-4cf5-8c07-95877351ca37")
+		)
 		(pad "1" thru_hole circle
 			(at -2.5 7)
 			(size 1.8 1.8)
@@ -634,6 +714,46 @@
 					(thickness 0.12)
 				)
 			)
+		)
+		(fp_line
+			(start -6.1 -5.75)
+			(end 6.1 -5.75)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "9f6432ca-6643-4f4d-b57d-2d9c47d95e40")
+		)
+		(fp_line
+			(start 6.1 -5.75)
+			(end 6.1 8.15)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "b81f3963-9345-4318-8c25-06a82ec40b8a")
+		)
+		(fp_line
+			(start 6.1 8.15)
+			(end -6.1 8.15)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "e3ef6e44-daaf-465e-849b-c171b5292b65")
+		)
+		(fp_line
+			(start -6.1 8.15)
+			(end -6.1 -5.75)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "7fa9883a-29ac-4102-a3e9-0bec5a5fba64")
 		)
 		(pad "1" thru_hole circle
 			(at -2.5 7)
@@ -3304,6 +3424,46 @@
 				)
 			)
 		)
+		(fp_line
+			(start -6.1 -5.75)
+			(end 6.1 -5.75)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "191dfa2c-5afe-4889-897e-a90432a7a8f7")
+		)
+		(fp_line
+			(start 6.1 -5.75)
+			(end 6.1 8.15)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "2e34c380-b0a9-4f44-a58b-299dbf8e4312")
+		)
+		(fp_line
+			(start 6.1 8.15)
+			(end -6.1 8.15)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "29be703f-cb3c-48fb-9686-b725ce368fae")
+		)
+		(fp_line
+			(start -6.1 8.15)
+			(end -6.1 -5.75)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "7d1c5838-c651-4554-b793-1e426979ab49")
+		)
 		(pad "1" thru_hole circle
 			(at -2.5 7)
 			(size 1.8 1.8)
@@ -3901,6 +4061,46 @@
 					(thickness 0.12)
 				)
 			)
+		)
+		(fp_line
+			(start -6.1 -5.75)
+			(end 6.1 -5.75)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "ccb04394-bc19-4911-b80d-a2f57c4ad684")
+		)
+		(fp_line
+			(start 6.1 -5.75)
+			(end 6.1 8.15)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "f731c203-3f25-433d-aaea-a5d8cc12eb0f")
+		)
+		(fp_line
+			(start 6.1 8.15)
+			(end -6.1 8.15)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "f392ce4b-05df-4fe6-8cdd-3fba85c2ad02")
+		)
+		(fp_line
+			(start -6.1 8.15)
+			(end -6.1 -5.75)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "feb16ef4-c594-4b45-ab4e-4f89b76e4f5f")
 		)
 		(pad "1" thru_hole circle
 			(at -2.5 7)
@@ -4662,6 +4862,46 @@
 				)
 			)
 		)
+		(fp_line
+			(start -6.1 -5.75)
+			(end 6.1 -5.75)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "4f0414f0-7712-4195-9f61-e74224214398")
+		)
+		(fp_line
+			(start 6.1 -5.75)
+			(end 6.1 8.15)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "96524059-86ab-4405-b360-a8b20b5faec4")
+		)
+		(fp_line
+			(start 6.1 8.15)
+			(end -6.1 8.15)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "0ce763e7-a37f-41e1-8a2e-9361157d02d7")
+		)
+		(fp_line
+			(start -6.1 8.15)
+			(end -6.1 -5.75)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "8bfecb56-32d7-40af-bac3-fb37ca83318b")
+		)
 		(pad "1" thru_hole circle
 			(at -2.5 7)
 			(size 1.8 1.8)
@@ -5400,13 +5640,13 @@
 		(layer "Edge.Cuts")
 		(uuid "0a21732c-ea71-459f-898f-a5fed0d77edc")
 	)
-	(gr_text "GLITCHWAVE 567 - CONTROL  rev0.1  Illicit Apothecary"
+	(gr_text "WHERE THE FUZZ MEETS THE FUNK - CONTROL  rev0.1  Illicit Apothecary"
 		(at 69 111 0)
 		(layer "F.SilkS")
 		(uuid "910d48ea-d7fc-458e-b8ce-8ceba4f1ae9e")
 		(effects
 			(font
-				(size 1.2 1.2)
+				(size 1 1)
 			)
 		)
 	)

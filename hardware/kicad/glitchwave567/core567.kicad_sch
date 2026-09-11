@@ -2495,7 +2495,7 @@
     (property "Value" "470u" (id 1) (at 259.08 148.59 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Capacitor_SMD:CP_Elec_10x10.2" (id 2) (at 259.08 146.05 0)
+    (property "Footprint" "Capacitor_SMD:CP_Elec_10x10" (id 2) (at 259.08 146.05 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "" (id 3) (at 259.08 146.05 0)
