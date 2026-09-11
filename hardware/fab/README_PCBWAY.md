@@ -1,5 +1,5 @@
 # Glitchwave 567 / "Where The Fuzz Meets The Funk" - PCBWay ordering guide
-**rev 0.4, 2026-09-11.** Supersedes rev 0.2 (2026-07-29). Previous copy kept as
+**rev 0.5, 2026-09-11.** Supersedes rev 0.2 (2026-07-29). Previous copy kept as
 `README_PCBWAY.bak_20260911.md`.
 
 Two boards, one enclosure (Hammond 1590XX). Order both as **4-layer, full turnkey
@@ -77,11 +77,20 @@ No other part is DNP.
 
 ## Turnkey sourcing notes
 
-1. **Every line carries a real MPN.** PCBWay sources by MPN. The Manufacturer
-   column is filled in where a single true manufacturer exists and deliberately
-   left blank for industry-standard second-sourced parts (1N4148W, 1N5819W,
-   BZT52C, MMBT3904, SS14, SS34, SMAJ18A, AO3401A, MMBFJ201), where the MPN alone
-   is sufficient and naming one maker would be misleading.
+1. **Every line carries a real MPN and a verified manufacturer.** On 2026-09-11
+   all 87 distinct LCSC part numbers on the two boards were looked up individually
+   in the live LCSC/JLC catalogue. Every one is a real, orderable part, in stock,
+   with the capacitance / resistance / package matching the BOM. Zero dead part
+   numbers and zero value mismatches. The Manufacturer column is now read from
+   that lookup rather than guessed from the MPN, which is what had been putting
+   CUI Devices on XKB and HOOYA jacks, Sunlord on a TAI-TECH ferrite and an SXN
+   inductor, TDK on a CCTC capacitor, and "UNI-ROYAL (Uniohm)" on 40 lines of
+   UNI-ROYAL(Uniroyal Elec) resistors. The lookup table lives in
+   `kicad/tools/lcsc_verified_20260911.json`.
+   Thinnest stock at time of check, none of them a problem for 5 boards:
+   LM567CMX/NOPB 562, PJ-603A 518, PCM12SMTR 441, DC-044A 1210, MMBTA13 3084.
+   Parts cost at LCSC qty-1 pricing is about **$28.34 per MAIN board and $4.75 per
+   CONTROL board**, so roughly $33 a set plus the Pico and the two Alpha stomps.
 2. **Stomp switches SW1/SW2 on CONTROL: Alpha SF12011F-0102-20R-M-011.** Not DNP.
    A genuine PC-pin SPDT momentary footswitch from Alpha's SF12 series (Taiwan),
    terminals in a straight row at 2.5 mm pitch, Pin 1 = N.O., Pin 2 = COM,

@@ -222,14 +222,84 @@ tools, regenerated fab outputs, the new release zip, the quarantined stale folde
 eight unrelated modified files under `src/` and `docs/` were deliberately left alone and
 are still uncommitted. **Nothing has been pushed.**
 
-## 5. Still open
+## 5. Third pass: every part verified against the live catalogue
+
+### F9. All 87 LCSC part numbers looked up individually (PASSED)
+
+The last inherited assumption in this report was "every line carries a real,
+orderable MPN", which came from the README rather than from a check. Given that the
+C107 defect was also an inherited assumption, it was worth actually doing.
+
+Every distinct LCSC part number on both boards, 87 of them, was queried against the
+live LCSC/JLC catalogue. **Result: all 87 are real, in stock, and the value and
+package match the BOM. Zero dead part numbers, zero value mismatches.**
+
+Thinnest stock, none of them a problem for a 5-board run:
+
+| Part | Designators | Need (5 boards) | Stock |
+|---|---|---|---|
+| LM567CMX/NOPB | U5 | 5 | 562 |
+| PJ-603A | J1, J2 | 10 | 518 |
+| PCM12SMTR | SW1-SW3 | 15 | 441 |
+| DC-044A-2.5A-2.0 | J5 | 5 | 1,210 |
+| MMBTA13 | Q1 | 5 | 3,084 |
+
+### F10. The Manufacturer column was still wrong, differently (FIXED)
+
+The rewrite in F3 replaced substring matching with a hand-written MPN-prefix table.
+That table was itself wrong on a large share of the BOM:
+
+| Designators | MPN | Prefix table said | Catalogue says |
+|---|---|---|---|
+| ~40 resistor lines | 0603WAF* | UNI-ROYAL (Uniohm) | **UNI-ROYAL(Uniroyal Elec)** |
+| J3, J4, J6 | PJ-3410 | CUI Devices | **XKB Connection** |
+| J1, J2 | PJ-603A | CUI Devices | **HOOYA** |
+| J5 | DC-044A-2.5A-2.0 | CUI Devices | **XKB Connection** |
+| FB100 | HCB3216KF-601T30 | Sunlord | **TAI-TECH** |
+| L100 | SMDRI127-220MT | Sunlord | **SXN(Shun Xiang Nuo Elec)** |
+| C1, C3, C8, C60 | TCC0603X7R224K500CT | TDK | **CCTC** |
+| C105 | 0603N332J500CT | UNI-ROYAL | **Walsin Tech Corp** |
+| RV1-RV6 (CTRL) | RK09K1130A70 | ALPS | **ALPSALPINE** |
+| 11 more lines | diodes, FETs, electrolytics | blank | MDD, ST(Semtech), JSMSEMI, ROQANG, Honor Elec, FOJAN, onsemi, Alpha & Omega, Jiangsu Changjing |
+
+"UNI-ROYAL (Uniohm)" is the worst of these: it conflates two different companies
+and it was on roughly half the BOM.
+
+The generator no longer guesses. Manufacturer is read from
+`kicad/tools/lcsc_verified_20260911.json`, populated from the per-part lookups, keyed
+by the LCSC code already in `BOM.xlsx`. Only two parts have no LCSC number
+(the Pico SC0915 and the Alpha SF12011F stomps) and both are mapped by hand.
+**Every line on both boards now carries a verified manufacturer. Zero blanks.**
+
+The lesson, for the third time on this BOM: do not infer a manufacturer from a part
+number. Look it up.
+
+### Parts cost
+
+At LCSC qty-1 pricing, excluding the two parts PCBWay sources direct:
+
+| | per board |
+|---|---|
+| MAIN | $28.34 |
+| CONTROL | $4.75 |
+| **one set** | **$33.10** |
+| five sets | $165.49 |
+
+Add roughly $4 for each Pico and a few dollars for each Alpha stomp. This is parts
+only: bare PCB fabrication, assembly labour and PCBWay's sourcing markup are all on
+top, and they come back in the manual quote.
+
+Dearest lines per board: six LM13700 at $6.05, three Bourns trimmers at $3.44, the
+MP1584 at $2.93, the LM567 at $2.19, seven TL074 at $2.05.
+
+## 6. Still open
 
 * **The enclosure drill template is still stale and quarantined.** Not a fab deliverable,
   so it does not block the PCB order, but no metal gets cut until a new one exists.
 * **rev0.1 is still on the silkscreen.** The board has changed since that number was put
   there, but it has never been fabbed, so rev0.1 is still accurate for the first article.
 
-## 6. Files changed today
+## 7. Files changed today
 
 ```
 kicad/glitchwave567/glitchwave567.kicad_pcb     C112 added, +5V stub, zones refilled,

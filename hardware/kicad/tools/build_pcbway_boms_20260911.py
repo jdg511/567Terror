@@ -17,11 +17,13 @@
 """
 import openpyxl
 import csv
+import json
 import re
 import os
 
 HW = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SRC = os.path.join(HW, "BOM.xlsx")
+LCSC_DB = os.path.join(HW, "kicad", "tools", "lcsc_verified_20260911.json")
 OUT_DIR = os.path.join(HW, "fab")
 BOARDS = {
     "MAIN board": os.path.join(HW, "kicad", "glitchwave567", "glitchwave567.kicad_pcb"),
@@ -38,42 +40,23 @@ MPN_OVERRIDES = {
     "SC0915 Raspberry Pi Pico": ("SC0915", "Raspberry Pi"),
 }
 
-# --- verified MPN prefix -> manufacturer ------------------------------------
-# Every entry here was checked against the live LCSC/JLC catalogue on
-# 2026-09-11 or earlier. Do not add a guess to this table.
-PREFIX_MFR = [
-    ("PZ254V", "XFCN"), ("PM254V", "XFCN"),          # was wrongly "CVILUX", and then "TI"
-    ("3224W", "Bourns"),                              # was wrongly "TI"
-    ("LM13700", "Texas Instruments"),                 # was wrongly "LM"
-    ("LM567", "Texas Instruments"),                   # was wrongly "LM"
-    ("TL074", "Texas Instruments"),
-    ("CD4051", "Texas Instruments"), ("CD4052", "Texas Instruments"),
-    ("CD74HC", "Texas Instruments"), ("SN74", "Texas Instruments"),
-    ("MP1584", "Monolithic Power Systems"),
-    ("RK09K", "ALPS"), ("RK09D", "ALPS"),
-    ("SF12", "Alpha"), ("SF17", "Alpha"),
-    ("PCM12", "C&K"),
-    ("PJ-", "CUI Devices"), ("DC-044A", "CUI Devices"),
-    ("WS2812B", "Worldsemi"),
-    ("CC0603", "Yageo"), ("CC0402", "Yageo"), ("CC0805", "Yageo"), ("CC1206", "Yageo"),
-    ("RC0603", "Yageo"), ("RC0402", "Yageo"),
-    ("GRM", "Murata"),
-    ("CL10", "Samsung Electro-Mechanics"), ("CL21", "Samsung Electro-Mechanics"),
-    ("CL31", "Samsung Electro-Mechanics"),
-    ("TCC0603", "TDK"),
-    ("0603WAF", "UNI-ROYAL (Uniohm)"), ("0603N", "UNI-ROYAL (Uniohm)"),
-    ("HCB3216", "Sunlord"), ("SMDRI127", "Sunlord"),
-    ("RVT", "Honor Elec"),                            # RVT1V... SMD electrolytics
-    ("RVE", "KNSCHA"),                                # RVE100UF... SMD electrolytic
-]
+# --- manufacturer comes from the LCSC catalogue, not from a guess ---------
+# 2026-09-11: every MPN-prefix heuristic this file ever used was wrong somewhere.
+# "TI" matched inside "Vertical"; then the hand-written replacement table still had
+# PJ-3410 and DC-044A as CUI Devices (they are XKB Connection), PJ-603A as CUI
+# (HOOYA), the ferrite as Sunlord (TAI-TECH), the inductor as Sunlord (SXN), the
+# 220n as TDK (CCTC), the 3n3 as UNI-ROYAL (Walsin), and every 0603WAF resistor as
+# "UNI-ROYAL (Uniohm)", conflating two different companies. Manufacturer is now read
+# from lcsc_verified_20260911.json, which was populated by looking up each C-number
+# in the live catalogue. Do not reintroduce prefix guessing.
+with open(LCSC_DB, encoding="utf-8") as _f:
+    LCSC = {k: v for k, v in json.load(_f).items() if not k.startswith("_")}
 
-# Industry-standard second-sourced parts. No single true manufacturer, and a
-# guessed one only misleads PCBWay. MPN alone is enough for these.
-GENERIC_PREFIXES = [
-    "1N4148", "1N5819", "BZT52C", "MMBT39", "MMBFJ2", "AO3401",
-    "SS14", "SS34", "SMAJ", "FRC0603",
-]
-
+# The only parts with no LCSC number. Both confirmed from the manufacturers directly.
+NO_LCSC_MFR = {
+    "SF12011F-0102-20R-M-011": "Alpha",
+    "SC0915": "Raspberry Pi",
+}
 
 def clean_mpn(raw):
     raw = str(raw or "").strip()
@@ -82,15 +65,17 @@ def clean_mpn(raw):
     return raw, None
 
 
-def manufacturer_for(mpn):
-    up = mpn.upper()
-    for pre in GENERIC_PREFIXES:
-        if up.startswith(pre.upper()):
-            return ""
-    for pre, name in PREFIX_MFR:
-        if up.startswith(pre.upper()):
-            return name
-    return ""
+def manufacturer_for(mpn, lcsc):
+    """Look the manufacturer up. Never guess it."""
+    code = str(lcsc or "").strip()
+    if code in LCSC:
+        return LCSC[code]["mfr"]
+    return NO_LCSC_MFR.get(str(mpn).strip(), "")
+
+
+def unit_price(lcsc):
+    code = str(lcsc or "").strip()
+    return LCSC[code]["price"] if code in LCSC else None
 
 
 def board_mounting(pcb_path):
@@ -134,6 +119,7 @@ def process(wb, sheet, pcb_path, out_path):
         fp = row[hdr["Footprint"]] or ""
         dnp = bool(row[hdr["DNP"]])
         mpn, mfr_override = clean_mpn(row[hdr["MPN"]])
+        lcsc = row[hdr["Part # (LCSC C# / DK)"]]
 
         if dnp:
             rows.append({"Line#": line, "Qty": qty, "Designator": ",".join(des),
@@ -144,7 +130,9 @@ def process(wb, sheet, pcb_path, out_path):
             notes.append("DNP kept in BOM so it matches the centroid: %s" % ",".join(des))
             continue
 
-        mfr = mfr_override or manufacturer_for(mpn)
+        mfr = mfr_override or manufacturer_for(mpn, lcsc)
+        if not mfr:
+            notes.append("NO MANUFACTURER for %s (MPN %s, LCSC %s)" % (",".join(des), mpn, lcsc))
         types = {mount.get(d) for d in des}
         if None in types:
             notes.append("NOT ON BOARD: %s" % ",".join(d for d in des if d not in mount))
