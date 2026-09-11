@@ -215,6 +215,13 @@ above), 67 warnings, still zero shorts, zero clearance, zero unconnected. CONTRO
 violations, 0 errors. Parity re-verified after regeneration: MAIN 297 = 297 = 297,
 CONTROL 22 = 22 = 22.
 
+### Committed
+
+All of the above is committed as **f73cb0d** on `main` (61 files: board, schematics, BOM,
+tools, regenerated fab outputs, the new release zip, the quarantined stale folder). The
+eight unrelated modified files under `src/` and `docs/` were deliberately left alone and
+are still uncommitted. **Nothing has been pushed.**
+
 ## 5. Still open
 
 * **The enclosure drill template is still stale and quarantined.** Not a fab deliverable,
