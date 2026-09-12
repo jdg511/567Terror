@@ -43,6 +43,42 @@ juce_add_binary_data(GwAssets SOURCES
 )
 set_target_properties(GwAssets PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
+# v0.40 demo clips, embedded so the player works with no files on disk.
+# Mono Ogg Vorbis q2 (about 1.5 MB for all 27). ORDER IS THE DROPDOWN ORDER
+# and is also the saved parameter index, so only ever append to this list.
+# HEADER_NAME matters: without it this target would also generate a
+# "BinaryData.h" and collide with GwAssets' one.
+juce_add_binary_data(GwDemos HEADER_NAME DemoData.h NAMESPACE DemoData SOURCES
+    assets/demos/arpeggio-quick-clean.ogg
+    assets/demos/arpeggio-deluxe-clean.ogg
+    assets/demos/arpeggio-iconic-cleanish.ogg
+    assets/demos/arpeggio-warm-crunch.ogg
+    assets/demos/arpeggio-dirty-punk.ogg
+    assets/demos/rhythm-chords-fender-clean.ogg
+    assets/demos/rhythm-chords-suhr-clean.ogg
+    assets/demos/rhythm-chords-ac30-crunch.ogg
+    assets/demos/power-chords-iconic-cleanish.ogg
+    assets/demos/power-chords-plexi.ogg
+    assets/demos/power-chords-punk-rock-rhythm.ogg
+    assets/demos/power-chords-classic-hi-gain.ogg
+    assets/demos/solo-mesa.ogg
+    assets/demos/solo-diezel.ogg
+    assets/demos/solo-fortin.ogg
+    assets/demos/metal-5150.ogg
+    assets/demos/metal-blackstar.ogg
+    assets/demos/metal-dualrec.ogg
+    assets/demos/pick-bass-clean-bright.ogg
+    assets/demos/pick-bass-bite.ogg
+    assets/demos/pick-bass-growl.ogg
+    assets/demos/pick-bass-rock-classic.ogg
+    assets/demos/pick-bass-metalcore.ogg
+    assets/demos/finger-bass-clean-bright.ogg
+    assets/demos/finger-bass-nice-warm.ogg
+    assets/demos/finger-bass-bite.ogg
+    assets/demos/finger-bass-growl.ogg
+)
+set_target_properties(GwDemos PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+
 target_sources(Glitchwave567 PRIVATE
     src/PluginProcessor.cpp
     src/PluginEditor.cpp
@@ -63,7 +99,9 @@ target_compile_definitions(Glitchwave567 PUBLIC
 target_link_libraries(Glitchwave567
     PRIVATE
         GwAssets
+        GwDemos
         juce::juce_audio_utils
+        juce::juce_audio_formats
         juce::juce_dsp
     PUBLIC
         juce::juce_recommended_config_flags

@@ -851,6 +851,218 @@ public:
 };
 
 // ---------------------------------------------------------------------------
+// v0.40 demo player. A dropdown of embedded clips, a start/stop transport and
+// a level knob, in a strip below the pedal face. The processor sums the clip
+// into the pedal's input, so it runs through the whole circuit. The strip sits
+// outside the cover's dim veil on purpose: the point of it is A/B-ing the
+// under-the-cover switches against real playing while the cover is open.
+// ---------------------------------------------------------------------------
+class DemoSelector : public juce::Component
+{
+public:
+    std::function<void()> onChange;
+
+    void attach (juce::AudioParameterChoice* p) { param = p; idx = -1; refresh(); }
+
+    void refresh()
+    {
+        const int now = param != nullptr ? param->getIndex() : 0;
+        if (now != idx) { idx = now; repaint(); }
+    }
+
+    juce::String currentName() const
+    {
+        if (param == nullptr || param->choices.isEmpty()) return "-";
+        return param->choices[juce::jlimit (0, param->choices.size() - 1, idx)];
+    }
+
+    void mouseDown (const juce::MouseEvent&) override
+    {
+        if (param == nullptr) return;
+
+        // 27 clips is far too many for one flat list, and the names already
+        // group by the text before the dash, so build a submenu per family.
+        const auto& names = param->choices;
+        juce::PopupMenu menu, sub;
+        juce::String lastCat;
+
+        for (int i = 0; i < names.size(); ++i)
+        {
+            auto cat  = names[i].upToFirstOccurrenceOf (" - ", false, false).trim();
+            auto leaf = names[i].fromFirstOccurrenceOf (" - ", false, false).trim();
+            if (leaf.isEmpty()) { cat = "Clips"; leaf = names[i]; }
+
+            if (cat != lastCat)
+            {
+                if (lastCat.isNotEmpty()) menu.addSubMenu (lastCat, sub);
+                sub.clear();
+                lastCat = cat;
+            }
+            sub.addItem (i + 1, leaf, true, i == param->getIndex());
+        }
+        if (lastCat.isNotEmpty()) menu.addSubMenu (lastCat, sub);
+
+        menu.setLookAndFeel (&getLookAndFeel());
+        menu.showMenuAsync (juce::PopupMenu::Options()
+                                .withTargetComponent (this)
+                                .withMinimumWidth (getWidth()),
+                            [this] (int result)
+                            {
+                                if (result <= 0 || param == nullptr) return;
+                                param->beginChangeGesture();
+                                param->setValueNotifyingHost (
+                                    param->convertTo0to1 ((float) (result - 1)));
+                                param->endChangeGesture();
+                                refresh();
+                                if (onChange) onChange();
+                            });
+    }
+
+    void paint (juce::Graphics& g) override
+    {
+        auto r = getLocalBounds().toFloat();
+        g.setColour (juce::Colour (0xff050508));
+        g.fillRoundedRectangle (r, 6.0f);
+        g.setColour (gw::kBtnEdge);
+        g.drawRoundedRectangle (r.reduced (0.5f), 6.0f, 1.0f);
+
+        g.setColour (gw::kText);
+        g.setFont (gw::barlow (12.0f, true, 0.10f));
+        g.drawText (currentName(), getLocalBounds().reduced (14, 0).withTrimmedRight (22),
+                    juce::Justification::centredLeft, true);
+
+        const float cx = r.getRight() - 16.0f, cy = r.getCentreY();
+        juce::Path chevron;
+        chevron.startNewSubPath (cx - 4.5f, cy - 2.0f);
+        chevron.lineTo (cx, cy + 3.0f);
+        chevron.lineTo (cx + 4.5f, cy - 2.0f);
+        g.setColour (gw::kGrey);
+        g.strokePath (chevron, juce::PathStrokeType (1.6f));
+    }
+
+private:
+    juce::AudioParameterChoice* param = nullptr;
+    int idx = -1;
+};
+
+// ---------------------------------------------------------------------------
+class DemoTransportButton : public juce::Component
+{
+public:
+    std::function<void()> onToggle;
+
+    void setPlaying (bool p) { if (p != playing) { playing = p; repaint(); } }
+
+    void mouseDown (const juce::MouseEvent&) override { if (onToggle) onToggle(); }
+
+    void paint (juce::Graphics& g) override
+    {
+        auto r = getLocalBounds().toFloat();
+        const auto accent = playing ? gw::kRed : gw::kGreen;
+
+        g.setColour (juce::Colour (0xff0a0a0e));
+        g.fillRoundedRectangle (r, 6.0f);
+        g.setColour (accent.withAlpha (0.65f));
+        g.drawRoundedRectangle (r.reduced (1.0f), 5.0f, 1.0f);
+        g.setColour (gw::kBtnEdge);
+        g.drawRoundedRectangle (r.reduced (0.5f), 6.0f, 1.0f);
+
+        const float cy = r.getCentreY(), gx = r.getX() + 22.0f;
+        g.setColour (accent);
+        if (playing)
+            g.fillRect (gx - 5.0f, cy - 5.0f, 10.0f, 10.0f);
+        else
+        {
+            juce::Path tri;
+            tri.addTriangle (gx - 4.5f, cy - 6.5f, gx - 4.5f, cy + 6.5f, gx + 6.5f, cy);
+            g.fillPath (tri);
+        }
+
+        g.setColour (gw::kText);
+        g.setFont (gw::barlow (11.5f, true, 0.16f));
+        g.drawText (playing ? "STOP" : "START",
+                    getLocalBounds().withTrimmedLeft (40), juce::Justification::centredLeft);
+    }
+
+private:
+    bool playing = false;
+};
+
+// ---------------------------------------------------------------------------
+class DemoPanel : public juce::Component
+{
+public:
+    juce::Slider* volKnob = nullptr;
+    bool   playing     = false;
+    double clipSeconds = 0.0;
+
+    void paint (juce::Graphics& g) override
+    {
+        auto r = getLocalBounds().toFloat();
+        g.setColour (gw::kPanelBg);
+        g.fillRoundedRectangle (r, 12.0f);
+        g.setColour (gw::kHairline);
+        g.drawRoundedRectangle (r.reduced (0.5f), 12.0f, 1.0f);
+
+        g.setColour (gw::kText);
+        g.setFont (gw::barlow (11.5f, true, 0.16f));
+        g.drawText (juce::String::fromUTF8 ("DEMO PLAYER \xc2\xb7 STRAIGHT INTO THE PEDAL"),
+                    14, 10, 520, 16, juce::Justification::centredLeft);
+
+        g.setColour (gw::kDim);
+        g.setFont (gw::mono (9.0f, 400, 0.03f));
+        g.drawText (juce::String::fromUTF8 ("27 clips baked into the plugin \xc2\xb7 loops until you stop it \xc2\xb7 stays live while the cover is open"),
+                    14, 28, 760, 12, juce::Justification::centredLeft);
+
+        g.setColour (gw::kHairline);
+        g.fillRect (14, 46, 1008, 1);
+
+        {   // running LED
+            auto led = juce::Rectangle<float> (628.0f, 68.0f, 11.0f, 11.0f);
+            const auto c = playing ? gw::kGreen : gw::kChipOff;
+            if (playing)
+            {
+                g.setColour (c.withAlpha (0.35f));
+                g.fillEllipse (led.expanded (5.0f));
+            }
+            g.setColour (juce::Colour (0xff0a0c10).interpolatedWith (c, playing ? 1.0f : 0.55f));
+            g.fillEllipse (led);
+        }
+        g.setColour (playing ? gw::kGreen : gw::kDim2);
+        g.setFont (gw::mono (10.0f, 500));
+        g.drawText (playing ? "LOOPING" : "STOPPED", 648, 67, 140, 14,
+                    juce::Justification::centredLeft);
+
+        if (clipSeconds > 0.0)
+        {
+            g.setColour (gw::kGrey);
+            g.setFont (gw::mono (9.0f, 400));
+            g.drawText (juce::String (clipSeconds, 1) + " s loop", 648, 84, 140, 12,
+                        juce::Justification::centredLeft);
+        }
+
+        g.setColour (gw::kGrey);
+        g.setFont (gw::mono (9.0f, 400, 0.03f));
+        g.drawText (juce::String::fromUTF8 ("Clip and level save with the preset \xc2\xb7 start/stop does not"),
+                    14, 100, 470, 12, juce::Justification::centredLeft);
+
+        g.setColour (gw::kDim);
+        g.setFont (gw::barlow (9.5f, true, 0.16f));
+        g.drawText ("DEMO LEVEL", 888, 30, 140, 12, juce::Justification::centred);
+
+        if (volKnob != nullptr)
+        {
+            const double dv = volKnob->getValue();
+            juce::String v = (dv > 0.0 ? "+" : "") + juce::String (dv, 1);
+            v = v.replace ("-", juce::String::fromUTF8 ("\xe2\x88\x92")) + " dB";
+            g.setColour (gw::kText);
+            g.setFont (gw::mono (12.0f, 400));
+            g.drawText (v, 888, 122, 140, 14, juce::Justification::centred);
+        }
+    }
+};
+
+// ---------------------------------------------------------------------------
 // "Where the Fuzz Meets the Funk" — chromatic-aberration name with the
 // occasional horizontal tear. v0.35: the brand/version line below it is gone
 // (version now lives in the standalone's Scale and Feedback window) and the
@@ -1545,8 +1757,8 @@ private:
     //   X (nothing held):        Freq   LPF     Mix      Rate   Rate   Gain
     //   Y (TAP held):             Gain   Res     Vol      Shape  Shape  Mode
     //   Z (BYPASS held):          L1 Dep L2 Dep  DrvRng   Target Target Target
-    //   A (BOTH held, secret):   Mix -> STARVE   Freq -> env SHAPE
-    //                            LPF -> env RATIO   Gain -> env THRESHOLD
+    //   A (BOTH held, secret):   Mix -> STARVE   Freq -> env THRESHOLD
+    //                            LPF -> env RATIO   Gain -> env SHAPE
     //                            (Rate 1/2 still dead.)
     //
     // v0.37: keyboard emulation (INS/DEL) is removed. A layer can only be
@@ -1640,6 +1852,13 @@ private:
     CoverDim   coverDim;
     CoverPanel cover;
     bool gateOpen = false;
+
+    // v0.40 demo player strip, below the pedal face
+    DemoPanel           demoPanel;
+    DemoSelector        demoSel;
+    DemoTransportButton demoBtn;
+    juce::Slider        demoVolKnob;
+    std::unique_ptr<SliderAttachment> demoVolAtt;
 
     // hints (v0.39: ship them ON)
     bool showHints = true;

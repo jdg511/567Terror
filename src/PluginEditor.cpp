@@ -249,6 +249,33 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     cover.addAndMakeVisible (c41Row);
     cover.addAndMakeVisible (c42Row);
 
+    // ---- v0.40 demo player strip ---------------------------------------------
+    demoSel.attach (choice ("democlip"));
+    demoSel.onChange = [this] { demoPanel.repaint(); };
+
+    demoVolKnob.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    demoVolKnob.setTextBoxStyle (juce::Slider::NoTextBox, false, 0, 0);
+    demoVolKnob.setVelocityModeParameters (1.0, 1, 0.0, false);
+    demoVolKnob.setRotaryParameters (gw::kAngle0, gw::kAngle1, true);
+    demoVolKnob.setColour (juce::Slider::rotarySliderFillColourId, gw::kCyan);
+    demoVolKnob.onValueChange = [this] { demoPanel.repaint(); };
+    demoVolAtt = std::make_unique<SliderAttachment> (apvts, "demovol", demoVolKnob);
+
+    demoBtn.onToggle = [this]
+    {
+        const bool next = ! processor.isDemoPlaying();
+        processor.setDemoPlaying (next);
+        demoBtn.setPlaying (next);
+        demoPanel.playing = next;
+        demoPanel.repaint();
+    };
+
+    demoPanel.volKnob = &demoVolKnob;
+    demoPanel.addAndMakeVisible (demoSel);
+    demoPanel.addAndMakeVisible (demoBtn);
+    demoPanel.addAndMakeVisible (demoVolKnob);
+    addAndMakeVisible (demoPanel);
+
     strip.onOpen = [this] { setGateOpen (true); };
     addAndMakeVisible (strip);
 
@@ -287,7 +314,7 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     addMouseListener (&holdHint, true);
 
     startTimerHz (60);
-    setSize (1060, 640);
+    setSize (1060, 800);   // v0.40: face art is 640 tall, demo strip lives below it
     // v0.35: defaults to x1 every launch; the standalone's "Scale and
     // Feedback" window (Options menu) offers x0.5 / x1 / x1.5 / x2 live.
     appliedScale = processor.uiScale.load (std::memory_order_relaxed);
@@ -381,12 +408,12 @@ void GlitchwaveAudioProcessorEditor::updateKnobModes()
             freqAtt = std::make_unique<SliderAttachment> (ap, "lfo1depth", freqKnob);
             lpfAtt  = std::make_unique<SliderAttachment> (ap, "lfo2depth", lpfKnob);
             break;
-        case 3:   // v0.38 secret Layer A: Mix->Starve, Freq->env Shape,
-                  // LPF->env Ratio, Gain->env Threshold. Rate 1/2 still dead.
+        case 3:   // v0.39 secret Layer A: Mix->Starve, Freq->env Threshold,
+                  // LPF->env Ratio, Gain->env Shape. Rate 1/2 still dead.
             mixAtt     = std::make_unique<SliderAttachment> (ap, "starve",    mixKnob);
-            freqAtt    = std::make_unique<SliderAttachment> (ap, "envshape",  freqKnob);
+            freqAtt    = std::make_unique<SliderAttachment> (ap, "envthresh", freqKnob);
             lpfAtt     = std::make_unique<SliderAttachment> (ap, "envratio",  lpfKnob);
-            envGainAtt = std::make_unique<SliderAttachment> (ap, "envthresh", envGainKnob);
+            envGainAtt = std::make_unique<SliderAttachment> (ap, "envshape",  envGainKnob);
             break;
     }
 
@@ -555,6 +582,14 @@ void GlitchwaveAudioProcessorEditor::refreshReadouts (int layer)
             c = gw::kRed;                       // the secret "?" burns red
         ls[i]->setColour (juce::Label::textColourId, c);
     }
+    // v0.39: with Hints on, Layer A's row gets three cryptic-but-readable
+    // titles instead of dashes/"?" -- Freq/LPF/Mix only, Gain stays dark.
+    if (layer == 3 && showHints)
+    {
+        ls[0]->setText ("ET?", juce::dontSendNotification);   // Freq -> env Threshold
+        ls[1]->setText ("ER?", juce::dontSendNotification);   // LPF  -> env Ratio
+        ls[2]->setText ("SV?", juce::dontSendNotification);   // Mix  -> Starve Voltage
+    }
 
     // ---- value lines -------------------------------------------------------
     juce::String text[6];
@@ -594,14 +629,14 @@ void GlitchwaveAudioProcessorEditor::refreshReadouts (int layer)
         {
             for (int i = 0; i < 6; ++i) { text[i] = juce::String::fromUTF8 (kDash); col[i] = gw::kGrey; }
 
-            // v0.38: FREQ = env Shape, LPF = env Ratio, GAIN = env Threshold.
+            // v0.39: FREQ = env Threshold, LPF = env Ratio, GAIN = env Shape.
             // Bare numbers, no captions -- same secret treatment as Starve.
-            text[0] = pTxt ("envshape");  col[0] = gw::kText;
+            text[0] = pTxt ("envthresh"); col[0] = gw::kText;
             text[1] = pTxt ("envratio");  col[1] = gw::kText;
-            text[5] = pTxt ("envthresh"); col[5] = gw::kText;
+            text[5] = pTxt ("envshape");  col[5] = gw::kText;
 
-            // the "?" reads out as the sagging rail: supply .. 1 V floor,
-            // modeled against a 2.4 A supply ceiling (see Glitchwave567.h)
+            // the "?" reads out as the sagging rail: a straight line from
+            // supply .. 1 V floor (9-18 V / 100 mA modeled supply)
             static constexpr float kVolts[4] = { 9.0f, 12.0f, 15.0f, 18.0f };
             float volts = kVolts[0];
             if (auto* ps = dynamic_cast<juce::AudioParameterChoice*> (apvts.getParameter ("supply4")))
@@ -610,8 +645,7 @@ void GlitchwaveAudioProcessorEditor::refreshReadouts (int layer)
             if (auto* p = apvts.getParameter ("starve"))
                 sv = p->getValue();
             constexpr float kFloorV = 1.0f;
-            const float foldback = std::pow (sv, 6.0f);
-            text[2] = juce::String (kFloorV + (volts - kFloorV) * (1.0f - foldback), 1);
+            text[2] = juce::String (volts - sv * (volts - kFloorV), 1);
             col[2]  = gw::kText;
             break;
         }
@@ -860,6 +894,21 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     c42Row.refresh();
     supplySel.refresh();
 
+    // v0.40: the demo transport lives on the processor, and the clip can also
+    // be changed by the host, so re-read both every frame
+    {
+        const bool p = processor.isDemoPlaying();
+        demoBtn.setPlaying (p);
+        const double secs = processor.getDemoClipSeconds();
+        if (p != demoPanel.playing || std::fabs (secs - demoPanel.clipSeconds) > 0.05)
+        {
+            demoPanel.playing     = p;
+            demoPanel.clipSeconds = secs;
+            demoPanel.repaint();
+        }
+        demoSel.refresh();
+    }
+
     // ---- decoration ----------------------------------------------------------
     fx.tick (t);
     holdHint.tick (t);
@@ -898,6 +947,19 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // the baked mosaic face (dark veil + scanlines already in the art)
     g.drawImage (bgImage, { 0.0f, 0.0f, 1060.0f, 640.0f });
+
+    // v0.40: the art is only 640 tall, so the demo strip gets its own ground
+    if (getHeight() > 640)
+    {
+        g.setColour (juce::Colour (0xff07070b));
+        g.fillRect (0, 640, 1060, getHeight() - 640);
+
+        juce::ColourGradient edge (gw::kCyan, 0.0f, 640.0f, gw::kMagenta, 1060.0f, 640.0f, false);
+        g.setGradientFill (edge);
+        g.setOpacity (0.30f);
+        g.fillRect (0.0f, 640.0f, 1060.0f, 1.0f);
+        g.setOpacity (1.0f);
+    }
 
     {   // rainbow hairline under the header
         juce::ColourGradient grad (gw::kMagenta, 0.0f, 70.0f, gw::kYellow, 1060.0f, 70.0f, false);
@@ -1125,4 +1187,12 @@ void GlitchwaveAudioProcessorEditor::resized()
     holdHint.setTargets (tapStompBtn.getBounds().getCentre().toFloat(),
                          bypassBtn.getBounds().getCentre().toFloat());
     holdHint.setBounds (0, 0, 1060, 640);
+
+    // ---- v0.40 demo player strip ----------------------------------------------
+    // Deliberately outside fx / holdHint / coverDim, which all stay clipped to
+    // the 640 px pedal face, so the strip keeps working with the cover open.
+    demoPanel.setBounds (12, 648, 1036, 140);
+    demoSel.setBounds     (14,  56, 430, 38);   // panel-local from here down
+    demoBtn.setBounds    (458,  56, 150, 38);
+    demoVolKnob.setBounds (920, 46,  76, 76);
 }

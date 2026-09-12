@@ -4,12 +4,15 @@
 #include <juce_dsp/juce_dsp.h>
 #include "dsp/Glitchwave567.h"
 #include "dsp/ModSystem.h"
+#include "AudioFilePlayer.h"
 
-class GlitchwaveAudioProcessor : public juce::AudioProcessor
+class GlitchwaveAudioProcessor : public juce::AudioProcessor,
+                                 private juce::AudioProcessorValueTreeState::Listener,
+                                 private juce::AsyncUpdater
 {
 public:
     GlitchwaveAudioProcessor();
-    ~GlitchwaveAudioProcessor() override = default;
+    ~GlitchwaveAudioProcessor() override;
 
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override {}
@@ -68,8 +71,28 @@ public:
     // polls and applies it live.
     std::atomic<float> uiScale { 1.0f };
 
+    // ---- v0.40 demo player -------------------------------------------------
+    // The clips are embedded (DemoData) and summed into the pedal's input, so
+    // they run through the whole chain. Which clip and how loud are real
+    // parameters ("democlip" / "demovol"); whether it is rolling is transport
+    // state, so it is a plain atomic and is never saved or automated.
+    static juce::StringArray demoClipNames();
+
+    void setDemoPlaying (bool shouldPlay) noexcept;
+    bool isDemoPlaying() const noexcept
+    {
+        return demoPlaying.load (std::memory_order_relaxed);
+    }
+
+    // message thread only (takes the player's lock briefly)
+    double getDemoClipSeconds() const noexcept { return demoPlayer.getLengthSeconds(); }
+
 private:
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+
+    void parameterChanged (const juce::String& paramID, float newValue) override;
+    void handleAsyncUpdate() override;      // message thread: decode the clip
+    void loadDemoClip (int index);
 
     static constexpr int kModChunk = 32;  // host samples between mod updates
 
@@ -79,6 +102,16 @@ private:
 
     juce::AudioBuffer<float> monoBuffer;  // ch0 = processing, ch1 = raw live copy (gate)
     juce::AudioBuffer<float> cvBuffer;    // ch0 = CV1 (SC L), ch1 = CV2 (SC R)
+
+    // v0.40 demo player state
+    AudioFilePlayer          demoPlayer;
+    juce::AudioFormatManager demoFormats;
+    juce::AudioBuffer<float> demoBuffer;  // one block of rendered demo audio
+    std::atomic<bool> demoPlaying { false };
+    std::atomic<int>  pendingDemoClip { 0 };
+    int   loadedDemoClip = -1;            // message thread only
+    float demoGainCur    = 1.0f;          // audio thread only: zipper-free level
+    float demoEnv        = 0.0f;          // audio thread only: start/stop fade
 
     std::atomic<float> meterPeaks[2] { { 0.f }, { 0.f } };
     std::atomic<float> visVals[6] { { 0.f }, { 0.f }, { 0.f }, { 0.f }, { 0.f }, { 0.f } };
@@ -106,6 +139,7 @@ private:
         std::atomic<float>* starve{};   std::atomic<float>* jfeton{};
         std::atomic<float>* ladder36{}; std::atomic<float>* boost6{};
         std::atomic<float>* c41cap{};   std::atomic<float>* c42cap{};
+        std::atomic<float>* democlip{}; std::atomic<float>* demovol{};
     } raw;
 
     // ---- output gate state ------------------------------------------------------

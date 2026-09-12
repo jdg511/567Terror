@@ -1,5 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include <DemoData.h>   // v0.40: the embedded demo clips (GwDemos target)
 
 namespace
 {
@@ -112,6 +113,81 @@ GlitchwaveAudioProcessor::GlitchwaveAudioProcessor()
     raw.boost6      = apvts.getRawParameterValue ("boost6");
     raw.c41cap      = apvts.getRawParameterValue ("c41cap");
     raw.c42cap      = apvts.getRawParameterValue ("c42cap");
+    raw.democlip    = apvts.getRawParameterValue ("democlip");
+    raw.demovol     = apvts.getRawParameterValue ("demovol");
+
+    // v0.40 demo player: Ogg comes in with registerBasicFormats(), so the
+    // embedded clips decode with nothing extra enabled.
+    demoFormats.registerBasicFormats();
+    apvts.addParameterListener ("democlip", this);
+    loadDemoClip ((int) raw.democlip->load());
+}
+
+GlitchwaveAudioProcessor::~GlitchwaveAudioProcessor()
+{
+    apvts.removeParameterListener ("democlip", this);
+    cancelPendingUpdate();
+}
+
+// ---- v0.40 demo player ----------------------------------------------------------
+// Display names, in the same order as the SOURCES list in CMakeLists.txt.
+// The index is what gets saved in the session, so only ever append.
+juce::StringArray GlitchwaveAudioProcessor::demoClipNames()
+{
+    return {
+        "Arpeggio - Quick Clean",       "Arpeggio - Deluxe Clean",
+        "Arpeggio - Iconic Clean-ish",  "Arpeggio - Warm Crunch",
+        "Arpeggio - Dirty Punk",
+        "Rhythm - Fender Clean",        "Rhythm - Suhr Clean",
+        "Rhythm - AC30 Crunch",
+        "Power Chords - Iconic Clean-ish", "Power Chords - Plexi",
+        "Power Chords - Punk Rock",     "Power Chords - Classic Hi-Gain",
+        "Solo - Mesa",                  "Solo - Diezel",
+        "Solo - Fortin",
+        "Metal - 5150",                 "Metal - Blackstar",
+        "Metal - Dual Rec",
+        "Pick Bass - Clean Bright",     "Pick Bass - Bite",
+        "Pick Bass - Growl",            "Pick Bass - Rock Classic",
+        "Pick Bass - Metalcore",
+        "Finger Bass - Clean Bright",   "Finger Bass - Nice Warm",
+        "Finger Bass - Bite",           "Finger Bass - Growl"
+    };
+}
+
+void GlitchwaveAudioProcessor::setDemoPlaying (bool shouldPlay) noexcept
+{
+    if (shouldPlay)
+        demoPlayer.restart();
+    demoPlaying.store (shouldPlay, std::memory_order_relaxed);
+}
+
+// may arrive on the audio thread, so it only flags and bounces to the message
+// thread; decoding an Ogg is never done under the audio callback
+void GlitchwaveAudioProcessor::parameterChanged (const juce::String& paramID, float newValue)
+{
+    if (paramID == "democlip")
+    {
+        pendingDemoClip.store ((int) newValue, std::memory_order_relaxed);
+        triggerAsyncUpdate();
+    }
+}
+
+void GlitchwaveAudioProcessor::handleAsyncUpdate()
+{
+    loadDemoClip (pendingDemoClip.load (std::memory_order_relaxed));
+}
+
+void GlitchwaveAudioProcessor::loadDemoClip (int index)
+{
+    index = juce::jlimit (0, DemoData::namedResourceListSize - 1, index);
+    if (index == loadedDemoClip)
+        return;
+
+    int size = 0;
+    if (const char* data = DemoData::getNamedResource (DemoData::namedResourceList[index], size))
+        if (demoPlayer.loadFromMemory (data, size, demoFormats,
+                                       DemoData::originalFilenames[index]))
+            loadedDemoClip = index;
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout
@@ -243,11 +319,20 @@ GlitchwaveAudioProcessor::createParameterLayout()
         juce::ParameterID { "c41cap", 1 }, "C41 Loop Cap", false));
     layout.add (std::make_unique<juce::AudioParameterBool> (
         juce::ParameterID { "c42cap", 1 }, "C42 Output Cap", false));
+
+    // ---- v0.40 demo player ---------------------------------------------------------
+    // Clip choice and level are parameters so they save with the session and
+    // the UI can use the normal attachments. Play/stop is transport, not a
+    // parameter, and lives on the processor as a plain atomic.
+    layout.add (std::make_unique<PC> (juce::ParameterID { "democlip", 1 }, "Demo Clip",
+        demoClipNames(), 0));
+    layout.add (std::make_unique<PF> (juce::ParameterID { "demovol", 1 }, "Demo Level",
+        juce::NormalisableRange<float> (-24.0f, 12.0f, 0.1f), 0.0f, db1));
     layout.add (std::make_unique<PF> (juce::ParameterID { "starve", 1 }, "Starve",
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.0f,
         Att().withStringFromValueFunction ([] (float v, int)
             {
-                // secret: rail sags from the supply toward 5 V (never below)
+                // secret: rail sags LINEARLY from the supply down to 1 V (v0.39)
                 return juce::String (juce::roundToInt (v * 100.0f)) + " %";
             })));
 
@@ -266,6 +351,12 @@ void GlitchwaveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
 
     monoBuffer.setSize (2, samplesPerBlock);
     cvBuffer.setSize (2, samplesPerBlock);
+
+    // v0.40 demo player
+    demoBuffer.setSize (1, samplesPerBlock);
+    demoPlayer.prepare (sampleRate);
+    demoGainCur = juce::Decibels::decibelsToGain (raw.demovol->load());
+    demoEnv     = 0.0f;
 
     hostRate     = sampleRate;
     gateEnvCoeff = 1.0f - std::exp (-1.0f / (0.010f * (float) sampleRate));
@@ -324,6 +415,30 @@ void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     }
     else
         juce::FloatVectorOperations::clear (mono, numSamples);
+
+    // ---- v0.40 demo player -----------------------------------------------------
+    // Summed into the pedal's input ahead of everything else, so the clip runs
+    // through the gate, the meters and the whole circuit exactly like a guitar
+    // would. The gain ramps across the block, so moving the level knob and
+    // hitting start/stop never clicks.
+    {
+        const bool  want      = demoPlaying.load (std::memory_order_relaxed);
+        const float envTarget = want ? 1.0f : 0.0f;
+
+        if (want || demoEnv > 0.0f)
+        {
+            const int nd = juce::jmin (numSamples, demoBuffer.getNumSamples());
+            float* d = demoBuffer.getWritePointer (0);
+            demoPlayer.process (d, nd, true, true);
+
+            const float gTarget = juce::Decibels::decibelsToGain (raw.demovol->load());
+            demoBuffer.applyGainRamp (0, 0, nd, demoGainCur * demoEnv, gTarget * envTarget);
+            juce::FloatVectorOperations::add (mono, d, nd);
+
+            demoGainCur = gTarget;
+            demoEnv     = envTarget;
+        }
+    }
 
     // raw copy for the gate threshold + input meter
     monoBuffer.copyFrom (1, 0, mono, numSamples);
