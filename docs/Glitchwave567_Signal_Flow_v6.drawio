@@ -1,0 +1,445 @@
+<mxfile host="Electron" agent="Claude">
+  <diagram name="1 - Audio Path" id="gwHwAudioV6">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3700" pageHeight="1560" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="a-title" parent="1" vertex="1" value="GLITCHWAVE 567 &#8212; MAIN BOARD HARDWARE SIGNAL FLOW  (rev 6, from the fabbed schematic)&#xa;Page 1 of 4: the audio path. Every knob is an OTA VCA driven by a Pico PWM CV &#8212; no audio ever touches the MCU." style="text;html=1;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;">
+          <mxGeometry x="40" y="30" width="1600" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-legend" parent="1" vertex="1" value="Blue = op-amp / passive audio  &#183;  Green = wet (567)  &#183;  Orange = dry (Bazz Fuss)  &#183;  Purple = CV from the Pico  &#183;  Red = switch or DO-NOT-FIT  &#183;  Yellow = jacks and rails" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;fontStyle=2;">
+          <mxGeometry x="40" y="105" width="1600" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ============ input ============ -->
+        <mxCell id="a-j1" parent="1" vertex="1" value="J1  INPUT JACK&#xa;6.35 mm PJ-603A&#xa;switched tip" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;align=center;verticalAlign=middle;">
+          <mxGeometry x="40" y="400" width="180" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-innet" parent="1" vertex="1" value="INPUT NETWORK  (original, faithful)&#xa;R1 1k series &#183; R2 2.2M load&#xa;C1 220n block &#183; R3 2.2M bias to VREF&#xa;&#8594; U1A buffer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="260" y="400" width="290" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-voice" parent="1" vertex="1" value="VOICING LOW-CUT&#xa;2&#215; Sallen-Key HP, 24 dB/oct @ 40 Hz&#xa;Q 0.54 then Q 1.31" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="590" y="400" width="280" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-tap" parent="1" vertex="1" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;">
+          <mxGeometry x="915" y="452" width="16" height="16" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-taplbl" parent="1" vertex="1" value="DRY_CLEAN&#xa;tap is AFTER the voicing filter&#xa;(also feeds the bypass VCA on this page&#xa;and the envelope follower on page 3)" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontStyle=2;">
+          <mxGeometry x="800" y="490" width="250" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ============ wet branch ============ -->
+        <mxCell id="a-trim" parent="1" vertex="1" value="FIXED TRIM&#xa;+15 dB&#xa;wet branch only" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1000" y="180" width="180" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-gain" parent="1" vertex="1" value="GAIN STAGE  U1&#xa;&#215;214.6  (1 + 470k / 2.2k)&#xa;C2 4.7&#181; shelf, unity below 15.4 Hz&#xa;CLIPS THE RAILS &#8594; square into the 567" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1220" y="180" width="300" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-567" parent="1" vertex="1" value="U5  LM567  TONE DECODER&#xa;SO-8, on the V567 rail&#xa;THE HEART&#xa;&#8594; detail on page 2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;align=center;verticalAlign=middle;strokeWidth=3;">
+          <mxGeometry x="1570" y="165" width="300" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-dnp" parent="1" vertex="1" value="C41 / C42  &#8212;  DO NOT FIT&#xa;LFIL (pin 2) and OFIL (pin 1) pads are&#xa;deliberately EMPTY. With no filter caps the&#xa;loop never settles and pin 8 chatters at&#xa;audio rate. THAT CHATTER IS THE VOICE." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;strokeWidth=2;">
+          <mxGeometry x="1560" y="10" width="320" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-freqota" parent="1" vertex="1" value="U7  LM13700 OTA&#xa;emulates the timing resistor RT&#xa;pin 5 square &#8594; attenuator &#8594; OTA&#xa;&#8594; current into the CT node&#xa;R38 100k floor keeps the VCO alive" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1450" y="370" width="290" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-ctmux" parent="1" vertex="1" value="U8  CD4052B&#xa;CT RANGE SELECT&#xa;47n / 1&#181; / 22&#181; / 470&#181;&#xa;&#215; OTA sweep = 0.2 Hz &#8230; 6 kHz+" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1780" y="370" width="270" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-freqcv" parent="1" vertex="1" value="FREQ_CV  (Iabc)&#xa;FREQ_A / FREQ_B  (range)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=center;verticalAlign=middle;dashed=1;">
+          <mxGeometry x="1560" y="540" width="380" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-q" parent="1" vertex="1" value="Q OPEN-COLLECTOR NODE  (pin 8)&#xa;R16 100k weak pull-up to V567&#xa;C43 makes the stray C explicit&#xa;&#8594; lopsided square, original behaviour" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1930" y="175" width="300" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- ============ dry branch ============ -->
+        <mxCell id="a-dirtvca" parent="1" vertex="1" value="DIRT GAIN VCA  U3 LM13700&#xa;&#215;1 &#8230; &#215;300 sweep&#xa;(VCA attenuator + fixed &#215;300 stage)&#xa;replaces a digipot: 5 V parts cannot&#xa;pass 9 V-referenced audio at 18 V" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1000" y="650" width="300" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-dirtcv" parent="1" vertex="1" value="DIRT_CV  (Iabc)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=center;verticalAlign=middle;dashed=1;">
+          <mxGeometry x="1060" y="810" width="180" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-bazz" parent="1" vertex="1" value="BAZZ FUSS  (always on, dry path)&#xa;Q1 MMBTA13 darlington + D1 diode&#xa;collector rail = VDIRT (the starve target)&#xa;9 kHz voicing LP &#183; DC-blocked out" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1350" y="650" width="320" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- ============ mix ============ -->
+        <mxCell id="a-wetvca" parent="1" vertex="1" value="WET VCA  U10A&#xa;raw 567 square" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="2320" y="180" width="230" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-wetcv" parent="1" vertex="1" value="MIX_WET_CV" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=center;verticalAlign=middle;dashed=1;">
+          <mxGeometry x="2355" y="310" width="160" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-dryvca" parent="1" vertex="1" value="DRY VCA  U10B&#xa;Bazz Fuss output" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="2320" y="665" width="230" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-drycv" parent="1" vertex="1" value="MIX_DRY_CV" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=center;verticalAlign=middle;dashed=1;">
+          <mxGeometry x="2355" y="795" width="160" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-sum" parent="1" vertex="1" value="U9A  VIRTUAL-GROUND SUM&#xa;the two VCA output CURRENTS sum here&#xa;(free mixing &#8212; no crossfade pot)&#xa;original R9 1M wet / R10 100k dry / R11 100k fb&#xa;reproduced by input attenuators + firmware CV law" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="2620" y="390" width="330" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-svf" parent="1" vertex="1" value="STATE-VARIABLE FILTER&#xa;LM13700 datasheet topology&#xa;U9B sum &#8594; U11A int1 (BP) &#8594; U11B int2 (LP)&#xa;HP taken at the sum node&#xa;cutoff: SVF_F_CV &#8594; both Iabc&#xa;Q: BP feedback through U12A VCA, 0.25 &#8230; 8" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="3010" y="380" width="340" height="170" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-svfcv" parent="1" vertex="1" value="SVF_F_CV  &#183;  SVF_Q_CV" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=center;verticalAlign=middle;dashed=1;">
+          <mxGeometry x="3070" y="570" width="220" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-fmode" parent="1" vertex="1" value="U13  CD4051B&#xa;MODE SELECT&#xa;ch0 Off (bypass) &#183; ch1 LP&#xa;ch2 BP &#183; ch3 HP &#183; ch4 Notch" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="3410" y="390" width="250" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-fmodecv" parent="1" vertex="1" value="FMODE_A / B / C" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=center;verticalAlign=middle;dashed=1;">
+          <mxGeometry x="3450" y="570" width="170" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- ============ output chain (wrapped row) ============ -->
+        <mxCell id="a-dcblk" parent="1" vertex="1" value="C8 / R12 DC BLOCK&#xa;7.2 Hz (original)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="40" y="1010" width="220" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-hp60" parent="1" vertex="1" value="HP 60 Hz&#xa;12 dB/oct" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="300" y="1010" width="170" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-bell" parent="1" vertex="1" value="BELL +3 dB @ 800 Hz&#xa;Q 0.5 &#183; Zf 3.6k||56n, Zg 4.3k+47n&#xa;review-verified 790 Hz / +3.04 dB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="510" y="1010" width="280" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-sw1" parent="1" vertex="1" value="SW1  +6 dB&#xa;MSK-12C02 slide&#xa;short = unity" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="830" y="1010" width="180" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-sw2" parent="1" vertex="1" value="SW2  JFET STAGE&#xa;QJ1 MMBFJ201 Fetzer Valve&#xa;big 2nd harmonic, asym squish&#xa;SHIPS IN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1050" y="1010" width="260" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-sw3" parent="1" vertex="1" value="SW3  &#8722;3/&#8722;6 ASYM LADDER&#xa;D70&#8211;D75 1N4148W&#xa;pos half soft 3-step, neg half 2-step&#xa;SHIPS OUT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1350" y="1010" width="290" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-gatevca" parent="1" vertex="1" value="U15A  GATE &#215; VOL VCA&#xa;one VCA, product CV from the Pico" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1690" y="1010" width="270" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-gatecv" parent="1" vertex="1" value="GATE_VOL_CV" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=center;verticalAlign=middle;dashed=1;">
+          <mxGeometry x="1740" y="940" width="170" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-bypvca" parent="1" vertex="1" value="U15B  CLEAN-BYPASS VCA&#xa;fed from DRY_CLEAN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1690" y="1250" width="270" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-bypcv" parent="1" vertex="1" value="BYPASS_CV" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=center;verticalAlign=middle;dashed=1;">
+          <mxGeometry x="1740" y="1385" width="170" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-dryin" parent="1" vertex="1" value="DRY_CLEAN&#xa;(global label, from the input tap)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;align=center;verticalAlign=middle;dashed=1;">
+          <mxGeometry x="1390" y="1265" width="240" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-obuf" parent="1" vertex="1" value="U16A  SUM + BUFFER&#xa;U15A and U15B output CURRENTS&#xa;sum here (ERC output-output waiver)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="2010" y="1125" width="300" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-r13" parent="1" vertex="1" value="R13&#xa;470R" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="2360" y="1130" width="120" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-j2" parent="1" vertex="1" value="J2  OUTPUT JACK&#xa;6.35 mm PJ-603A" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;align=center;verticalAlign=middle;">
+          <mxGeometry x="2530" y="1130" width="220" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-note" parent="1" vertex="1" value="WHY THERE ARE NO AUDIO POTS ON THIS BOARD&#xa;&#xa;Every control is an OTA VCA or an analog mux, steered by a filtered PWM CV from the Pico. The six panel pots on the control board are&#xa;DC wipers into the ADC mux &#8212; audio never leaves the analog domain and never crosses the 2x8 header. That is what makes the pedal&#xa;digitally controlled rather than digital: the Pico sets currents, the LM13700s do the work." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;align=left;verticalAlign=top;spacing=12;">
+          <mxGeometry x="2530" y="1290" width="1130" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- ============ edges ============ -->
+        <mxCell id="ae1" parent="1" edge="1" source="a-j1" target="a-innet" value="IN_TIP" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;fontSize=11;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae2" parent="1" edge="1" source="a-innet" target="a-voice" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae3" parent="1" edge="1" source="a-voice" target="a-tap" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;endArrow=none;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae4" parent="1" edge="1" source="a-tap" target="a-trim" value="V567_DRIVE" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;strokeColor=#82b366;fontSize=11;fontColor=#82b366;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae5" parent="1" edge="1" source="a-tap" target="a-dirtvca" value="DRY_CLEAN" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;strokeColor=#d79b00;fontSize=11;fontColor=#d79b00;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="ae6" parent="1" edge="1" source="a-trim" target="a-gain" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;strokeColor=#82b366;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae7" parent="1" edge="1" source="a-gain" target="a-567" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;strokeColor=#82b366;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae8" parent="1" edge="1" source="a-567" target="a-q" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;strokeColor=#82b366;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae9" parent="1" edge="1" source="a-dnp" target="a-567" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=1;entryX=0.4;entryY=0;strokeColor=#b85450;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae10" parent="1" edge="1" source="a-freqota" target="a-567" value="timing current" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=0;entryX=0.25;entryY=1;strokeWidth=2;strokeColor=#82b366;fontSize=11;fontColor=#82b366;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae11" parent="1" edge="1" source="a-ctmux" target="a-567" value="CT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=0;entryX=0.75;entryY=1;strokeWidth=2;strokeColor=#82b366;fontSize=11;fontColor=#82b366;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae12" parent="1" edge="1" source="a-freqcv" target="a-freqota" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.25;exitY=0;entryX=0.5;entryY=1;strokeColor=#9673a6;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae13" parent="1" edge="1" source="a-freqcv" target="a-ctmux" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.75;exitY=0;entryX=0.5;entryY=1;strokeColor=#9673a6;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="ae14" parent="1" edge="1" source="a-dirtcv" target="a-dirtvca" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;strokeColor=#9673a6;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae15" parent="1" edge="1" source="a-dirtvca" target="a-bazz" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;strokeColor=#d79b00;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="ae16" parent="1" edge="1" source="a-q" target="a-wetvca" value="Q_OUT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;strokeColor=#82b366;fontSize=11;fontColor=#82b366;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae17" parent="1" edge="1" source="a-bazz" target="a-dryvca" value="DIRT_OUT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;strokeColor=#d79b00;fontSize=11;fontColor=#d79b00;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae18" parent="1" edge="1" source="a-wetcv" target="a-wetvca" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;strokeColor=#9673a6;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae19" parent="1" edge="1" source="a-drycv" target="a-dryvca" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;strokeColor=#9673a6;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae20" parent="1" edge="1" source="a-wetvca" target="a-sum" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0.5;entryY=0;strokeWidth=3;strokeColor=#82b366;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae21" parent="1" edge="1" source="a-dryvca" target="a-sum" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0.5;entryY=1;strokeWidth=3;strokeColor=#d79b00;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="ae22" parent="1" edge="1" source="a-sum" target="a-svf" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae23" parent="1" edge="1" source="a-svfcv" target="a-svf" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;strokeColor=#9673a6;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae24" parent="1" edge="1" source="a-svf" target="a-fmode" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae25" parent="1" edge="1" source="a-fmodecv" target="a-fmode" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;strokeColor=#9673a6;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="ae26" parent="1" edge="1" source="a-fmode" target="a-dcblk" value="FILT_OUT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0.5;entryY=0;strokeWidth=3;fontSize=12;fontStyle=1;">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="3680" y="880" /><mxPoint x="150" y="880" /></Array></mxGeometry>
+        </mxCell>
+
+        <mxCell id="ae27" parent="1" edge="1" source="a-dcblk" target="a-hp60" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae28" parent="1" edge="1" source="a-hp60" target="a-bell" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae29" parent="1" edge="1" source="a-bell" target="a-sw1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae30" parent="1" edge="1" source="a-sw1" target="a-sw2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae31" parent="1" edge="1" source="a-sw2" target="a-sw3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae32" parent="1" edge="1" source="a-sw3" target="a-gatevca" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae33" parent="1" edge="1" source="a-gatecv" target="a-gatevca" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#9673a6;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae34" parent="1" edge="1" source="a-bypcv" target="a-bypvca" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;strokeColor=#9673a6;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae35" parent="1" edge="1" source="a-dryin" target="a-bypvca" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;strokeColor=#d79b00;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae36" parent="1" edge="1" source="a-gatevca" target="a-obuf" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.25;strokeWidth=3;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae37" parent="1" edge="1" source="a-bypvca" target="a-obuf" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.75;strokeWidth=3;strokeColor=#d79b00;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae38" parent="1" edge="1" source="a-obuf" target="a-r13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae39" parent="1" edge="1" source="a-r13" target="a-j2" value="OUT_TIP" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;fontSize=11;"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram name="2 - LM567 Core" id="gwHwCoreV6">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2400" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="k-title" parent="1" vertex="1" value="PAGE 2 &#8212; THE 567 CORE&#xa;How a fixed-frequency tone decoder gets a 0.2 Hz to 6 kHz sweep: an OTA stands in for the timing resistor and a 4052 switches the timing cap." style="text;html=1;align=left;verticalAlign=middle;fontSize=19;fontStyle=1;">
+          <mxGeometry x="40" y="30" width="1500" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="k-drive" parent="1" vertex="1" value="V567_DRIVE&#xa;clipped square from the&#xa;&#215;214.6 gain stage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="40" y="460" width="220" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="k-567" parent="1" vertex="1" value="U5  LM567  (SO-8)&#xa;&#xa;pin 3  input&#xa;pin 5 / 6  timing (RT, CT)&#xa;pin 1  OFIL &#183; pin 2  LFIL&#xa;pin 8  Q open collector&#xa;&#xa;runs on the V567 rail (9 V, 78L09)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;align=center;verticalAlign=middle;strokeWidth=3;">
+          <mxGeometry x="640" y="380" width="340" height="270" as="geometry" />
+        </mxCell>
+
+        <mxCell id="k-dnp" parent="1" vertex="1" value="C41  LFIL (pin 2)   &#183;   C42  OFIL (pin 1)&#xa;PADS EXIST, DO NOT FIT&#xa;&#xa;With no filter caps neither the loop nor the lock&#xa;detector has anything to average over, so pin 8&#xa;toggles on the instantaneous phase at 2 &#215; f0.&#xa;The pads are there for taming experiments only.&#xa;The plugin models both, switchable." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;fontStyle=1;align=center;verticalAlign=middle;strokeWidth=3;">
+          <mxGeometry x="60" y="120" width="440" height="230" as="geometry" />
+        </mxCell>
+
+        <mxCell id="k-ota" parent="1" vertex="1" value="U7  LM13700 OTA  &#8212;  ELECTRONIC RT&#xa;pin 5 square &#8594; attenuator &#8594; OTA&#xa;&#8594; current into the CT node&#xa;Iabc = FREQ_CV sweeps f0 over decades&#xa;R38 100k floor keeps the VCO alive at Iabc = 0" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="600" y="780" width="420" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="k-ct" parent="1" vertex="1" value="U8  CD4052B  &#8212;  CT RANGE SELECT&#xa;on the V567 rail, picks 1 of 4 caps&#xa;47n  /  1&#181;  /  22&#181;  /  470&#181;&#xa;&#215; the OTA sweep = 0.2 Hz &#8230; 6 kHz+ with overlap" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1120" y="780" width="420" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="k-shift" parent="1" vertex="1" value="Q2 / Q3  MMBT3904&#xa;LEVEL SHIFT 3.3 V &#8594; V567&#xa;INVERTING &#8212; firmware flips the bits" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1180" y="1020" width="300" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="k-freqcv" parent="1" vertex="1" value="FREQ_CV&#xa;Pico PWM, 2-pole RC&#xa;(pitch is the most FM-audible CV,&#xa;so it gets the extra pole)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="100" y="800" width="300" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="k-freqab" parent="1" vertex="1" value="FREQ_A / FREQ_B&#xa;Pico GP, range select" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1650" y="1040" width="260" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="k-q" parent="1" vertex="1" value="Q NODE  (pin 8)&#xa;R16 100k weak pull-up to V567&#xa;C43 = the sim&#39;s stray C, made explicit&#xa;weak pull-up &#8594; lopsided square,&#xa;which is the original behaviour" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1330" y="420" width="340" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="k-qout" parent="1" vertex="1" value="Q_OUT&#xa;&#8594; WET VCA (page 1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1800" y="330" width="260" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="k-lock" parent="1" vertex="1" value="LOCK_SENSE&#xa;&#8594; ADC mux ch8 (page 3)&#xa;firmware can see whether it locked" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1800" y="560" width="300" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="k-cal" parent="1" vertex="1" value="KNOWN AND ACCEPTED&#xa;&#xa;R38 100k sits outside the 2k&#8211;20k RT range the datasheet documents, so OTA-off f0 accuracy and drift are unspecified.&#xa;That is fine: it is a floor, not an operating point.&#xa;&#xa;The 4052 on-resistance adds roughly 3.6 &#215; rON / Reff of timing error, which firmware calibrates out per range." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;align=left;verticalAlign=top;spacing=12;">
+          <mxGeometry x="40" y="1060" width="1080" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ke1" parent="1" edge="1" source="k-drive" target="k-567" value="pin 3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;strokeColor=#82b366;fontSize=11;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ke2" parent="1" edge="1" source="k-dnp" target="k-567" value="pins 1 and 2 left open" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=1;exitY=0.5;entryX=0.2;entryY=0;strokeColor=#b85450;strokeWidth=3;fontSize=11;fontColor=#b85450;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ke3" parent="1" edge="1" source="k-ota" target="k-567" value="pin 5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=0;entryX=0.35;entryY=1;strokeWidth=3;strokeColor=#82b366;fontSize=11;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ke4" parent="1" edge="1" source="k-ct" target="k-567" value="pin 6  CT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.25;exitY=0;entryX=0.75;entryY=1;strokeWidth=3;strokeColor=#82b366;fontSize=11;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ke5" parent="1" edge="1" source="k-freqcv" target="k-ota" value="Iabc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#9673a6;strokeWidth=2;fontSize=11;fontColor=#9673a6;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ke6" parent="1" edge="1" source="k-freqab" target="k-shift" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#9673a6;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ke7" parent="1" edge="1" source="k-shift" target="k-ct" value="A / B" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;strokeColor=#9673a6;strokeWidth=2;fontSize=11;fontColor=#9673a6;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ke8" parent="1" edge="1" source="k-567" target="k-q" value="pin 8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;strokeColor=#82b366;fontSize=11;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ke9" parent="1" edge="1" source="k-q" target="k-qout" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.25;entryX=0;entryY=0.5;strokeWidth=3;strokeColor=#82b366;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ke10" parent="1" edge="1" source="k-q" target="k-lock" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=1;exitY=0.75;entryX=0;entryY=0.5;strokeColor=#9673a6;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram name="3 - Control and CV" id="gwHwCtrlV6">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2800" pageHeight="1600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="c-title" parent="1" vertex="1" value="PAGE 3 &#8212; CONTROL AND CV&#xa;The Pico never touches audio. It reads DC and writes DC: PWM out to the OTAs and muxes, muxed ADC back in." style="text;html=1;align=left;verticalAlign=middle;fontSize=19;fontStyle=1;">
+          <mxGeometry x="40" y="30" width="1500" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c-board" parent="1" vertex="1" value="CONTROL BOARD&#xa;bolts behind the drilled face&#xa;&#xa;6&#215; ALPS RK09K1130A5R  B10k lin&#xa;FREQ  GAIN  MIX  /  FIZZ  Q  VOL&#xa;2&#215; Alpha SF12011F soft-touch stomps&#xa;6&#215; WS2812B: sect A, B, C, tempo, bypass, gate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="40" y="380" width="360" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c-j10" parent="1" vertex="1" value="J10  &#8212;  KEYED 2&#215;8 HEADER&#xa;ONLY DC CROSSES:&#xa;rails &#183; 6 pot wipers &#183; 2 stomps &#183; WS2812 data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;strokeWidth=2;">
+          <mxGeometry x="480" y="410" width="330" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c-pico" parent="1" vertex="1" value="U20  RASPBERRY PI PICO&#xa;&#xa;GP0&#8211;8    PWM CVs (10k + 100n, ~160 Hz pole)&#xa;GP9       CVOUT_PWM&#xa;GP10&#8211;14 mux addresses&#xa;GP15     WS2812 data (via U22)&#xa;GP16&#8211;17 stomps&#xa;GP18&#8211;21 4067 address&#xa;GP22     spare&#xa;ADC0     16ch mux &#183; ADC1/2 CV1/CV2 direct" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;fontStyle=1;align=center;verticalAlign=middle;strokeWidth=3;">
+          <mxGeometry x="900" y="330" width="420" height="300" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c-mux" parent="1" vertex="1" value="U21  74HC4067  &#8212;  16ch ADC MUX (3V3)&#xa;C0&#8211;5  pot wipers&#xa;C6     ENV_ADC&#xa;C7     VA_SENSE&#xa;C8     LOCK_SENSE&#xa;C9&#8211;11 gate trims RV1&#8211;3 (THRESH / HOLD / FADE)&#xa;C12&#8211;15 grounded" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="480" y="720" width="420" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c-trims" parent="1" vertex="1" value="RV1 / RV2 / RV3  10k trims (3224W)&#xa;the &#34;inside the pedal&#34; gate controls&#xa;THRESH &#183; HOLD &#183; FADE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="40" y="760" width="360" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c-env" parent="1" vertex="1" value="ENVELOPE FOLLOWER&#xa;precision full-wave rectifier (VREF-referenced)&#xa;+ Mu-Tron ballistics: attack ~4 ms, release ~150 ms&#xa;buffered, divided into 0&#8211;3.3 V, BAT54 hard clamp&#xa;&#xa;Only the FEEL is analog &#8212; where the envelope goes&#xa;is firmware, matching the plugin mod system." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="40" y="1010" width="420" height="190" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c-cvin" parent="1" vertex="1" value="CV IN &#215;2  (J3 / J4, switched tip)&#xa;100k series &#183; /3 divider (accepts ~10 V)&#xa;BAT54S rail clamps &#183; RC slew&#xa;&#8594; ADC1 / ADC2 direct (fast path)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="960" y="1010" width="380" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c-cvout" parent="1" vertex="1" value="CV OUT  (J6)&#xa;Pico PWM &#8594; 2-pole RC&#xa;&#8594; &#215;1.52 on the +5 V-capable VA op-amp&#xa;(0&#8211;3.3 V becomes 0&#8211;5 V) &#8594; 1k &#8594; jack" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1400" y="1010" width="380" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c-cvs" parent="1" vertex="1" value="PWM CVs OUT  (GP0&#8211;GP8, each 10k + 100n)&#xa;&#xa;DIRT_CV            &#8594;  dirt gain VCA&#xa;FREQ_CV            &#8594;  567 timing OTA   (second RC pole)&#xa;MIX_WET_CV         &#8594;  wet VCA&#xa;MIX_DRY_CV         &#8594;  dry VCA&#xa;SVF_F_CV           &#8594;  filter cutoff, both integrator Iabc&#xa;SVF_Q_CV           &#8594;  damping VCA&#xa;GATE_VOL_CV        &#8594;  gate &#215; VOL VCA&#xa;BYPASS_CV          &#8594;  clean-bypass VCA&#xa;STARVE_CV          &#8594;  VDIRT servo (page 4)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;align=left;verticalAlign=top;spacing=12;">
+          <mxGeometry x="1420" y="330" width="600" height="300" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c-addr" parent="1" vertex="1" value="MUX ADDRESSES OUT  (GP10&#8211;GP14)&#xa;&#xa;FREQ_A / FREQ_B      &#8594;  U8 CD4052B, 567 timing cap&#xa;                                 level-shifted 3.3 V &#8594; V567 by Q2/Q3&#xa;FMODE_A / B / C      &#8594;  U13 CD4051B, filter mode&#xa;                                 level-shifted 3.3 V &#8594; VA by Q4/Q5/Q6&#xa;&#xa;Both shifters INVERT &#8212; firmware flips the bits." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;align=left;verticalAlign=top;spacing=12;">
+          <mxGeometry x="1420" y="670" width="600" height="230" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c-leds" parent="1" vertex="1" value="U22  74AHCT1G125&#xa;WS2812 data level shift on +5 V&#xa;(3.3 V is marginal for 5 V pixels)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="900" y="150" width="420" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c-note" parent="1" vertex="1" value="WHAT THE FIRMWARE OWNS&#xa;&#xa;The pots are DC wipers, not audio pots, so every knob law &#8212; the FREQ decade sweep, the MIX crossfade ratios that reproduce the original&#xa;R9 1M / R10 100k mixer, the gate threshold and fade, the whole modulation matrix &#8212; lives in firmware and matches the plugin. The analog&#xa;side only has to be linear and quiet; the shape of every control is software.&#xa;&#xa;VA_SENSE goes back to the ADC so the firmware can scale its CV laws to whatever supply is actually plugged in (9 V to 18 V)." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;align=left;verticalAlign=top;spacing=12;">
+          <mxGeometry x="2080" y="330" width="640" height="420" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ce1" parent="1" edge="1" source="c-board" target="c-j10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce2" parent="1" edge="1" source="c-j10" target="c-pico" value="stomps &#183; WS2812" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;fontSize=11;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce3" parent="1" edge="1" source="c-j10" target="c-mux" value="6 wipers" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeWidth=3;fontSize=11;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce4" parent="1" edge="1" source="c-trims" target="c-mux" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce5" parent="1" edge="1" source="c-mux" target="c-pico" value="ADC0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0.25;entryY=1;strokeWidth=3;fontSize=11;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce6" parent="1" edge="1" source="c-env" target="c-mux" value="ENV_ADC" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.75;exitY=0;entryX=0.25;entryY=1;strokeWidth=2;fontSize=11;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce7" parent="1" edge="1" source="c-cvin" target="c-pico" value="ADC1 / ADC2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=0;entryX=0.6;entryY=1;strokeWidth=2;fontSize=11;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce8" parent="1" edge="1" source="c-pico" target="c-cvout" value="CVOUT_PWM" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.75;exitY=1;entryX=0.5;entryY=0;strokeWidth=2;fontSize=11;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce9" parent="1" edge="1" source="c-pico" target="c-cvs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=1;exitY=0.35;entryX=0;entryY=0.35;strokeColor=#9673a6;strokeWidth=3;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce10" parent="1" edge="1" source="c-pico" target="c-addr" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=1;exitY=0.85;entryX=0;entryY=0.3;strokeColor=#9673a6;strokeWidth=3;"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1370" y="585" /><mxPoint x="1370" y="739" /></Array></mxGeometry></mxCell>
+        <mxCell id="ce11" parent="1" edge="1" source="c-pico" target="c-leds" value="GP15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;strokeWidth=2;fontSize=11;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce12" parent="1" edge="1" source="c-leds" target="c-j10" value="to the 6 pixels" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=0.5;entryY=0;strokeWidth=2;fontSize=11;"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram name="4 - Power" id="gwHwPowerV6">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2600" pageHeight="1300" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="p-title" parent="1" vertex="1" value="PAGE 4 &#8212; POWER TREE&#xa;9&#8211;18 V in, four rails out. VDIRT is the interesting one: it is a servo, not a regulator, and it only feeds the Bazz Fuss." style="text;html=1;align=left;verticalAlign=middle;fontSize=19;fontStyle=1;">
+          <mxGeometry x="40" y="30" width="1500" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-j5" parent="1" vertex="1" value="J5  DC JACK  2.1 mm&#xa;CENTRE-NEGATIVE&#xa;tip = GND, sleeve = +V&#xa;9&#8211;18 V DC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1;align=center;verticalAlign=middle;strokeWidth=2;">
+          <mxGeometry x="40" y="400" width="260" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-prot" parent="1" vertex="1" value="REVERSE PROTECT + FILTER&#xa;Q10 AO3401A P-FET&#xa;FB100 600R / 3A ferrite&#xa;D106 SMAJ18A transient clamp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="360" y="400" width="300" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-va" parent="1" vertex="1" value="VA  &#8212;  RAW ANALOG RAIL&#xa;whatever the adapter gives, 9&#8211;18 V&#xa;feeds every TL074 and LM13700" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1;align=center;verticalAlign=middle;strokeWidth=3;">
+          <mxGeometry x="720" y="400" width="320" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-vref" parent="1" vertex="1" value="VREF  =  VA / 2&#xa;mid-rail, buffered&#xa;(R14 / R15 / C10 of the original)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1120" y="180" width="320" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-v567" parent="1" vertex="1" value="V567  &#8212;  LM567 RAIL&#xa;U18 78L09 + D105 1N4148 drop&#xa;the diode exists because LM567C abs max is 9 V&#xa;and the 78L09 tolerance is +5 %" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1120" y="360" width="380" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-buck" parent="1" vertex="1" value="+5 V BUCK&#xa;U19 MP1584EN + L100 22&#181;H / 3A&#xa;feeds the WS2812 chain and,&#xa;through D90 SS14, the Pico VSYS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1120" y="560" width="380" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-3v3" parent="1" vertex="1" value="3V3&#xa;from the Pico&#39;s own regulator&#xa;ADC reference, muxes, logic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="1580" y="560" width="320" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-starve" parent="1" vertex="1" value="VDIRT  &#8212;  STARVE SERVO&#xa;STARVE_CV (Pico PWM 0&#8211;3.3 V) &#215;5.45&#xa;commands Q11 BCP56&#xa;D103 6V2 zener floor = 5.0 V at the emitter&#xa;&#xa;FEEDS ONLY THE BAZZ FUSS COLLECTOR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;fontStyle=1;align=center;verticalAlign=middle;strokeWidth=3;">
+          <mxGeometry x="1120" y="760" width="440" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-starvecv" parent="1" vertex="1" value="STARVE_CV&#xa;from the Pico" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=center;verticalAlign=middle;dashed=1;">
+          <mxGeometry x="300" y="830" width="260" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-sense" parent="1" vertex="1" value="VA_SENSE&#xa;divider, 18 V maps to 3.25 V&#xa;&#8594; ADC mux ch7&#xa;firmware scales its CV laws to the&#xa;supply that is actually plugged in" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=center;verticalAlign=middle;">
+          <mxGeometry x="620" y="1030" width="380" height="160" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p-note" parent="1" vertex="1" value="STARVE IS NOT A BROWN-OUT OF THE WHOLE PEDAL&#xa;&#xa;Only the Bazz Fuss collector rail sags. The op-amps, the 567 and everything digital stay on their own regulated rails, so the pedal keeps&#xa;working while the dirt stage dies. That is deliberate: the sound of a dying fuzz, without losing the rest of the circuit.&#xa;&#xa;COMP / FREQ / FB values around the MP1584 are flagged for a datasheet check at the review pass." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;align=left;verticalAlign=top;spacing=12;">
+          <mxGeometry x="1660" y="760" width="880" height="220" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pe1" parent="1" edge="1" source="p-j5" target="p-prot" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe2" parent="1" edge="1" source="p-prot" target="p-va" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=3;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe3" parent="1" edge="1" source="p-va" target="p-vref" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe4" parent="1" edge="1" source="p-va" target="p-v567" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe5" parent="1" edge="1" source="p-va" target="p-buck" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe6" parent="1" edge="1" source="p-va" target="p-starve" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.9;exitY=1;entryX=0;entryY=0.5;strokeWidth=2;strokeColor=#d79b00;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe7" parent="1" edge="1" source="p-buck" target="p-3v3" value="Pico VSYS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=2;fontSize=11;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe8" parent="1" edge="1" source="p-starvecv" target="p-starve" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.85;strokeColor=#9673a6;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe9" parent="1" edge="1" source="p-va" target="p-sense" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.15;exitY=1;entryX=0.5;entryY=0;strokeColor=#9673a6;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
