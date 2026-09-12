@@ -405,11 +405,13 @@ void GlitchwaveAudioProcessorEditor::updateKnobModes()
             lpfAtt  = std::make_unique<SliderAttachment> (ap, "lfo2depth", lpfKnob);
             break;
         case 3:   // v0.39 secret Layer A: Mix->Starve, Freq->env Threshold,
-                  // LPF->env Ratio, Gain->env Shape. Rate 1/2 still dead.
-            mixAtt     = std::make_unique<SliderAttachment> (ap, "starve",    mixKnob);
-            freqAtt    = std::make_unique<SliderAttachment> (ap, "envthresh", freqKnob);
-            lpfAtt     = std::make_unique<SliderAttachment> (ap, "envratio",  lpfKnob);
-            envGainAtt = std::make_unique<SliderAttachment> (ap, "envshape",  envGainKnob);
+                  // LPF->env Ratio. v0.42: Gain no longer reaches env Shape
+                  // -- that slot is dead now, like Rate 1/2. The envshape
+                  // parameter still exists for host automation; it just has
+                  // no knob on the pedal.
+            mixAtt  = std::make_unique<SliderAttachment> (ap, "starve",    mixKnob);
+            freqAtt = std::make_unique<SliderAttachment> (ap, "envthresh", freqKnob);
+            lpfAtt  = std::make_unique<SliderAttachment> (ap, "envratio",  lpfKnob);
             break;
     }
 
@@ -625,11 +627,11 @@ void GlitchwaveAudioProcessorEditor::refreshReadouts (int layer)
         {
             for (int i = 0; i < 6; ++i) { text[i] = juce::String::fromUTF8 (kDash); col[i] = gw::kGrey; }
 
-            // v0.39: FREQ = env Threshold, LPF = env Ratio, GAIN = env Shape.
+            // v0.39: FREQ = env Threshold, LPF = env Ratio.
             // Bare numbers, no captions -- same secret treatment as Starve.
+            // v0.42: GAIN no longer shows env Shape; that slot stays dashed.
             text[0] = pTxt ("envthresh"); col[0] = gw::kText;
             text[1] = pTxt ("envratio");  col[1] = gw::kText;
-            text[5] = pTxt ("envshape");  col[5] = gw::kText;
 
             // the "?" reads out as the sagging rail: a straight line from
             // 9 V down to the 1 V floor. v0.41 / rev 7: one adapter voltage,

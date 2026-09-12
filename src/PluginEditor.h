@@ -1731,8 +1731,9 @@ private:
     //   Y (TAP held):             Gain   Res     Vol      Shape  Shape  Mode
     //   Z (BYPASS held):          L1 Dep L2 Dep  DrvRng   Target Target Target
     //   A (BOTH held, secret):   Mix -> STARVE   Freq -> env THRESHOLD
-    //                            LPF -> env RATIO   Gain -> env SHAPE
-    //                            (Rate 1/2 still dead.)
+    //                            LPF -> env RATIO
+    //                            (Rate 1/2 and Gain dead -- v0.42 removed
+    //                             Gain -> env SHAPE.)
     //
     // v0.37: keyboard emulation (INS/DEL) is removed. A layer can only be
     // held by pressing and holding a stomp with the mouse, or right-click

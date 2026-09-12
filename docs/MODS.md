@@ -1,4 +1,24 @@
-# Glitchwave 567 -- Step 2 Mods (v0.2 .. v0.41)
+# Glitchwave 567 -- Step 2 Mods (v0.2 .. v0.42)
+
+## v0.42 -- Layer A drops the envelope-follower Shape control off the GAIN knob
+
+On the secret Layer A (both stomps held), the ENVELOPE GAIN knob used to
+reach `envshape`. That mapping is gone. Layer A is now three live knobs:
+
+* MIX -> STARVE (the red "?")
+* FREQ -> env THRESHOLD
+* LPF -> env RATIO
+
+GAIN on Layer A is dead, the same as Rate 1 and Rate 2 already were, and its
+value line stays dashed instead of showing the shape number. Releasing the
+stomps puts the knob back on `envgain` as usual, so nothing about normal
+playing changes.
+
+The `envshape` parameter itself is kept: it still runs in the DSP and is
+still automatable from a host, it just no longer has a knob on the pedal, so
+it sits at whatever it was last set to (default unless a preset moved it).
+Say the word if you want it deleted outright and pinned to its default.
+
 
 ## v0.41 -- hardware rev 7 mirrored into the plugin: ladder and +6 dB deleted, one supply voltage, JFET moved in front of the fuss, LM567 on its own 7.5 V rail
 
