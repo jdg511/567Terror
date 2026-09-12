@@ -97,12 +97,15 @@ private:
         std::atomic<float>* lfo2shape{}; std::atomic<float>* lfo2target{};
         std::atomic<float>* envtarget{}; std::atomic<float>* envgain{};
         std::atomic<float>* envdrive{};
+        std::atomic<float>* envratio{};  std::atomic<float>* envshape{};
+        std::atomic<float>* envthresh{};
         std::atomic<float>* lpfmode{}; std::atomic<float>* lpfrange{};
         std::atomic<float>* gatethresh{};
         std::atomic<float>* gatehold{}; std::atomic<float>* gatefade{};
         std::atomic<float>* bypass{};   std::atomic<float>* supply{};
         std::atomic<float>* starve{};   std::atomic<float>* jfeton{};
         std::atomic<float>* ladder36{}; std::atomic<float>* boost6{};
+        std::atomic<float>* c41cap{};   std::atomic<float>* c42cap{};
     } raw;
 
     // ---- output gate state ------------------------------------------------------

@@ -96,6 +96,9 @@ GlitchwaveAudioProcessor::GlitchwaveAudioProcessor()
     raw.envtarget  = apvts.getRawParameterValue ("envtarget5");
     raw.envgain    = apvts.getRawParameterValue ("envgain");
     raw.envdrive   = apvts.getRawParameterValue ("envdrive");
+    raw.envratio   = apvts.getRawParameterValue ("envratio");
+    raw.envshape   = apvts.getRawParameterValue ("envshape");
+    raw.envthresh  = apvts.getRawParameterValue ("envthresh");
     raw.lpfmode    = apvts.getRawParameterValue ("lpfmode3");
     raw.lpfrange   = apvts.getRawParameterValue ("lpfrange");
     raw.gatethresh  = apvts.getRawParameterValue ("gatethresh");
@@ -107,6 +110,8 @@ GlitchwaveAudioProcessor::GlitchwaveAudioProcessor()
     raw.jfeton      = apvts.getRawParameterValue ("jfeton");
     raw.ladder36    = apvts.getRawParameterValue ("ladder36");
     raw.boost6      = apvts.getRawParameterValue ("boost6");
+    raw.c41cap      = apvts.getRawParameterValue ("c41cap");
+    raw.c42cap      = apvts.getRawParameterValue ("c42cap");
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout
@@ -181,6 +186,25 @@ GlitchwaveAudioProcessor::createParameterLayout()
             { return "x" + juce::String (v, v < 2.0f ? 2 : 1); })));
     layout.add (std::make_unique<PC> (juce::ParameterID { "envdrive", 1 }, "Env Drive",
         juce::StringArray { "Drive Up", "Drive Down" }, 0));
+    // v0.38 secret Layer-A envelope shaping: Ratio (LPF knob), Shape (Freq
+    // knob), Threshold (Gain knob). Bare numbers only, on purpose -- these
+    // stay off the books like Starve always has.
+    layout.add (std::make_unique<PF> (juce::ParameterID { "envratio", 1 }, "Env Ratio",
+        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.5f,
+        Att().withStringFromValueFunction ([] (float v, int)
+            {
+                const float r = std::pow (10.0f, 2.0f * (v - 0.5f));   // 0.1 .. 10
+                return r < 1.0f ? (juce::String (r, 2) + ":1")
+                                : ("1:" + juce::String (r, r < 2.0f ? 2 : 1));
+            })));
+    layout.add (std::make_unique<PF> (juce::ParameterID { "envshape", 1 }, "Env Shape",
+        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.5f,
+        Att().withStringFromValueFunction ([] (float v, int)
+            { return juce::String (std::pow (2.0f, 4.0f * (v - 0.5f)), 2); })));
+    layout.add (std::make_unique<PF> (juce::ParameterID { "envthresh", 1 }, "Env Threshold",
+        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.0f,
+        Att().withStringFromValueFunction ([] (float v, int)
+            { return juce::String (v, 2); })));
     layout.add (std::make_unique<PC> (juce::ParameterID { "lpfmode3", 1 }, "Filter Mode",
         juce::StringArray { "Off", "Mode LP", "Mode BP", "Mode HP", "Mode Notch" }, 1));
     layout.add (std::make_unique<PC> (juce::ParameterID { "lpfrange", 1 }, "Filter Range",
@@ -203,16 +227,22 @@ GlitchwaveAudioProcessor::createParameterLayout()
     // ---- v0.21 power + bypass ----------------------------------------------------
     layout.add (std::make_unique<juce::AudioParameterBool> (
         juce::ParameterID { "bypass", 1 }, "Bypass", false));
-    // v0.32: internal switches (under the cover). Ships: JFET ON, -3/-6
-    // ladder OFF, 9 V. Supply now 9/12/15/18 V.
+    // v0.39: internal switches (under the cover). Ships: JFET OFF, -3/-6
+    // ladder OFF, +6 dB OFF, 9 V. Supply now 9/12/15/18 V.
     layout.add (std::make_unique<PC> (juce::ParameterID { "supply4", 1 }, "Supply",
         juce::StringArray { "9V", "12V", "15V", "18V" }, 0));
     layout.add (std::make_unique<juce::AudioParameterBool> (
-        juce::ParameterID { "jfeton", 1 }, "JFET Stage", true));
+        juce::ParameterID { "jfeton", 1 }, "JFET Stage", false));
     layout.add (std::make_unique<juce::AudioParameterBool> (
         juce::ParameterID { "ladder36", 1 }, "-3/-6 Ladder", false));
     layout.add (std::make_unique<juce::AudioParameterBool> (
-        juce::ParameterID { "boost6", 1 }, "+6dB Boost", true));
+        juce::ParameterID { "boost6", 1 }, "+6dB Boost", false));
+    // v0.39: the two DNP filter pads at the LM567 (C41 = pin 2 loop filter,
+    // C42 = pin 1 output filter). Both ship OUT, matching the built board.
+    layout.add (std::make_unique<juce::AudioParameterBool> (
+        juce::ParameterID { "c41cap", 1 }, "C41 Loop Cap", false));
+    layout.add (std::make_unique<juce::AudioParameterBool> (
+        juce::ParameterID { "c42cap", 1 }, "C42 Output Cap", false));
     layout.add (std::make_unique<PF> (juce::ParameterID { "starve", 1 }, "Starve",
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.0f,
         Att().withStringFromValueFunction ([] (float v, int)
@@ -333,6 +363,9 @@ void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     // filter Mode Off also disables the envelope follower section
     mp.envGain     = lpfModeIdx == 0 ? 0.0f : raw.envgain->load();
     mp.envDriveUp  = raw.envdrive->load() < 0.5f;
+    mp.envRatio    = raw.envratio->load();
+    mp.envShape    = raw.envshape->load();
+    mp.envThresh   = raw.envthresh->load();
     if (lfo2Retrig.exchange (false, std::memory_order_relaxed))
         mod.retriggerLfo2();     // tempo tap re-seeds chaos/drift generators
     if (lfo1Retrig.exchange (false, std::memory_order_relaxed))
@@ -399,9 +432,11 @@ void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
             cp.supplyV = kVolts[juce::jlimit (0, 3, (int) raw.supply->load())];
         }
         cp.starve     = raw.starve->load();
-        cp.jfetOn     = raw.jfeton->load()   >= 0.5f;   // internal switch (ships ON)
+        cp.jfetOn     = raw.jfeton->load()   >= 0.5f;   // internal switch (ships OFF)
         cp.ladder36   = raw.ladder36->load() >= 0.5f;   // internal switch (ships OFF)
         cp.boost6Gain = raw.boost6->load()   >= 0.5f ? 2.0f : 1.0f;   // internal switch
+        cp.c41LoopCap = raw.c41cap->load()   >= 0.5f;   // LM567 pin 2 pad (ships OUT)
+        cp.c42OutCap  = raw.c42cap->load()   >= 0.5f;   // LM567 pin 1 pad (ships OUT)
         circuit.setParams (cp);
 
         float* chans[] = { mono + offset };

@@ -32,6 +32,19 @@ struct Tunables
     float vcoPullRange   = 0.07f;   // VCO max deviation, fraction of f0 (datasheet: 14% total BW)
     float loopStrayHz    = 400000.f;// loop-filter pole with no LFIL cap (stray only)
     float ofilStrayHz    = 400000.f;// output-filter pole with no OFIL cap (stray only)
+    // v0.39 - the two DNP pads on the real board, now switchable in the sim.
+    // C41 sits on LM567 pin 2 (loop filter), C42 on pin 1 (output filter).
+    // Both pins present ~4.7k of internal resistance, so each pad is just a
+    // single real pole at 1/(2*pi*R*C). Values are what a builder would
+    // actually try in those 0603 pads. C41 = 1u is the datasheet's classic
+    // narrow-band loop cap. C42 = 220n is deliberately NOT the datasheet's
+    // "C3 >= 2 x C2": that much output filtering stops pin 8 moving at all
+    // and the wet path goes silent everywhere, which is a mute switch, not a
+    // mod. 220n averages over a few cycles instead, so the decoder only stops
+    // chattering when a tone actually sits on f0 (or a harmonic of it).
+    float pin12R         = 4700.f;  // internal resistance at LM567 pins 1 and 2
+    float c41Farads      = 1.0e-6f; // C41 = LFIL, pin 2  -> 33.9 Hz loop pole
+    float c42Farads      = 220e-9f; // C42 = OFIL, pin 1  -> 154 Hz output pole
     float detOnLevel     = 0.35f;   // Schmitt comparator: Q turns ON (low) above this
     float detOffLevel    = 0.15f;   // Schmitt comparator: Q turns OFF below this
     float inHysteresisV  = 0.005f;  // input limiter comparator hysteresis (volts)
@@ -204,14 +217,21 @@ public:
                                    //       3 Op-Amp OD, 4 Octave Fuzz (always on, dry path only)
         // v0.21 power modelling
         float supplyV     = 9.0f;  // 9 or 18 (centre-negative adapter voltage)
-        float starve      = 0.0f;  // 0..1 secret starve: rail sags toward 5 V
+        float starve      = 0.0f;  // 0..1 secret starve: rail sags toward a
+                                   // 1 V floor as the modeled 2.4 A supply
+                                   // hits its current-limit foldback (v0.38)
         // v0.32 — Jason's FINAL output stage (audition over): two internal
         // switches. JFET stage on/off (ships ON) feeding an asymmetric
         // -3/-6 ladder on/off (ships OFF). Both off = the bare op-amp rail.
-        bool  jfetOn      = true;
+        bool  jfetOn      = false;
         bool  ladder36    = false;
         // v0.23: the +6 dB output boost is now switchable (1.0 or 2.0)
-        float boost6Gain  = 2.0f;
+        float boost6Gain  = 1.0f;
+        // v0.39: the two DNP filter pads at the LM567. Both ship OUT, which
+        // is how the board is built: the decoder never settles, so pin 8
+        // chatters at audio rate and that chatter is the pedal's voice.
+        bool  c41LoopCap  = false;   // pin 2, LFIL
+        bool  c42OutCap   = false;   // pin 1, OFIL
     };
 
     Tunables tune; // exposed so the harness / future mods can poke at it
@@ -233,8 +253,9 @@ public:
         outPeak.setupPeak (800.0f, 0.5f, 3.0f, fs);   // +3 dB broad bell @ 800 Hz
         sagCoeff = 1.0f - std::exp (-1.0f / (0.030f * fs));  // Ge fuzz bias sag ~30 ms
         in567HP.setCutoff (36.0f, fs);                // C3 (220n) into ~20k pin impedance
-        loopFilter.setCutoff (tune.loopStrayHz, fs);  // no LFIL cap -> stray only
-        ofilFilter.setCutoff (tune.ofilStrayHz, fs);  // no OFIL cap -> stray only
+        // loop / output filter poles are owned by updateDerived(), because
+        // C41 and C42 can be switched in and out while running (v0.39)
+        loopHzCur = ofilHzCur = -1.0f;
         outDCBlock.setCutoff (7.23f, fs);             // C8 (220n) + R12 (100k)
         jfetDC.setCutoff (10.0f, fs);                 // v0.22 JFET output cap
 
@@ -273,11 +294,24 @@ public:
         smoothed.starve += potSmoothCoeff * (target.starve - smoothed.starve);
         smoothed.boost6Gain += potSmoothCoeff * (target.boost6Gain - smoothed.boost6Gain);
 
-        // v0.21: effective rail. 9 V is the reference design; 18 V doubles the
-        // analogue headroom; the starve pot sags the DIRT/output rail toward
-        // 5 V (never below — the digital 3.3/5 V rails are separately
-        // regulated and never starved).
-        const float vEff  = target.supplyV - smoothed.starve * (target.supplyV - 5.0f);
+        // v0.21/v0.38: effective rail. 9 V is the reference design; 18 V
+        // doubles the analogue headroom. Starve now models a real 2.4 A
+        // rated wall-wart/battery supply under load: real supplies hold
+        // their rated voltage almost flat right up near their current
+        // ceiling, then fold back hard once they hit it -- not a straight
+        // line droop. So most of the knob's travel barely sags the rail;
+        // only the last stretch dives, all the way to a hard 1 V floor (the
+        // digital 3.3/5 V rails are separately regulated and never
+        // starved). We let it go all the way to 1 V even though every real
+        // op-amp/JFET stage in this circuit would already be dead and
+        // silent long before that -- the point is to hear the whole death
+        // spiral, not stop short of it.
+        constexpr float kMaxSupplyA = 2.4f;    // modeled supply current ceiling
+        constexpr float kFloorV     = 1.0f;    // absolute rail floor, fully collapsed
+        const float iDrawnA  = smoothed.starve * kMaxSupplyA;   // 0 .. 2.4 A modeled draw
+        const float loadFrac = iDrawnA / kMaxSupplyA;           // fraction of rated current
+        const float foldback = std::pow (loadFrac, 6.0f);      // flat, then a cliff
+        const float vEff     = kFloorV + (target.supplyV - kFloorV) * (1.0f - foldback);
         railC             = vEff / 9.0f;               // clip ceiling re: 9 V FS
         starveA           = smoothed.starve;
         smoothed.gain += potSmoothCoeff * (target.gain - smoothed.gain);
@@ -309,7 +343,12 @@ public:
 
         // VCO (current-controlled oscillator) with loop-filter frequency pull
         const float loopV = std::clamp (loopFilter.y, -1.0f, 1.0f);
-        const float fVco  = f0 * (1.0f + tune.vcoPullRange * loopV);
+        // Loop polarity: the phase detector feeds the VCO with a MINUS sign, so
+        // the stable lock sits a quarter cycle the other way round and the
+        // quadrature detector below reads +1 when locked, which is the real
+        // chip's convention (lock pulls pin 8 low). With no loop cap the loop
+        // never settles anyway, so this sign is inaudible until C41 goes in.
+        const float fVco  = f0 * (1.0f - tune.vcoPullRange * loopV);
         vcoPhase += (double) (fVco / fs);
         if (vcoPhase >= 1.0) vcoPhase -= 1.0;
         const float sVco  = (vcoPhase < 0.5)                     ? 1.0f : -1.0f;
@@ -535,6 +574,21 @@ private:
         // v0.32: FREQ range 0.2 Hz .. 6 kHz (was 0.1 Hz .. 18 kHz)
         f0 = std::min (0.2f * std::pow (30000.0f, smoothed.freq), 0.4f * fs);
 
+        // ---- v0.39 LM567 filter pads: C41 (pin 2, LFIL) and C42 (pin 1, OFIL) --
+        // Each pad works into the chip's internal ~4.7k, so fitting one moves a
+        // single real pole from "stray only" down to 1/(2*pi*R*C). Empty pads
+        // leave the loop and the lock detector wide open, which is why the as-
+        // built board chatters instead of decoding. Recomputed here rather than
+        // in prepare() so the switches work while audio is running.
+        const float loopHz = target.c41LoopCap
+                               ? 1.0f / (2.0f * detail::kPi * tune.pin12R * tune.c41Farads)
+                               : tune.loopStrayHz;
+        const float ofilHz = target.c42OutCap
+                               ? 1.0f / (2.0f * detail::kPi * tune.pin12R * tune.c42Farads)
+                               : tune.ofilStrayHz;
+        if (force || loopHz != loopHzCur) { loopFilter.setCutoff (loopHz, fs); loopHzCur = loopHz; }
+        if (force || ofilHz != ofilHzCur) { ofilFilter.setCutoff (ofilHz, fs); ofilHzCur = ofilHz; }
+
         // ---- v0.9 dirt: GAIN 0..1 -> x2 .. x300 (log), per-model voicing ------
         dirtG = 1.1f * std::pow (272.727f, smoothed.gain);   // v0.19: x1.1 .. x300
         dirtLP.setCutoff (target.dirtType == 1 ? 3500.0f
@@ -603,6 +657,7 @@ private:
     float vQ = 0.0f, qHighV = 1.5f, qLowV = -4.35f;
     float qRiseCoeff = 1.0f, qFallCoeff = 1.0f;
     float wetGain = 0.05f, dryGain = 0.5f;
+    float loopHzCur = -1.0f, ofilHzCur = -1.0f;   // v0.39 C41/C42 pole cache
 };
 
 } // namespace glitchwave

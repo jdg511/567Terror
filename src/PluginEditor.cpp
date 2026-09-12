@@ -1,4 +1,5 @@
 #include "PluginEditor.h"
+#include "ScaleFeedback.h"
 
 namespace
 {
@@ -201,7 +202,7 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     };
     hint (hintChips,  juce::String::fromUTF8 ("HOLD TAP \xe2\x86\x92 Y \xc2\xb7 HOLD BYPASS \xe2\x86\x92 Z \xc2\xb7 BOTH \xe2\x86\x92 A"),
           10.2f, gw::kDim2);
-    hint (hintLayers, juce::String::fromUTF8 ("Hold the stomp or its key \xe2\x80\x94 or right-click a stomp to latch it."),
+    hint (hintLayers, juce::String::fromUTF8 ("Hold a stomp, or right-click it to latch."),
           8.5f, gw::kDim2);
     hint (hintLfo1,   juce::String::fromUTF8 ("Z \xc2\xb7 FREQ knob = depth \xc2\xb7 LED: wave / depth %"),
           9.0f, gw::kDim2);
@@ -238,10 +239,15 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     ladderRow.attach (apvts.getParameter ("ladder36"), juce::String::fromUTF8 ("\xe2\x88\x92""3/\xe2\x88\x92""6 LADDER"));
     boostRow.attach  (apvts.getParameter ("boost6"),   "+6 dB BOOST");
     supplySel.attach (choice ("supply4"));
+    // v0.39: the two DNP filter pads at the LM567, switchable independently
+    c41Row.attach (apvts.getParameter ("c41cap"), "C41  LFIL  PIN 2");
+    c42Row.attach (apvts.getParameter ("c42cap"), "C42  OFIL  PIN 1");
     cover.addAndMakeVisible (jfetRow);
     cover.addAndMakeVisible (ladderRow);
     cover.addAndMakeVisible (boostRow);
     cover.addAndMakeVisible (supplySel);
+    cover.addAndMakeVisible (c41Row);
+    cover.addAndMakeVisible (c42Row);
 
     strip.onOpen = [this] { setGateOpen (true); };
     addAndMakeVisible (strip);
@@ -256,6 +262,29 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     fx.grabFace = [this] { return createComponentSnapshot ({ 0, 0, 1060, 640 }, false, 1.0f); };
     setGateOpen (false);
     applyHints();
+
+    // v0.37: in-plugin Scale/Feedback access, since the standalone-only
+    // title-bar Options menu (StandaloneApp.cpp) never existed for
+    // VST3/plugin builds -- this opens the exact same window either way.
+    settingsBtn.setColour (juce::TextButton::buttonColourId, juce::Colour (0xff0a0a0e));
+    settingsBtn.setColour (juce::TextButton::textColourOffId, gw::kText);
+    settingsBtn.setColour (juce::TextButton::textColourOnId,  gw::kText);
+    settingsBtn.onClick = [this]
+    {
+        if (scaleFeedbackWindow == nullptr)
+            scaleFeedbackWindow = std::make_unique<ScaleFeedbackWindow> (processor);
+        scaleFeedbackWindow->setVisible (true);
+        scaleFeedbackWindow->toFront (true);
+    };
+    addAndMakeVisible (settingsBtn);
+
+    // v0.37: replaces the removed INS/DEL keyboard emulation -- see
+    // docs/MODS.md v0.37. Mouse-transparent and on top of everything
+    // (added last), but still told about every click via addMouseListener
+    // so it knows to start fading even when the click lands on a knob or
+    // button underneath it.
+    addAndMakeVisible (holdHint);
+    addMouseListener (&holdHint, true);
 
     startTimerHz (60);
     setSize (1060, 640);
@@ -296,16 +325,16 @@ void GlitchwaveAudioProcessorEditor::setupKnob (juce::Slider& s, juce::Label& l,
 // ---------------------------------------------------------------------------
 bool GlitchwaveAudioProcessorEditor::tapStompDown() const
 {
-    // v0.30 (Jason's X/Y/Z/A spec): Y = TAP held = INS, Z = BYPASS held =
-    // DEL. Polled globally; right-click LATCH remains the mouse-only hold.
-    return tapStompBtn.isDown() || tapStompBtn.isLatched()
-        || juce::KeyPress::isKeyCurrentlyDown (juce::KeyPress::insertKey);
+    // v0.37: keyboard emulation (INS/DEL) is gone -- it collided with
+    // Fender Studio Pro's own Insert/Delete shortcuts and stalled the GUI
+    // whenever it was held (see docs/MODS.md v0.37). Held state is now
+    // mouse-only: press and hold the stomp, or right-click to latch it.
+    return tapStompBtn.isDown() || tapStompBtn.isLatched();
 }
 
 bool GlitchwaveAudioProcessorEditor::bypassStompDown() const
 {
-    return bypassBtn.isDown() || bypassBtn.isLatched()
-        || juce::KeyPress::isKeyCurrentlyDown (juce::KeyPress::deleteKey);
+    return bypassBtn.isDown() || bypassBtn.isLatched();
 }
 
 int GlitchwaveAudioProcessorEditor::computeLayer() const
@@ -352,8 +381,12 @@ void GlitchwaveAudioProcessorEditor::updateKnobModes()
             freqAtt = std::make_unique<SliderAttachment> (ap, "lfo1depth", freqKnob);
             lpfAtt  = std::make_unique<SliderAttachment> (ap, "lfo2depth", lpfKnob);
             break;
-        case 3:   // secret starve: MIX only; every other knob is dead
-            mixAtt  = std::make_unique<SliderAttachment> (ap, "starve", mixKnob);
+        case 3:   // v0.38 secret Layer A: Mix->Starve, Freq->env Shape,
+                  // LPF->env Ratio, Gain->env Threshold. Rate 1/2 still dead.
+            mixAtt     = std::make_unique<SliderAttachment> (ap, "starve",    mixKnob);
+            freqAtt    = std::make_unique<SliderAttachment> (ap, "envshape",  freqKnob);
+            lpfAtt     = std::make_unique<SliderAttachment> (ap, "envratio",  lpfKnob);
+            envGainAtt = std::make_unique<SliderAttachment> (ap, "envthresh", envGainKnob);
             break;
     }
 
@@ -560,7 +593,15 @@ void GlitchwaveAudioProcessorEditor::refreshReadouts (int layer)
         case 3:
         {
             for (int i = 0; i < 6; ++i) { text[i] = juce::String::fromUTF8 (kDash); col[i] = gw::kGrey; }
-            // the "?" reads out as the sagging rail: supply .. 5 V floor
+
+            // v0.38: FREQ = env Shape, LPF = env Ratio, GAIN = env Threshold.
+            // Bare numbers, no captions -- same secret treatment as Starve.
+            text[0] = pTxt ("envshape");  col[0] = gw::kText;
+            text[1] = pTxt ("envratio");  col[1] = gw::kText;
+            text[5] = pTxt ("envthresh"); col[5] = gw::kText;
+
+            // the "?" reads out as the sagging rail: supply .. 1 V floor,
+            // modeled against a 2.4 A supply ceiling (see Glitchwave567.h)
             static constexpr float kVolts[4] = { 9.0f, 12.0f, 15.0f, 18.0f };
             float volts = kVolts[0];
             if (auto* ps = dynamic_cast<juce::AudioParameterChoice*> (apvts.getParameter ("supply4")))
@@ -568,7 +609,9 @@ void GlitchwaveAudioProcessorEditor::refreshReadouts (int layer)
             float sv = 0.0f;
             if (auto* p = apvts.getParameter ("starve"))
                 sv = p->getValue();
-            text[2] = juce::String (volts - sv * (volts - 5.0f), 1) + " V";
+            constexpr float kFloorV = 1.0f;
+            const float foldback = std::pow (sv, 6.0f);
+            text[2] = juce::String (kFloorV + (volts - kFloorV) * (1.0f - foldback), 1);
             col[2]  = gw::kText;
             break;
         }
@@ -674,12 +717,12 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
 
     // knob enables per layer. The env-gain knob must stay alive in Y even
     // with the filter Off — it's how the Mode gets turned back on.
-    freqKnob.setEnabled     (layer != 3);
-    lpfKnob.setEnabled      (layer == 2 ? true : (layer == 3 ? false : filterOn));
+    freqKnob.setEnabled     (true);
+    lpfKnob.setEnabled      (layer == 2 || layer == 3 ? true : filterOn);
     mixKnob.setEnabled      (true);
     lfo1RateKnob.setEnabled (layer != 3);
     lfo2RateKnob.setEnabled (layer != 3);
-    envGainKnob.setEnabled  (layer == 0 ? filterOn : layer != 3);
+    envGainKnob.setEnabled  (layer == 0 ? filterOn : true);
 
     refreshReadouts (layer);
 
@@ -800,6 +843,8 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
         s.jfet   = onOf ("jfeton");
         s.ladder = onOf ("ladder36");
         s.boost  = onOf ("boost6");
+        s.c41    = onOf ("c41cap");
+        s.c42    = onOf ("c42cap");
         s.hints  = showHints;
         if (auto* ps = dynamic_cast<juce::AudioParameterChoice*> (
                            processor.apvts.getParameter ("supply4")))
@@ -811,10 +856,13 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     jfetRow.refresh();
     ladderRow.refresh();
     boostRow.refresh();
+    c41Row.refresh();
+    c42Row.refresh();
     supplySel.refresh();
 
     // ---- decoration ----------------------------------------------------------
     fx.tick (t);
+    holdHint.tick (t);
 
     // v0.35 title jiggle: once every ~1:11, never on an exact schedule —
     // roughly every 1:11 +/- 12 s of random slack, and each jiggle runs at a
@@ -886,23 +934,21 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     {
         const char* head[6] = { "FREQ", "LPF", "MIX", "RATE 1", "RATE 2", "GAIN" };
         struct Row { const char* label; const char* c[6]; };
-        static const Row rows[4] = {
+        static const Row rows[3] = {
             { "X \xc2\xb7 NOTHING",   { "Freq", "LPF", "Mix", "Rate", "Rate", "Gain" } },
-            { "Y \xc2\xb7 TAP / INS", { "Gain", "Res", "Vol", "Shape", "Shape", "Mode" } },
-            { "Z \xc2\xb7 BYP / DEL", { "L1 Depth", "L2 Depth", "Drv/Rng", "Target", "Target", "Target" } },
-            { "A \xc2\xb7 BOTH",      { "\xe2\x80\x94", "\xe2\x80\x94", "?", "\xe2\x80\x94", "\xe2\x80\x94", "\xe2\x80\x94" } },
+            { "Y \xc2\xb7 TAP HOLD",  { "Gain", "Res", "Vol", "Shape", "Shape", "Mode" } },
+            { "Z \xc2\xb7 BYP HOLD",  { "L1 Depth", "L2 Depth", "Drv/Rng", "Target", "Target", "Target" } },
         };
-        const juce::Colour rowCols[4] = { gw::kText, gw::kCyan, gw::kYellow, gw::kRed };
-        const juce::Colour labCols[4] = { gw::kDim,
+        const juce::Colour rowCols[3] = { gw::kText, gw::kCyan, gw::kYellow };
+        const juce::Colour labCols[3] = { gw::kDim,
                                           gw::kCyan.withAlpha (0.72f),
-                                          gw::kYellow.withAlpha (0.72f),
-                                          gw::kRed.withAlpha (0.72f) };
+                                          gw::kYellow.withAlpha (0.72f) };
         auto cellX = [] (int i) { return 510 + 104 + i * 58; };
         g.setFont (gw::mono (9.5f, 400, 0.04f));
         g.setColour (gw::kDim2);
         for (int i = 0; i < 6; ++i)
             g.drawText (head[i], cellX (i), 126, 56, 16, juce::Justification::centredLeft);
-        for (int rI = 0; rI < 4; ++rI)
+        for (int rI = 0; rI < 3; ++rI)
         {
             const int y = 142 + rI * 19;
             g.setColour (gw::kRowLine);
@@ -913,10 +959,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
                         juce::Justification::centredLeft);
             for (int i = 0; i < 6; ++i)
             {
-                auto c = rowCols[rI];
-                if (rI == 3)
-                    c = i == 2 ? gw::kRed : gw::kGrey;
-                g.setColour (c);
+                g.setColour (rowCols[rI]);
                 g.drawText (juce::String::fromUTF8 (rows[rI].c[i]), cellX (i), y, 56, 19,
                             juce::Justification::centredLeft);
             }
@@ -1059,6 +1102,8 @@ void GlitchwaveAudioProcessorEditor::resized()
         ladderRow.setBounds  (500, 146, 224, 36);
         boostRow.setBounds   (500, 188, 224, 36);
         supplySel.setBounds  (758, 134, 229, 36);
+        c41Row.setBounds     (758, 188, 229, 26);   // v0.39 LM567 pin 2 pad
+        c42Row.setBounds     (758, 217, 229, 26);   // v0.39 LM567 pin 1 pad
     }
 
     // ---- footswitch strip -----------------------------------------------------
@@ -1066,8 +1111,18 @@ void GlitchwaveAudioProcessorEditor::resized()
     tapStompBtn.setBounds (62, 582, 38, 38);
     bypassBtn.setBounds   (182, 582, 38, 38);
     bypassLed.setBounds   (230, 593, 16, 16);
-    hintStomp1.setBounds  (360, 586, 620, 11);
-    hintStomp2.setBounds  (360, 601, 620, 11);
+    hintStomp1.setBounds  (360, 586, 480, 11);
+    hintStomp2.setBounds  (360, 601, 480, 11);
+
+    // v0.37: SETTINGS button -- right of the stomps' hint text, left of the
+    // small logo (drawn at x958 in paint()); only "2nd row" room this strip
+    // has is already spoken for, so it shares the bottom row.
+    settingsBtn.setBounds (848, 589, 100, 26);
 
     fx.setBounds (0, 0, 1060, 640);
+
+    // v0.37: keep the hold-hint's arrows locked onto the stomps' real bounds
+    holdHint.setTargets (tapStompBtn.getBounds().getCentre().toFloat(),
+                         bypassBtn.getBounds().getCentre().toFloat());
+    holdHint.setBounds (0, 0, 1060, 640);
 }

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(Glitchwave567 VERSION 0.36.0 LANGUAGES C CXX)
+project(Glitchwave567 VERSION 0.39.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -19,7 +19,7 @@ juce_add_plugin(Glitchwave567
     BUNDLE_ID "com.illicitapothecary.glitchwave567"
     PLUGIN_MANUFACTURER_CODE Jdgw
     PLUGIN_CODE Gw67
-    FORMATS VST3 LV2 Standalone AU
+    FORMATS VST3 Standalone
     LV2URI "https://github.com/jdg511/567Terror"
     PRODUCT_NAME "Where The Fuzz Meets The Funk"
     IS_SYNTH FALSE

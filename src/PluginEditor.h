@@ -268,9 +268,9 @@ public:
     // whatever eats lone modifier keys on the host machine.
     bool isLatched() const noexcept { return latched; }
 
-    // v0.30: the stomp doubles as an INDICATOR — it lights while its layer
-    // key (INS/DEL) is held, so the widget shows the held state AND can be
-    // activated by mouse.
+    // v0.30: the stomp doubles as an INDICATOR: it lights while the layer is
+    // held (press-and-hold or right-click latch), so the widget shows the
+    // held state AND can be activated by mouse.
     void setIndicated (bool b) noexcept
     {
         if (indicated != b) { indicated = b; repaint(); }
@@ -596,12 +596,14 @@ public:
     struct Summary
     {
         juce::String gate, supply;
-        bool jfet = true, ladder = false, boost = true, hints = false;
+        bool jfet = false, ladder = false, boost = false, hints = true;
+        bool c41 = false, c42 = false;          // v0.39 LM567 filter pads
 
         bool operator!= (const Summary& o) const
         {
             return gate != o.gate || supply != o.supply || jfet != o.jfet
-                || ladder != o.ladder || boost != o.boost || hints != o.hints;
+                || ladder != o.ladder || boost != o.boost || hints != o.hints
+                || c41 != o.c41 || c42 != o.c42;
         }
     };
 
@@ -673,6 +675,10 @@ public:
             put (summary.ladder ? "ON" : "OFF", summary.ladder ? gw::kGreen : gw::kDim2);
             put ("   +6dB ", gw::kDim);
             put (summary.boost ? "ON" : "OFF", summary.boost ? gw::kGreen : gw::kDim2);
+            put ("   C41 ", gw::kDim);
+            put (summary.c41 ? "IN" : "OUT", summary.c41 ? gw::kGreen : gw::kDim2);
+            put ("   C42 ", gw::kDim);
+            put (summary.c42 ? "IN" : "OUT", summary.c42 ? gw::kGreen : gw::kDim2);
             put ("   SUPPLY ", gw::kDim);
             put (summary.supply, gw::kText);
             put ("   HINTS ", gw::kDim);
@@ -799,6 +805,10 @@ public:
         g.drawText ("OUTPUT GATE",  12, 72, 200, 12, juce::Justification::centredLeft);
         g.drawText ("PCB SWITCHES", 500, 72, 200, 12, juce::Justification::centredLeft);
         g.drawText ("SIM SUPPLY",   758, 110, 200, 12, juce::Justification::centredLeft);
+        g.setColour (gw::kDim);
+        g.setFont (gw::barlow (9.5f, true, 0.16f));
+        g.drawText (juce::String::fromUTF8 ("LM567 FILTER PADS \xc2\xb7 DNP ON THE BOARD"),
+                    758, 172, 260, 12, juce::Justification::centredLeft);
         g.setColour (gw::kHairline);
         g.fillRect (12, 90, 414, 1);
         g.fillRect (500, 90, 512, 1);
@@ -832,7 +842,11 @@ public:
         g.setColour (gw::kGrey);
         g.setFont (gw::mono (9.0f, 400, 0.03f));
         g.drawText (juce::String::fromUTF8 ("Gate LED: green = open \xc2\xb7 amber = fading \xc2\xb7 red = fully closed"),
-                    500, 246, 500, 12, juce::Justification::centredLeft);
+                    500, 246, 480, 12, juce::Justification::centredLeft);
+        g.setColour (gw::kGrey);
+        g.setFont (gw::mono (8.5f, 400, 0.03f));
+        g.drawText (juce::String::fromUTF8 ("C41 1u pin 2 \xc2\xb7 C42 220n pin 1 \xc2\xb7 fit them and the decoder stops chattering"),
+                    500, 262, 520, 11, juce::Justification::centredLeft);
     }
 };
 
@@ -1373,6 +1387,139 @@ private:
 };
 
 // ---------------------------------------------------------------------------
+// v0.37: one-time "right-click to hold" callout, replacing the removed
+// INS/DEL keyboard emulation (see docs/MODS.md v0.37 for why). Big centred
+// text + two arrows pointing at the TAP/BYPASS stomps; holds still, then
+// travels down and shrinks onto the stomps, then fades. A click anywhere in
+// the plugin cuts the fade to one second from wherever it currently is,
+// continuing to travel first if it was still mid-move when clicked.
+// ---------------------------------------------------------------------------
+class HoldHintOverlay : public juce::Component
+{
+public:
+    HoldHintOverlay() { setInterceptsMouseClicks (false, false); }
+
+    // called once from resized(), with the two stomps' current centres
+    void setTargets (juce::Point<float> tapCentre, juce::Point<float> bypassCentre)
+    {
+        targetA = tapCentre;
+        targetB = bypassCentre;
+        textEnd = { (targetA.x + targetB.x) * 0.5f, juce::jmin (targetA.y, targetB.y) - 46.0f };
+    }
+
+    // called every frame from the editor's timerCallback, same clock as GlitchFx::tick
+    void tick (double nowMs)
+    {
+        if (done) return;
+        if (t0 <= 0.0) t0 = nowMs;
+        const double t = (nowMs - t0) / 1000.0;   // seconds since first shown
+
+        double posT = t;
+        double opacity;
+
+        if (clickT < 0.0)
+        {
+            opacity = opacityAt (t);
+        }
+        else
+        {
+            const double dt = t - clickT;
+            if (dt >= 1.0) { done = true; repaint(); return; }
+            opacity = juce::jmap (dt, 0.0, 1.0, (double) opacityAtClick, 0.0);
+            // still moving at the moment of the click -> keep moving during the fade
+            posT = (clickT >= 2.0 && clickT < 7.0) ? juce::jmin (t, 7.0) : clickT;
+        }
+
+        const auto pose = poseAt (posT);
+        curPos = pose.first;
+        curSize = pose.second;
+        curOpacity = (float) opacity;
+        repaint();
+    }
+
+    // called from the editor's mouseDown (via addMouseListener) for a click anywhere
+    void registerClick (double nowMs)
+    {
+        if (done || clickT >= 0.0) return;
+        if (t0 <= 0.0) t0 = nowMs;
+        clickT = (nowMs - t0) / 1000.0;
+        opacityAtClick = (float) opacityAt (clickT);
+    }
+
+    void mouseDown (const juce::MouseEvent&) override
+    {
+        registerClick (juce::Time::getMillisecondCounterHiRes());
+    }
+
+    void paint (juce::Graphics& g) override
+    {
+        if (done || curOpacity <= 0.001f) return;
+
+        // text box tracks curPos as its CENTRE -- this is what actually
+        // makes the callout travel; sized from the real glyph width so it
+        // never clips as curSize shrinks from 60 down to 15
+        const auto font = gw::barlow (curSize, true, 0.02f);
+        const float tw = gw::textW (font, kMessage);
+        const juce::Rectangle<float> textBox (curPos.x - tw * 0.5f - 6.0f,
+                                              curPos.y - curSize * 0.65f,
+                                              tw + 12.0f, curSize * 1.3f);
+
+        g.setColour (gw::kText.withAlpha (curOpacity));
+
+        // arrow tails hang off the bottom of the text box; the heads stay
+        // pinned on the stomps
+        const float thick = juce::jmap (curSize, 15.0f, 60.0f, 2.0f, 5.0f);
+        const float headW = juce::jmap (curSize, 15.0f, 60.0f, 10.0f, 26.0f);
+        const float headL = juce::jmap (curSize, 15.0f, 60.0f, 12.0f, 30.0f);
+        const juce::Point<float> tail { curPos.x, textBox.getBottom() };
+
+        auto arrow = [&] (juce::Point<float> head)
+        {
+            juce::Path p;
+            p.addArrow (juce::Line<float> (tail, head), thick, headW, headL);
+            g.fillPath (p);
+        };
+        arrow (targetA);
+        arrow (targetB);
+
+        g.setFont (font);
+        g.drawText (kMessage, textBox, juce::Justification::centred, false);
+    }
+
+private:
+    static constexpr const char* kMessage = "RIGHT-CLICK TO HOLD";
+    static double smoothstep (double u) { u = juce::jlimit (0.0, 1.0, u); return u * u * (3.0 - 2.0 * u); }
+
+    double opacityAt (double t) const
+    {
+        if (t < 7.0) return 1.0;
+        if (t < 12.0) return 1.0 - (t - 7.0) / 5.0;
+        return 0.0;
+    }
+
+    std::pair<juce::Point<float>, float> poseAt (double t) const
+    {
+        const juce::Point<float> centre { 530.0f, 320.0f };
+        if (t < 2.0) return { centre, 60.0f };
+        const double u = smoothstep ((t - 2.0) / 5.0);
+        const auto pos = centre + (textEnd - centre) * (float) u;
+        const float size = 60.0f + (15.0f - 60.0f) * (float) u;
+        return { pos, size };
+    }
+
+    juce::Point<float> targetA, targetB, textEnd;
+    juce::Point<float> curPos { 530.0f, 320.0f };
+    float curSize = 60.0f;
+    float curOpacity = 1.0f;
+    double t0 = 0.0, clickT = -1.0;
+    float opacityAtClick = 1.0f;
+    bool done = false;
+};
+
+// ---------------------------------------------------------------------------
+class ScaleFeedbackWindow;   // v0.37: opened from settingsBtn, defined in ScaleFeedback.h
+
+// ---------------------------------------------------------------------------
 class GlitchwaveAudioProcessorEditor : public juce::AudioProcessorEditor,
                                        private juce::Timer
 {
@@ -1396,12 +1543,18 @@ private:
     // ---- v0.30 control scheme: Jason's X/Y/Z/A knob layers -----------------
     // Six knobs (Freq, LPF, Mix | LFO1 Rate, LFO2 Rate, Env Gain):
     //   X (nothing held):        Freq   LPF     Mix      Rate   Rate   Gain
-    //   Y (TAP held / INS):      Gain   Res     Vol      Shape  Shape  Mode
-    //   Z (BYPASS held / DEL):   L1 Dep L2 Dep  DrvRng   Target Target Target
-    //   A (BOTH held, secret):   Mix knob -> STARVE; every other knob dead.
-    bool tapStompDown() const;      // TAP stomp, latch, or INS held
-    bool bypassStompDown() const;   // BYPASS stomp, latch, or DEL held
-    int  computeLayer() const;      // 0 = X, 1 = Y, 2 = Z, 3 = A (starve)
+    //   Y (TAP held):             Gain   Res     Vol      Shape  Shape  Mode
+    //   Z (BYPASS held):          L1 Dep L2 Dep  DrvRng   Target Target Target
+    //   A (BOTH held, secret):   Mix -> STARVE   Freq -> env SHAPE
+    //                            LPF -> env RATIO   Gain -> env THRESHOLD
+    //                            (Rate 1/2 still dead.)
+    //
+    // v0.37: keyboard emulation (INS/DEL) is removed. A layer can only be
+    // held by pressing and holding a stomp with the mouse, or right-click
+    // to latch it held. See docs/MODS.md v0.37.
+    bool tapStompDown() const;      // TAP stomp held, or latched
+    bool bypassStompDown() const;   // BYPASS stomp held, or latched
+    int  computeLayer() const;      // 0 = X, 1 = Y, 2 = Z, 3 = A (secret shaping)
     void updateKnobModes();         // swap slider attachments per layer
     void knobTouched();             // any knob move consumes the held stomps
     void applyZone (juce::Slider& s, const char* paramID, int zones,
@@ -1459,6 +1612,13 @@ private:
     LedIndicator  tapLed;              // v0.32: blinks the tap tempo + flashes presses
     double lastTapFlashMs = 0.0;
 
+    // v0.37: in-plugin Scale/Feedback access (the standalone-only title-bar
+    // Options menu never existed for VST3/plugin builds) + the one-time
+    // right-click hold callout that replaces INS/DEL
+    juce::TextButton settingsBtn { "SETTINGS" };
+    std::unique_ptr<ScaleFeedbackWindow> scaleFeedbackWindow;
+    HoldHintOverlay holdHint;
+
     // layer state
     int  knobLayer        = 0;
     bool suppressSliderCb = false;   // guard while swapping attachments
@@ -1474,14 +1634,15 @@ private:
     juce::Label  threshLabel, holdLabel, fadeLabel;   // hidden (cover paints captions)
     std::unique_ptr<SliderAttachment> threshAtt, holdAtt, fadeAtt;
     PcbSwitchRow  jfetRow, ladderRow, boostRow;   // +6 dB stays: it IS on Jason's PCB
+    PcbSwitchRow  c41Row, c42Row;                 // v0.39 the two DNP LM567 pads
     SupplySelector supplySel;
     InternalStrip strip;
     CoverDim   coverDim;
     CoverPanel cover;
     bool gateOpen = false;
 
-    // hints (design ships them off)
-    bool showHints = false;
+    // hints (v0.39: ship them ON)
+    bool showHints = true;
     juce::Label hintChips, hintLayers, hintLfo1, hintLfo2, hintStomp1, hintStomp2;
 
     // decoration
