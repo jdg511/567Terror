@@ -1,4 +1,36 @@
-# Glitchwave 567 -- Step 2 Mods (v0.2 .. v0.42)
+# Glitchwave 567 -- Step 2 Mods (v0.2 .. v0.43)
+
+## v0.43 -- dirt GAIN range is now x0.01 .. x100, with unity at the knob's centre
+
+The Layer Y GAIN knob (FREQ with TAP held) was x1.1 .. x300. It is now
+**x0.01 .. x100**, four decades, log as before.
+
+* **Unity lands dead centre.** `0.01 * 10000^0.5 = 1.0` exactly, so knob at
+  12 o'clock is x1.00 and you can read the whole bottom half as attenuation
+  and the whole top half as drive. That is not an accident of the numbers --
+  four decades is the only span that makes 0.01 and 100 symmetric about 1.
+* **The bottom half is genuine cut**, down to -40 dB. This is the knob you
+  want for the rev 7 open item: with SW1 in, the natural-gain JFET slams the
+  Bazz Fuss and GAIN minimum used to still be fuzz. Now you can back it off
+  and find, by ear, roughly how much pad belongs between the JFET and the
+  fuss before you solder one in.
+* **The top drops from x300 to x100.** The fuss is far past its clip point by
+  x100, so the wall is still a wall; you lose about 9.5 dB of headroom above
+  it that was only ever pushing an already-saturated stage harder.
+* **The default moves from 0.0 to 0.5** so the shipped sound does not change.
+  0.0 used to mean x1.1, near unity; under the new range 0.0 means x0.01, a
+  40 dB cut, which would have made the dry path nearly silent out of the box.
+  0.5 is x1.00.
+* Readout precision follows the range: 3 decimals below x0.1, 2 decimals to
+  x10, whole numbers above.
+
+**Existing presets and saved sessions will read differently.** The parameter
+is stored normalised 0..1, so a preset saved at 0.0 used to sound like x1.1
+and will now sound like x0.01. Anything you want to keep should be re-saved.
+
+The mod system is unaffected: it modulates the normalised value, so LFO and
+envelope routing to GAIN just follows the new curve.
+
 
 ## v0.42 -- Layer A drops the envelope-follower Shape control off the GAIN knob
 

@@ -236,7 +236,8 @@ public:
         int   lpfRangeHi  = 0;     // 0 = Lo range, 1 = Hi range
         float dry         = 0.5f;  // MIX crossfade — 0 = dry only, 0.5 = both, 1 = FX only
         float vol         = 0.5f;  // VOL1 pot position 0..1 (A100k), master level
-        float gain        = 0.0f;  // v0.9: dirt GAIN 0..1 -> x2 (slightly dirty) .. x300 (fuzz wall)
+        float gain        = 0.5f;  // v0.43: dirt GAIN 0..1 -> x0.01 (deep cut) .. x100
+                                   // (fuzz wall). 0.5 = unity, dead centre.
         int   dirtType    = 0;     // v0.9: 0 Electra, 1 Fuzz Face Ge, 2 Bazz Fuss,
                                    //       3 Op-Amp OD, 4 Octave Fuzz (always on, dry path only)
         // v0.21 power modelling. v0.41 / rev 7: 9 V is the only rail now.
@@ -553,8 +554,14 @@ private:
         if (force || loopHz != loopHzCur) { loopFilter.setCutoff (loopHz, fs); loopHzCur = loopHz; }
         if (force || ofilHz != ofilHzCur) { ofilFilter.setCutoff (ofilHz, fs); ofilHzCur = ofilHz; }
 
-        // ---- v0.9 dirt: GAIN 0..1 -> x2 .. x300 (log), per-model voicing ------
-        dirtG = 1.1f * std::pow (272.727f, smoothed.gain);   // v0.19: x1.1 .. x300
+        // ---- v0.43 dirt: GAIN 0..1 -> x0.01 .. x100 (log), per-model voicing --
+        // The span is 4 decades, which puts UNITY exactly at the knob's centre
+        // (0.01 * 10000^0.5 = 1.0). The bottom half is now genuine attenuation,
+        // which is what rev 7's natural-gain JFET needs: with SW1 in, the fuss
+        // is being slammed, and this is the sim's way of finding the pad value
+        // before it gets soldered. Top is x100 instead of x300 -- the fuss is
+        // long past its clip point by x100 anyway, so the wall is still there.
+        dirtG = 0.01f * std::pow (10000.0f, smoothed.gain);
         dirtLP.setCutoff (target.dirtType == 1 ? 3500.0f
                         : target.dirtType == 3 ? 6000.0f : 9000.0f, fs);
 
