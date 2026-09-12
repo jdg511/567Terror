@@ -529,59 +529,32 @@ private:
 };
 
 // ---------------------------------------------------------------------------
-// The 9V / 12V / 15V / 18V simulated-supply selector under the cover.
+// v0.41 / hardware rev 7: the 9/12/15/18 V selector is gone. There is one
+// adapter voltage now, and the only rail worth showing under the cover is the
+// LM567's own, which rev 7 drops out of VA with two 1N4148W because TI's
+// recommended maximum for the part is 8.5 V. Read-only, by design: it is set
+// by two diodes, not by a trimmer.
 // ---------------------------------------------------------------------------
-class SupplySelector : public juce::Component
+class RailReadout : public juce::Component
 {
 public:
-    void attach (juce::AudioParameterChoice* p) { param = p; refresh(); }
-
-    void refresh()
-    {
-        const int now = param != nullptr ? param->getIndex() : 0;
-        if (now != sel) { sel = now; repaint(); }
-    }
-
-    void mouseDown (const juce::MouseEvent& e) override
-    {
-        if (param == nullptr) return;
-        const int i = juce::jlimit (0, 3, e.x / 59);
-        param->beginChangeGesture();
-        *param = i;
-        param->endChangeGesture();
-        refresh();
-    }
-
     void paint (juce::Graphics& g) override
     {
-        static const char* names[4] = { "9V", "12V", "15V", "18V" };
-        for (int i = 0; i < 4; ++i)
-        {
-            auto r = juce::Rectangle<float> ((float) i * 59.0f, 0.0f, 52.0f, (float) getHeight());
-            if (i == sel)
-            {
-                g.setColour (gw::kGreen.withAlpha (0.40f));
-                g.fillRoundedRectangle (r.expanded (3.0f), 8.0f);
-                g.setColour (gw::kGreen);
-                g.fillRoundedRectangle (r, 6.0f);
-                g.setColour (juce::Colours::black);
-            }
-            else
-            {
-                g.setColour (juce::Colour (0xff050508));
-                g.fillRoundedRectangle (r, 6.0f);
-                g.setColour (gw::kBtnEdge);
-                g.drawRoundedRectangle (r.reduced (0.5f), 6.0f, 1.0f);
-                g.setColour (gw::kDim);
-            }
-            g.setFont (gw::mono (12.0f, 400));
-            g.drawText (names[i], r, juce::Justification::centred);
-        }
-    }
+        auto r = getLocalBounds().toFloat();
+        g.setColour (juce::Colour (0xff050508));
+        g.fillRoundedRectangle (r, 6.0f);
+        g.setColour (gw::kBtnEdge);
+        g.drawRoundedRectangle (r.reduced (0.5f), 6.0f, 1.0f);
 
-private:
-    juce::AudioParameterChoice* param = nullptr;
-    int sel = 0;
+        g.setColour (gw::kGreen);
+        g.setFont (gw::mono (13.0f, 500));
+        g.drawText ("7.5 V", getLocalBounds().reduced (14, 0),
+                    juce::Justification::centredLeft);
+        g.setColour (gw::kDim);
+        g.setFont (gw::mono (9.5f, 400));
+        g.drawText ("VA - D105 - D107", getLocalBounds().reduced (14, 0),
+                    juce::Justification::centredRight);
+    }
 };
 
 // ---------------------------------------------------------------------------
@@ -595,14 +568,13 @@ public:
 
     struct Summary
     {
-        juce::String gate, supply;
-        bool jfet = false, ladder = false, boost = false, hints = true;
+        juce::String gate;
+        bool jfet = false, hints = true;
         bool c41 = false, c42 = false;          // v0.39 LM567 filter pads
 
         bool operator!= (const Summary& o) const
         {
-            return gate != o.gate || supply != o.supply || jfet != o.jfet
-                || ladder != o.ladder || boost != o.boost || hints != o.hints
+            return gate != o.gate || jfet != o.jfet || hints != o.hints
                 || c41 != o.c41 || c42 != o.c42;
         }
     };
@@ -670,17 +642,13 @@ public:
             put (summary.gate, gw::kText);
             put ("   |   ", gw::kGrey);
             put ("JFET ", gw::kDim);
-            put (summary.jfet ? "ON" : "OFF", summary.jfet ? gw::kGreen : gw::kDim2);
-            put ("   LADDER ", gw::kDim);
-            put (summary.ladder ? "ON" : "OFF", summary.ladder ? gw::kGreen : gw::kDim2);
-            put ("   +6dB ", gw::kDim);
-            put (summary.boost ? "ON" : "OFF", summary.boost ? gw::kGreen : gw::kDim2);
+            put (summary.jfet ? "IN" : "OUT", summary.jfet ? gw::kGreen : gw::kDim2);
             put ("   C41 ", gw::kDim);
             put (summary.c41 ? "IN" : "OUT", summary.c41 ? gw::kGreen : gw::kDim2);
             put ("   C42 ", gw::kDim);
             put (summary.c42 ? "IN" : "OUT", summary.c42 ? gw::kGreen : gw::kDim2);
-            put ("   SUPPLY ", gw::kDim);
-            put (summary.supply, gw::kText);
+            put ("   V567 ", gw::kDim);
+            put ("7.5 V", gw::kText);
             put ("   HINTS ", gw::kDim);
             put (summary.hints ? "ON" : "OFF", summary.hints ? gw::kYellow : gw::kDim2);
         }
@@ -775,7 +743,7 @@ public:
 
         g.setColour (gw::kText);
         g.setFont (gw::barlow (12.0f, true, 0.18f));
-        g.drawText (juce::String::fromUTF8 ("UNDER THE COVER \xc2\xb7 TRIM POTS / SWITCHES / SIM VOLTAGE"),
+        g.drawText (juce::String::fromUTF8 ("UNDER THE COVER \xc2\xb7 TRIM POTS / SWITCHES / LM567 RAIL"),
                     48, 12, 640, 16, juce::Justification::centredLeft);
         g.setColour (gw::kDim);
         g.setFont (gw::mono (9.0f, 400, 0.03f));
@@ -803,8 +771,9 @@ public:
         g.setColour (gw::kDim);
         g.setFont (gw::barlow (9.5f, true, 0.16f));
         g.drawText ("OUTPUT GATE",  12, 72, 200, 12, juce::Justification::centredLeft);
-        g.drawText ("PCB SWITCHES", 500, 72, 200, 12, juce::Justification::centredLeft);
-        g.drawText ("SIM SUPPLY",   758, 110, 200, 12, juce::Justification::centredLeft);
+        g.drawText (juce::String::fromUTF8 ("PCB SWITCHES \xc2\xb7 SW1 SITS BEFORE THE FUSS"),
+                    500, 72, 300, 12, juce::Justification::centredLeft);
+        g.drawText ("LM567 RAIL",   758, 110, 200, 12, juce::Justification::centredLeft);
         g.setColour (gw::kDim);
         g.setFont (gw::barlow (9.5f, true, 0.16f));
         g.drawText (juce::String::fromUTF8 ("LM567 FILTER PADS \xc2\xb7 DNP ON THE BOARD"),
@@ -847,6 +816,10 @@ public:
         g.setFont (gw::mono (8.5f, 400, 0.03f));
         g.drawText (juce::String::fromUTF8 ("C41 1u pin 2 \xc2\xb7 C42 220n pin 1 \xc2\xb7 fit them and the decoder stops chattering"),
                     500, 262, 520, 11, juce::Justification::centredLeft);
+        g.setColour (gw::kGrey);
+        g.setFont (gw::mono (8.5f, 400, 0.03f));
+        g.drawText (juce::String::fromUTF8 ("SW1 at natural gain (x4..x10) slams the fuss \xc2\xb7 GAIN minimum is already fuzz"),
+                    500, 276, 520, 11, juce::Justification::centredLeft);
     }
 };
 
@@ -1845,9 +1818,9 @@ private:
     juce::Slider threshKnob, holdKnob, fadeKnob;
     juce::Label  threshLabel, holdLabel, fadeLabel;   // hidden (cover paints captions)
     std::unique_ptr<SliderAttachment> threshAtt, holdAtt, fadeAtt;
-    PcbSwitchRow  jfetRow, ladderRow, boostRow;   // +6 dB stays: it IS on Jason's PCB
+    PcbSwitchRow  jfetRow;                        // v0.41 / rev 7: the only one left
     PcbSwitchRow  c41Row, c42Row;                 // v0.39 the two DNP LM567 pads
-    SupplySelector supplySel;
+    RailReadout   railRead;                       // v0.41 V567 = 7.5 V, read-only
     InternalStrip strip;
     CoverDim   coverDim;
     CoverPanel cover;

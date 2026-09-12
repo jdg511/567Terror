@@ -106,11 +106,8 @@ GlitchwaveAudioProcessor::GlitchwaveAudioProcessor()
     raw.gatehold    = apvts.getRawParameterValue ("gatehold");
     raw.gatefade    = apvts.getRawParameterValue ("gatefade");
     raw.bypass      = apvts.getRawParameterValue ("bypass");
-    raw.supply      = apvts.getRawParameterValue ("supply4");
     raw.starve      = apvts.getRawParameterValue ("starve");
     raw.jfeton      = apvts.getRawParameterValue ("jfeton");
-    raw.ladder36    = apvts.getRawParameterValue ("ladder36");
-    raw.boost6      = apvts.getRawParameterValue ("boost6");
     raw.c41cap      = apvts.getRawParameterValue ("c41cap");
     raw.c42cap      = apvts.getRawParameterValue ("c42cap");
     raw.democlip    = apvts.getRawParameterValue ("democlip");
@@ -303,16 +300,12 @@ GlitchwaveAudioProcessor::createParameterLayout()
     // ---- v0.21 power + bypass ----------------------------------------------------
     layout.add (std::make_unique<juce::AudioParameterBool> (
         juce::ParameterID { "bypass", 1 }, "Bypass", false));
-    // v0.39: internal switches (under the cover). Ships: JFET OFF, -3/-6
-    // ladder OFF, +6 dB OFF, 9 V. Supply now 9/12/15/18 V.
-    layout.add (std::make_unique<PC> (juce::ParameterID { "supply4", 1 }, "Supply",
-        juce::StringArray { "9V", "12V", "15V", "18V" }, 0));
+    // v0.41 / hardware rev 7: the -3/-6 ladder, the +6 dB boost and the
+    // 12/15/18 V supply options are off the board, so they are gone from the
+    // sim too. One audio switch is left under the cover, and it now sits in
+    // front of the Bazz Fuss instead of after the mixer. It still ships OFF.
     layout.add (std::make_unique<juce::AudioParameterBool> (
         juce::ParameterID { "jfeton", 1 }, "JFET Stage", false));
-    layout.add (std::make_unique<juce::AudioParameterBool> (
-        juce::ParameterID { "ladder36", 1 }, "-3/-6 Ladder", false));
-    layout.add (std::make_unique<juce::AudioParameterBool> (
-        juce::ParameterID { "boost6", 1 }, "+6dB Boost", false));
     // v0.39: the two DNP filter pads at the LM567 (C41 = pin 2 loop filter,
     // C42 = pin 1 output filter). Both ship OUT, matching the built board.
     layout.add (std::make_unique<juce::AudioParameterBool> (
@@ -542,14 +535,9 @@ void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         cp.vol        = k.vol;
         cp.gain       = k.gain;
         cp.dirtType   = 2;   // v0.12: Bazz Fuss, hardwired (Jason's PCB pick)
-        {   // v0.32: 4-step simulated supply
-            static constexpr float kVolts[4] = { 9.0f, 12.0f, 15.0f, 18.0f };
-            cp.supplyV = kVolts[juce::jlimit (0, 3, (int) raw.supply->load())];
-        }
+        cp.supplyV    = 9.0f;   // v0.41 / rev 7: one adapter voltage, 9 V
         cp.starve     = raw.starve->load();
-        cp.jfetOn     = raw.jfeton->load()   >= 0.5f;   // internal switch (ships OFF)
-        cp.ladder36   = raw.ladder36->load() >= 0.5f;   // internal switch (ships OFF)
-        cp.boost6Gain = raw.boost6->load()   >= 0.5f ? 2.0f : 1.0f;   // internal switch
+        cp.jfetOn     = raw.jfeton->load()   >= 0.5f;   // SW1, now pre-fuss (ships OFF)
         cp.c41LoopCap = raw.c41cap->load()   >= 0.5f;   // LM567 pin 2 pad (ships OUT)
         cp.c42OutCap  = raw.c42cap->load()   >= 0.5f;   // LM567 pin 1 pad (ships OUT)
         circuit.setParams (cp);

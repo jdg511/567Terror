@@ -234,18 +234,14 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     cover.gateKnobs[1] = &holdKnob;
     cover.gateKnobs[2] = &fadeKnob;
 
-    // the PCB switches — +6 dB kept: Jason's actual PCB carries that stage
-    jfetRow.attach   (apvts.getParameter ("jfeton"),   "JFET STAGE");
-    ladderRow.attach (apvts.getParameter ("ladder36"), juce::String::fromUTF8 ("\xe2\x88\x92""3/\xe2\x88\x92""6 LADDER"));
-    boostRow.attach  (apvts.getParameter ("boost6"),   "+6 dB BOOST");
-    supplySel.attach (choice ("supply4"));
+    // v0.41 / rev 7: SW1 is the only audio switch left on the board, and it
+    // now sits in front of the Bazz Fuss rather than after the mixer.
+    jfetRow.attach   (apvts.getParameter ("jfeton"),   "SW1  JFET  PRE-FUSS");
     // v0.39: the two DNP filter pads at the LM567, switchable independently
     c41Row.attach (apvts.getParameter ("c41cap"), "C41  LFIL  PIN 2");
     c42Row.attach (apvts.getParameter ("c42cap"), "C42  OFIL  PIN 1");
     cover.addAndMakeVisible (jfetRow);
-    cover.addAndMakeVisible (ladderRow);
-    cover.addAndMakeVisible (boostRow);
-    cover.addAndMakeVisible (supplySel);
+    cover.addAndMakeVisible (railRead);
     cover.addAndMakeVisible (c41Row);
     cover.addAndMakeVisible (c42Row);
 
@@ -636,11 +632,10 @@ void GlitchwaveAudioProcessorEditor::refreshReadouts (int layer)
             text[5] = pTxt ("envshape");  col[5] = gw::kText;
 
             // the "?" reads out as the sagging rail: a straight line from
-            // supply .. 1 V floor (9-18 V / 100 mA modeled supply)
-            static constexpr float kVolts[4] = { 9.0f, 12.0f, 15.0f, 18.0f };
-            float volts = kVolts[0];
-            if (auto* ps = dynamic_cast<juce::AudioParameterChoice*> (apvts.getParameter ("supply4")))
-                volts = kVolts[juce::jlimit (0, 3, ps->getIndex())];
+            // 9 V down to the 1 V floor. v0.41 / rev 7: one adapter voltage,
+            // and this sagging rail is VDIRT, so it takes the JFET and the
+            // fuss down with it. The LM567's own 7.5 V rail is separate.
+            constexpr float volts = 9.0f;
             float sv = 0.0f;
             if (auto* p = apvts.getParameter ("starve"))
                 sv = p->getValue();
@@ -875,24 +870,16 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
             return pp != nullptr && pp->getValue() >= 0.5f;
         };
         s.jfet   = onOf ("jfeton");
-        s.ladder = onOf ("ladder36");
-        s.boost  = onOf ("boost6");
         s.c41    = onOf ("c41cap");
         s.c42    = onOf ("c42cap");
         s.hints  = showHints;
-        if (auto* ps = dynamic_cast<juce::AudioParameterChoice*> (
-                           processor.apvts.getParameter ("supply4")))
-            s.supply = ps->getCurrentChoiceName().replace ("V", " V");
         strip.setSummary (s);
     }
 
     // switches can also move under host automation — keep the rows honest
     jfetRow.refresh();
-    ladderRow.refresh();
-    boostRow.refresh();
     c41Row.refresh();
     c42Row.refresh();
-    supplySel.refresh();
 
     // v0.40: the demo transport lives on the processor, and the clip can also
     // be changed by the host, so re-read both every frame
@@ -1161,9 +1148,7 @@ void GlitchwaveAudioProcessorEditor::resized()
         holdKnob.setBounds   (160, 124, 76, 76);
         fadeKnob.setBounds   (292, 124, 76, 76);
         jfetRow.setBounds    (500, 104, 224, 36);
-        ladderRow.setBounds  (500, 146, 224, 36);
-        boostRow.setBounds   (500, 188, 224, 36);
-        supplySel.setBounds  (758, 134, 229, 36);
+        railRead.setBounds   (758, 134, 229, 36);
         c41Row.setBounds     (758, 188, 229, 26);   // v0.39 LM567 pin 2 pad
         c42Row.setBounds     (758, 217, 229, 26);   // v0.39 LM567 pin 1 pad
     }

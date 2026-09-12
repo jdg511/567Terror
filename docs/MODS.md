@@ -1,4 +1,194 @@
-# Glitchwave 567 — Step 2 Mods (v0.2 … v0.36)
+# Glitchwave 567 -- Step 2 Mods (v0.2 .. v0.41)
+
+## v0.41 -- hardware rev 7 mirrored into the plugin: ladder and +6 dB deleted, one supply voltage, JFET moved in front of the fuss, LM567 on its own 7.5 V rail
+
+The sim now matches the rev 7 board. Four changes, and the last one is the
+one that will surprise you when you hear it.
+
+* **The -3/-6 asymmetric ladder is gone**, in the sim and on the board. The
+  output stage is now just the fixed voicing into the op-amp rail, and the
+  rail is still the thing STARVE collapses. `ladderDb`, `ladderLo`,
+  `halfClip`, `ladderClip` and `asymClip` are deleted from the DSP, not
+  merely switched off.
+* **The +6 dB output boost is gone** for the same reason. The `boost6`
+  parameter and its smoothing are removed.
+* **One adapter voltage: 9 V.** The 12/15/18 V options are off the hardware,
+  so `supply4` and the SIM SUPPLY selector are deleted. STARVE still sags
+  that single rail linearly to the 1 V floor. In rev 7 that sagging rail is
+  VDIRT, which is why the JFET and the Bazz Fuss die on it together.
+* **The JFET stage MOVED rather than being deleted.** SW1 now puts the J201
+  Fetzer Valve in FRONT of the Bazz Fuss (stage 3b) instead of after the
+  mixer, with its drain on VDIRT so STARVE reaches it. It also runs at its
+  REAL voltage gain now instead of unity: `tune.jfetGain` = 6, the middle of
+  a J201 Fetzer's natural x4..x10 spread, with the gain AND the usable input
+  swing both scaling with the drain rail (a starved JFET loses gm and
+  headroom at the same time, so it does not just get quieter, it stops
+  curving). Consequence, and it is the real one, not a modelling artifact:
+  a natural-gain JFET turns a 100-300 mV guitar into 0.4-3 V, and the fuss
+  clips at a few hundred mV, so **with SW1 in, GAIN at minimum is already
+  full fuzz**. The hardware fix is a fixed pad BETWEEN the JFET and the
+  fuss, never before the JFET (attenuating first just starves it of the
+  level it needs to curve). That pad is still open, to be sized on the
+  breadboard, so the sim runs it unpadded too.
+* **V567 is its own rail, and it is 7.5 V, not 8.7 V.** Rev 7 drops it out
+  of VA with D105 + D107, two 1N4148W in series. Why the target moved: TI's
+  recommended operating maximum for the LM567C is 8.5 V and absolute max is
+  9.0 V, so 8.7 V was outside the datasheet with 0.3 V to destruction. And
+  no resistive divider can hold any target here, because the chip draws
+  7-10 mA idle and 12-15 mA activated -- a 56R/1.6k divider would have moved
+  the rail ~430 mV in step with the chatter, modulating the timing network
+  and the Q-node swing with the audio. Two diodes are about six times
+  stiffer over that swing (dynamic resistance at 12 mA is only ~2.2 ohm) and
+  the 100u at the pin mops up the rest. The BZX84C8V2 across the shunt leg
+  becomes a genuine wrong-adapter fault clamp that never conducts in normal
+  use -- at 8.7 V its 7.79-8.61 V tolerance band would have had it
+  conducting continuously at the nominal operating point.
+  The cost lands on the wet path and is modelled: R16 pulls the Q node up to
+  V567, so its high level drops from about +3.75 V to +2.50 V relative to
+  the 4.5 V mixer reference, roughly 15% of the total Q swing. The MIX law
+  absorbs it. If f0 drift ever matters more than wet level, TI characterises
+  stability at 4.75-5.75 V, so 5 V is the real sweet spot.
+
+Under the cover: PCB SWITCHES is down to one row, "SW1 JFET PRE-FUSS", and
+where SIM SUPPLY used to be there is now a read-only LM567 RAIL readout
+(7.5 V, VA - D105 - D107) -- read-only by design, since two diodes set it,
+not a trimmer. The closed strip reads `JFET / C41 / C42 / V567 / HINTS`.
+Defaults are unchanged: everything OFF/OUT, HINTS ON.
+
+## v0.40 -- demo player strip: 27 embedded clips, looping transport, -24..+12 dB level
+
+A 140 px strip below the pedal face, deliberately outside the cover's dim
+veil so it keeps playing while the cover is open -- the whole point is
+A/B-ing the under-the-cover switches against real playing.
+
+* Dropdown of 27 Ogg clips baked in with `juce_add_binary_data` (Ogg decodes
+  with `registerBasicFormats()`, no extra flags, unlike MP3). The list is
+  grouped into submenus by the text before the dash.
+* START becomes STOP; the clip loops until stopped. Clip choice and level
+  save with the preset, the transport does not.
+* DEMO LEVEL knob, -24 to +12 dB. The processor sums the clip into the
+  pedal's input, so it runs through the entire circuit.
+
+## v0.39 -- Starve corrected to a realistic 9-18V/100mA linear supply, Freq/Gain swapped on the secret envelope controls, hint captions added
+
+Follow-up corrections to v0.38, all on Layer A (both stomps held):
+
+* **Starve supply spec fixed**: the modeled supply is now a 9-18 V / 100 mA
+  wall-wart or 9 V battery -- a genuinely realistic rating for a single
+  small stompbox (the v0.38 "2.4 A" figure was way oversized for a pedal
+  like this). The current-limit foldback curve from v0.38 is gone too:
+  per spec this is now a plain LINEAR sag, a straight line from whatever
+  supply voltage is selected (9/12/15/18 V) all the way down to the 1 V
+  floor, regardless of which supply voltage is chosen. Same formula shape
+  as the original pre-v0.38 code, just with the floor moved from 5 V to
+  1 V. Readout under Mix stays a bare number, no `V`.
+* **Threshold and Shape swapped knobs**: Threshold moves to the Freq knob;
+  Shape moves to the Gain knob (Freq's old job). Ratio stays on LPF,
+  Starve stays on Mix. Wasn't specified which knob absorbs the one
+  Threshold vacated, so it's treated as a straight swap between Freq and
+  Gain -- flag it if that's not what you had in mind.
+* **Hint captions for Layer A**: with Hints ON (the HINTS: ON/OFF toggle),
+  Layer A's row now shows three short, still-cryptic titles instead of
+  dashes: Freq = `ET?`, LPF = `ER?`, Mix = `SV?`. Gain stays dark (no
+  caption requested for it). With Hints OFF, the row goes back to the
+  fully secret dashes/`?` from before -- unchanged.
+
+## v0.38 -- realistic 1V/2.4A supply starve, secret envelope-follower Ratio/Shape/Threshold, KNOB LAYERS chart drops the A row
+
+Three separate asks bundled into one pass, all living on the already-secret
+Layer A (both stomps held):
+
+* **KNOB LAYERS chart**: the "A -- BOTH" row is gone from the on-screen
+  legend entirely (it only ever showed dashes and a "?" anyway). The chart
+  is now X/Y/Z only. Layer A itself still exists and still works exactly
+  the same way (hold both stomps) -- it is just no longer documented on the
+  face, same as Starve always was.
+* **Starve, now SUPER realistic**: the secret Starve knob (Mix, in Layer A)
+  used to sag the rail in a straight line from the supply voltage down to a
+  5 V floor. It now models an actual 2.4 A-rated wall-wart/battery: nearly
+  flat voltage for most of the knob's travel (a real supply barely sags
+  until it's close to its rated current), then a hard current-limit
+  foldback in the last stretch, diving all the way to a 1 V floor. That is
+  well past the point any real op-amp or JFET stage in this circuit would
+  already be dead and silent -- we let it go there anyway so you hear the
+  whole death spiral, not just the "still technically alive" part. The
+  live readout under the Mix knob now shows the bare effective-rail number
+  (e.g. `9.0` down to `1.0`), no `V` suffix.
+* **Envelope follower Ratio** (LPF knob, Layer A): the follower used to be
+  a flat 1:1 relationship between input level and its output. LPF now
+  sweeps a compressor-style ratio continuously from `0.1:1` (expand) at
+  0%, through `1:1` (unity) at 50%, to `1:10` (heavy compression) at 100%,
+  applied above the new Threshold. Readout is just the ratio itself
+  (`0.10:1` .. `1:1` .. `1:10`), no other label.
+* **Envelope follower Shape** (Freq knob, Layer A): a separate knee-curve
+  control, independent of Ratio -- log (concave) at 0%, straight line at
+  50%, exponential (convex) at 100%. There's no standard named unit for a
+  curve-shape blend the way there is for speed or mass, so it's just a
+  bare gamma-exponent number (0.25 .. 1 .. 4), no suffix, no label.
+* **Envelope follower Threshold** (Gain knob, Layer A): input below this
+  level now reads as flat zero out of the follower; everything above it is
+  rescaled 0..1 before Ratio/Shape are applied. Bare 0.00..1.00 number,
+  no label.
+* All three envelope controls default to "no change" (Threshold 0, Ratio
+  and Shape centred at 0.5) so a stock patch sounds identical to before
+  this pass. DSP change is entirely inside `ModSystem::compute()`
+  (`envAboveThresh` / `envShapeExp` / `envRatioExp` / `envShaped`, used in
+  place of the raw `inEnv` everywhere the follower feeds its target).
+
+Would either of the curve controls be easy to actually build in analog
+hardware? Threshold: trivial, just an offset/bias into the rectifier stage
+before the VCA control, extremely common (every noise gate and most
+compressors have exactly this). Ratio: doable but a real component --
+you'd want a proper log/antilog VCA core (THAT2180-series or SSM2164, or a
+discrete diode log-antilog pair) with the ratio pot tapping into the
+control path, the same basic technique a dbx/1176-style compressor uses
+for its ratio switch, just applied to the envelope-follower's control
+voltage instead of the audio path. Shape (log/linear/exponential morph)
+is the hard one in pure analog -- a continuous three-way curve morph
+needs a crossfade between differently-shaped CV generators, which gets
+big and fiddly with discrete parts fast. In practice, the boutique-pedal
+way to get exactly this control today is a small microcontroller shaping
+the VCA's control voltage (DAC out) while the audio path itself stays
+100% analog -- keeps the sound analog, makes the curve-morph a couple of
+lines of firmware instead of a rat's nest of op-amps.
+
+## v0.37 -- INS/DEL keyboard emulation removed, right-click-only hold + in-plugin SETTINGS
+
+Root cause of the "GUI stutters while holding INS/DEL, only inside Fender
+Studio Pro, only the GUI, audio never glitches" report: Fender's own key
+command sheet binds Insert to "Insert Marker" and Delete to "Delete" as
+host-level shortcuts. Every OS auto-repeat keydown for those two keys was
+falling straight through the (unfocused, unclaimed) plugin editor and
+reaching the host, which was doing real per-repeat work on its own
+timeline/marker redraw, stealing frames from the shared UI thread. There
+is no host-guaranteed way to reserve a key from a DAW (VST3's onKeyDown
+"handled" return is best-effort, not a contract), so the fix is to stop
+using the keyboard at all:
+
+* `tapStompDown()` / `bypassStompDown()` no longer poll
+  `KeyPress::isKeyCurrentlyDown()`. TAP = Y and BYPASS = Z can only be held
+  by pressing and holding the stomp with the mouse, or right-click to latch
+  it held (v0.28, unchanged and now the only hold path). BOTH held = A,
+  same as always.
+* New one-time onboarding callout (`HoldHintOverlay` in PluginEditor.h):
+  big bold off-white "RIGHT-CLICK TO HOLD" text with two arrows pointing at
+  the TAP/BYPASS stomps. Starts full-size (60 px) centred on the face, holds
+  still 2 s, travels down and shrinks onto the stomps over 5 s (7 s total),
+  then fades out over 5 s (12 s total). Clicking anywhere in the plugin at
+  any point cuts the (remaining) fade to 1 s from whatever opacity it is
+  currently at; if it was still travelling when clicked, it keeps
+  travelling for that 1 s rather than freezing in place. On top of
+  everything else in the editor; does not intercept clicks.
+* New SETTINGS button on the pedal face itself (footswitch strip, between
+  the stomps' hint text and the small logo), opening the exact same Scale
+  and Feedback window the standalone's title-bar Options menu always had.
+  Fixes the actual complaint: that window was only ever reachable from
+  `StandaloneApp.cpp`'s custom title bar, so it silently did not exist for
+  VST3/plugin instances, there was nowhere in a DAW to reach it at all.
+* Every on-screen and in-code mention of INS/DEL as the layer-hold keys
+  (the KNOB LAYERS chart, the v0.30 control-scheme comments, the footswitch
+  hint text) is updated to match; nothing else about the X/Y/Z/A layer
+  behaviour, tap tempo, gate, or DSP changed.
 
 ## v0.36 — the plugin becomes "Where The Fuzz Meets The Funk"
 

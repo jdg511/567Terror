@@ -53,6 +53,30 @@ struct Tunables
     float noiseFloorV    = 1.5e-4f; // input-referred noise at the 567 input (idle bleed)
     float jackVoltsPerFS = 2.0f;    // 1.0 full-scale sample == this many volts at the jack
     float fixedTrimDb    = 15.0f;   // v0.8: fixed drive into the 567 branch (knob removed)
+
+    // ---- v0.41, mirroring hardware rev 7 -----------------------------------
+    // V567 is its own rail now: VA through D105 + D107 (two 1N4148W in
+    // series), so 9.0 V minus roughly 1.5 V of diode drop. The old 8.7 V
+    // target was above TI's 8.5 V recommended maximum for the LM567C, and a
+    // resistive divider could not hold ANY target because the chip swings
+    // 7-10 mA idle to 12-15 mA activated. Two diodes are about six times
+    // stiffer over that swing (a diode's dynamic resistance at 12 mA is only
+    // ~2.2 ohm). R16 pulls the Q node up to THIS rail, not to VA, so the
+    // lower rail costs the wet path a slice of its swing -- that is the
+    // audible price of getting inside the datasheet, and it is modelled.
+    // STARVE does not reach here: rev 7 starves VDIRT, not VA.
+    float v567RailV      = 7.5f;    // VA 9.0 V - D105 - D107
+    // Rev 7 moves the J201 Fetzer Valve in FRONT of the Bazz Fuss and hangs
+    // its drain on VDIRT, so STARVE reaches it. It runs at natural gain --
+    // no pad, no degeneration trim -- which for a J201 Fetzer is roughly
+    // x4 to x10 depending on the individual part's Idss. 6 is the middle.
+    // Consequence, and it is the real one: a natural-gain JFET turns a
+    // 100-300 mV guitar into 0.4-3 V, and the Bazz Fuss clips at a few
+    // hundred mV, so with the JFET IN, GAIN at minimum is already full
+    // fuzz. The hardware fix is a fixed pad BETWEEN the JFET and the fuss
+    // (attenuating before the JFET just starves it of the level it needs to
+    // curve). That pad is still open, so the sim runs it unpadded too.
+    float jfetGain       = 6.0f;    // small-signal voltage gain at a full rail
 };
 
 // ----------------------------------------------------------------------------
@@ -215,18 +239,17 @@ public:
         float gain        = 0.0f;  // v0.9: dirt GAIN 0..1 -> x2 (slightly dirty) .. x300 (fuzz wall)
         int   dirtType    = 0;     // v0.9: 0 Electra, 1 Fuzz Face Ge, 2 Bazz Fuss,
                                    //       3 Op-Amp OD, 4 Octave Fuzz (always on, dry path only)
-        // v0.21 power modelling
-        float supplyV     = 9.0f;  // 9 or 18 (centre-negative adapter voltage)
-        float starve      = 0.0f;  // 0..1 secret starve: rail sags toward a
-                                   // 1 V floor as the modeled 2.4 A supply
-                                   // hits its current-limit foldback (v0.38)
-        // v0.32 — Jason's FINAL output stage (audition over): two internal
-        // switches. JFET stage on/off (ships ON) feeding an asymmetric
-        // -3/-6 ladder on/off (ships OFF). Both off = the bare op-amp rail.
+        // v0.21 power modelling. v0.41 / rev 7: 9 V is the only rail now.
+        // The 12/15/18 V options are gone from the hardware, so they are gone
+        // from the sim; STARVE still sags this one linearly to a 1 V floor.
+        float supplyV     = 9.0f;  // centre-negative adapter, 9 V, fixed
+        float starve      = 0.0f;  // 0..1 secret starve: rail sags LINEARLY
+                                   // from 9 V down to a 1 V floor (v0.39)
+        // v0.41 / rev 7: ONE internal audio switch left. The -3/-6 ladder and
+        // the +6 dB boost are off the board. The JFET has moved from the
+        // output chain to the front of the Bazz Fuss, on VDIRT, so STARVE
+        // reaches it. It ships OUT.
         bool  jfetOn      = false;
-        bool  ladder36    = false;
-        // v0.23: the +6 dB output boost is now switchable (1.0 or 2.0)
-        float boost6Gain  = 1.0f;
         // v0.39: the two DNP filter pads at the LM567. Both ship OUT, which
         // is how the board is built: the decoder never settles, so pin 8
         // chatters at audio rate and that chatter is the pedal's voice.
@@ -292,26 +315,21 @@ public:
         smoothed.dry  += potSmoothCoeff * (target.dry  - smoothed.dry);
         smoothed.vol  += potSmoothCoeff * (target.vol  - smoothed.vol);
         smoothed.starve += potSmoothCoeff * (target.starve - smoothed.starve);
-        smoothed.boost6Gain += potSmoothCoeff * (target.boost6Gain - smoothed.boost6Gain);
 
-        // v0.21/v0.38: effective rail. 9 V is the reference design; 18 V
-        // doubles the analogue headroom. Starve now models a real 2.4 A
-        // rated wall-wart/battery supply under load: real supplies hold
-        // their rated voltage almost flat right up near their current
-        // ceiling, then fold back hard once they hit it -- not a straight
-        // line droop. So most of the knob's travel barely sags the rail;
-        // only the last stretch dives, all the way to a hard 1 V floor (the
-        // digital 3.3/5 V rails are separately regulated and never
-        // starved). We let it go all the way to 1 V even though every real
-        // op-amp/JFET stage in this circuit would already be dead and
-        // silent long before that -- the point is to hear the whole death
-        // spiral, not stop short of it.
-        constexpr float kMaxSupplyA = 2.4f;    // modeled supply current ceiling
-        constexpr float kFloorV     = 1.0f;    // absolute rail floor, fully collapsed
-        const float iDrawnA  = smoothed.starve * kMaxSupplyA;   // 0 .. 2.4 A modeled draw
-        const float loadFrac = iDrawnA / kMaxSupplyA;           // fraction of rated current
-        const float foldback = std::pow (loadFrac, 6.0f);      // flat, then a cliff
-        const float vEff     = kFloorV + (target.supplyV - kFloorV) * (1.0f - foldback);
+        // v0.21/v0.39/v0.41: effective rail. Rev 7 settles on one adapter
+        // voltage, 9 V, so there is nothing to select any more. Starve models
+        // a real 9 V / 100 mA rated wall-wart or battery -- a genuinely
+        // realistic rating for a single small stompbox. Per spec this is a
+        // plain LINEAR sag: Starve travels a straight line from 9 V all the
+        // way down to a hard 1 V floor (the digital 3.3/5 V rails and the
+        // LM567's own diode-dropped rail are separate and never starved; in
+        // rev 7 this sagging rail IS VDIRT, which is why the JFET and the
+        // Bazz Fuss both die on it). We let it go all the
+        // way to 1 V even though every real op-amp/JFET stage in this
+        // circuit would already be dead and silent long before that -- the
+        // point is to hear the whole death spiral, not stop short of it.
+        constexpr float kFloorV = 1.0f;    // absolute rail floor, fully collapsed
+        const float vEff  = target.supplyV - smoothed.starve * (target.supplyV - kFloorV);
         railC             = vEff / 9.0f;               // clip ceiling re: 9 V FS
         starveA           = smoothed.starve;
         smoothed.gain += potSmoothCoeff * (target.gain - smoothed.gain);
@@ -368,7 +386,13 @@ public:
         vQ += (detected ? qFallCoeff : qRiseCoeff) * (qTargetV - vQ);
 
         // ==== Stage 3b: always-on dirt in the DRY path only (v0.9) ==========
-        const float vDirt = processDirt (vDry);
+        // v0.41 / rev 7: SW1 puts the J201 Fetzer Valve IN FRONT of the dirt
+        // instead of after the mixer. Its drain rail is VDIRT, the same rail
+        // STARVE collapses, so starving it kills the JFET's gain and headroom
+        // together and the fuss behind it goes quiet from the input side as
+        // well as from its own bias. At natural gain this hits the Bazz Fuss
+        // with several volts, so with SW1 in, GAIN minimum is already fuzz.
+        const float vDirt = processDirt (target.jfetOn ? jfetStage (vDry) : vDry);
 
         // ==== Stage 4: inverting mixer (U1.2) — raw 567 wet + dirty dry ======
         const float vMix = detail::opampClip (-(wetGain * vQ + dryGain * vDirt));
@@ -378,115 +402,55 @@ public:
                                ? detail::opampClip (fizzLPF.process (vMix))
                                : vMix;
 
-        // ==== v0.24 output chain: voicing -> +6 dB boost -> rail soft clip ===
-        // (Jason: the switchable +6 dB is the 2nd-to-last thing, feeding the
-        // clip stage directly. The +15 dB pre-567 trim is untouched, wet only.)
+        // ==== v0.41 output chain: voicing -> rail clip =======================
+        // Rev 7 deletes the +6 dB boost and the -3/-6 ladder from the board,
+        // so the output stage is now just the fixed voicing into the op-amp
+        // rail. The +15 dB pre-567 trim is untouched, wet only.
         float o = outDCBlock.process (vOut);
         o = outHP.process (o);                         // 12 dB/oct low-cut @ 60 Hz
         o = outPeak.process (o);                       // +3 dB Q0.5 bell @ 800 Hz
-        o *= smoothed.boost6Gain;                      // +6 dB boost (switchable)
         return clipStage (o / tune.jackVoltsPerFS);    // clip: the LAST thing
     }
 
     // ------------------------------------------------------------------------
-    // v0.21..v0.24 output clip stage.
-    // Ladder: Jason's ratio ladder (2:1 / 4:1 / 8:1 output-referred bands)
-    // with quadratic knees, referenced to the effective rail. Three onsets,
-    // named by where compression begins below the rail:
-    //   -9 ladder: bands -9/-6/-3/0, 6 dB knees, unity below -15, rail at +33
-    //   -6 ladder: bands -6/-4/-2/0, 4 dB knees, unity below  -8, rail at +22
-    //   -3 ladder: bands -3/-2/-1/0, 2 dB knees, unity below  -4, rail at +11
-    // JFET (D): a J201 square-law common-source stage biased at half
-    // pinch-off (Fetzer-Valve style) — smooth curvature everywhere, the
-    // cutoff side rounds to a perfect zero-slope stop at +0.5c, the ohmic
-    // side runs hotter and corners at -1.5c. Big 2nd harmonic, asymmetric.
-    // v0.24 asymmetric modes clip each polarity with a different ladder
-    // (onset 0 = no ladder, just the bare rail as a hard stop) — in hardware:
-    // different biased-diode-divider stacks per polarity of the feedback net.
-    // Everything scales with the effective rail (18 V / starve).
+    // v0.41 output clip stage + JFET stage (hardware rev 7).
+    //
+    // The -3/-6 ratio ladder and the +6 dB boost are off the board, so the
+    // last thing in the chain is simply the op-amp hitting the effective
+    // rail. It still scales with STARVE through railC.
+    //
+    // The JFET did NOT get deleted, it MOVED: rev 7 puts the J201 Fetzer
+    // Valve in FRONT of the Bazz Fuss (see processSample, stage 3b), with its
+    // drain on VDIRT so STARVE reaches it. It is a square-law common-source
+    // stage biased at half pinch-off: smooth curvature everywhere, the cutoff
+    // side rounding to a zero-slope stop and the ohmic side cornering harder,
+    // which is where the big second harmonic and the asymmetry come from.
+    //
+    // v0.41 also gives it its REAL voltage gain instead of running it at
+    // unity. tune.jfetGain is the small-signal gain at a full rail (6 is the
+    // middle of a J201 Fetzer's natural x4..x10 spread). Both the gain and
+    // the usable input swing scale with the drain rail, because a starved
+    // JFET loses gm and headroom at the same time -- crank STARVE and the
+    // stage does not just get quieter, it stops curving.
     // ------------------------------------------------------------------------
-    float ladderDb (float Li, int onset) const noexcept
-    {
-        if (onset == 6)
-        {   // -6 ladder — output bands -6/-4/-2/0, 4 dB knees
-            if      (Li <= -4.0f)  { const float d = Li + 8.0f; return -8.0f + d - d * d / 16.0f; }
-            else if (Li <= 0.0f)   { const float d = Li + 4.0f; return -5.0f + 0.5f * d - d * d / 32.0f; }
-            else if (Li <= 4.0f)   return -3.5f + 0.25f * Li;
-            else if (Li <= 8.0f)   { const float d = Li - 4.0f; return -2.5f + 0.25f * d - d * d / 64.0f; }
-            else if (Li <= 22.0f)  return -1.75f + 0.125f * (Li - 8.0f);
-            return 0.0f;
-        }
-        if (onset == 3)
-        {   // -3 ladder — output bands -3/-2/-1/0, 2 dB knees
-            if      (Li <= -2.0f)  { const float d = Li + 4.0f; return -4.0f + d - d * d / 8.0f; }
-            else if (Li <= 0.0f)   { const float d = Li + 2.0f; return -2.5f + 0.5f * d - d * d / 16.0f; }
-            else if (Li <= 2.0f)   return -1.75f + 0.25f * Li;
-            else if (Li <= 4.0f)   { const float d = Li - 2.0f; return -1.25f + 0.25f * d - d * d / 32.0f; }
-            else if (Li <= 11.0f)  return -0.875f + 0.125f * (Li - 4.0f);
-            return 0.0f;
-        }
-        // -9 ladder — output bands -9/-6/-3/0, 6 dB knees
-        if      (Li <= -6.0f)  { const float d = Li + 12.0f; return -12.0f + d - d * d / 24.0f; }
-        else if (Li <= 0.0f)   { const float d = Li + 6.0f;  return  -7.5f + 0.5f * d - d * d / 48.0f; }
-        else if (Li <= 6.0f)   return -5.25f + 0.25f * Li;
-        else if (Li <= 12.0f)  { const float d = Li - 6.0f;  return -3.75f + 0.25f * d - d * d / 96.0f; }
-        else if (Li <= 33.0f)  return -2.625f + 0.125f * (Li - 12.0f);
-        return 0.0f;
-    }
-
-    // below the first knee the signal passes untouched
-    float ladderLo (int onset) const noexcept
-    {
-        return onset == 9 ? 0.2512f          // 10^(-12/20)
-             : onset == 6 ? 0.3981f          // 10^( -8/20)
-                          : 0.6310f;         // 10^( -4/20)
-    }
-
-    // one polarity through one ladder (ax >= 0). onset 0 = bare rail (hard).
-    float halfClip (float ax, int onset) const noexcept
-    {
-        const float c = railC;
-        if (onset == 0)
-            return std::min (ax, c);
-        const float a = ax / c;
-        if (a < ladderLo (onset))
-            return ax;
-        return c * std::pow (10.0f, ladderDb (20.0f * std::log10 (a), onset) * 0.05f);
-    }
-
-    float ladderClip (float x, int onset) const noexcept
-    {
-        return x >= 0.0f ? halfClip (x, onset) : -halfClip (-x, onset);
-    }
-
-    // v0.24: different ladder per polarity (positive half first)
-    float asymClip (float x, int posOnset, int negOnset) const noexcept
-    {
-        return x >= 0.0f ? halfClip (x, posOnset) : -halfClip (-x, negOnset);
-    }
-
     float jfetStage (float x) noexcept
     {
-        const float c = railC;
-        const float u = x / c;                       // swing re: pinch-off
+        // usable input swing, referred to half pinch-off (~0.4 V on a J201 at
+        // a full rail), and the gm*Rd gain. Both collapse with VDIRT.
+        const float k  = std::max (railC, 0.05f);
+        const float vp = 0.4f * k;
+        const float g  = tune.jfetGain * k;
+        const float u  = x / vp;                     // swing re: half pinch-off
         float y;
         if      (u >=  1.0f) y =  0.5f;              // cutoff: zero-slope stop
         else if (u <= -1.0f) y = -1.5f;              // ohmic corner
         else                 y = u - 0.5f * u * u;   // square law
-        return jfetDC.process (y * c);               // output cap: block the DC
+        return jfetDC.process (y * vp * g);          // output cap: block the DC
     }
 
     float clipStage (float x) noexcept
     {
-        // v0.32 internal switches: JFET (ships ON) -> -3/-6 ladder (ships
-        // OFF). Both off = the bare op-amp rail as a hard stop.
-        if (target.jfetOn)
-        {
-            const float y = jfetStage (x);
-            return target.ladder36 ? asymClip (y, 3, 6) : y;
-        }
-        if (target.ladder36)
-            return asymClip (x, 3, 6);
+        // rev 7: the bare op-amp rail, hard stop. Nothing else lives here.
         return x >= 0.0f ? std::min (x, railC) : std::max (x, -railC);
     }
 
@@ -601,12 +565,18 @@ private:
         if (target.lpfMode > 0)
             fizzLPF.setup (target.lpfMode - 1, fizzFc, fizzQ, fs);
 
-        // ---- Q node levels: pull-up 100k to 9V vs. mixer load to 4.5V --------
+        // ---- Q node levels: R16 100k up to V567 vs. mixer load to 4.5V -------
         // v0.8: the filter no longer loads the Q node; the VOL pot + R9 (1M)
-        // path is a much lighter load
+        // path is a much lighter load.
+        // v0.41 / rev 7: R16 pulls up to the LM567's OWN rail, not to VA. That
+        // rail is now 7.5 V (VA through D105 + D107) instead of 9 V, because
+        // TI's recommended maximum for the LM567C is 8.5 V. The cost lands
+        // right here: the Q node's high level drops from about +3.75 V to
+        // +2.50 V relative to the 4.5 V mixer reference, so the wet path loses
+        // roughly 15% of its total swing. The MIX law absorbs it.
         const float rLoad = 500000.0f;
         const float g16 = 1.0f / 100000.0f, gL = 1.0f / rLoad;
-        qHighV = (9.0f * g16 + 4.5f * gL) / (g16 + gL) - 4.5f; // delta volts (+0.75..+2.4)
+        qHighV = (tune.v567RailV * g16 + 4.5f * gL) / (g16 + gL) - 4.5f;
         qLowV  = 0.15f - 4.5f;                                  // hard saturation low
 
         const float tauRise = (100000.0f * rLoad / (100000.0f + rLoad)) * tune.qNodeStrayC;

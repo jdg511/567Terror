@@ -135,9 +135,8 @@ private:
         std::atomic<float>* lpfmode{}; std::atomic<float>* lpfrange{};
         std::atomic<float>* gatethresh{};
         std::atomic<float>* gatehold{}; std::atomic<float>* gatefade{};
-        std::atomic<float>* bypass{};   std::atomic<float>* supply{};
+        std::atomic<float>* bypass{};
         std::atomic<float>* starve{};   std::atomic<float>* jfeton{};
-        std::atomic<float>* ladder36{}; std::atomic<float>* boost6{};
         std::atomic<float>* c41cap{};   std::atomic<float>* c42cap{};
         std::atomic<float>* democlip{}; std::atomic<float>* demovol{};
     } raw;
