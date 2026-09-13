@@ -236,7 +236,7 @@ public:
         int   lpfRangeHi  = 0;     // 0 = Lo range, 1 = Hi range
         float dry         = 0.5f;  // MIX crossfade — 0 = dry only, 0.5 = both, 1 = FX only
         float vol         = 0.5f;  // VOL1 pot position 0..1 (A100k), master level
-        float gain        = 0.5f;  // v0.43: dirt GAIN 0..1 -> x0.01 (deep cut) .. x100
+        float gain        = 0.5f;  // v0.44: dirt GAIN 0..1 -> x0.1 (-20 dB) .. x10
                                    // (fuzz wall). 0.5 = unity, dead centre.
         int   dirtType    = 0;     // v0.9: 0 Electra, 1 Fuzz Face Ge, 2 Bazz Fuss,
                                    //       3 Op-Amp OD, 4 Octave Fuzz (always on, dry path only)
@@ -554,14 +554,19 @@ private:
         if (force || loopHz != loopHzCur) { loopFilter.setCutoff (loopHz, fs); loopHzCur = loopHz; }
         if (force || ofilHz != ofilHzCur) { ofilFilter.setCutoff (ofilHz, fs); ofilHzCur = ofilHz; }
 
-        // ---- v0.43 dirt: GAIN 0..1 -> x0.01 .. x100 (log), per-model voicing --
-        // The span is 4 decades, which puts UNITY exactly at the knob's centre
-        // (0.01 * 10000^0.5 = 1.0). The bottom half is now genuine attenuation,
-        // which is what rev 7's natural-gain JFET needs: with SW1 in, the fuss
-        // is being slammed, and this is the sim's way of finding the pad value
-        // before it gets soldered. Top is x100 instead of x300 -- the fuss is
-        // long past its clip point by x100 anyway, so the wall is still there.
-        dirtG = 0.01f * std::pow (10000.0f, smoothed.gain);
+        // ---- v0.44 dirt: GAIN 0..1 -> x0.1 .. x10 (log), per-model voicing ----
+        // Two decades, +/-20 dB about unity, and because the ends are
+        // reciprocal (max = 1/min) UNITY lands exactly at the knob's centre:
+        // 0.1 * 100^0.5 = 1.0. That is the rule for any log knob -- noon sits
+        // at the geometric mean of the two ends.
+        // The bottom half is real attenuation, which is what rev 7's
+        // natural-gain JFET needs: with SW1 in, the fuss is being slammed, and
+        // -20 dB is enough to walk it back and find the pad value by ear
+        // before it gets soldered. The top is x10 rather than x100 or x300
+        // because the fuss is long past its clip point by then; what those
+        // extra decades really cost is resolution, since cramming 80 dB into
+        // 300 degrees of rotation makes every small move a big jump.
+        dirtG = 0.1f * std::pow (100.0f, smoothed.gain);
         dirtLP.setCutoff (target.dirtType == 1 ? 3500.0f
                         : target.dirtType == 3 ? 6000.0f : 9000.0f, fs);
 

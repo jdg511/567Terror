@@ -222,16 +222,17 @@ GlitchwaveAudioProcessor::createParameterLayout()
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.9f, pct));   // 90 %
 
     // ---- always-on Bazz Fuss dirt in the dry path (v0.12: hardwired) --------------
-    // v0.43: the GAIN range is x0.01 .. x100, four decades, so UNITY sits at
-    // the knob's exact centre and the bottom half is real attenuation. The
-    // default moves from 0.0 to 0.5 to keep the shipped sound where it was
-    // (0.0 used to mean x1.1; it now means x0.01, a 40 dB cut).
+    // v0.44: the GAIN range is x0.1 .. x10, two decades, +/-20 dB about unity.
+    // The ends are reciprocal, which is what puts UNITY at the knob's exact
+    // centre (noon on a log knob is the geometric mean of the two ends), and
+    // two decades keeps the resolution usable instead of cramming 80 dB into
+    // 300 degrees of rotation. Default 0.5 = x1.00.
     layout.add (std::make_unique<PF> (juce::ParameterID { "dirtgain", 1 }, "Gain",
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.5f,
         Att().withStringFromValueFunction ([] (float v, int)
             {
-                const float g = 0.01f * std::pow (10000.0f, v);   // x0.01 .. x100
-                return "x" + juce::String (g, g < 0.1f ? 3 : (g < 10.0f ? 2 : 0));
+                const float g = 0.1f * std::pow (100.0f, v);   // x0.1 .. x10
+                return "x" + juce::String (g, 2);
             })));
 
     // ---- LFO stack ---------------------------------------------------------------

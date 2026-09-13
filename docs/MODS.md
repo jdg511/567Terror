@@ -1,14 +1,38 @@
-# Glitchwave 567 -- Step 2 Mods (v0.2 .. v0.43)
+# Glitchwave 567 -- Step 2 Mods (v0.2 .. v0.44)
 
-## v0.43 -- dirt GAIN range is now x0.01 .. x100, with unity at the knob's centre
+## v0.44 -- dirt GAIN settles at x0.1 .. x10
 
-The Layer Y GAIN knob (FREQ with TAP held) was x1.1 .. x300. It is now
+v0.43's four decades turned out to be too much range for one knob. The Layer
+Y GAIN knob is now **x0.1 .. x10**: two decades, +/-20 dB about unity, log.
+
+* **Unity still lands dead centre**, because the two ends are reciprocal.
+  That is the general rule for any log knob: noon sits at the geometric mean
+  of the ends, so `sqrt(min * max) = 1` whenever `max = 1/min`. 0.1 and 10,
+  0.2 and 5, 0.01 and 100 all satisfy it; they just differ in how much range
+  they pack into the same 300 degrees of rotation.
+* **-20 dB of cut is enough for the rev 7 job.** A natural-gain Fetzer at x6
+  turns a 0.3 V pick attack into about 1.8 V, and the Bazz Fuss clips around
+  0.3 V, so roughly 15 to 20 dB of cut brings it back to the fuss's
+  threshold. That is the pad value you are hunting for, and it now sits
+  comfortably inside the knob's travel rather than at its very end.
+* **The top at x10 loses nothing that mattered.** The fuss is far past its
+  clip point by x10; x100 and x300 were only pushing an already-saturated
+  stage harder. What those extra decades actually cost was resolution.
+* Default stays 0.5 = x1.00. Readout is 2 decimals throughout.
+
+**Presets saved before v0.43 will still read differently** -- the parameter
+is stored normalised, and the curve under it has changed twice now. Re-save
+anything you want to keep.
+
+## v0.43 -- dirt GAIN range widened to x0.01 .. x100 (superseded by v0.44)
+
+The Layer Y GAIN knob (FREQ with TAP held) was x1.1 .. x300. It became
 **x0.01 .. x100**, four decades, log as before.
 
 * **Unity lands dead centre.** `0.01 * 10000^0.5 = 1.0` exactly, so knob at
   12 o'clock is x1.00 and you can read the whole bottom half as attenuation
-  and the whole top half as drive. That is not an accident of the numbers --
-  four decades is the only span that makes 0.01 and 100 symmetric about 1.
+  and the whole top half as drive. (Not an accident: 0.01 and 100 are
+  reciprocals. See v0.44 for the general rule.)
 * **The bottom half is genuine cut**, down to -40 dB. This is the knob you
   want for the rev 7 open item: with SW1 in, the natural-gain JFET slams the
   Bazz Fuss and GAIN minimum used to still be fuzz. Now you can back it off
