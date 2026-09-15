@@ -211,7 +211,7 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
     };
     hint (hintChips,  juce::String::fromUTF8 ("HOLD A \xe2\x86\x92 X \xc2\xb7 HOLD B \xe2\x86\x92 Y \xc2\xb7 HOLD A+B+C \xe2\x86\x92 Z"),
           10.2f, gw::kDim2);
-    hint (hintLayers, juce::String::fromUTF8 ("Hold a stomp, or right-click it to latch."),
+    hint (hintLayers, juce::String::fromUTF8 ("Hold 3 s or right-click to latch \xc2\xb7 LED turns RED when the hold takes."),
           8.5f, gw::kDim2);
     hint (hintLfo1,   juce::String::fromUTF8 ("Y \xc2\xb7 FREQ knob = depth \xc2\xb7 LED: wave / depth %"),
           9.0f, gw::kDim2);
@@ -1128,6 +1128,53 @@ void WtfAudioProcessorEditor::timerCallback()
     // bypass status LED (green = effect active, like every pedal)
     if (auto* pb = processor.apvts.getParameter ("bypass"))
         bypassLed.setLevel (pb->getValue() >= 0.5f ? 0.0f : 1.0f);
+
+    // ---- v0.47 HOLD indication ---------------------------------------------
+    // A stomp's LED goes RED the moment its three-second hold registers (or
+    // the moment you right-click to latch it), so you know the hold has taken
+    // and can lift your foot. Amber-dim while the hold is still counting down,
+    // which doubles as a progress cue. Normal colour otherwise.
+    //
+    // This runs LAST of the LED logic so it wins over the per-stomp defaults,
+    // but it stands down while a preset ring is spinning: the ring is the more
+    // important message at that moment, and the holds have already been
+    // released by then anyway.
+    if (stompMode == StompMode::Normal)
+    {
+        const double nowH = nowMs();
+        TapHoldButton* btn[3] = { &tapStompBtn, &bypassBtn, &stompCBtn };
+        LedIndicator*  led[3] = { &tapLed,      &bypassLed, &stompCLed };
+        const juce::Colour home[3] = { gw::kYellow, gw::kGreen, gw::kCyan };
+
+        for (int i = 0; i < 3; ++i)
+        {
+            const bool isDown    = btn[i]->isDown();
+            const bool isLatched = btn[i]->isLatched();
+            const bool held      = isLatched
+                                 || (isDown && downSinceMs[i] > 0.0
+                                     && nowH - downSinceMs[i] >= kHoldMs);
+
+            if (held)
+            {
+                led[i]->setColour (gw::kRed);      // hold is IN
+                led[i]->setLevel (1.0f);
+            }
+            else if (isDown)
+            {
+                // counting toward the hold: amber, brightening as it fills
+                const double t = downSinceMs[i] > 0.0
+                                   ? juce::jlimit (0.0, 1.0,
+                                                   (nowH - downSinceMs[i]) / kHoldMs)
+                                   : 0.0;
+                led[i]->setColour (gw::kYellow);
+                led[i]->setLevel (0.20f + 0.65f * (float) t);
+            }
+            else
+            {
+                led[i]->setColour (home[i]);       // back to normal
+            }
+        }
+    }
 
     // gate LED: green = open, amber blinking = fading, red = fully closed
     const float atten = processor.readVis (5);

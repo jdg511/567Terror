@@ -1,9 +1,30 @@
-# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.45)
+# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.47)
 
 > Renamed at v0.45. "Glitchwave 567" turned out to be an existing product, so
 > the internal name is now **WTF**, which the product name supplies for free:
 > **W**here **T**he **F**uzz Meets The Funk. Entries below v0.45 still say
 > Glitchwave; that is history, not a mistake.
+
+## v0.47 -- the stomp LEDs show hold state
+
+Each stomp's LED now reports where its hold stands:
+
+| LED | meaning |
+|---|---|
+| its normal colour (amber / green / cyan) | idle |
+| **amber, brightening** | the 3-second hold is counting down |
+| **RED** | the hold has taken, you can lift your foot |
+
+Right-clicking to latch goes straight to red, since a latch satisfies the
+hold instantly. The hold display stands down while a preset ring is spinning,
+because the ring is the more important message at that moment and the holds
+have already been released by then.
+
+Also fixed: the Default layer chip was drawing a UTF-8 bullet through a raw
+`char*` and coming out as mojibake. It reads **D** now.
+
+Verified by holding stomp A for four seconds and screenshotting mid-hold:
+LED red, stomp ring lit, layer chip on X.
 
 ## v0.46 -- double-tap toggles, 3-second holds, dB threshold, Preset A values
 
