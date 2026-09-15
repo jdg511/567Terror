@@ -196,7 +196,7 @@ void WtfAudioProcessor::loadFactoryPresetA()
         else if (id == "envgain")
             target = rp->convertTo0to1 (4.0f);          // x4
         else if (id == "envratio")
-            target = 0.5f + std::log10 (2.0f) * 0.5f;   // 2:1 compression
+            target = std::log (4.0f) / std::log (20.0f);   // 2:1 on the new range
         else if (id == "lfo2depth")
             target = 0.20f;                             // 20 %
         else if (id == "lfo2rate")
@@ -350,10 +350,13 @@ WtfAudioProcessor::createParameterLayout()
     // ---- envelope follower + filter switches ------------------------------------------
     layout.add (std::make_unique<PC> (juce::ParameterID { "envtarget5", 1 }, "Env Target",
         kEnvTargets, 2)); // default: LPF
+    // v0.48: top of the range raised from x40 to x100. The skew is set so that
+    // x4 -- the Mu-Tron-ish setting and Preset A's value -- sits at NOON:
+    //   skew = log(0.5) / log((4 - 0.125) / (100 - 0.125)) = 0.2133
     layout.add (std::make_unique<PF> (juce::ParameterID { "envgain", 1 }, "Env Gain",
-        juce::NormalisableRange<float> (0.125f, 40.0f, 0.0f, 0.3f), 10.0f,   // x10
+        juce::NormalisableRange<float> (0.125f, 100.0f, 0.0f, 0.2133f), 4.0f,
         Att().withStringFromValueFunction ([] (float v, int)
-            { return "x" + juce::String (v, v < 2.0f ? 2 : 1); })));
+            { return "x" + juce::String (v, v < 2.0f ? 2 : (v < 20.0f ? 1 : 0)); })));
     layout.add (std::make_unique<PC> (juce::ParameterID { "envdrive", 1 }, "Env Drive",
         juce::StringArray { "Drive Up", "Drive Down" }, 0));
     // v0.38 secret Layer-A envelope shaping: Ratio (LPF knob), Shape (Freq
@@ -363,10 +366,11 @@ WtfAudioProcessor::createParameterLayout()
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.5f,
         Att().withStringFromValueFunction ([] (float v, int)
             {
-                // v0.46: standard compressor notation. Above noon is
-                // compression and reads N:1; below noon is expansion and reads
-                // 1:N. The old code had these the wrong way round.
-                const float r = std::pow (10.0f, 2.0f * (v - 0.5f));   // 0.1 .. 10
+                // v0.48: the range is 1:2 .. 10:1 now, log, so r = 0.5 .. 10.
+                // Standard compressor notation: N:1 is compression, 1:N is
+                // expansion. Unity lands at v = log(2)/log(20) = 0.231, and
+                // Preset A's 2:1 at v = log(4)/log(20) = 0.463.
+                const float r = 0.5f * std::pow (20.0f, v);            // 0.5 .. 10
                 return r >= 1.0f ? (juce::String (r, r < 10.0f ? 2 : 1) + ":1")
                                  : ("1:" + juce::String (1.0f / r, 2));
             })));

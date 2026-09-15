@@ -1,6 +1,6 @@
 @echo off
 rem ============================================================
-rem  Where The Fuzz Meets The Funk - one-click Windows build
+rem  Glitchwave 567 - one-click Windows build
 rem  Needs: Visual Studio 2022 with "Desktop development with C++"
 rem  (CMake is included with that workload.)
 rem ============================================================
@@ -36,8 +36,8 @@ if errorlevel 1 goto fail
 
 echo.
 echo Installing VST3 into the system VST3 folder...
-set "VST3_SRC=%~dp0build\Glitchwave567_artefacts\Release\VST3\Where The Fuzz Meets The Funk.vst3"
-set "VST3_DST=%CommonProgramFiles%\VST3\Where The Fuzz Meets The Funk.vst3"
+set "VST3_SRC=%~dp0build\Glitchwave567_artefacts\Release\VST3\Glitchwave 567.vst3"
+set "VST3_DST=%CommonProgramFiles%\VST3\Glitchwave 567.vst3"
 "%SystemRoot%\System32\Robocopy.exe" "%VST3_SRC%" "%VST3_DST%" /MIR /NFL /NDL /NJH /NJS >nul 2>nul
 if exist "%VST3_DST%\Contents" (
     echo   Installed: "%VST3_DST%"
@@ -51,10 +51,10 @@ echo ============================================================
 echo  BUILD SUCCEEDED
 echo.
 echo  Standalone app:
-echo    build\Glitchwave567_artefacts\Release\Standalone\Where The Fuzz Meets The Funk.exe
+echo    build\Glitchwave567_artefacts\Release\Standalone\Glitchwave 567.exe
 echo.
 echo  VST3 plugin (also auto-installed for your DAW):
-echo    C:\Program Files\Common Files\VST3\Where The Fuzz Meets The Funk.vst3
+echo    C:\Program Files\Common Files\VST3\Glitchwave 567.vst3
 echo ============================================================
 echo.
 pause

@@ -67,7 +67,7 @@ public:
         int   lfo2Shape  = (int) LfoShape::Sine;
         int   lfo2Target = (int) ModTarget::Lfo1Rate;
         // Envelope follower
-        float envGain    = 4.0f;    // x0.125 .. x40
+        float envGain    = 4.0f;    // v0.48: x0.125 .. x100, x4 at noon
         bool  envDriveUp = true;
         int   envTarget  = (int) ModTarget::Fizz;
         // v0.38 secret Layer-A shaping (all three default to "no change"):
@@ -255,7 +255,7 @@ public:
             case ModTarget::Lfo1Rate:  lfo1RateFactor = std::exp2 (lfo2Sig * 2.0f); break;
             case ModTarget::Lfo1Depth: lfo1DepthEff = clampf (lfo1DepthEff + lfo2Sig, 0.0f, 1.0f); break;
             case ModTarget::EnvAmount: envGainEff = clampf (envGainEff * std::exp2 (lfo2Sig * 2.0f),
-                                                            0.125f, 40.0f); break;
+                                                            0.125f, 100.0f); break;
             default: applyToKnob (out, (ModTarget) params.lfo2Target, lfo2Sig * 0.5f); break;
         }
 
@@ -274,7 +274,8 @@ public:
                                              / std::max (1.0f - params.envThresh, 0.0001f),
                                              0.0f, 1.0f);
         const float envShapeExp = std::pow (2.0f,  4.0f * (params.envShape - 0.5f)); // 0.25 (log) .. 4 (exp)
-        const float envRatioExp = std::pow (10.0f, 2.0f * (params.envRatio - 0.5f)); // 0.1:1 .. 1:10
+        // v0.48: ratio range is 1:2 .. 10:1 (r = 0.5 .. 10), log.
+        const float envRatioExp = 0.5f * std::pow (20.0f, params.envRatio);
         // v0.45: the VTL5C3 law goes LAST, after Threshold/Ratio/Shape, because
         // in the real pedal those all live in front of the LED driver and the
         // vactrol is the final thing between the driver and the filter. Leaving
@@ -308,7 +309,7 @@ public:
         {
             case ModTarget::EnvAmount:
                 envGainEff = clampf (envGainEff * std::exp2 (lfo1Sig * 2.0f),
-                                     0.125f, 40.0f); break;
+                                     0.125f, 100.0f); break;
             case ModTarget::EnvLevel:
                 envLevelMul = 1.0f + 2.0f * lfo1Sig; break;      // up to x3
             default:

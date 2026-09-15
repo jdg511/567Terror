@@ -1,9 +1,45 @@
-# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.47)
+# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.48)
 
 > Renamed at v0.45. "Glitchwave 567" turned out to be an existing product, so
 > the internal name is now **WTF**, which the product name supplies for free:
 > **W**here **T**he **F**uzz Meets The Funk. Entries below v0.45 still say
 > Glitchwave; that is history, not a mistake.
+
+## v0.48 -- the attack/decay knobs actually move now
+
+### The real bug, found at last
+
+```cpp
+lfo1RateKnob.setEnabled (layer != 3);
+lfo2RateKnob.setEnabled (layer != 3);
+```
+
+Two lines in the per-frame knob-enable block, left over from when Rate 1 and
+Rate 2 were dead on the old secret Layer A. v0.45 gave them the Mu-Tron ATTACK
+and DECAY and wired the attachments correctly, but never removed the disable.
+So the knobs were bound to live parameters, drew their values correctly, and
+silently refused the mouse. Everything I "fixed" in v0.46 and v0.47 was real,
+but none of it was this.
+
+Both knobs are enabled on every layer now. GAIN, which genuinely is dead on
+Layer Z since v0.42, greys out there instead of pretending to be a control.
+
+Verified by latching all three stomps and dragging: ATTACK moved 1.55 ms to
+7.29 ms, DECAY held at 158.7 ms.
+
+### Env follower GAIN range raised to x100
+
+Was x0.125 .. x40, now **x0.125 .. x100**. The skew is set so **x4 sits at
+noon** (skew = log(0.5)/log((4-0.125)/(100-0.125)) = 0.2133), which keeps the
+Mu-Tron-ish setting and Preset A's value in the same place your hand expects.
+The LFO-modulation clamps inside ModSystem were raised to match.
+
+### Ratio range is 1:2 .. 10:1
+
+Was 1:10 .. 10:1. Now **r = 0.5 .. 10**, log: `r = 0.5 * 20^v`. Unity lands at
+v = log(2)/log(20) = 0.231 and Preset A's 2:1 at v = log(4)/log(20) = 0.463.
+Still standard compressor notation: N:1 compression, 1:N expansion.
+
 
 ## v0.47 -- the stomp LEDs show hold state
 

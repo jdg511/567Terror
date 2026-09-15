@@ -1033,9 +1033,17 @@ void WtfAudioProcessorEditor::timerCallback()
     freqKnob.setEnabled     (true);
     lpfKnob.setEnabled      (layer == 2 || layer == 3 ? true : filterOn);
     mixKnob.setEnabled      (true);
-    lfo1RateKnob.setEnabled (layer != 3);
-    lfo2RateKnob.setEnabled (layer != 3);
-    envGainKnob.setEnabled  (layer == 0 ? filterOn : true);
+    // v0.48 THE BUG: these two were "layer != 3", left over from when Rate 1
+    // and Rate 2 were dead on the old secret Layer A. v0.45 gave them the
+    // Mu-Tron ATTACK and DECAY but never removed the disable, so the knobs
+    // were attached to live parameters and simply refused to take the mouse.
+    // They are live on every layer now.
+    lfo1RateKnob.setEnabled (true);
+    lfo2RateKnob.setEnabled (true);
+    // GAIN really is dead on Layer Z (v0.42 took env Shape off it), so it
+    // greys out there rather than pretending to be a control.
+    envGainKnob.setEnabled  (layer == 3 ? false
+                                        : (layer == 0 ? filterOn : true));
 
     refreshReadouts (layer);
 
