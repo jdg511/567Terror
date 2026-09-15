@@ -5,6 +5,57 @@
 > **W**here **T**he **F**uzz Meets The Funk. Entries below v0.45 still say
 > Glitchwave; that is history, not a mistake.
 
+## v0.46 -- double-tap toggles, 3-second holds, dB threshold, Preset A values
+
+### The Layer Z bug
+
+v0.45 made Layer Z unreachable. Latching A then B formed the A+B mask, which
+fired preset-save mode 600 ms later, before you could get to C. Fixed two
+ways: a hold is now a real **3 seconds**, and the combo mask has to sit
+unchanged for **1.2 s** before anything fires, which is plenty of time to
+latch the third stomp. A right-click latch satisfies that stomp's own
+3-second hold instantly, but the mask settle still applies.
+
+### Holds release themselves
+
+Once a combo has done its job, every stomp is released, latches included. You
+are not left stuck in a layer after saving or recalling a preset.
+
+### Double tap instead of single tap
+
+Toggling a circuit is a **double tap** now, and the gap between tap 1 and tap
+2 sets how long tap 3 has to arrive before the gesture is read as tap tempo
+instead. Tap fast, get a fast answer; tap slow, get a proportionally slower
+window (clamped to 220 ms .. 1.4 s). A fixed timeout either feels sluggish or
+steals taps; a self-scaling one does neither.
+
+### Envelope follower
+
+* **THRESHOLD is dB now**, -96 to -12 dB, displayed in dB. The Mu-Tron III has
+  no threshold control at all, and its precision rectifier is built to detect
+  "even very small signals", so **-96 dB is the Mu-Tron setting** and that is
+  what Preset A uses. That also reconciles "threshold should be zero" with
+  "same as the Mu-Tron III": zero gating, bottom of the range.
+* **ATTACK and DECAY spans widened to three decades**, noon still exactly on
+  the stock value: attack 0.049 ms .. 1.551 ms .. 49 ms, decay 5.0 ms ..
+  158.7 ms .. 5.0 s.
+* **RATIO now reads in standard compressor notation.** Above noon is
+  compression and reads N:1; below noon is expansion and reads 1:N. The old
+  code had these inverted.
+
+### Preset A
+
+Beyond the 50 percent rule: env threshold -96 dB, env gain x4, env ratio 2:1,
+LFO 2 depth 20 percent, LFO 2 rate 0.5 Hz.
+
+### Topology, written down
+
+The fuzz branch and the 567 branch are **parallel**, both hanging off the same
+clean input buffer. MIX crossfades between them. The envelope filter sits
+**after** that mix, so it sweeps the sum rather than one branch. Killing one
+branch leaves the other running, which is the whole reason they are parallel.
+This is now drawn in the DSP source so it cannot drift.
+
 ## v0.45 -- three stomps, presets, real Mu-Tron III ballistics, and the rename
 
 ### Mu-Tron III envelope, derived instead of guessed

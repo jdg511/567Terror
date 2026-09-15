@@ -187,6 +187,20 @@ void WtfAudioProcessor::loadFactoryPresetA()
             target = 1.0f;                              // all three circuits on
         else if (id == "bypass")
             target = 0.0f;                              // engaged, not bypassed
+        // ---- v0.46: Preset A's named values ---------------------------------
+        // These are Jason's, and between them they set the pedal up as a
+        // Mu-Tron III sitting in front of the fuzz rather than a neutral grid
+        // of 50 percents.
+        else if (id == "envthresh")
+            target = rp->convertTo0to1 (-96.0f);        // no gate = Mu-Tron
+        else if (id == "envgain")
+            target = rp->convertTo0to1 (4.0f);          // x4
+        else if (id == "envratio")
+            target = 0.5f + std::log10 (2.0f) * 0.5f;   // 2:1 compression
+        else if (id == "lfo2depth")
+            target = 0.20f;                             // 20 %
+        else if (id == "lfo2rate")
+            target = rp->convertTo0to1 (0.5f);          // 0.5 Hz
         else if (dynamic_cast<juce::AudioParameterFloat*> (p) != nullptr)
             target = 0.5f;                              // the 50% rule: noon
         else
@@ -349,37 +363,48 @@ WtfAudioProcessor::createParameterLayout()
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.5f,
         Att().withStringFromValueFunction ([] (float v, int)
             {
+                // v0.46: standard compressor notation. Above noon is
+                // compression and reads N:1; below noon is expansion and reads
+                // 1:N. The old code had these the wrong way round.
                 const float r = std::pow (10.0f, 2.0f * (v - 0.5f));   // 0.1 .. 10
-                return r < 1.0f ? (juce::String (r, 2) + ":1")
-                                : ("1:" + juce::String (r, r < 2.0f ? 2 : 1));
+                return r >= 1.0f ? (juce::String (r, r < 10.0f ? 2 : 1) + ":1")
+                                 : ("1:" + juce::String (1.0f / r, 2));
             })));
     layout.add (std::make_unique<PF> (juce::ParameterID { "envshape", 1 }, "Env Shape",
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.5f,
         Att().withStringFromValueFunction ([] (float v, int)
             { return juce::String (std::pow (2.0f, 4.0f * (v - 0.5f)), 2); })));
+    // v0.46: THRESHOLD is a real dB control now, -96 to -12 dB, not a bare
+    // 0..1 number. -96 dB is effectively no gate at all, which is what the
+    // Mu-Tron III itself does: its precision rectifier is built to detect
+    // "even very small signals", and there is no threshold control anywhere on
+    // the pedal. So -96 dB IS the Mu-Tron setting, and it is Preset A's value.
     layout.add (std::make_unique<PF> (juce::ParameterID { "envthresh", 1 }, "Env Threshold",
-        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.0f,
+        juce::NormalisableRange<float> (-96.0f, -12.0f, 0.1f), -96.0f,
         Att().withStringFromValueFunction ([] (float v, int)
-            { return juce::String (v, 2); })));
+            { return juce::String (v, 1) + " dB"; })));
 
-    // ---- v0.45 Mu-Tron III ballistics on the Layer Z rate knobs -------------
-    // Stored 0..1 and mapped logarithmically, same trick as GAIN, so NOON is
-    // exactly the stock Musitronics value and the ends are a decade either
-    // side. 0.1551 * 100^0.5 = 1.551 ms and 15.87 * 100^0.5 = 158.7 ms.
-    // Log, not linear, on purpose: these are RC time constants, and item 9 of
-    // the spec is that the Mu-Tron's response must not be linearised.
+    // ---- v0.46 Mu-Tron III ballistics on the Layer Z rate knobs -------------
+    // Stored 0..1 and mapped logarithmically so NOON is exactly the stock
+    // Musitronics value. v0.46 widens the span from two decades to THREE
+    // (1000:1, so half that either side of noon), which is what "extended but
+    // reasonable" buys you:
+    //     ATTACK  0.049 ms .. 1.551 ms .. 49 ms
+    //     DECAY   5.0 ms   .. 158.7 ms .. 5.0 s
+    // Log, not linear, on purpose: these are RC time constants, and the whole
+    // point of item 9 is that the Mu-Tron's response must not be linearised.
     layout.add (std::make_unique<PF> (juce::ParameterID { "envattack", 1 }, "Env Attack",
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.5f,
         Att().withStringFromValueFunction ([] (float v, int)
             {
-                const float ms = 0.1551f * std::pow (100.0f, v);   // 0.155 .. 15.5 ms
-                return juce::String (ms, ms < 10.0f ? 2 : 1) + " ms";
+                const float ms = 1.551f * std::pow (1000.0f, v - 0.5f);
+                return juce::String (ms, ms < 1.0f ? 3 : (ms < 10.0f ? 2 : 1)) + " ms";
             })));
     layout.add (std::make_unique<PF> (juce::ParameterID { "envdecay", 1 }, "Env Decay",
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.5f,
         Att().withStringFromValueFunction ([] (float v, int)
             {
-                const float ms = 15.87f * std::pow (100.0f, v);    // 15.9 ms .. 1.59 s
+                const float ms = 158.7f * std::pow (1000.0f, v - 0.5f);
                 return ms < 1000.0f ? (juce::String (ms, ms < 100.0f ? 1 : 0) + " ms")
                                     : (juce::String (ms * 0.001f, 2) + " s");
             })));
@@ -597,11 +622,13 @@ void WtfAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     mp.envDriveUp  = raw.envdrive->load() < 0.5f;
     mp.envRatio    = raw.envratio->load();
     mp.envShape    = raw.envshape->load();
-    mp.envThresh   = raw.envthresh->load();
-    // v0.45 Mu-Tron ballistics. Stored 0..1, mapped log so that 0.5 is exactly
-    // the stock 1.551 ms / 158.7 ms off the Musitronics circuit.
-    mp.envAttackMs = 0.1551f * std::pow (100.0f, raw.envattack->load());
-    mp.envDecayMs  = 15.87f  * std::pow (100.0f, raw.envdecay->load());
+    // v0.46: THRESHOLD is in dB on the panel; the follower compares against a
+    // linear level, so convert here. -96 dB lands at 1.6e-5, which is below
+    // anything a guitar makes, i.e. no gate -- the Mu-Tron's own behaviour.
+    mp.envThresh   = juce::Decibels::decibelsToGain (raw.envthresh->load());
+    // v0.46 Mu-Tron ballistics, three decades with noon on the stock value.
+    mp.envAttackMs = 1.551f * std::pow (1000.0f, raw.envattack->load() - 0.5f);
+    mp.envDecayMs  = 158.7f * std::pow (1000.0f, raw.envdecay->load()  - 0.5f);
     if (lfo2Retrig.exchange (false, std::memory_order_relaxed))
         mod.retriggerLfo2();     // tempo tap re-seeds chaos/drift generators
     if (lfo1Retrig.exchange (false, std::memory_order_relaxed))

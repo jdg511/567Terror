@@ -406,9 +406,27 @@ public:
                               ? processDirt (target.jfetOn ? jfetStage (vDry) : vDry)
                               : vDry;
 
-        // ==== Stage 4: inverting mixer (U1.2) — raw 567 wet + dirty dry ======
-        // v0.45: stomp B kills the 567 by muting the wet leg at the mixer,
-        // which is what pulling the decoder's output would do on the board.
+        // ==== Stage 4: the parallel mixer (U1.2) =============================
+        //
+        //                      +---- FUZZ branch (JFET -> Bazz Fuss) ----+
+        //   IN -> buffer ->----|                                          |--> MIX
+        //         (vDry)       +---- 567 branch (trim -> LM567 -> Q) ----+     |
+        //                                                                      v
+        //                                                          ENVELOPE FILTER
+        //                                                                      |
+        //                                                            voicing, VOL, out
+        //
+        // The two branches are PARALLEL and both hang off the same clean
+        // buffer. MIX crossfades between them: fully counter-clockwise is the
+        // fuzz branch alone, fully clockwise is the 567 branch alone, and
+        // anywhere between is a blend. The envelope filter sits AFTER that
+        // mix, so it sweeps whatever the two branches add up to rather than
+        // one of them.
+        //
+        // v0.45: stomp B kills the 567 by muting its leg at the mixer, which
+        // is what pulling the decoder's output would do on the board. Killing
+        // a branch leaves the other one running -- that is the whole reason
+        // the branches are parallel rather than in series.
         const float wetG = target.decoderOn ? wetGain : 0.0f;
         const float vMix = detail::opampClip (-(wetG * vQ + dryGain * vDirt));
 

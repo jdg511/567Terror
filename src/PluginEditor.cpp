@@ -219,11 +219,11 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
           9.0f, gw::kDim2);
     // v0.45: the stomp strip carries three lines now. One tap, three taps and
     // a hold each mean something different, and that will not fit on two.
-    hint (hintStomp1, juce::String::fromUTF8 ("1 tap: A = fuzz off \xc2\xb7 B = 567 off \xc2\xb7 C = env filter off"),
+    hint (hintStomp1, juce::String::fromUTF8 ("DOUBLE TAP: A = fuzz off \xc2\xb7 B = 567 off \xc2\xb7 C = env filter off"),
           9.0f, gw::kDim);
     hint (hintStomp2, juce::String::fromUTF8 ("A \xc3\x97""3 = LFO 1 rate \xc2\xb7 B \xc3\x97""3 = LFO 2 rate \xc2\xb7 C \xc3\x97""4+ steps MIX 0/25/50/75/100"),
           9.0f, gw::kDim2);
-    hint (hintStomp3, juce::String::fromUTF8 ("HOLD C = bypass \xc2\xb7 HOLD A+B = save preset (ring CW) \xc2\xb7 HOLD B+C = recall (ring CCW)"),
+    hint (hintStomp3, juce::String::fromUTF8 ("HOLD 3 s (or right-click to latch) \xc2\xb7 C = bypass \xc2\xb7 A+B = save (CW) \xc2\xb7 B+C = recall (CCW)"),
           9.0f, gw::kDim2);
 
     // ---- output gate + internal switches (all under the cover) ---------------
@@ -485,7 +485,8 @@ void WtfAudioProcessorEditor::knobTouched()
     if (stompCBtn.isDown())   stompCBtn.cancelPressActions();
     // v0.45: touching a knob also kills any pending burst, so reaching for a
     // control mid-gesture never accidentally kills a circuit.
-    for (int i = 0; i < 3; ++i) { burstLive[i] = false; burstN[i] = 0; }
+    for (int i = 0; i < 3; ++i)
+    { burstLive[i] = false; burstN[i] = 0; burstDeadline[i] = 0.0; }
     comboFired = true;
 }
 
@@ -600,25 +601,72 @@ void WtfAudioProcessorEditor::stepMixQuarter()
 void WtfAudioProcessorEditor::stompTapped (int which)
 {
     const double now = nowMs();
-    if (! burstLive[which] || now - burstLastMs[which] > kBurstGapMs)
-        burstN[which] = 0;                       // previous burst has expired
-    ++burstN[which];
-    burstLastMs[which] = now;
-    burstLive[which]   = true;
 
     // A preset mode swallows taps: they choose the slot instead.
     if (stompMode != StompMode::Normal)
     {
         pickPresetSlot (which);
-        burstLive[which] = false;
-        burstN[which]    = 0;
+        burstLive[which]    = false;
+        burstN[which]       = 0;
+        burstDeadline[which] = 0.0;
         return;
     }
 
-    // C steps MIX live from the 4th tap on; the first three are the "is this a
-    // burst at all" run-up, mirroring how A and B need three to set a tempo.
+    // Has the previous burst expired? A burst stays open until its own
+    // deadline passes, and the deadline is derived from the taps themselves.
+    if (! burstLive[which] || (burstDeadline[which] > 0.0 && now > burstDeadline[which]))
+    {
+        burstN[which]        = 0;
+        burstDeadline[which] = 0.0;
+    }
+
+    ++burstN[which];
+    burstLastMs[which] = now;
+    burstLive[which]   = true;
+    if (burstN[which] == 1)
+        burstFirstMs[which] = now;
+
+    if (burstN[which] == 2)
+    {
+        // The gap between tap 1 and tap 2 IS the clock. A third tap inside
+        // this window means you are setting a tempo (or stepping MIX on C);
+        // silence to the deadline means it was a double tap.
+        const double gap = juce::jlimit (kTapWinMin / kTapWinScale,
+                                         kTapWinMax / kTapWinScale,
+                                         now - burstFirstMs[which]);
+        burstDeadline[which] = now + gap * kTapWinScale;
+    }
+    else if (burstN[which] >= 3)
+    {
+        // Still in a run. Keep the window rolling on the latest interval so a
+        // long tempo chain does not time out mid-count.
+        const double gap = juce::jlimit (kTapWinMin / kTapWinScale,
+                                         kTapWinMax / kTapWinScale,
+                                         now - burstLastMs[which] > 0.0
+                                             ? (now - burstFirstMs[which]) / (burstN[which] - 1)
+                                             : kTapWinMin);
+        burstDeadline[which] = now + gap * kTapWinScale;
+    }
+
+    // C steps MIX from the 4th tap on, live, one step per tap.
     if (which == 2 && burstN[2] >= 4)
         stepMixQuarter();
+}
+
+// After a combo does its job the held stomps go back to normal, exactly as a
+// real switch would once your foot comes off it. That includes dropping any
+// right-click latch, so you are not left stuck in a layer.
+void WtfAudioProcessorEditor::releaseAllStomps()
+{
+    TapHoldButton* all[3] = { &tapStompBtn, &bypassBtn, &stompCBtn };
+    for (auto* b : all)
+    {
+        if (b->isDown()) b->cancelPressActions();
+        b->setLatched (false);
+    }
+    comboMask  = 0;
+    comboFired = false;
+    updateKnobModes();
 }
 
 void WtfAudioProcessorEditor::enterStompMode (StompMode m)
@@ -655,17 +703,20 @@ void WtfAudioProcessorEditor::serviceStomps()
 {
     const double now = nowMs();
 
-    // ---- 1. close out any burst that has gone quiet -------------------------
+    // ---- 1. close out any burst whose window has run out --------------------
+    // Two taps and then silence = toggle that stomp's circuit. Three or more
+    // = it was a tempo (or MIX) gesture and has already done its job.
     for (int i = 0; i < 3; ++i)
     {
-        if (! burstLive[i] || now - burstLastMs[i] <= kBurstGapMs)
+        if (! burstLive[i] || burstDeadline[i] <= 0.0 || now <= burstDeadline[i])
             continue;
         const int n = burstN[i];
-        burstLive[i] = false;
-        burstN[i]    = 0;
-        if (n != 1)
-            continue;                    // 2+ taps was a tempo / MIX gesture
-        switch (i)                       // a lone tap kills that stomp's circuit
+        burstLive[i]     = false;
+        burstN[i]        = 0;
+        burstDeadline[i] = 0.0;
+        if (n != 2)
+            continue;
+        switch (i)
         {
             case 0: toggleBool ("fuzzon");    break;
             case 1: toggleBool ("dec567on");  break;
@@ -674,30 +725,56 @@ void WtfAudioProcessorEditor::serviceStomps()
         }
     }
 
-    // ---- 2. combos, which need a deliberate hold ---------------------------
-    const int mask = (tapStompDown()    ? 1 : 0)
-                   | (bypassStompDown() ? 2 : 0)
-                   | (stompCDown()      ? 4 : 0);
+    // ---- 2. combos, which need a real three-second hold --------------------
+    // A latch (right-click) satisfies a stomp's own hold instantly, but the
+    // MASK still has to settle: otherwise latching A then B would fire the
+    // A+B save combo before you ever got to C, and Layer Z would be
+    // unreachable. That was a real bug in v0.45.
+    const bool down[3]    = { tapStompDown(), bypassStompDown(), stompCDown() };
+    const bool latched[3] = { tapStompBtn.isLatched(), bypassBtn.isLatched(),
+                              stompCBtn.isLatched() };
+    const int  mask = (down[0] ? 1 : 0) | (down[1] ? 2 : 0) | (down[2] ? 4 : 0);
+
+    for (int i = 0; i < 3; ++i)
+    {
+        if (down[i] && downSinceMs[i] <= 0.0) downSinceMs[i] = now;
+        if (! down[i])                        downSinceMs[i] = 0.0;
+    }
+
     if (mask != comboMask)
     {
         comboMask    = mask;
         comboSinceMs = now;
         comboFired   = false;
     }
-    else if (! comboFired && mask != 0 && now - comboSinceMs >= kComboHoldMs)
+    else if (! comboFired && mask != 0 && now - comboSinceMs >= kMaskSettle)
     {
-        comboFired = true;
-        switch (mask)
+        // every member of this combo must have satisfied its own hold
+        bool allHeld = true;
+        for (int i = 0; i < 3; ++i)
+            if ((mask & (1 << i)) != 0
+                && ! latched[i]
+                && (downSinceMs[i] <= 0.0 || now - downSinceMs[i] < kHoldMs))
+                allHeld = false;
+
+        if (allHeld)
         {
-            case 3:  enterStompMode (StompMode::PresetSave);   break;  // A+B
-            case 6:  enterStompMode (StompMode::PresetRecall); break;  // B+C
-            case 4:  toggleBool ("bypass");                    break;  // C alone
-            default: break;   // 1, 2 and 7 are layers, handled continuously
+            comboFired = true;
+            switch (mask)
+            {
+                case 3:  enterStompMode (StompMode::PresetSave);
+                         releaseAllStomps();                      break;  // A+B
+                case 6:  enterStompMode (StompMode::PresetRecall);
+                         releaseAllStomps();                      break;  // B+C
+                case 4:  toggleBool ("bypass");
+                         releaseAllStomps();                      break;  // C
+                default: break;   // 1, 2 and 7 are layers, held continuously
+            }
         }
     }
 
-    // ---- 3. a preset mode gives up after 6 s rather than trapping you -------
-    if (stompMode != StompMode::Normal && now - stompModeMs > 6000.0)
+    // ---- 3. a preset mode gives up after 8 s rather than trapping you -------
+    if (stompMode != StompMode::Normal && now - stompModeMs > 8000.0)
         stompMode = StompMode::Normal;
 }
 

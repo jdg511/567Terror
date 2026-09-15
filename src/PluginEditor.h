@@ -268,6 +268,13 @@ public:
     // whatever eats lone modifier keys on the host machine.
     bool isLatched() const noexcept { return latched; }
 
+    // v0.46: a combo releases every stomp once it has done its job, the way a
+    // real switch comes back up when your foot leaves it.
+    void setLatched (bool shouldLatch) noexcept
+    {
+        if (latched != shouldLatch) { latched = shouldLatch; repaint(); }
+    }
+
     // v0.30: the stomp doubles as an INDICATOR: it lights while the layer is
     // held (press-and-hold or right-click latch), so the widget shows the
     // held state AND can be activated by mouse.
@@ -367,7 +374,9 @@ public:
     void paint (juce::Graphics& g) override
     {
         // v0.45: the layers are Default / X / Y / Z now, and Z is public.
-        static const char* names[4] = { "\xe2\x80\xa2", "X", "Y", "Z" };
+        // Plain ASCII: drawText takes these as a raw char* and a UTF-8 bullet
+        // came out as mojibake.
+        static const char* names[4] = { "D", "X", "Y", "Z" };
         const juce::Colour cols[4]  = { gw::kText, gw::kCyan, gw::kYellow, gw::kGreen };
         for (int i = 0; i < 4; ++i)
         {
@@ -1802,15 +1811,31 @@ private:
     LedIndicator  tapLed;              // v0.32: blinks the tap tempo + flashes presses
     LedIndicator  stompCLed;           // v0.45
 
-    // ---- v0.45 three-stomp gesture engine -----------------------------------
-    // A burst is a run of taps with less than kBurstGapMs between them. The
-    // decision waits for the burst to END, which is the only way a single tap
-    // and the first tap of a tempo triple can mean different things.
-    static constexpr double kBurstGapMs = 520.0;   // burst is over after this
-    static constexpr double kComboHoldMs = 600.0;  // hold this long to fire a combo
-    int    burstN[3] { 0, 0, 0 };          // taps so far in the current burst, per stomp
+    // ---- v0.46 three-stomp gesture engine -----------------------------------
+    // DOUBLE TAP toggles that stomp's circuit, and the gap between tap 1 and
+    // tap 2 sets how long a third tap has to arrive before the gesture is read
+    // as tap tempo instead. Tap fast and the answer comes fast; tap slow and
+    // you get a correspondingly slow window. That self-scaling window is the
+    // whole idea -- a fixed timeout either feels sluggish or steals taps.
+    //
+    // A HOLD is three seconds, after which you can let go. Right-clicking a
+    // stomp latches it, and a latch counts as an instantly-satisfied hold, so
+    // in the sim you right-click your way to a combo instead of trying to pin
+    // three switches with one mouse.
+    static constexpr double kHoldMs      = 3000.0;  // a real hold is 3 s
+    static constexpr double kMaskSettle  = 1200.0;  // let the combo finish forming
+    static constexpr double kTapWinMin   = 220.0;   // floor on the derived window
+    static constexpr double kTapWinMax   = 1400.0;  // ceiling on it
+    static constexpr double kTapWinScale = 1.6;     // window = gap x this
+
+    int    burstN[3] { 0, 0, 0 };            // taps so far in this burst
+    double burstFirstMs[3] { 0.0, 0.0, 0.0 };
     double burstLastMs[3] { 0.0, 0.0, 0.0 };
+    double burstDeadline[3] { 0.0, 0.0, 0.0 };  // 0 = nothing pending
     bool   burstLive[3] { false, false, false };
+    double downSinceMs[3] { 0.0, 0.0, 0.0 };    // when each stomp went down
+
+    void releaseAllStomps();                    // drop latches + press state
 
     enum class StompMode { Normal, PresetSave, PresetRecall };
     StompMode stompMode      = StompMode::Normal;
