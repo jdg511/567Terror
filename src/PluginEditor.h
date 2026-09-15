@@ -5,7 +5,7 @@
 
 // ===========================================================================
 // v0.34 "Terror" — Jason's glitch-art restyle from the Claude Design project
-// (docs/ui/Glitchwave 567 - v0.34 Terror.dc.html). GRAPHICS ONLY: the whole
+// (docs/ui/WTF - v0.34 Terror.dc.html). GRAPHICS ONLY: the whole
 // X/Y/Z/A layer machine, tap tempo, latches and gate behaviour are v0.32.
 // ===========================================================================
 
@@ -366,8 +366,9 @@ public:
 
     void paint (juce::Graphics& g) override
     {
-        static const char* names[4] = { "X", "Y", "Z", "A" };
-        const juce::Colour cols[4]  = { gw::kText, gw::kCyan, gw::kYellow, gw::kRed };
+        // v0.45: the layers are Default / X / Y / Z now, and Z is public.
+        static const char* names[4] = { "\xe2\x80\xa2", "X", "Y", "Z" };
+        const juce::Colour cols[4]  = { gw::kText, gw::kCyan, gw::kYellow, gw::kGreen };
         for (int i = 0; i < 4; ++i)
         {
             auto r = juce::Rectangle<float> ((float) i * 42.0f, 0.0f, 36.0f, 26.0f);
@@ -1705,12 +1706,12 @@ private:
 class ScaleFeedbackWindow;   // v0.37: opened from settingsBtn, defined in ScaleFeedback.h
 
 // ---------------------------------------------------------------------------
-class GlitchwaveAudioProcessorEditor : public juce::AudioProcessorEditor,
+class WtfAudioProcessorEditor : public juce::AudioProcessorEditor,
                                        private juce::Timer
 {
 public:
-    explicit GlitchwaveAudioProcessorEditor (GlitchwaveAudioProcessor&);
-    ~GlitchwaveAudioProcessorEditor() override;
+    explicit WtfAudioProcessorEditor (WtfAudioProcessor&);
+    ~WtfAudioProcessorEditor() override;
 
     void paint (juce::Graphics&) override;
     void resized() override;
@@ -1727,19 +1728,20 @@ private:
 
     // ---- v0.30 control scheme: Jason's X/Y/Z/A knob layers -----------------
     // Six knobs (Freq, LPF, Mix | LFO1 Rate, LFO2 Rate, Env Gain):
-    //   X (nothing held):        Freq   LPF     Mix      Rate   Rate   Gain
-    //   Y (TAP held):             Gain   Res     Vol      Shape  Shape  Mode
-    //   Z (BYPASS held):          L1 Dep L2 Dep  DrvRng   Target Target Target
-    //   A (BOTH held, secret):   Mix -> STARVE   Freq -> env THRESHOLD
-    //                            LPF -> env RATIO
-    //                            (Rate 1/2 and Gain dead -- v0.42 removed
-    //                             Gain -> env SHAPE.)
+    //   DEFAULT (nothing held):  Freq   LPF     Vol      Rate   Rate   Gain
+    //   X (hold A):               Gain   Res     Mix      Shape  Shape  Mode
+    //   Y (hold B):               L1 Dep L2 Dep  DrvRng   Target Target Target
+    //   Z (hold A+B+C):          Mix -> STARVE (still the only secret)
+    //                            Freq -> env THRESHOLD, LPF -> env RATIO
+    //                            Rate 1 -> ATTACK, Rate 2 -> DECAY (v0.45)
+    //                            Gain dead.
     //
     // v0.37: keyboard emulation (INS/DEL) is removed. A layer can only be
     // held by pressing and holding a stomp with the mouse, or right-click
     // to latch it held. See docs/MODS.md v0.37.
-    bool tapStompDown() const;      // TAP stomp held, or latched
-    bool bypassStompDown() const;   // BYPASS stomp held, or latched
+    bool tapStompDown() const;      // stomp A held, or latched
+    bool bypassStompDown() const;   // stomp B held, or latched
+    bool stompCDown() const;        // stomp C held, or latched (v0.45)
     int  computeLayer() const;      // 0 = X, 1 = Y, 2 = Z, 3 = A (secret shaping)
     void updateKnobModes();         // swap slider attachments per layer
     void knobTouched();             // any knob move consumes the held stomps
@@ -1748,7 +1750,7 @@ private:
     void applyComboFromMixKnob();   // Z Mix knob -> env drive x range
     void recordTap (bool lfo2, double pressMs);
 
-    GlitchwaveAudioProcessor& processor;
+    WtfAudioProcessor& processor;
     GwLookAndFeel lnf;
 
     // baked art from the design bundle
@@ -1793,9 +1795,37 @@ private:
     double lfo1CtxUntil = 0.0, lfo2CtxUntil = 0.0, envCtxUntil = 0.0;
 
     // the two stomps
-    TapHoldButton tapStompBtn, bypassBtn;
+    // v0.45: three stomps now. tapStompBtn IS stomp A and bypassBtn IS stomp
+    // B -- the member names are historical, the panel labels are A/B/C.
+    TapHoldButton tapStompBtn, bypassBtn, stompCBtn;
     LedIndicator  bypassLed;
     LedIndicator  tapLed;              // v0.32: blinks the tap tempo + flashes presses
+    LedIndicator  stompCLed;           // v0.45
+
+    // ---- v0.45 three-stomp gesture engine -----------------------------------
+    // A burst is a run of taps with less than kBurstGapMs between them. The
+    // decision waits for the burst to END, which is the only way a single tap
+    // and the first tap of a tempo triple can mean different things.
+    static constexpr double kBurstGapMs = 520.0;   // burst is over after this
+    static constexpr double kComboHoldMs = 600.0;  // hold this long to fire a combo
+    int    burstN[3] { 0, 0, 0 };          // taps so far in the current burst, per stomp
+    double burstLastMs[3] { 0.0, 0.0, 0.0 };
+    bool   burstLive[3] { false, false, false };
+
+    enum class StompMode { Normal, PresetSave, PresetRecall };
+    StompMode stompMode      = StompMode::Normal;
+    double    stompModeMs    = 0.0;     // when we entered it (for the LED chase)
+    int       comboMask      = 0;       // which stomps were down last tick
+    double    comboSinceMs   = 0.0;     // when that mask last changed
+    bool      comboFired     = false;   // one action per hold, not one per tick
+
+    void  stompTapped (int which);      // 0=A 1=B 2=C
+    void  serviceStomps();              // called from the timer
+    void  toggleBool (const char* paramId);
+    void  stepMixQuarter();
+    void  enterStompMode (StompMode m);
+    void  pickPresetSlot (int slot);    // in save or recall mode
+    void  applyFactoryPresetA();
     double lastTapFlashMs = 0.0;
 
     // v0.37: in-plugin Scale/Feedback access (the standalone-only title-bar
@@ -1812,7 +1842,8 @@ private:
     // tap tempo state (press times; commit = rolling 3-press average)
     double tapHist1[4] {}, tapHist2[4] {};
     int    tapN1 = 0, tapN2 = 0;
-    double tapPressMs   = 0.0;
+    double tapPressMs    = 0.0;
+    double bypassPressMs = 0.0;      // v0.45: stomp B taps LFO 2's tempo itself
     bool   tapPressLfo2 = false;     // BYPASS was held at the press
 
     // output gate + internal switches (all under the cover)
@@ -1836,7 +1867,8 @@ private:
 
     // hints (v0.39: ship them ON)
     bool showHints = true;
-    juce::Label hintChips, hintLayers, hintLfo1, hintLfo2, hintStomp1, hintStomp2;
+    juce::Label hintChips, hintLayers, hintLfo1, hintLfo2,
+                hintStomp1, hintStomp2, hintStomp3;   // v0.45: a third line
 
     // decoration
     GlitchFx fx;
@@ -1852,5 +1884,5 @@ private:
 
     int frame = 0;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GlitchwaveAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WtfAudioProcessorEditor)
 };

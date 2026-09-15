@@ -1,4 +1,99 @@
-# Glitchwave 567 -- Step 2 Mods (v0.2 .. v0.44)
+# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.45)
+
+> Renamed at v0.45. "Glitchwave 567" turned out to be an existing product, so
+> the internal name is now **WTF**, which the product name supplies for free:
+> **W**here **T**he **F**uzz Meets The Funk. Entries below v0.45 still say
+> Glitchwave; that is history, not a mistake.
+
+## v0.45 -- three stomps, presets, real Mu-Tron III ballistics, and the rename
+
+### Mu-Tron III envelope, derived instead of guessed
+
+Read off the GGG Mutron III schematic and confirmed against the Aion Lumitron
+parts list (same circuit, different designators):
+
+| | Neutron | Lumitron | value |
+|---|---|---|---|
+| attack resistor | R14 | R16 | 330 R |
+| envelope cap | C9 | C12 | 4.7 uF |
+| to -9 V | R15 | R17 | 47 k |
+| to LED driver | R16 | R18 | 120 k |
+
+* **ATTACK = R14 x C9 = 1.551 ms.** **DECAY = (R15 || R16) x C9 = 158.7 ms.**
+  That is where the "4 ms / 150 ms" everyone quotes comes from: 150 ms is the
+  decay time constant, and 4 ms is the 10-90% rise (2.2 x 1.551 = 3.4 ms) once
+  the vactrol is stacked on.
+* **The vactrol is the second half of the ballistics.** The Lumitron specifies
+  a VTL5C3: 2.5 ms turn-on to 63%, 35 ms decay. Cascaded behind the cap. This
+  is why a Mu-Tron does not sound like a plain one-pole follower.
+* **The vactrol is also the whole non-linearity.** Xvive's datasheet gives
+  1 mA -> 30 kOhm, 10 mA -> 5 Ohm, 40 mA -> 1.5 Ohm, dark 10 MOhm. Fitting the
+  1-10 mA leg is R proportional to I^-3.78: nearly four decades of resistance
+  per decade of current. Filter frequency is 1/(2*pi*(Rldr || 220k)*C), so
+  frequency follows I^3.78, a straight line in log-current vs log-frequency.
+  Over the pedal's real window (~0.35 to 1.1 mA) that is 460 Hz to 4.6 kHz on
+  the high range and 206 Hz to 2.06 kHz on the low: a 10:1 sweep either way.
+  It is compressive, which is why a light touch already opens the filter most
+  of the way and then it crowds at the top.
+* **ATTACK and DECAY are now knobs**, on Layer Z's Rate 1 and Rate 2. Log
+  taper, a decade either side, **noon = the stock Musitronics value exactly**.
+  Turning them does not linearise anything: the vactrol law sits downstream of
+  both, so the Mu-Tron shape survives whatever times you dial.
+
+### Three stomps
+
+`board.h` already reserved GP22 as "expansion room", so the third stomp costs
+one GPIO that was already set aside. Every audio parameter is already a PWM CV
+into a VCA, so presets are pure firmware.
+
+| | 1 tap | 3+ taps | hold |
+|---|---|---|---|
+| **A** | fuzz circuit on/off | LFO 1 tap tempo | Layer X |
+| **B** | 567 circuit on/off | LFO 2 tap tempo | Layer Y |
+| **C** | envelope filter on/off | 4th tap on steps MIX 0/25/50/75/100 | bypass |
+
+Plus **A+B = save preset** (ring runs clockwise) and **B+C = recall preset**
+(counter-clockwise), and **A+B+C = Layer Z**.
+
+Nothing is decided on the tap itself. Each stomp accumulates a *burst*, and
+the burst is judged once it has been quiet for 520 ms, which is the only way
+a single tap and the first tap of a tempo triple can mean different things.
+Combos need a deliberate 600 ms hold. A preset mode times out after 6 s rather
+than trapping you, and touching any knob cancels a pending gesture.
+
+### Presets
+
+Three slots, each a whole APVTS snapshot, so a slot carries everything
+including the under-the-cover switches and the circuit kills. Boots on A.
+Until something is saved over it, **A is the factory state: every knob at
+noon, fuzz + 567 + envelope filter all on, pedal engaged.**
+
+One deliberate deviation from the spec: "all settings at 50%" is applied to
+the continuous controls only. Normalised 0.5 on a 5-way selector lands on
+whatever is third in the list, which is arbitrary rather than neutral, so the
+selectors (filter mode, LFO shapes, mod targets) keep their designed defaults.
+
+### Layers renamed, and MIX/VOL swapped
+
+* X -> **Default**, Y -> **X**, Z -> **Y**, A -> **Z**.
+* Default's third knob is **VOL** now; **MIX** moved to Layer X where VOL was.
+* **Layer Z is published** on the KNOB LAYERS chart. Only STARVE stays secret,
+  still on the red "?".
+
+### Plugin UI
+
+Stomps are labelled A / B / C, the chart has four rows, the stomp strip has a
+third hint line, and the layer chips read Default / X / Y / Z.
+
+### Rename
+
+Product strings, UI, docs, CMake and all C++ naming moved to WTF: namespace
+`glitchwave` -> `wtf`, `GlitchwaveAudioProcessor` -> `WtfAudioProcessor`,
+`Glitchwave567.h` -> `Wtf567.h`, CMake project `Wtf567`, plugin code `Wtf7`.
+**The KiCad projects and the fab package are deliberately untouched** until
+the boards are ordered, because renaming those invalidates the verification
+work that is already done.
+
 
 ## v0.44 -- dirt GAIN settles at x0.1 .. x10
 

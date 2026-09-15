@@ -67,7 +67,7 @@ private:
 
     void openScaleFeedback()
     {
-        if (auto* gp = dynamic_cast<GlitchwaveAudioProcessor*> (pluginHolder->processor.get()))
+        if (auto* gp = dynamic_cast<WtfAudioProcessor*> (pluginHolder->processor.get()))
         {
             if (dialog == nullptr)
                 dialog = std::make_unique<ScaleFeedbackWindow> (*gp);

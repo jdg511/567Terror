@@ -13,7 +13,7 @@
 class ScaleFeedbackComponent : public juce::Component
 {
 public:
-    explicit ScaleFeedbackComponent (GlitchwaveAudioProcessor& p) : proc (p)
+    explicit ScaleFeedbackComponent (WtfAudioProcessor& p) : proc (p)
     {
         auto style = [this] (juce::TextEditor& e, bool multiline)
         {
@@ -273,7 +273,7 @@ private:
     static constexpr float kScales[4] = { 0.5f, 1.0f, 1.5f, 2.0f };
     static constexpr int   kFormTop   = 196;
 
-    GlitchwaveAudioProcessor& proc;
+    WtfAudioProcessor& proc;
     juce::TextEditor name, email, address, state, zip, country, phone, feedback;
     juce::ToggleButton nSale, nFree, nNone;
     juce::TextButton saveBtn { "SAVE" };
@@ -285,7 +285,7 @@ private:
 class ScaleFeedbackWindow : public juce::DocumentWindow
 {
 public:
-    explicit ScaleFeedbackWindow (GlitchwaveAudioProcessor& p)
+    explicit ScaleFeedbackWindow (WtfAudioProcessor& p)
         : DocumentWindow ("Scale and Feedback", juce::Colours::black,
                           DocumentWindow::closeButton)
     {

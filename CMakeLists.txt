@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(Glitchwave567 VERSION 0.44.0 LANGUAGES C CXX)
+project(Wtf567 VERSION 0.45.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -14,11 +14,11 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(JUCE)
 
 # ---- Plugin ------------------------------------------------------------------
-juce_add_plugin(Glitchwave567
+juce_add_plugin(Wtf567
     COMPANY_NAME "Illicit Apothecary"
-    BUNDLE_ID "com.illicitapothecary.glitchwave567"
+    BUNDLE_ID "com.illicitapothecary.Wtf567"
     PLUGIN_MANUFACTURER_CODE Jdgw
-    PLUGIN_CODE Gw67
+    PLUGIN_CODE Wtf7
     FORMATS VST3 Standalone
     LV2URI "https://github.com/jdg511/567Terror"
     PRODUCT_NAME "Where The Fuzz Meets The Funk"
@@ -79,24 +79,24 @@ juce_add_binary_data(GwDemos HEADER_NAME DemoData.h NAMESPACE DemoData SOURCES
 )
 set_target_properties(GwDemos PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
-target_sources(Glitchwave567 PRIVATE
+target_sources(Wtf567 PRIVATE
     src/PluginProcessor.cpp
     src/PluginEditor.cpp
 )
 
 # v0.35: custom standalone app — adds "Scale and Feedback..." to the
 # Options menu (standalone target only; other formats untouched)
-target_compile_definitions(Glitchwave567_Standalone PRIVATE
+target_compile_definitions(Wtf567_Standalone PRIVATE
     JUCE_USE_CUSTOM_PLUGIN_STANDALONE_APP=1)
-target_sources(Glitchwave567_Standalone PRIVATE src/StandaloneApp.cpp)
+target_sources(Wtf567_Standalone PRIVATE src/StandaloneApp.cpp)
 
-target_compile_definitions(Glitchwave567 PUBLIC
+target_compile_definitions(Wtf567 PUBLIC
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0
 )
 
-target_link_libraries(Glitchwave567
+target_link_libraries(Wtf567
     PRIVATE
         GwAssets
         GwDemos

@@ -1,5 +1,5 @@
 // ============================================================================
-//  Glitchwave567.h — behavioral circuit simulation of the Glitchwave 567 pedal
+//  Wtf567.h — behavioral circuit simulation of the WTF pedal
 //
 //  Portable C++ (no JUCE dependency) so the same code runs in the plugin and
 //  in the offline test harness. All voltages are stored as "delta volts"
@@ -19,7 +19,7 @@
 #include <cstdint>
 #include <algorithm>
 
-namespace glitchwave
+namespace wtf
 {
 
 // ----------------------------------------------------------------------------
@@ -221,7 +221,7 @@ namespace detail
 // ----------------------------------------------------------------------------
 // The pedal
 // ----------------------------------------------------------------------------
-class Glitchwave567
+class Wtf567
 {
 public:
     struct Params
@@ -256,6 +256,12 @@ public:
         // chatters at audio rate and that chatter is the pedal's voice.
         bool  c41LoopCap  = false;   // pin 2, LFIL
         bool  c42OutCap   = false;   // pin 1, OFIL
+        // v0.45: the two circuit kills that stomps A and B now own. Killing
+        // the fuzz routes the clean buffer straight to the mixer; killing the
+        // 567 shuts the wet leg off at the mixer. Either one on its own still
+        // leaves the other half of the pedal working, which is the point.
+        bool  fuzzOn      = true;    // stomp A
+        bool  decoderOn   = true;    // stomp B
     };
 
     Tunables tune; // exposed so the harness / future mods can poke at it
@@ -393,10 +399,18 @@ public:
         // together and the fuss behind it goes quiet from the input side as
         // well as from its own bias. At natural gain this hits the Bazz Fuss
         // with several volts, so with SW1 in, GAIN minimum is already fuzz.
-        const float vDirt = processDirt (target.jfetOn ? jfetStage (vDry) : vDry);
+        // v0.45: stomp A kills the fuzz. The JFET goes with it, because in the
+        // hardware SW1 sits inside the dirt path, so killing the fuzz block
+        // takes the Fetzer with it and the mixer sees the clean buffer.
+        const float vDirt = target.fuzzOn
+                              ? processDirt (target.jfetOn ? jfetStage (vDry) : vDry)
+                              : vDry;
 
         // ==== Stage 4: inverting mixer (U1.2) — raw 567 wet + dirty dry ======
-        const float vMix = detail::opampClip (-(wetGain * vQ + dryGain * vDirt));
+        // v0.45: stomp B kills the 567 by muting the wet leg at the mixer,
+        // which is what pulling the decoder's output would do on the board.
+        const float wetG = target.decoderOn ? wetGain : 0.0f;
+        const float vMix = detail::opampClip (-(wetG * vQ + dryGain * vDirt));
 
         // ==== Stage 5: envelope filter (single LP/BP/HP, Off = bypass) ======
         const float vOut = (target.lpfMode > 0)
@@ -642,4 +656,4 @@ private:
     float loopHzCur = -1.0f, ofilHzCur = -1.0f;   // v0.39 C41/C42 pole cache
 };
 
-} // namespace glitchwave
+} // namespace wtf

@@ -1,5 +1,5 @@
 // ============================================================================
-//  ModSystem.h — modulation layer for the Glitchwave 567 sim.
+//  ModSystem.h — modulation layer for the WTF sim.
 //
 //  v0.13 — matches the hardware plan exactly:
 //    * LFO 1: always UNIPOLAR-UP (0..+1), assignable target, blink LED.
@@ -20,7 +20,7 @@
 #include <cstdint>
 #include <algorithm>
 
-namespace glitchwave
+namespace wtf
 {
 
 // Target list enum. Values are stable; the processor maps dropdown/LED-selector
@@ -70,7 +70,77 @@ public:
         float envGain    = 4.0f;    // x0.125 .. x40
         bool  envDriveUp = true;
         int   envTarget  = (int) ModTarget::Fizz;
+        // v0.38 secret Layer-A shaping (all three default to "no change"):
+        float envThresh  = 0.0f;    // 0..1 -- below this, the follower reads 0
+        float envRatio   = 0.5f;    // 0..1 -> 0.1:1 (expand) .. 1:1 .. 1:10 (compress)
+        float envShape   = 0.5f;    // 0..1 -> log .. linear .. exponential curve
+        // v0.45 Mu-Tron III ballistics, now on the Layer Z knobs. Defaults are
+        // the REAL numbers off the Musitronics circuit -- see MuTron below.
+        float envAttackMs = 1.551f;   // noon on the ATTACK knob
+        float envDecayMs  = 158.7f;   // noon on the DECAY knob
     };
+
+    // ------------------------------------------------------------------------
+    // v0.45  MU-TRON III ENVELOPE, derived from the circuit rather than guessed
+    //
+    // Values are read off the GGG Mutron III schematic and confirmed against
+    // the Aion Lumitron parts list (same circuit, different designators):
+    //
+    //   IC3b   precision HALF-WAVE rectifier, 1M feedback, two 1N914
+    //   R14    330 ohm   feeds the envelope cap          (Lumitron R16)
+    //   C9     4.7 uF    the envelope cap                (Lumitron C12)
+    //   R15    47k       from the cap node to -9V        (Lumitron R17)
+    //   R16    120k      from the cap node to the LED driver's virtual ground
+    //
+    // ATTACK  = R14 * C9            = 330 * 4.7u    = 1.551 ms
+    // DECAY   = (R15 || R16) * C9   = 33.77k * 4.7u = 158.7 ms
+    //
+    // That is where the "4 ms / 150 ms" figure everyone quotes comes from: the
+    // decay is the 159 ms time constant, and 4 ms is the 10-90% RISE time
+    // (2.2 * 1.551 = 3.4 ms) once the vactrol's own lag is stacked on top.
+    //
+    // THE VACTROL IS THE SECOND HALF OF THE BALLISTICS. The Lumitron specifies
+    // a VTL5C3, "fast on / fast off": 2.5 ms turn-on to 63%, 35 ms decay. That
+    // lag cascades with the cap, and it is why a Mu-Tron does not sound like a
+    // plain one-pole follower.
+    //
+    // AND THE VACTROL IS WHY NOTHING HERE IS LINEAR. From the Xvive datasheet:
+    //     1 mA -> 30 kOhm,  10 mA -> 5 Ohm,  40 mA -> 1.5 Ohm, dark 10 MOhm
+    // Fitting the 1-10 mA leg gives R proportional to I^-3.78. Nearly four
+    // decades of resistance per decade of current. The filter runs at
+    // f = 1/(2*pi*(Rldr || 220k)*C), so frequency follows I^3.78, which is a
+    // STRAIGHT LINE in log-current versus log-frequency. In the pedal's real
+    // operating window (about 0.35 to 1.1 mA through the LED) that works out
+    // to roughly 460 Hz to 4.6 kHz on the high range and 206 Hz to 2.06 kHz on
+    // the low range: a 10:1 sweep either way.
+    //
+    // Because the knob-to-frequency map in this plugin is already logarithmic,
+    // the whole non-linearity collapses into one line: the envelope drives LED
+    // CURRENT linearly, and knob position follows log(current). That is
+    // kVacShape() below. Change ATTACK or DECAY all you like and the shape
+    // survives, which is the point of item 9.
+    // ------------------------------------------------------------------------
+    struct MuTron
+    {
+        static constexpr float kAttackMs   = 1.551f;    // R14 * C9
+        static constexpr float kDecayMs    = 158.7f;    // (R15||R16) * C9
+        static constexpr float kVacOnMs    = 2.5f;      // VTL5C3 turn-on to 63%
+        static constexpr float kVacOffMs   = 35.0f;     // VTL5C3 decay
+        // LED current window, full/idle. 1.1 mA / 0.35 mA from the sweep above.
+        static constexpr float kCurrentK   = 3.143f;
+        // 10:1 filter sweep, expressed against this plugin's 200:1 FIZZ span.
+        static constexpr float kSweepSpan  = 0.4343f;   // log10(10) / log10(200)
+    };
+
+    // The vactrol law, normalised. d is 0..1 of envelope; the return is 0..1 of
+    // sweep. Compressive: a light touch already opens the filter most of the
+    // way, then it crowds together at the top, exactly like the real thing.
+    static inline float kVacShape (float d) noexcept
+    {
+        d = d < 0.0f ? 0.0f : (d > 1.0f ? 1.0f : d);
+        return std::log (1.0f + d * (MuTron::kCurrentK - 1.0f))
+             / std::log (MuTron::kCurrentK);
+    }
 
     struct KnobSet
     {
@@ -81,15 +151,20 @@ public:
     void prepare (double sampleRate) noexcept
     {
         fs = (float) sampleRate;
-        envAtkCoeff = onePoleCoeff (4.0f);     // Mu-Tron-ish follower ballistics
-        envRelCoeff = onePoleCoeff (150.0f);
+        // v0.45: real Mu-Tron numbers, and the vactrol's own lag behind them.
+        envAtkCoeff = onePoleCoeff (MuTron::kAttackMs);
+        envRelCoeff = onePoleCoeff (MuTron::kDecayMs);
+        vacOnCoeff  = onePoleCoeff (MuTron::kVacOnMs);
+        vacOffCoeff = onePoleCoeff (MuTron::kVacOffMs);
+        atkMsCur = MuTron::kAttackMs;
+        decMsCur = MuTron::kDecayMs;
         cvCoeff     = onePoleCoeff (15.0f);    // fixed CV smoothing
         reset();
     }
 
     void reset() noexcept
     {
-        inEnv = cv1Env = cv2Env = 0.0f;
+        inEnv = cv1Env = cv2Env = vacEnv = 0.0f;
         cv1SilentSec = cv2SilentSec = 1000.0f;   // start "unplugged" -> VCAs open
         lfo1Phase = lfo2Phase = 0.0;
         shValue = shValue2 = shPrev = shPrev2 = 0.0f;
@@ -100,7 +175,22 @@ public:
         samplesSinceCompute = 0;
     }
 
-    void setParams (const Params& p) noexcept { params = p; }
+    void setParams (const Params& p) noexcept
+    {
+        params = p;
+        // v0.45: ATTACK and DECAY are live knobs now (Layer Z). Recompute the
+        // coefficients only when they actually move -- exp() is not free.
+        if (p.envAttackMs != atkMsCur)
+        {
+            atkMsCur    = p.envAttackMs;
+            envAtkCoeff = onePoleCoeff (atkMsCur);
+        }
+        if (p.envDecayMs != decMsCur)
+        {
+            decMsCur    = p.envDecayMs;
+            envRelCoeff = onePoleCoeff (decMsCur);
+        }
+    }
 
     // v0.18: a tap-tempo tap on LFO 2 resets the non-periodic generators'
     // state (the tap sets the time-scale; the reset makes it feel synced
@@ -122,7 +212,14 @@ public:
     // Call once per host-rate sample. Inputs are absolute-value levels (FS).
     inline void tick (float inputAbs, float cv1Abs, float cv2Abs) noexcept
     {
+        // v0.45 two-stage Mu-Tron ballistics.
+        //   stage 1: the 4.7uF envelope cap, charged through 330R and
+        //            discharged through 47k||120k
+        //   stage 2: the VTL5C3 itself, which has its own 2.5 ms / 35 ms lag
+        // Cascading them is what makes the attack feel soft-but-quick instead
+        // of clicky, and what puts the little tail on the end of the decay.
         inEnv  += (inputAbs > inEnv ? envAtkCoeff : envRelCoeff) * (inputAbs - inEnv);
+        vacEnv += (inEnv > vacEnv ? vacOnCoeff : vacOffCoeff) * (inEnv - vacEnv);
         cv1Env += cvCoeff * (cv1Abs - cv1Env);
         cv2Env += cvCoeff * (cv2Abs - cv2Env);
         ++samplesSinceCompute;
@@ -162,8 +259,31 @@ public:
             default: applyToKnob (out, (ModTarget) params.lfo2Target, lfo2Sig * 0.5f); break;
         }
 
+        // ---- v0.38: secret Layer-A envelope shaping (Threshold/Ratio/Shape) --
+        // Threshold (Gain knob): below it the follower reads flat zero.
+        // Ratio (LPF knob): a compressor-style ratio applied to the level
+        // above threshold, continuously from 0.1:1 (expand) through 1:1
+        // (unity) to 1:10 (heavy compression).
+        // Shape (Freq knob): the curve's knee -- log (concave) at one end,
+        // straight line in the middle, exponential (convex) at the other.
+        // All three default to "no change" (thresh 0, ratio/shape centred
+        // at 0.5) so a stock patch behaves exactly as it did before v0.38.
+        // v0.45: the follower now reads off vacEnv, which is the envelope cap
+        // AND the vactrol, not the bare rectifier.
+        const float envAboveThresh = clampf ((vacEnv - params.envThresh)
+                                             / std::max (1.0f - params.envThresh, 0.0001f),
+                                             0.0f, 1.0f);
+        const float envShapeExp = std::pow (2.0f,  4.0f * (params.envShape - 0.5f)); // 0.25 (log) .. 4 (exp)
+        const float envRatioExp = std::pow (10.0f, 2.0f * (params.envRatio - 0.5f)); // 0.1:1 .. 1:10
+        // v0.45: the VTL5C3 law goes LAST, after Threshold/Ratio/Shape, because
+        // in the real pedal those all live in front of the LED driver and the
+        // vactrol is the final thing between the driver and the filter. Leaving
+        // Ratio/Shape centred gives you the stock Mu-Tron curve.
+        const float envShaped   = kVacShape (std::pow (envAboveThresh,
+                                                       envShapeExp * envRatioExp));
+
         // ---- envelope pre-pass (v0.21: env can drive LFO1 rate/depth) --------
-        const float envPre      = clampf (inEnv * envGainEff, 0.0f, 1.0f);
+        const float envPre      = clampf (envShaped * envGainEff, 0.0f, 1.0f);
         const float envApplyPre = params.envDriveUp ? envPre : -envPre;
         switch ((ModTarget) params.envTarget)
         {
@@ -198,7 +318,7 @@ public:
 
         // ---- envelope follower -> its knob target ----------------------------
         // (skipped when it already spent itself on LFO1 rate/depth above)
-        const float envSig = clampf (inEnv * envGainEff * envLevelMul, 0.0f, 1.0f);
+        const float envSig = clampf (envShaped * envGainEff * envLevelMul, 0.0f, 1.0f);
         visEnvSig = envSig;
         const ModTarget et = (ModTarget) params.envTarget;
         if (et != ModTarget::Lfo1Rate && et != ModTarget::Lfo1Depth)
@@ -481,6 +601,9 @@ private:
 
     float inEnv = 0.0f, cv1Env = 0.0f, cv2Env = 0.0f;
     float envAtkCoeff = 0.1f, envRelCoeff = 0.01f, cvCoeff = 0.05f;
+    // v0.45 vactrol stage + the live ATTACK/DECAY cache
+    float vacEnv = 0.0f, vacOnCoeff = 0.1f, vacOffCoeff = 0.01f;
+    float atkMsCur = MuTron::kAttackMs, decMsCur = MuTron::kDecayMs;
     float cv1SilentSec = 1000.0f, cv2SilentSec = 1000.0f;
 
     double lfo1Phase = 0.0, lfo2Phase = 0.0;
@@ -494,4 +617,4 @@ private:
     float visLfo1 = 0.0f, visLfo2 = 0.0f, visEnvSig = 0.0f;
 };
 
-} // namespace glitchwave
+} // namespace wtf

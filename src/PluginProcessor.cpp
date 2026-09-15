@@ -46,8 +46,8 @@ namespace
                                            "Wobble", "Glitch", "White Noise", "Pink Noise" };
 
     // list index -> enum maps
-    using MT = glitchwave::ModTarget;
-    using LS = glitchwave::LfoShape;
+    using MT = wtf::ModTarget;
+    using LS = wtf::LfoShape;
     constexpr MT kLfo1Map[] = { MT::Off, MT::Freq, MT::Fizz, MT::LpfQ, MT::Dry, MT::Gain,
                                 MT::EnvAmount, MT::EnvLevel };
     constexpr MT kLfo2Map[] = { MT::Off, MT::Freq, MT::Fizz, MT::LpfQ, MT::Dry,
@@ -73,7 +73,7 @@ namespace
     }
 }
 
-GlitchwaveAudioProcessor::GlitchwaveAudioProcessor()
+WtfAudioProcessor::WtfAudioProcessor()
     : AudioProcessor (BusesProperties()
                           .withInput  ("Input",     juce::AudioChannelSet::stereo(), true)
                           .withOutput ("Output",    juce::AudioChannelSet::stereo(), true)
@@ -110,6 +110,11 @@ GlitchwaveAudioProcessor::GlitchwaveAudioProcessor()
     raw.jfeton      = apvts.getRawParameterValue ("jfeton");
     raw.c41cap      = apvts.getRawParameterValue ("c41cap");
     raw.c42cap      = apvts.getRawParameterValue ("c42cap");
+    raw.envattack   = apvts.getRawParameterValue ("envattack");
+    raw.envdecay    = apvts.getRawParameterValue ("envdecay");
+    raw.fuzzon      = apvts.getRawParameterValue ("fuzzon");
+    raw.dec567on    = apvts.getRawParameterValue ("dec567on");
+    raw.envfilton   = apvts.getRawParameterValue ("envfilton");
     raw.democlip    = apvts.getRawParameterValue ("democlip");
     raw.demovol     = apvts.getRawParameterValue ("demovol");
 
@@ -118,9 +123,82 @@ GlitchwaveAudioProcessor::GlitchwaveAudioProcessor()
     demoFormats.registerBasicFormats();
     apvts.addParameterListener ("democlip", this);
     loadDemoClip ((int) raw.democlip->load());
+
+    // v0.45: the pedal boots on Preset A. Nothing is saved yet at this point,
+    // so A is the factory state: every knob at noon, all three circuits on.
+    // If the host restores a session, setStateInformation runs after this and
+    // overwrites it, which is the correct order.
+    loadFactoryPresetA();
 }
 
-GlitchwaveAudioProcessor::~GlitchwaveAudioProcessor()
+// ---------------------------------------------------------------------------
+// v0.45  PRESETS
+//
+// Three slots. A slot is a whole APVTS snapshot, so it carries everything --
+// the six knobs, the layers, the under-the-cover switches, the circuit kills.
+// Nothing is excluded, because a preset that only recalls half the pedal is
+// the fastest way to make presets feel broken.
+//
+// The pedal boots on slot A. Until you save something over it, slot A is the
+// factory state below: every continuous control at 50 percent, and the fuzz,
+// the 567 and the envelope filter all switched on.
+// ---------------------------------------------------------------------------
+void WtfAudioProcessor::savePreset (int slot)
+{
+    if (slot < 0 || slot > 2) return;
+    presetState[slot] = apvts.copyState().createCopy();
+    presetSaved[slot] = true;
+}
+
+void WtfAudioProcessor::recallPreset (int slot)
+{
+    if (slot < 0 || slot > 2) return;
+    if (! presetSaved[slot])
+    {
+        // Nothing written there yet. Slot A falls back to the factory state;
+        // B and C simply do nothing rather than silently loading A.
+        if (slot == 0) loadFactoryPresetA();
+        return;
+    }
+    apvts.replaceState (presetState[slot].createCopy());
+}
+
+void WtfAudioProcessor::loadFactoryPresetA()
+{
+    // "All settings at 50%" applies to the CONTINUOUS controls -- every knob
+    // sits at noon. It deliberately does NOT reset the selectors (filter mode,
+    // LFO shapes, mod targets): normalised 0.5 on a 5-way choice lands on
+    // whatever happens to be third in the list, which is not a neutral state,
+    // it is an arbitrary one. Those keep their designed defaults.
+    //
+    // The rest is exactly as specified: fuzz, 567 and envelope filter all on,
+    // pedal engaged, and the demo player left alone because it is not part of
+    // the sound.
+    for (auto* p : getParameters())
+    {
+        auto* rp = dynamic_cast<juce::RangedAudioParameter*> (p);
+        if (rp == nullptr) continue;
+        const juce::String id = rp->paramID;
+        if (id == "democlip" || id == "demovol" || id == "preset3")
+            continue;
+
+        float target;
+        if (id == "fuzzon" || id == "dec567on" || id == "envfilton")
+            target = 1.0f;                              // all three circuits on
+        else if (id == "bypass")
+            target = 0.0f;                              // engaged, not bypassed
+        else if (dynamic_cast<juce::AudioParameterFloat*> (p) != nullptr)
+            target = 0.5f;                              // the 50% rule: noon
+        else
+            continue;                                   // selectors keep theirs
+
+        rp->beginChangeGesture();
+        rp->setValueNotifyingHost (target);
+        rp->endChangeGesture();
+    }
+}
+
+WtfAudioProcessor::~WtfAudioProcessor()
 {
     apvts.removeParameterListener ("democlip", this);
     cancelPendingUpdate();
@@ -129,7 +207,7 @@ GlitchwaveAudioProcessor::~GlitchwaveAudioProcessor()
 // ---- v0.40 demo player ----------------------------------------------------------
 // Display names, in the same order as the SOURCES list in CMakeLists.txt.
 // The index is what gets saved in the session, so only ever append.
-juce::StringArray GlitchwaveAudioProcessor::demoClipNames()
+juce::StringArray WtfAudioProcessor::demoClipNames()
 {
     return {
         "Arpeggio - Quick Clean",       "Arpeggio - Deluxe Clean",
@@ -151,7 +229,7 @@ juce::StringArray GlitchwaveAudioProcessor::demoClipNames()
     };
 }
 
-void GlitchwaveAudioProcessor::setDemoPlaying (bool shouldPlay) noexcept
+void WtfAudioProcessor::setDemoPlaying (bool shouldPlay) noexcept
 {
     if (shouldPlay)
         demoPlayer.restart();
@@ -160,7 +238,7 @@ void GlitchwaveAudioProcessor::setDemoPlaying (bool shouldPlay) noexcept
 
 // may arrive on the audio thread, so it only flags and bounces to the message
 // thread; decoding an Ogg is never done under the audio callback
-void GlitchwaveAudioProcessor::parameterChanged (const juce::String& paramID, float newValue)
+void WtfAudioProcessor::parameterChanged (const juce::String& paramID, float newValue)
 {
     if (paramID == "democlip")
     {
@@ -169,12 +247,12 @@ void GlitchwaveAudioProcessor::parameterChanged (const juce::String& paramID, fl
     }
 }
 
-void GlitchwaveAudioProcessor::handleAsyncUpdate()
+void WtfAudioProcessor::handleAsyncUpdate()
 {
     loadDemoClip (pendingDemoClip.load (std::memory_order_relaxed));
 }
 
-void GlitchwaveAudioProcessor::loadDemoClip (int index)
+void WtfAudioProcessor::loadDemoClip (int index)
 {
     index = juce::jlimit (0, DemoData::namedResourceListSize - 1, index);
     if (index == loadedDemoClip)
@@ -188,7 +266,7 @@ void GlitchwaveAudioProcessor::loadDemoClip (int index)
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout
-GlitchwaveAudioProcessor::createParameterLayout()
+WtfAudioProcessor::createParameterLayout()
 {
     using PF  = juce::AudioParameterFloat;
     using PC  = juce::AudioParameterChoice;
@@ -283,6 +361,43 @@ GlitchwaveAudioProcessor::createParameterLayout()
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.0f,
         Att().withStringFromValueFunction ([] (float v, int)
             { return juce::String (v, 2); })));
+
+    // ---- v0.45 Mu-Tron III ballistics on the Layer Z rate knobs -------------
+    // Stored 0..1 and mapped logarithmically, same trick as GAIN, so NOON is
+    // exactly the stock Musitronics value and the ends are a decade either
+    // side. 0.1551 * 100^0.5 = 1.551 ms and 15.87 * 100^0.5 = 158.7 ms.
+    // Log, not linear, on purpose: these are RC time constants, and item 9 of
+    // the spec is that the Mu-Tron's response must not be linearised.
+    layout.add (std::make_unique<PF> (juce::ParameterID { "envattack", 1 }, "Env Attack",
+        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.5f,
+        Att().withStringFromValueFunction ([] (float v, int)
+            {
+                const float ms = 0.1551f * std::pow (100.0f, v);   // 0.155 .. 15.5 ms
+                return juce::String (ms, ms < 10.0f ? 2 : 1) + " ms";
+            })));
+    layout.add (std::make_unique<PF> (juce::ParameterID { "envdecay", 1 }, "Env Decay",
+        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.5f,
+        Att().withStringFromValueFunction ([] (float v, int)
+            {
+                const float ms = 15.87f * std::pow (100.0f, v);    // 15.9 ms .. 1.59 s
+                return ms < 1000.0f ? (juce::String (ms, ms < 100.0f ? 1 : 0) + " ms")
+                                    : (juce::String (ms * 0.001f, 2) + " s");
+            })));
+
+    // ---- v0.45 per-circuit kills, one per stomp ----------------------------
+    // A kills the fuzz, B kills the 567, C kills the envelope filter. All
+    // three ship ON, and Preset A's factory state turns all three on.
+    layout.add (std::make_unique<juce::AudioParameterBool> (
+        juce::ParameterID { "fuzzon", 1 },   "Fuzz Circuit", true));
+    layout.add (std::make_unique<juce::AudioParameterBool> (
+        juce::ParameterID { "dec567on", 1 }, "567 Circuit", true));
+    layout.add (std::make_unique<juce::AudioParameterBool> (
+        juce::ParameterID { "envfilton", 1 }, "Env Filter Circuit", true));
+
+    // ---- v0.45 preset slot ---------------------------------------------------
+    // Which of the three slots is live. Boots on A.
+    layout.add (std::make_unique<PC> (juce::ParameterID { "preset3", 1 }, "Preset",
+        juce::StringArray { "A", "B", "C" }, 0));
     layout.add (std::make_unique<PC> (juce::ParameterID { "lpfmode3", 1 }, "Filter Mode",
         juce::StringArray { "Off", "Mode LP", "Mode BP", "Mode HP", "Mode Notch" }, 1));
     layout.add (std::make_unique<PC> (juce::ParameterID { "lpfrange", 1 }, "Filter Range",
@@ -337,7 +452,7 @@ GlitchwaveAudioProcessor::createParameterLayout()
     return layout;
 }
 
-void GlitchwaveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void WtfAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     oversampling = std::make_unique<juce::dsp::Oversampling<float>> (
         1, kOversampleFactorLog2,
@@ -366,7 +481,7 @@ void GlitchwaveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     setLatencySamples (juce::roundToInt (oversampling->getLatencyInSamples()));
 }
 
-bool GlitchwaveAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool WtfAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
     const auto& in  = layouts.getMainInputChannelSet();
     const auto& out = layouts.getMainOutputChannelSet();
@@ -386,7 +501,7 @@ bool GlitchwaveAudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
     return true;
 }
 
-void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
+void WtfAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
                                              juce::MidiBuffer&)
 {
     juce::ScopedNoDenormals noDenormals;
@@ -461,9 +576,13 @@ void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     // ---- modulation setup ----------------------------------------------------------
     // v0.13: CVs are hardwired VCAs on their LFO's depth inside ModSystem —
     // the LFOs always stay on; the sidechain just breathes their depth.
-    const int lpfModeIdx = (int) raw.lpfmode->load();
+    // v0.45: stomp C's single tap kills the envelope filter circuit outright,
+    // which is the same thing the Mode=Off selector already did, so route both
+    // through one flag rather than inventing a second path.
+    const bool envFilterOn = raw.envfilton->load() >= 0.5f;
+    const int  lpfModeIdx  = envFilterOn ? (int) raw.lpfmode->load() : 0;
 
-    glitchwave::ModSystem::Params mp;
+    wtf::ModSystem::Params mp;
     mp.lfo1RateHz  = raw.lfo1rate->load();
     mp.lfo1Depth   = raw.lfo1depth->load();
     mp.lfo1Shape   = (int) kShapeMap[juce::jlimit (0, 15, (int) raw.lfo1shape->load())];
@@ -479,6 +598,10 @@ void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     mp.envRatio    = raw.envratio->load();
     mp.envShape    = raw.envshape->load();
     mp.envThresh   = raw.envthresh->load();
+    // v0.45 Mu-Tron ballistics. Stored 0..1, mapped log so that 0.5 is exactly
+    // the stock 1.551 ms / 158.7 ms off the Musitronics circuit.
+    mp.envAttackMs = 0.1551f * std::pow (100.0f, raw.envattack->load());
+    mp.envDecayMs  = 15.87f  * std::pow (100.0f, raw.envdecay->load());
     if (lfo2Retrig.exchange (false, std::memory_order_relaxed))
         mod.retriggerLfo2();     // tempo tap re-seeds chaos/drift generators
     if (lfo1Retrig.exchange (false, std::memory_order_relaxed))
@@ -486,7 +609,7 @@ void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     mod.setParams (mp);
 
-    glitchwave::ModSystem::KnobSet base;
+    wtf::ModSystem::KnobSet base;
     base.freq = raw.freq->load();
     base.fizz = raw.fizz->load();
     base.lpfQ = raw.lpfq->load();
@@ -530,7 +653,7 @@ void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         k.freq *= (1.0f - gatePull);
         k.fizz *= (1.0f - gatePull);
 
-        glitchwave::Glitchwave567::Params cp;
+        wtf::Wtf567::Params cp;
         cp.freq       = k.freq;
         cp.fizz       = k.fizz;
         cp.lpfQ       = k.lpfQ;
@@ -545,6 +668,8 @@ void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         cp.jfetOn     = raw.jfeton->load()   >= 0.5f;   // SW1, now pre-fuss (ships OFF)
         cp.c41LoopCap = raw.c41cap->load()   >= 0.5f;   // LM567 pin 2 pad (ships OUT)
         cp.c42OutCap  = raw.c42cap->load()   >= 0.5f;   // LM567 pin 1 pad (ships OUT)
+        cp.fuzzOn     = raw.fuzzon->load()   >= 0.5f;   // v0.45 stomp A
+        cp.decoderOn  = raw.dec567on->load() >= 0.5f;   // v0.45 stomp B
         circuit.setParams (cp);
 
         float* chans[] = { mono + offset };
@@ -595,18 +720,18 @@ void GlitchwaveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         mainOut.copyFrom (ch, 0, mono, numSamples);
 }
 
-juce::AudioProcessorEditor* GlitchwaveAudioProcessor::createEditor()
+juce::AudioProcessorEditor* WtfAudioProcessor::createEditor()
 {
-    return new GlitchwaveAudioProcessorEditor (*this);
+    return new WtfAudioProcessorEditor (*this);
 }
 
-void GlitchwaveAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
+void WtfAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     if (auto xml = apvts.copyState().createXml())
         copyXmlToBinary (*xml, destData);
 }
 
-void GlitchwaveAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void WtfAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // v0.32 (Jason): the STANDALONE pedal powers up on the ship defaults
     // every time, like flipping on a real pedal. DAWs still restore their
@@ -620,5 +745,5 @@ void GlitchwaveAudioProcessor::setStateInformation (const void* data, int sizeIn
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new GlitchwaveAudioProcessor();
+    return new WtfAudioProcessor();
 }

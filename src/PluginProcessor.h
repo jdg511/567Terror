@@ -2,17 +2,17 @@
 
 #include <juce_audio_utils/juce_audio_utils.h>
 #include <juce_dsp/juce_dsp.h>
-#include "dsp/Glitchwave567.h"
+#include "dsp/Wtf567.h"
 #include "dsp/ModSystem.h"
 #include "AudioFilePlayer.h"
 
-class GlitchwaveAudioProcessor : public juce::AudioProcessor,
+class WtfAudioProcessor : public juce::AudioProcessor,
                                  private juce::AudioProcessorValueTreeState::Listener,
                                  private juce::AsyncUpdater
 {
 public:
-    GlitchwaveAudioProcessor();
-    ~GlitchwaveAudioProcessor() override;
+    WtfAudioProcessor();
+    ~WtfAudioProcessor() override;
 
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override {}
@@ -96,8 +96,8 @@ private:
 
     static constexpr int kModChunk = 32;  // host samples between mod updates
 
-    glitchwave::Glitchwave567 circuit;
-    glitchwave::ModSystem     mod;
+    wtf::Wtf567 circuit;
+    wtf::ModSystem     mod;
     std::unique_ptr<juce::dsp::Oversampling<float>> oversampling;
 
     juce::AudioBuffer<float> monoBuffer;  // ch0 = processing, ch1 = raw live copy (gate)
@@ -138,8 +138,27 @@ private:
         std::atomic<float>* bypass{};
         std::atomic<float>* starve{};   std::atomic<float>* jfeton{};
         std::atomic<float>* c41cap{};   std::atomic<float>* c42cap{};
+        // v0.45 Mu-Tron ballistics + the three per-circuit kills
+        std::atomic<float>* envattack{}; std::atomic<float>* envdecay{};
+        std::atomic<float>* fuzzon{};    std::atomic<float>* dec567on{};
+        std::atomic<float>* envfilton{};
         std::atomic<float>* democlip{}; std::atomic<float>* demovol{};
     } raw;
+
+public:
+    // ---- v0.45 preset slots -------------------------------------------------
+    // Three slots, saved as APVTS state trees so they carry every parameter
+    // including the under-the-cover switches. They live with the session, so a
+    // DAW project keeps them; the pedal will keep the same three in flash.
+    void savePreset (int slot);
+    void recallPreset (int slot);
+    void loadFactoryPresetA();   // everything at 50%, all three circuits on
+    bool presetIsSaved (int slot) const noexcept
+    { return slot >= 0 && slot < 3 && presetSaved[slot]; }
+
+private:
+    juce::ValueTree presetState[3];
+    bool            presetSaved[3] { false, false, false };
 
     // ---- output gate state ------------------------------------------------------
     double hostRate     = 48000.0;
@@ -150,5 +169,5 @@ private:
     float  lastOutGain  = 1.0f;
     float  bypassMix    = 0.0f;   // v0.21 buffered-bypass crossfade
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GlitchwaveAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WtfAudioProcessor)
 };

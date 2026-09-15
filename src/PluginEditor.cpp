@@ -32,7 +32,7 @@ namespace
     }
 }
 
-GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioProcessor& p)
+WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
     setLookAndFeel (&lnf);
@@ -163,30 +163,39 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     {
         tapPressMs     = nowMs();
         lastTapFlashMs = tapPressMs;          // v0.32: tempo LED flashes each press
-        tapPressLfo2 = bypassStompDown();
-        if (tapPressLfo2 && bypassBtn.isDown())
-            bypassBtn.cancelPressActions();   // that hold is a tap-shift now, not a bypass toggle
+        // v0.45: LFO 2's tempo lives on stomp B's own taps now, so A always
+        // means LFO 1 and the old shift gesture is gone.
+        tapPressLfo2 = false;
         updateKnobModes();
     };
-    tapStompBtn.onTap     = [this] { recordTap (tapPressLfo2, tapPressMs); };
+    // v0.45: every tap goes through the burst engine as well as the tempo
+    // chain, so one tap can kill the fuzz while three still set the rate.
+    tapStompBtn.onTap     = [this] { recordTap (tapPressLfo2, tapPressMs); stompTapped (0); };
     tapStompBtn.onRelease = [this] { tapPressMs = 0.0; updateKnobModes(); };
     addAndMakeVisible (tapStompBtn);
 
-    // ---- the BYPASS stomp ----------------------------------------------------
-    bypassBtn.onTap = [this]
+    // ---- stomp B -------------------------------------------------------------
+    // v0.45: B no longer toggles bypass on a tap. A lone tap kills the 567,
+    // three taps set LFO 2's rate, and bypass moved to a hold on stomp C.
+    bypassBtn.onPress = [this]
     {
-        if (auto* pb = processor.apvts.getParameter ("bypass"))
-        {
-            pb->beginChangeGesture();
-            pb->setValueNotifyingHost (pb->getValue() >= 0.5f ? 0.0f : 1.0f);
-            pb->endChangeGesture();
-        }
+        bypassPressMs     = nowMs();
+        lastTapFlashMs    = bypassPressMs;
+        updateKnobModes();
     };
-    bypassBtn.onPress   = [this] { updateKnobModes(); };
-    bypassBtn.onRelease = [this] { updateKnobModes(); };
+    bypassBtn.onTap     = [this] { recordTap (true, bypassPressMs); stompTapped (1); };
+    bypassBtn.onRelease = [this] { bypassPressMs = 0.0; updateKnobModes(); };
     addAndMakeVisible (bypassBtn);
     bypassLed.setColour (gw::kGreen);
     addAndMakeVisible (bypassLed);
+
+    // ---- stomp C (v0.45) -----------------------------------------------------
+    stompCBtn.onPress   = [this] { updateKnobModes(); };
+    stompCBtn.onTap     = [this] { stompTapped (2); };
+    stompCBtn.onRelease = [this] { updateKnobModes(); };
+    addAndMakeVisible (stompCBtn);
+    stompCLed.setColour (gw::kCyan);
+    addAndMakeVisible (stompCLed);
 
     tapLed.setColour (gw::kYellow);
     addAndMakeVisible (tapLed);
@@ -200,17 +209,21 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
         l.setJustificationType (juce::Justification::centredLeft);
         addAndMakeVisible (l);
     };
-    hint (hintChips,  juce::String::fromUTF8 ("HOLD TAP \xe2\x86\x92 Y \xc2\xb7 HOLD BYPASS \xe2\x86\x92 Z \xc2\xb7 BOTH \xe2\x86\x92 A"),
+    hint (hintChips,  juce::String::fromUTF8 ("HOLD A \xe2\x86\x92 X \xc2\xb7 HOLD B \xe2\x86\x92 Y \xc2\xb7 HOLD A+B+C \xe2\x86\x92 Z"),
           10.2f, gw::kDim2);
     hint (hintLayers, juce::String::fromUTF8 ("Hold a stomp, or right-click it to latch."),
           8.5f, gw::kDim2);
-    hint (hintLfo1,   juce::String::fromUTF8 ("Z \xc2\xb7 FREQ knob = depth \xc2\xb7 LED: wave / depth %"),
+    hint (hintLfo1,   juce::String::fromUTF8 ("Y \xc2\xb7 FREQ knob = depth \xc2\xb7 LED: wave / depth %"),
           9.0f, gw::kDim2);
-    hint (hintLfo2,   juce::String::fromUTF8 ("Z \xc2\xb7 LPF knob = depth \xc2\xb7 TAP \xc3\x97""3 + BYPASS = rate"),
+    hint (hintLfo2,   juce::String::fromUTF8 ("Y \xc2\xb7 LPF knob = depth \xc2\xb7 B \xc3\x97""3 = rate"),
           9.0f, gw::kDim2);
-    hint (hintStomp1, juce::String::fromUTF8 ("TAP \xc3\x97""3 avg = LFO 1 rate \xc2\xb7 hold BYPASS while tapping = LFO 2 rate \xc2\xb7 0.2\xe2\x80\x93""20 Hz"),
+    // v0.45: the stomp strip carries three lines now. One tap, three taps and
+    // a hold each mean something different, and that will not fit on two.
+    hint (hintStomp1, juce::String::fromUTF8 ("1 tap: A = fuzz off \xc2\xb7 B = 567 off \xc2\xb7 C = env filter off"),
           9.0f, gw::kDim);
-    hint (hintStomp2, juce::String::fromUTF8 ("Amber LED blinks the tempo \xc2\xb7 green LED = effect active"),
+    hint (hintStomp2, juce::String::fromUTF8 ("A \xc3\x97""3 = LFO 1 rate \xc2\xb7 B \xc3\x97""3 = LFO 2 rate \xc2\xb7 C \xc3\x97""4+ steps MIX 0/25/50/75/100"),
+          9.0f, gw::kDim2);
+    hint (hintStomp3, juce::String::fromUTF8 ("HOLD C = bypass \xc2\xb7 HOLD A+B = save preset (ring CW) \xc2\xb7 HOLD B+C = recall (ring CCW)"),
           9.0f, gw::kDim2);
 
     // ---- output gate + internal switches (all under the cover) ---------------
@@ -317,12 +330,12 @@ GlitchwaveAudioProcessorEditor::GlitchwaveAudioProcessorEditor (GlitchwaveAudioP
     setScaleFactor (appliedScale);
 }
 
-GlitchwaveAudioProcessorEditor::~GlitchwaveAudioProcessorEditor()
+WtfAudioProcessorEditor::~WtfAudioProcessorEditor()
 {
     setLookAndFeel (nullptr);
 }
 
-void GlitchwaveAudioProcessorEditor::setupKnob (juce::Slider& s, juce::Label& l,
+void WtfAudioProcessorEditor::setupKnob (juce::Slider& s, juce::Label& l,
                                                 const juce::String& name, bool big,
                                                 juce::Colour ring)
 {
@@ -346,7 +359,7 @@ void GlitchwaveAudioProcessorEditor::setupKnob (juce::Slider& s, juce::Label& l,
 // ---------------------------------------------------------------------------
 // v0.24 layer machinery — UNCHANGED from v0.32
 // ---------------------------------------------------------------------------
-bool GlitchwaveAudioProcessorEditor::tapStompDown() const
+bool WtfAudioProcessorEditor::tapStompDown() const
 {
     // v0.37: keyboard emulation (INS/DEL) is gone -- it collided with
     // Fender Studio Pro's own Insert/Delete shortcuts and stalled the GUI
@@ -355,18 +368,29 @@ bool GlitchwaveAudioProcessorEditor::tapStompDown() const
     return tapStompBtn.isDown() || tapStompBtn.isLatched();
 }
 
-bool GlitchwaveAudioProcessorEditor::bypassStompDown() const
+bool WtfAudioProcessorEditor::bypassStompDown() const
 {
     return bypassBtn.isDown() || bypassBtn.isLatched();
 }
 
-int GlitchwaveAudioProcessorEditor::computeLayer() const
+bool WtfAudioProcessorEditor::stompCDown() const
 {
-    const bool t = tapStompDown(), b = bypassStompDown();
-    return (t && b) ? 3 : b ? 2 : t ? 1 : 0;
+    return stompCBtn.isDown() || stompCBtn.isLatched();
 }
 
-void GlitchwaveAudioProcessorEditor::updateKnobModes()
+// v0.45: A alone is Layer X, B alone is Layer Y, all three together is Layer Z.
+// A+B and B+C are preset gestures, not layers, so they read as Default and the
+// knobs keep doing what they were doing while you hold them.
+int WtfAudioProcessorEditor::computeLayer() const
+{
+    const bool a = tapStompDown(), b = bypassStompDown(), c = stompCDown();
+    if (a && b && c) return 3;      // Layer Z
+    if (a && ! b && ! c) return 1;  // Layer X
+    if (b && ! a && ! c) return 2;  // Layer Y
+    return 0;                       // Default
+}
+
+void WtfAudioProcessorEditor::updateKnobModes()
 {
     const int layer = computeLayer();
     if (layer == knobLayer)
@@ -387,31 +411,35 @@ void GlitchwaveAudioProcessorEditor::updateKnobModes()
 
     switch (layer)
     {
-        case 0:   // X — the printed panel
+        case 0:   // DEFAULT — the printed panel.
+                  // v0.45: the third knob is VOL here now, and MIX moved to
+                  // Layer X. Volume is the thing you reach for without thinking
+                  // about it, so it belongs on the layer you are already on.
             freqAtt     = std::make_unique<SliderAttachment> (ap, "freq",     freqKnob);
             lpfAtt      = std::make_unique<SliderAttachment> (ap, "fizz",     lpfKnob);
-            mixAtt      = std::make_unique<SliderAttachment> (ap, "dry",      mixKnob);
+            mixAtt      = std::make_unique<SliderAttachment> (ap, "vol",      mixKnob);
             lfo1RateAtt = std::make_unique<SliderAttachment> (ap, "lfo1rate", lfo1RateKnob);
             lfo2RateAtt = std::make_unique<SliderAttachment> (ap, "lfo2rate", lfo2RateKnob);
             envGainAtt  = std::make_unique<SliderAttachment> (ap, "envgain",  envGainKnob);
             break;
-        case 1:   // Y (TAP held) — Gain / Res / Vol + zone-select Shape/Shape/Mode
+        case 1:   // LAYER X (hold A) — Gain / Res / Mix + Shape/Shape/Mode
             freqAtt = std::make_unique<SliderAttachment> (ap, "dirtgain", freqKnob);
             lpfAtt  = std::make_unique<SliderAttachment> (ap, "lpfq",     lpfKnob);
-            mixAtt  = std::make_unique<SliderAttachment> (ap, "vol",      mixKnob);
+            mixAtt  = std::make_unique<SliderAttachment> (ap, "dry",      mixKnob);
             break;
-        case 2:   // Z (BYPASS held) — L1/L2 Depth, DrvRng, Target x3
+        case 2:   // LAYER Y (hold B) — L1/L2 Depth, DrvRng, Target x3
             freqAtt = std::make_unique<SliderAttachment> (ap, "lfo1depth", freqKnob);
             lpfAtt  = std::make_unique<SliderAttachment> (ap, "lfo2depth", lpfKnob);
             break;
-        case 3:   // v0.39 secret Layer A: Mix->Starve, Freq->env Threshold,
-                  // LPF->env Ratio. v0.42: Gain no longer reaches env Shape
-                  // -- that slot is dead now, like Rate 1/2. The envshape
-                  // parameter still exists for host automation; it just has
-                  // no knob on the pedal.
-            mixAtt  = std::make_unique<SliderAttachment> (ap, "starve",    mixKnob);
-            freqAtt = std::make_unique<SliderAttachment> (ap, "envthresh", freqKnob);
-            lpfAtt  = std::make_unique<SliderAttachment> (ap, "envratio",  lpfKnob);
+        case 3:   // LAYER Z (hold A+B+C). Was the secret Layer A; as of v0.45
+                  // it is published on the chart and only STARVE stays
+                  // unlabelled. Rate 1 and Rate 2 are no longer dead: they are
+                  // the Mu-Tron ATTACK and DECAY, with noon = stock.
+            mixAtt      = std::make_unique<SliderAttachment> (ap, "starve",    mixKnob);
+            freqAtt     = std::make_unique<SliderAttachment> (ap, "envthresh", freqKnob);
+            lpfAtt      = std::make_unique<SliderAttachment> (ap, "envratio",  lpfKnob);
+            lfo1RateAtt = std::make_unique<SliderAttachment> (ap, "envattack", lfo1RateKnob);
+            lfo2RateAtt = std::make_unique<SliderAttachment> (ap, "envdecay",  lfo2RateKnob);
             break;
     }
 
@@ -448,15 +476,20 @@ void GlitchwaveAudioProcessorEditor::updateKnobModes()
     knobLayer = layer;
 }
 
-void GlitchwaveAudioProcessorEditor::knobTouched()
+void WtfAudioProcessorEditor::knobTouched()
 {
     // a knob move turns the held stomp(s) into pure layer-shifts: no tempo
     // tap on the TAP stomp, no bypass toggle on the BYPASS stomp
     if (tapStompBtn.isDown()) tapStompBtn.cancelPressActions();
     if (bypassBtn.isDown())   bypassBtn.cancelPressActions();
+    if (stompCBtn.isDown())   stompCBtn.cancelPressActions();
+    // v0.45: touching a knob also kills any pending burst, so reaching for a
+    // control mid-gesture never accidentally kills a circuit.
+    for (int i = 0; i < 3; ++i) { burstLive[i] = false; burstN[i] = 0; }
+    comboFired = true;
 }
 
-void GlitchwaveAudioProcessorEditor::applyZone (juce::Slider& s, const char* paramID,
+void WtfAudioProcessorEditor::applyZone (juce::Slider& s, const char* paramID,
                                                 int zones, int& ctx, double& ctxUntil,
                                                 int ctxKind)
 {
@@ -474,7 +507,7 @@ void GlitchwaveAudioProcessorEditor::applyZone (juce::Slider& s, const char* par
     ctxUntil = nowMs() + 1500.0;
 }
 
-void GlitchwaveAudioProcessorEditor::applyComboFromMixKnob()
+void WtfAudioProcessorEditor::applyComboFromMixKnob()
 {
     envCtx      = kCtxCombo;
     envCtxUntil = nowMs() + 1500.0;
@@ -496,7 +529,7 @@ void GlitchwaveAudioProcessorEditor::applyComboFromMixKnob()
 // v0.32 tap tempo: rolling average of the last THREE presses (2 intervals);
 // 1-2 presses arm only, the 3rd (and every press after) commits.
 // ---------------------------------------------------------------------------
-void GlitchwaveAudioProcessorEditor::recordTap (bool lfo2, double pressMs)
+void WtfAudioProcessorEditor::recordTap (bool lfo2, double pressMs)
 {
     if (pressMs <= 0.0)
         return;
@@ -525,17 +558,160 @@ void GlitchwaveAudioProcessorEditor::recordTap (bool lfo2, double pressMs)
     }
 }
 
-void GlitchwaveAudioProcessorEditor::setGateOpen (bool shouldBeOpen)
+// ---------------------------------------------------------------------------
+// v0.45  THREE-STOMP GESTURE ENGINE
+//
+// The whole trick is that a single tap and the first tap of a tempo triple
+// look identical at the moment they happen. So nothing is decided on the tap
+// itself: each stomp accumulates a BURST, and the burst is judged once it has
+// been quiet for kBurstGapMs.
+//
+//   A   1 tap  -> fuzz circuit on/off        3+ taps -> LFO 1 tap tempo
+//   B   1 tap  -> 567 circuit on/off         3+ taps -> LFO 2 tap tempo
+//   C   1 tap  -> envelope filter on/off     4+ taps -> step MIX 0/25/50/75/100
+//
+// Holds are separate and continuous:
+//   hold A        Layer X          hold A+B    preset SAVE   (ring runs CW)
+//   hold B        Layer Y          hold B+C    preset RECALL (ring runs CCW)
+//   hold A+B+C    Layer Z          hold C      bypass on/off
+// ---------------------------------------------------------------------------
+void WtfAudioProcessorEditor::toggleBool (const char* paramId)
+{
+    if (auto* p = processor.apvts.getParameter (paramId))
+    {
+        p->beginChangeGesture();
+        p->setValueNotifyingHost (p->getValue() >= 0.5f ? 0.0f : 1.0f);
+        p->endChangeGesture();
+    }
+}
+
+// C's 4th tap onward walks MIX round 0 / 25 / 50 / 75 / 100 and wraps.
+void WtfAudioProcessorEditor::stepMixQuarter()
+{
+    auto* p = processor.apvts.getParameter ("dry");
+    if (p == nullptr) return;
+    const int cur  = juce::roundToInt (p->getValue() * 4.0f);   // nearest quarter
+    const int next = (cur + 1) % 5;
+    p->beginChangeGesture();
+    p->setValueNotifyingHost ((float) next * 0.25f);
+    p->endChangeGesture();
+}
+
+void WtfAudioProcessorEditor::stompTapped (int which)
+{
+    const double now = nowMs();
+    if (! burstLive[which] || now - burstLastMs[which] > kBurstGapMs)
+        burstN[which] = 0;                       // previous burst has expired
+    ++burstN[which];
+    burstLastMs[which] = now;
+    burstLive[which]   = true;
+
+    // A preset mode swallows taps: they choose the slot instead.
+    if (stompMode != StompMode::Normal)
+    {
+        pickPresetSlot (which);
+        burstLive[which] = false;
+        burstN[which]    = 0;
+        return;
+    }
+
+    // C steps MIX live from the 4th tap on; the first three are the "is this a
+    // burst at all" run-up, mirroring how A and B need three to set a tempo.
+    if (which == 2 && burstN[2] >= 4)
+        stepMixQuarter();
+}
+
+void WtfAudioProcessorEditor::enterStompMode (StompMode m)
+{
+    stompMode   = m;
+    stompModeMs = nowMs();
+}
+
+// In save mode the slot is written; in recall mode it is loaded. Either way
+// the mode ends as soon as a slot is picked.
+void WtfAudioProcessorEditor::pickPresetSlot (int slot)
+{
+    if (stompMode == StompMode::PresetSave)
+        processor.savePreset (slot);
+    else if (stompMode == StompMode::PresetRecall)
+        processor.recallPreset (slot);
+
+    if (auto* p = dynamic_cast<juce::AudioParameterChoice*> (
+                      processor.apvts.getParameter ("preset3")))
+    {
+        p->beginChangeGesture();
+        *p = juce::jlimit (0, 2, slot);
+        p->endChangeGesture();
+    }
+    stompMode = StompMode::Normal;
+}
+
+void WtfAudioProcessorEditor::applyFactoryPresetA()
+{
+    processor.loadFactoryPresetA();
+}
+
+void WtfAudioProcessorEditor::serviceStomps()
+{
+    const double now = nowMs();
+
+    // ---- 1. close out any burst that has gone quiet -------------------------
+    for (int i = 0; i < 3; ++i)
+    {
+        if (! burstLive[i] || now - burstLastMs[i] <= kBurstGapMs)
+            continue;
+        const int n = burstN[i];
+        burstLive[i] = false;
+        burstN[i]    = 0;
+        if (n != 1)
+            continue;                    // 2+ taps was a tempo / MIX gesture
+        switch (i)                       // a lone tap kills that stomp's circuit
+        {
+            case 0: toggleBool ("fuzzon");    break;
+            case 1: toggleBool ("dec567on");  break;
+            case 2: toggleBool ("envfilton"); break;
+            default: break;
+        }
+    }
+
+    // ---- 2. combos, which need a deliberate hold ---------------------------
+    const int mask = (tapStompDown()    ? 1 : 0)
+                   | (bypassStompDown() ? 2 : 0)
+                   | (stompCDown()      ? 4 : 0);
+    if (mask != comboMask)
+    {
+        comboMask    = mask;
+        comboSinceMs = now;
+        comboFired   = false;
+    }
+    else if (! comboFired && mask != 0 && now - comboSinceMs >= kComboHoldMs)
+    {
+        comboFired = true;
+        switch (mask)
+        {
+            case 3:  enterStompMode (StompMode::PresetSave);   break;  // A+B
+            case 6:  enterStompMode (StompMode::PresetRecall); break;  // B+C
+            case 4:  toggleBool ("bypass");                    break;  // C alone
+            default: break;   // 1, 2 and 7 are layers, handled continuously
+        }
+    }
+
+    // ---- 3. a preset mode gives up after 6 s rather than trapping you -------
+    if (stompMode != StompMode::Normal && now - stompModeMs > 6000.0)
+        stompMode = StompMode::Normal;
+}
+
+void WtfAudioProcessorEditor::setGateOpen (bool shouldBeOpen)
 {
     gateOpen = shouldBeOpen;
     coverDim.setVisible (gateOpen);
     cover.setVisible (gateOpen);
 }
 
-void GlitchwaveAudioProcessorEditor::applyHints()
+void WtfAudioProcessorEditor::applyHints()
 {
     for (auto* l : { &hintChips, &hintLayers, &hintLfo1, &hintLfo2,
-                     &hintStomp1, &hintStomp2 })
+                     &hintStomp1, &hintStomp2, &hintStomp3 })
         l->setVisible (showHints);
     cover.hintsOn = showHints;
     cover.repaint();
@@ -544,7 +720,7 @@ void GlitchwaveAudioProcessorEditor::applyHints()
 // ---------------------------------------------------------------------------
 // the live readouts: captions, value lines, rulers + names, per active layer
 // ---------------------------------------------------------------------------
-void GlitchwaveAudioProcessorEditor::refreshReadouts (int layer)
+void WtfAudioProcessorEditor::refreshReadouts (int layer)
 {
     auto& apvts = processor.apvts;
     auto pTxt = [&apvts] (const char* id) -> juce::String
@@ -562,14 +738,19 @@ void GlitchwaveAudioProcessorEditor::refreshReadouts (int layer)
 
     // ---- captions ----------------------------------------------------------
     struct Cap { const char* t[6]; };
+    // v0.45: MIX and VOL traded places on Default / Layer X, and Layer Z is
+    // published now, so it gets real captions instead of dashes. The only
+    // thing still hiding is STARVE, which keeps its red "?".
     static const Cap caps[4] = {
-        {{ "FREQ",     "LPF",      "MIX",     "RATE",  "RATE",  "GAIN" }},    // X
-        {{ "GAIN",     "RES",      "VOL",     "SHAPE", "SHAPE", "MODE" }},    // Y
-        {{ "L1 DEPTH", "L2 DEPTH", "DRV/RNG", "TARGET","TARGET","TARGET" }},  // Z
-        {{ kDash,      kDash,      "?",       kDash,   kDash,   kDash }},     // A
+        {{ "FREQ",     "LPF",      "VOL",     "RATE",  "RATE",  "GAIN" }},    // Default
+        {{ "GAIN",     "RES",      "MIX",     "SHAPE", "SHAPE", "MODE" }},    // X
+        {{ "L1 DEPTH", "L2 DEPTH", "DRV/RNG", "TARGET","TARGET","TARGET" }},  // Y
+        {{ "ENV THR",  "ENV RATIO","?",       "ATTACK","DECAY", kDash }},     // Z
     };
-    static const juce::Colour bigCols[4]   = { gw::kText, gw::kCyan, gw::kYellow, gw::kDead };
-    static const juce::Colour smallCols[4] = { gw::kDim,  gw::kCyan, gw::kYellow, gw::kDead };
+    // v0.45: Layer Z reads green now, matching its row on the chart, instead
+    // of the dead grey it wore while it was a secret.
+    static const juce::Colour bigCols[4]   = { gw::kText, gw::kCyan, gw::kYellow, gw::kGreen };
+    static const juce::Colour smallCols[4] = { gw::kDim,  gw::kCyan, gw::kYellow, gw::kGreen };
     juce::Label* ls[6] = { &freqLabel, &lpfLabel, &mixLabel,
                            &lfo1RateLabel, &lfo2RateLabel, &envGainLabel };
     for (int i = 0; i < 6; ++i)
@@ -580,14 +761,10 @@ void GlitchwaveAudioProcessorEditor::refreshReadouts (int layer)
             c = gw::kRed;                       // the secret "?" burns red
         ls[i]->setColour (juce::Label::textColourId, c);
     }
-    // v0.39: with Hints on, Layer A's row gets three cryptic-but-readable
-    // titles instead of dashes/"?" -- Freq/LPF/Mix only, Gain stays dark.
+    // v0.45: Layer Z is public now, so the captions above are already real.
+    // Only STARVE is still coy, and Hints spells that one out.
     if (layer == 3 && showHints)
-    {
-        ls[0]->setText ("ET?", juce::dontSendNotification);   // Freq -> env Threshold
-        ls[1]->setText ("ER?", juce::dontSendNotification);   // LPF  -> env Ratio
-        ls[2]->setText ("SV?", juce::dontSendNotification);   // Mix  -> Starve Voltage
-    }
+        ls[2]->setText ("SV?", juce::dontSendNotification);   // Mix -> Starve Voltage
 
     // ---- value lines -------------------------------------------------------
     juce::String text[6];
@@ -595,11 +772,11 @@ void GlitchwaveAudioProcessorEditor::refreshReadouts (int layer)
     switch (layer)
     {
         case 0:
-            text[0] = pTxt ("freq");     text[1] = pTxt ("fizz");     text[2] = pTxt ("dry");
+            text[0] = pTxt ("freq");     text[1] = pTxt ("fizz");     text[2] = pTxt ("vol");
             text[3] = pTxt ("lfo1rate"); text[4] = pTxt ("lfo2rate"); text[5] = pTxt ("envgain");
             break;
         case 1:
-            text[0] = pTxt ("dirtgain"); text[1] = pTxt ("lpfq");     text[2] = pTxt ("vol");
+            text[0] = pTxt ("dirtgain"); text[1] = pTxt ("lpfq");     text[2] = pTxt ("dry");
             text[3] = lfo1ShapeParam != nullptr ? lfo1ShapeParam->getCurrentChoiceName() : juce::String();
             col[3]  = gw::kHues[shape1 % 8];
             text[4] = lfo2ShapeParam != nullptr ? lfo2ShapeParam->getCurrentChoiceName() : juce::String();
@@ -627,11 +804,14 @@ void GlitchwaveAudioProcessorEditor::refreshReadouts (int layer)
         {
             for (int i = 0; i < 6; ++i) { text[i] = juce::String::fromUTF8 (kDash); col[i] = gw::kGrey; }
 
-            // v0.39: FREQ = env Threshold, LPF = env Ratio.
-            // Bare numbers, no captions -- same secret treatment as Starve.
-            // v0.42: GAIN no longer shows env Shape; that slot stays dashed.
+            // v0.45 Layer Z: FREQ = env Threshold, LPF = env Ratio, and the
+            // two rate knobs are the Mu-Tron ATTACK and DECAY. Noon on those
+            // reads 1.55 ms and 159 ms, the stock Musitronics values.
+            // GAIN stays dashed; STARVE stays on the red "?".
             text[0] = pTxt ("envthresh"); col[0] = gw::kText;
             text[1] = pTxt ("envratio");  col[1] = gw::kText;
+            text[3] = pTxt ("envattack"); col[3] = gw::kGreen;
+            text[4] = pTxt ("envdecay");  col[4] = gw::kGreen;
 
             // the "?" reads out as the sagging rail: a straight line from
             // 9 V down to the 1 V floor. v0.41 / rev 7: one adapter voltage,
@@ -705,7 +885,7 @@ void GlitchwaveAudioProcessorEditor::refreshReadouts (int layer)
                        juce::dontSendNotification);
 }
 
-void GlitchwaveAudioProcessorEditor::timerCallback()
+void WtfAudioProcessorEditor::timerCallback()
 {
     ++frame;
 
@@ -724,6 +904,11 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     meterIn.fall  (fallPerFrame);
     meterOut.fall (fallPerFrame);
 
+    // v0.45: burst timeouts, combo holds and the preset-mode timeout all get
+    // serviced here, before the layer is read, so a combo that just fired is
+    // reflected on this same frame.
+    serviceStomps();
+
     // keep the layer honest every frame (keys can change any time)
     updateKnobModes();
     const int layer = knobLayer;
@@ -731,7 +916,27 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     // stomp held-indicators
     tapStompBtn.setIndicated (tapStompDown());
     bypassBtn.setIndicated (bypassStompDown());
+    stompCBtn.setIndicated (stompCDown());
     chips.setLayer (layer);
+
+    // v0.45 preset mode: the six LEDs become a ring. Clockwise while saving,
+    // counter-clockwise while recalling, which is the only cue you get and the
+    // only one you need once you have done it twice.
+    if (stompMode != StompMode::Normal)
+    {
+        const bool  cw   = (stompMode == StompMode::PresetSave);
+        const double spin = (nowMs() - stompModeMs) / 130.0;   // one step per 130 ms
+        const int    n    = 6;
+        const int    head = ((int) spin) % n;
+        LedIndicator* ring[6] = { &lfo1Led, &lfo2Led, &envLed,
+                                  &tapLed,  &bypassLed, &stompCLed };
+        for (int i = 0; i < n; ++i)
+        {
+            const int idx = cw ? i : (n - 1 - i);
+            const int d   = (i - head + n) % n;
+            ring[idx]->setLevel (d == 0 ? 1.0f : (d == 1 ? 0.45f : 0.06f));
+        }
+    }
 
     // v0.32 tempo LED: blinks at the tapped LFO1 rate, full flash on a press
     const double t = nowMs();
@@ -932,7 +1137,7 @@ void GlitchwaveAudioProcessorEditor::timerCallback()
     }
 }
 
-void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
+void WtfAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // the baked mosaic face (dark veil + scanlines already in the art)
     g.drawImage (bgImage, { 0.0f, 0.0f, 1060.0f, 640.0f });
@@ -983,23 +1188,27 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.setFont (gw::barlow (10.0f, true, 0.18f));
     g.drawText ("KNOB LAYERS", 510, 106, 200, 12, juce::Justification::centredLeft);
     {
+        // v0.45: four rows now. Layer Z came out of hiding -- only STARVE is
+        // still unlabelled, which is why its cell reads "?".
         const char* head[6] = { "FREQ", "LPF", "MIX", "RATE 1", "RATE 2", "GAIN" };
         struct Row { const char* label; const char* c[6]; };
-        static const Row rows[3] = {
-            { "X \xc2\xb7 NOTHING",   { "Freq", "LPF", "Mix", "Rate", "Rate", "Gain" } },
-            { "Y \xc2\xb7 TAP HOLD",  { "Gain", "Res", "Vol", "Shape", "Shape", "Mode" } },
-            { "Z \xc2\xb7 BYP HOLD",  { "L1 Depth", "L2 Depth", "Drv/Rng", "Target", "Target", "Target" } },
+        static const Row rows[4] = {
+            { "DEFAULT",              { "Freq", "LPF", "Vol", "Rate", "Rate", "Gain" } },
+            { "X \xc2\xb7 HOLD A",    { "Gain", "Res", "Mix", "Shape", "Shape", "Mode" } },
+            { "Y \xc2\xb7 HOLD B",    { "L1 Depth", "L2 Depth", "Drv/Rng", "Target", "Target", "Target" } },
+            { "Z \xc2\xb7 HOLD ABC",  { "Env Thr", "Env Ratio", "?", "Attack", "Decay", "\xe2\x80\x93" } },
         };
-        const juce::Colour rowCols[3] = { gw::kText, gw::kCyan, gw::kYellow };
-        const juce::Colour labCols[3] = { gw::kDim,
+        const juce::Colour rowCols[4] = { gw::kText, gw::kCyan, gw::kYellow, gw::kGreen };
+        const juce::Colour labCols[4] = { gw::kDim,
                                           gw::kCyan.withAlpha (0.72f),
-                                          gw::kYellow.withAlpha (0.72f) };
+                                          gw::kYellow.withAlpha (0.72f),
+                                          gw::kGreen.withAlpha (0.72f) };
         auto cellX = [] (int i) { return 510 + 104 + i * 58; };
         g.setFont (gw::mono (9.5f, 400, 0.04f));
         g.setColour (gw::kDim2);
         for (int i = 0; i < 6; ++i)
             g.drawText (head[i], cellX (i), 126, 56, 16, juce::Justification::centredLeft);
-        for (int rI = 0; rI < 3; ++rI)
+        for (int rI = 0; rI < 4; ++rI)
         {
             const int y = 142 + rI * 19;
             g.setColour (gw::kRowLine);
@@ -1065,8 +1274,11 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     panel (g, { 12, 573, 1036, 56 }, juce::Colours::transparentBlack);
     g.setColour (gw::kText);
     g.setFont (gw::barlow (12.0f, true, 0.16f));
-    g.drawText ("TAP",    110, 594, 60, 14, juce::Justification::centredLeft);
-    g.drawText ("BYPASS", 256, 594, 80, 14, juce::Justification::centredLeft);
+    // v0.45: three stomps, named for what they are rather than what they do,
+    // because each one does three different things depending on the gesture.
+    g.drawText ("A", 106, 594, 24, 14, juce::Justification::centredLeft);
+    g.drawText ("B", 202, 594, 24, 14, juce::Justification::centredLeft);
+    g.drawText ("C", 298, 594, 24, 14, juce::Justification::centredLeft);
 
     g.setColour (gw::kGrey);
     g.setFont (gw::mono (6.4f, 400, 0.08f));
@@ -1077,7 +1289,7 @@ void GlitchwaveAudioProcessorEditor::paint (juce::Graphics& g)
     g.setOpacity (1.0f);
 }
 
-void GlitchwaveAudioProcessorEditor::resized()
+void WtfAudioProcessorEditor::resized()
 {
     // header
     chips.setBounds (184, 22, 162, 26);
@@ -1156,12 +1368,19 @@ void GlitchwaveAudioProcessorEditor::resized()
     }
 
     // ---- footswitch strip -----------------------------------------------------
+    // v0.45: three stomps across the same strip, evenly spaced, with each
+    // one's LED to its left. A / B / C left to right.
     tapLed.setBounds      (34, 593, 16, 16);
     tapStompBtn.setBounds (62, 582, 38, 38);
-    bypassBtn.setBounds   (182, 582, 38, 38);
-    bypassLed.setBounds   (230, 593, 16, 16);
-    hintStomp1.setBounds  (360, 586, 480, 11);
-    hintStomp2.setBounds  (360, 601, 480, 11);
+    bypassLed.setBounds   (130, 593, 16, 16);
+    bypassBtn.setBounds   (158, 582, 38, 38);
+    stompCLed.setBounds   (226, 593, 16, 16);
+    stompCBtn.setBounds   (254, 582, 38, 38);
+    // v0.45: three lines on the stomp strip instead of two, tightened up so
+    // they still clear the SETTINGS button.
+    hintStomp1.setBounds  (348, 581, 496, 11);
+    hintStomp2.setBounds  (348, 594, 496, 11);
+    hintStomp3.setBounds  (348, 607, 496, 11);
 
     // v0.37: SETTINGS button -- right of the stomps' hint text, left of the
     // small logo (drawn at x958 in paint()); only "2nd row" room this strip
