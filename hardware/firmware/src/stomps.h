@@ -1,9 +1,20 @@
 // ============================================================================
 //  stomps.h — two footswitches, five gestures.
 //
+//  v0.51: the press LENGTH decides what a press was, matching the plugin:
+//
+//      under stomp_medium_ms (400 ms)          a flick   -> tap
+//      400 ms .. stomp_hold_ms (1.2 s)                   -> MEDIUM press
+//      past stomp_hold_ms                                -> hold
+//
+//  Taps and mediums both fire on RELEASE, since only then is the duration
+//  known; the hold fires the moment it is crossed so you can lift your foot.
+//
 //    STOMP1 tap        -> bypass toggle (10 ms equal-power crossfade)
+//    STOMP1 medium     -> (free; the plugin uses it for the fuzz kill)
 //    STOMP1 hold       -> (reserved; currently reports as a hold event)
 //    STOMP2 taps       -> tap tempo, sets the LFO rate
+//    STOMP2 medium     -> (free; the plugin uses it for the 567 kill)
 //    STOMP2 hold       -> cycle the SVF mode LP -> BP -> HP -> Notch
 //    BOTH held         -> STARVE: sag the Bazz Fuss rail toward the 5 V floor
 //                         while held, recover on release
@@ -20,9 +31,11 @@ extern "C" {
 #endif
 
 typedef struct GwStompEvents {
-    bool s1_tap;        // one clean short press of STOMP1
+    bool s1_tap;        // one clean short press of STOMP1 (< stomp_medium_ms)
+    bool s1_medium;     // v0.51: held past medium, released before hold
     bool s1_hold;       // STOMP1 crossed the hold threshold
     bool s2_tap;
+    bool s2_medium;     // v0.51
     bool s2_hold;
     bool both_start;    // both went down together
     bool both_end;      // ...and have now been released

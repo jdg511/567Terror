@@ -20,6 +20,7 @@ typedef struct {
     bool  state;        // debounced
     bool  prev;
     float held_sec;
+    float last_len_sec;  // v0.51: length of the press that just ended
     bool  hold_fired;
     bool  consumed;     // this press already became part of a both-gesture
 } Sw;
@@ -41,8 +42,9 @@ void gw_stomps_init (void)
         s_sw[i].integ      = 0.0f;
         s_sw[i].state      = false;
         s_sw[i].prev       = false;
-        s_sw[i].held_sec   = 0.0f;
-        s_sw[i].hold_fired = false;
+        s_sw[i].held_sec     = 0.0f;
+        s_sw[i].last_len_sec = 0.0f;
+        s_sw[i].hold_fired   = false;
         s_sw[i].consumed   = false;
     }
     s_both_active = false;
@@ -66,8 +68,15 @@ static void debounce (Sw* sw, float dt)
     if (! sw->state && sw->integ > 0.75f) sw->state = true;
     if (  sw->state && sw->integ < 0.25f) sw->state = false;
 
-    if (sw->state) sw->held_sec += dt;
-    else         { sw->held_sec = 0.0f; sw->hold_fired = false; }
+    if (sw->state)
+        sw->held_sec += dt;
+    else
+    {
+        // remember how long the press that just ended lasted, so the release
+        // branch can classify it (v0.51)
+        if (sw->prev) sw->last_len_sec = sw->held_sec;
+        sw->held_sec = 0.0f;
+    }
 }
 
 GwStompEvents gw_stomps_tick (float dt)
@@ -77,8 +86,11 @@ GwStompEvents gw_stomps_tick (float dt)
     debounce (&s_sw[0], dt);
     debounce (&s_sw[1], dt);
 
-    const float hold_sec = (float) gwt.stomp_hold_ms * 0.001f;
-    const float both_sec = (float) gwt.stomp_both_ms * 0.001f;
+    // v0.51: three outcomes now, not two. Kept in the same units and read
+    // fresh each tick so the console can retune them live.
+    const float medium_sec = (float) gwt.stomp_medium_ms * 0.001f;
+    const float hold_sec   = (float) gwt.stomp_hold_ms   * 0.001f;
+    const float both_sec   = (float) gwt.stomp_both_ms   * 0.001f;
 
     // ---- both-held gesture wins over everything else ----------------------
     if (s_sw[0].state && s_sw[1].state)
@@ -121,13 +133,26 @@ GwStompEvents gw_stomps_tick (float dt)
             }
         }
 
-        // tap fires on release, only if it never became a hold
+        // v0.51: the release decides between a tap and a medium press, since
+        // only on release is the duration known. A press that already became
+        // a hold fires nothing here: the hold did its job while the foot was
+        // still down. That ordering is what stops a hold from also killing a
+        // circuit on the way past, which is exactly the trap the plugin hit.
         if (sw->prev && ! sw->state)
         {
-            const bool was_short = ! sw->hold_fired;
-            if (was_short && ! suppress && ! sw->consumed)
+            // held_sec is zeroed by debounce() the moment state drops, so the
+            // length of the press that just ended is the PREVIOUS accumulation.
+            const float dur = sw->last_len_sec;
+            if (! sw->hold_fired && ! suppress && ! sw->consumed)
             {
-                if (i == 0) ev.s1_tap = true; else ev.s2_tap = true;
+                if (dur < medium_sec)
+                {
+                    if (i == 0) ev.s1_tap = true; else ev.s2_tap = true;
+                }
+                else
+                {
+                    if (i == 0) ev.s1_medium = true; else ev.s2_medium = true;
+                }
             }
             sw->consumed   = false;
             sw->hold_fired = false;

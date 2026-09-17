@@ -119,7 +119,8 @@ BOL(bypass_boot_engaged,    1,                   "1 = effect ON at power-up, 0 =
                                                                                                        \
 /* ==== STOMP FEEL ======================================================== */                          \
 FLT(stomp_debounce_ms,   5.0f,    0.5f,   50.0f, "contact-bounce integrator per switch")                \
-INT(stomp_hold_ms,        400,      80,   2000, "press shorter than this = tap, longer = hold")         \
+INT(stomp_medium_ms,      400,      80,   2000, "shorter than this = tap; longer = circuit kill")      \
+INT(stomp_hold_ms,       1200,     200,   4000, "longer than this = hold (layers / bypass / presets)") \
 INT(stomp_both_ms,         60,      10,    500, "window for 'both pressed together'")                   \
 INT(tap_timeout_ms,      3000,     500,  10000, "forget the tap sequence after this long")              \
 INT(tap_min_ms,            80,      20,   1000, "fastest accepted tap interval")                        \
