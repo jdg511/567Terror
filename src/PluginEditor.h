@@ -581,11 +581,17 @@ public:
         juce::String gate;
         bool jfet = false, hints = true;
         bool c41 = false, c42 = false;          // v0.39 LM567 filter pads
+        // v0.49: VDIRT is the rail STARVE actually sags. It belongs next to
+        // V567 on this line: those two ARE the pedal's supply rails, and
+        // STARVE is otherwise invisible unless you are sitting on Layer Z.
+        juce::String vdirt { "9.0 V" };
+        bool starved = false;
 
         bool operator!= (const Summary& o) const
         {
             return gate != o.gate || jfet != o.jfet || hints != o.hints
-                || c41 != o.c41 || c42 != o.c42;
+                || c41 != o.c41 || c42 != o.c42
+                || vdirt != o.vdirt || starved != o.starved;
         }
     };
 
@@ -657,6 +663,8 @@ public:
             put (summary.c41 ? "IN" : "OUT", summary.c41 ? gw::kGreen : gw::kDim2);
             put ("   C42 ", gw::kDim);
             put (summary.c42 ? "IN" : "OUT", summary.c42 ? gw::kGreen : gw::kDim2);
+            put ("   VDIRT ", gw::kDim);
+            put (summary.vdirt, summary.starved ? gw::kYellow : gw::kText);
             put ("   V567 ", gw::kDim);
             put ("7.5 V", gw::kText);
             put ("   HINTS ", gw::kDim);
@@ -1796,6 +1804,9 @@ private:
     juce::AudioParameterChoice* lpfModeParam    = nullptr;
     juce::AudioParameterChoice* envDriveParam   = nullptr;
     juce::AudioParameterChoice* lpfRangeParam   = nullptr;
+    // v0.49: LPF and RES belong to the ENVELOPE block, so their enable state
+    // follows the envelope filter circuit, never the fuzz or the 567.
+    juce::AudioParameterBool*   envFiltOnParam  = nullptr;
     LedIndicator lfo1Led, lfo2Led, envLed;
 
     // transient LED display contexts (linger 1.5 s after a change)

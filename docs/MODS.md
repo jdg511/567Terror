@@ -1,9 +1,59 @@
-# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.48)
+# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.49)
 
 > Renamed at v0.45. "Glitchwave 567" turned out to be an existing product, so
 > the internal name is now **WTF**, which the product name supplies for free:
 > **W**here **T**he **F**uzz Meets The Funk. Entries below v0.45 still say
 > Glitchwave; that is history, not a mistake.
+
+## v0.49 -- Starve is 9 V in Preset A, LPF and RES belong to the envelope
+
+### Preset A no longer boots on a half-dead battery
+
+"Every knob at noon" was being applied to STARVE as well, and STARVE is the
+one control whose noon is not a neutral value: it is a brown-out knob, 0 % is
+a healthy rail and 100 % sags it to 1 V. So the factory preset was starting
+the pedal at roughly **5 V**. Preset A now sets STARVE to 0, i.e. the full
+**9 V**.
+
+### STARVE reads in volts
+
+Was a percentage, which told you how far the knob had turned. It now reads
+the rail itself: **9.0 V** at one end down to **1.0 V** fully starved
+(`9 - 8v`, the same linear sag the DSP models). Rev 7 is a single 9 V supply,
+so that number is the actual VDIRT the fuzz is living on.
+
+### VDIRT added to the INTERNAL line
+
+The dirt rail now sits next to V567 on the always-visible strip:
+
+    GATE -48 dB . 1.9 s . 10.6889 s  |  JFET OUT  C41 OUT  C42 OUT
+    VDIRT 9.0 V   V567 7.5 V   HINTS ON
+
+It turns yellow once it sags. Those two are the pedal's supply rails, and
+STARVE was otherwise invisible unless you were sitting on Layer Z holding
+three stomps down.
+
+### LPF and RES are part of the ENVELOPE block, not the 567
+
+They now grey out when, and only when, the envelope block goes away, by
+either of its two routes: stomp C's double tap killing the Env Filter
+Circuit, or the Filter MODE selector on Off. The panel used to read the MODE
+selector alone, so killing the circuit with stomp C left LPF and RES looking
+live while they did nothing.
+
+Killing the fuzz (stomp A) or the 567 (stomp B) does not touch them. That was
+already true in the DSP and stays true: the two branches are parallel off the
+same clean buffer, MIX crossfades them, and the envelope filter sits after
+that mix, so it keeps sweeping whatever the surviving branch feeds it.
+
+> **Verified:** Preset A's 9 V, on a factory boot, reading VDIRT 9.0 V on the
+> internal line (docs/ui/v049_vdirt.png). **Not verified in the running
+> plugin:** the LPF/RES grey-out. Synthetic mouse input would not reach the
+> stomp buttons in this session, so the gesture could not be driven from
+> outside. The change is a three-line edit to one enable expression and is
+> correct by inspection, but it wants a foot on the switch: double-tap C and
+> watch LPF dim.
+
 
 ## v0.48 -- the attack/decay knobs actually move now
 

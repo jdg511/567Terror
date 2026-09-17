@@ -201,6 +201,12 @@ void WtfAudioProcessor::loadFactoryPresetA()
             target = 0.20f;                             // 20 %
         else if (id == "lfo2rate")
             target = rp->convertTo0to1 (0.5f);          // 0.5 Hz
+        // v0.49: STARVE is the one knob whose noon is NOT a neutral value.
+        // It is a brown-out control: 0 % leaves the rail at the full 9 V and
+        // 100 % sags it to 1 V, so "every knob at noon" was booting the
+        // factory preset on a half-dead battery. Preset A is a healthy pedal.
+        else if (id == "starve")
+            target = 0.0f;                              // 9.0 V, no sag
         else if (dynamic_cast<juce::AudioParameterFloat*> (p) != nullptr)
             target = 0.5f;                              // the 50% rule: noon
         else
@@ -475,7 +481,13 @@ WtfAudioProcessor::createParameterLayout()
         Att().withStringFromValueFunction ([] (float v, int)
             {
                 // secret: rail sags LINEARLY from the supply down to 1 V (v0.39)
-                return juce::String (juce::roundToInt (v * 100.0f)) + " %";
+                // v0.49: read it out in VOLTS. Rev 7 is a single 9 V rail, so
+                // the number on the panel is the actual VDIRT the fuzz is
+                // running on: 9.0 V at 0 %, 1.0 V fully starved. "50 %" told
+                // you how far the knob had turned; "5.0 V" tells you what the
+                // circuit is living on, which is the thing you are listening
+                // for.
+                return juce::String (9.0f - 8.0f * v, 1) + " V";
             })));
 
     return layout;

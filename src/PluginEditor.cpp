@@ -154,6 +154,7 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
     lpfModeParam    = choice ("lpfmode3");
     envDriveParam   = choice ("envdrive");
     lpfRangeParam   = choice ("lpfrange");
+    envFiltOnParam  = dynamic_cast<juce::AudioParameterBool*> (apvts.getParameter ("envfilton"));
     addAndMakeVisible (lfo1Led);
     addAndMakeVisible (lfo2Led);
     addAndMakeVisible (envLed);
@@ -1026,7 +1027,19 @@ void WtfAudioProcessorEditor::timerCallback()
         tapLed.setLevel (flash ? 1.0f : (phase < 0.5 ? 0.7f : 0.05f));
     }
 
-    const bool filterOn = lpfModeParam != nullptr && lpfModeParam->getIndex() > 0;
+    // v0.49: LPF and RES are part of the ENVELOPE FOLLOWER + FILTER block,
+    // not the 567. So the only thing that greys them out is the envelope
+    // block itself going away, by either of its two routes: stomp C's double
+    // tap killing the Env Filter Circuit, or the Filter MODE selector sitting
+    // on Off. Killing the fuzz (stomp A) or the 567 (stomp B) leaves the
+    // filter running on whatever the other branch feeds it, so it leaves
+    // these knobs alone. The processor already routes both routes through one
+    // flag; this mirrors that flag on the panel instead of reading the MODE
+    // selector alone, which is why killing the circuit used to leave LPF and
+    // RES looking live while they did nothing.
+    const bool envCircuitOn = envFiltOnParam == nullptr || envFiltOnParam->get();
+    const bool filterOn = envCircuitOn
+                       && lpfModeParam != nullptr && lpfModeParam->getIndex() > 0;
 
     // knob enables per layer. The env-gain knob must stay alive in Y even
     // with the filter Off — it's how the Mode gets turned back on.
@@ -1211,6 +1224,13 @@ void WtfAudioProcessorEditor::timerCallback()
         s.jfet   = onOf ("jfeton");
         s.c41    = onOf ("c41cap");
         s.c42    = onOf ("c42cap");
+        // v0.49: the starved dirt rail, straight off the parameter so it reads
+        // the same "9.0 V" the Layer Z knob does. Yellow once it sags.
+        if (auto* sp = processor.apvts.getParameter ("starve"))
+        {
+            s.vdirt   = sp->getCurrentValueAsText();
+            s.starved = sp->getValue() > 0.005f;
+        }
         s.hints  = showHints;
         strip.setSummary (s);
     }
