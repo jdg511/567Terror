@@ -257,15 +257,21 @@ private:
 // v0.50 STOMP GESTURE TIMING. One press decides for itself what it was, by
 // how long it lasted:
 //
-//       0 .. 333 ms    a flick         tap tempo / MIX steps
-//     333 ms .. 3 s    a real press    kill that stomp's circuit
-//          past 3 s    a hold          layers, bypass, preset combos
+//       0 .. 400 ms    a flick         tap tempo / MIX steps
+//   400 ms .. 1.2 s    a real press    kill that stomp's circuit
+//        past 1.2 s    a hold          layers, bypass, preset combos
 //
 // No window to wait out and no tap counting, so the pedal cannot guess
 // wrong. Shared by the button, which classifies the press, and the editor,
 // which acts on what comes out.
-static constexpr double kStompMediumMs = 333.0;    // past this, it is a kill
-static constexpr double kStompHoldMs   = 3000.0;   // past this, it is a hold
+// v0.51: the floor went 333 -> 400 ms, because a boot lingering on a soft
+// switch can sit at 300 ms without meaning to, and the hold went 3 s -> 1.2 s,
+// because three seconds of standing on a switch is an age when you are
+// playing. 400 ms still clears a tempo tap (80..200 ms on a real switch) with
+// room to spare, and 1.2 s is three times the kill floor, so the two cannot
+// be confused by any foot.
+static constexpr double kStompMediumMs = 400.0;    // past this, it is a kill
+static constexpr double kStompHoldMs   = 1200.0;   // past this, it is a hold
 
 class TapHoldButton : public juce::Component, private juce::Timer
 {
@@ -395,8 +401,8 @@ public:
         g.drawEllipse (btn, held ? 2.5f : 1.5f);
 
         // the three seconds, drawn as an arc filling clockwise from the top.
-        // It is the only thing that makes a 3 s hold bearable: you can see
-        // how much longer to stand there.
+        // It is what makes standing on a switch bearable: you can see how
+        // much longer to hold.
         if (held && ! holdTaken && holdProgress > 0.02f)
         {
             const float rr = btn.getWidth() * 0.5f + 4.0f;
@@ -1895,11 +1901,14 @@ private:
     // you get a correspondingly slow window. That self-scaling window is the
     // whole idea -- a fixed timeout either feels sluggish or steals taps.
     //
-    // A HOLD is three seconds, after which you can let go. Right-clicking a
+    // A HOLD is 1.2 seconds, after which you can let go. Right-clicking a
     // stomp latches it, and a latch counts as an instantly-satisfied hold, so
     // in the sim you right-click your way to a combo instead of trying to pin
     // three switches with one mouse.
-    static constexpr double kHoldMs      = kStompHoldMs;   // a real hold is 3 s
+    static constexpr double kHoldMs      = kStompHoldMs;   // a real hold is 1.2 s
+    // Deliberately still 1.2 s, i.e. a whole hold-length, and it restarts
+    // every time the mask changes. That is the window you have to land the
+    // third switch before A+B commits to preset-save instead of Layer Z.
     static constexpr double kMaskSettle  = 1200.0;  // let the combo finish forming
     static constexpr double kTapWinMin   = 220.0;   // floor on the derived window
     static constexpr double kTapWinMax   = 1400.0;  // ceiling on it

@@ -50,8 +50,8 @@ jobs:
         run: |
           $out = "package/Glitchwave567-Windows"
           New-Item -ItemType Directory -Force -Path $out | Out-Null
-          Copy-Item "build/Glitchwave567_artefacts/Release/VST3/*.vst3" -Destination "$out/" -Recurse
-          Copy-Item "build/Glitchwave567_artefacts/Release/Standalone/*.exe" -Destination "$out/"
+          Copy-Item "build/Wtf567_artefacts/Release/VST3/*.vst3" -Destination "$out/" -Recurse
+          Copy-Item "build/Wtf567_artefacts/Release/Standalone/*.exe" -Destination "$out/"
           Compress-Archive -Path "$out/*" -DestinationPath "Glitchwave567-Windows.zip"
 
       - name: Package artefacts (Linux)
@@ -59,8 +59,8 @@ jobs:
         run: |
           out="package/Glitchwave567-Linux"
           mkdir -p "$out"
-          cp -r build/Glitchwave567_artefacts/Release/VST3/*.vst3 "$out/"
-          cp "build/Glitchwave567_artefacts/Release/Standalone/Where The Fuzz Meets The Funk" "$out/"
+          cp -r build/Wtf567_artefacts/Release/VST3/*.vst3 "$out/"
+          cp "build/Wtf567_artefacts/Release/Standalone/Where The Fuzz Meets The Funk" "$out/"
           cd package && zip -r "../Glitchwave567-Linux.zip" "Glitchwave567-Linux"
 
       - name: Package artefacts (macOS)
@@ -68,9 +68,9 @@ jobs:
         run: |
           out="package/Glitchwave567-macOS"
           mkdir -p "$out"
-          cp -r build/Glitchwave567_artefacts/Release/VST3/*.vst3 "$out/"
-          cp -r build/Glitchwave567_artefacts/Release/AU/*.component "$out/"
-          cp -r build/Glitchwave567_artefacts/Release/Standalone/*.app "$out/"
+          cp -r build/Wtf567_artefacts/Release/VST3/*.vst3 "$out/"
+          cp -r build/Wtf567_artefacts/Release/AU/*.component "$out/"
+          cp -r build/Wtf567_artefacts/Release/Standalone/*.app "$out/"
           cd package && zip -r "../Glitchwave567-macOS.zip" "Glitchwave567-macOS"
 
       - name: Upload artefact

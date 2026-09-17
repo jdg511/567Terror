@@ -43,13 +43,13 @@ jobs:
         shell: bash
         run: |
           mkdir -p out
-          cp -r "build/Glitchwave567_artefacts/Release/." out/
+          cp -r "build/Wtf567_artefacts/Release/." out/
           find out -name "*.a" -delete -o -name "*.lib" -delete -o -name "*.exp" -delete
           ls -R out
 
       - uses: actions/upload-artifact@v4
         with:
-          name: glitchwave567-${{ matrix.name }}
+          name: wtf-${{ matrix.name }}
           path: out
 
   release:

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(Wtf567 VERSION 0.50.0 LANGUAGES C CXX)
+project(Wtf567 VERSION 0.51.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -19,7 +19,11 @@ juce_add_plugin(Wtf567
     BUNDLE_ID "com.illicitapothecary.Wtf567"
     PLUGIN_MANUFACTURER_CODE Jdgw
     PLUGIN_CODE Wtf7
-    FORMATS VST3 Standalone
+    # v0.51: every format that can be built without a proprietary SDK.
+    # AU is Apple-only and JUCE simply skips it elsewhere. VST2 and AAX are
+    # left out on purpose: both need SDKs from Steinberg and Avid that cannot
+    # be redistributed, so CI could never build them.
+    FORMATS AU VST3 LV2 Standalone
     LV2URI "https://github.com/jdg511/567Terror"
     PRODUCT_NAME "Where The Fuzz Meets The Funk"
     IS_SYNTH FALSE

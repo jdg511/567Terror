@@ -1,9 +1,71 @@
-# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.50)
+# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.51)
 
 > Renamed at v0.45. "Glitchwave 567" turned out to be an existing product, so
 > the internal name is now **WTF**, which the product name supplies for free:
 > **W**here **T**he **F**uzz Meets The Funk. Entries below v0.45 still say
 > Glitchwave; that is history, not a mistake.
+
+## v0.51 -- 1.2 second hold, 400 ms kill, and every format on every OS
+
+### The hold is 1.2 s, not 3 s
+
+Three seconds of standing on a switch is an age when you are playing. The
+hold threshold is now **1200 ms**. Everything built on it follows: the ring's
+arc fills in 1.2 s, the combos (preset save, preset recall, bypass) arm in
+1.2 s, and the layers were always instant anyway.
+
+`kMaskSettle` is deliberately still 1200 ms, a whole hold-length, and it
+restarts every time the stomp mask changes. That is the window you have to
+land the third switch before A+B commits to preset-save instead of Layer Z.
+It used to be a 3 s window because the hold was 3 s, so this is the one place
+the shorter hold costs something. Worth watching with a real foot.
+
+### The kill floor is 400 ms, not 333
+
+A boot lingering on a soft switch can sit at 300 ms without meaning to, which
+would have killed the fuzz mid-song. 400 ms still clears a tempo tap (80 to
+200 ms on a real switch) with room to spare, and it is exactly a third of the
+1.2 s hold, so no foot can confuse the two.
+
+| press | what it means |
+|---|---|
+| under 400 ms | A / B x3 = that LFO's tap tempo, C x3 = step MIX |
+| **400 ms .. 1.2 s** | **A = fuzz off, B = 567 off, C = env fol + filter off** |
+| past 1.2 s | hold: layers, bypass, preset combos |
+
+The panel hints were updated to match, and the layer chart line now says the
+RING turns red rather than the LED, which has been true since v0.50.
+
+### Every format that can be built without a proprietary SDK
+
+`FORMATS` went from `VST3 Standalone` to **`AU VST3 LV2 Standalone`**. AU is
+Apple-only and JUCE skips it elsewhere; LV2 now builds on all three. VST2 and
+AAX are deliberately left out: both need SDKs from Steinberg and Avid that
+cannot be redistributed, so no CI runner could ever build them.
+
+### The CI workflows were pointing at a directory that no longer exists
+
+Both `.github/workflows/build.yml` and `build-plugins.yml` still packaged
+`Glitchwave567_artefacts`, which stopped existing when the target was renamed
+to `Wtf567` at v0.45. Every macOS and Linux run since then would have
+packaged nothing. Fixed, and the artifact names now say `wtf-` instead of
+`glitchwave567-`.
+
+(These are GitHub Actions, not GitLab. Same idea: a macOS runner in the cloud
+builds the Mac binaries, since they cannot be cross-compiled from Windows.)
+
+### Verified
+
+- The new build is live and the panel reads `PRESS 0.4 s` and `HOLD 1.2 s`.
+- Right-click latch on A still takes the ring straight to RED with the LEDs
+  untouched (docs/ui/v051_ring.png).
+- Windows build is clean and now emits LV2 alongside VST3 and Standalone.
+
+> The press-duration behaviour itself is unchanged in mechanism from v0.50,
+> where it was verified end to end; only the two constants moved. Driving the
+> exact press lengths from a script proved flaky again, so the 400 ms and
+> 1.2 s boundaries want a real foot on them.
+
 
 ## v0.50 -- one press, judged by its length. And the RING carries the hold
 

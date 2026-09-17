@@ -215,7 +215,7 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
     };
     hint (hintChips,  juce::String::fromUTF8 ("HOLD A \xe2\x86\x92 X \xc2\xb7 HOLD B \xe2\x86\x92 Y \xc2\xb7 HOLD A+B+C \xe2\x86\x92 Z"),
           10.2f, gw::kDim2);
-    hint (hintLayers, juce::String::fromUTF8 ("Hold 3 s or right-click to latch \xc2\xb7 LED turns RED when the hold takes."),
+    hint (hintLayers, juce::String::fromUTF8 ("Hold 1.2 s or right-click to latch \xc2\xb7 the RING turns RED when the hold takes."),
           8.5f, gw::kDim2);
     hint (hintLfo1,   juce::String::fromUTF8 ("Y \xc2\xb7 FREQ knob = depth \xc2\xb7 LED: wave / depth %"),
           9.0f, gw::kDim2);
@@ -223,11 +223,11 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
           9.0f, gw::kDim2);
     // v0.45: the stomp strip carries three lines now. One tap, three taps and
     // a hold each mean something different, and that will not fit on two.
-    hint (hintStomp1, juce::String::fromUTF8 ("PRESS 1/3 s: A = fuzz off \xc2\xb7 B = 567 off \xc2\xb7 C = env filter off"),
+    hint (hintStomp1, juce::String::fromUTF8 ("PRESS 0.4 s: A = fuzz off \xc2\xb7 B = 567 off \xc2\xb7 C = env filter off"),
           9.0f, gw::kDim);
     hint (hintStomp2, juce::String::fromUTF8 ("QUICK TAPS: A \xc3\x97""3 = LFO 1 rate \xc2\xb7 B \xc3\x97""3 = LFO 2 rate \xc2\xb7 C \xc3\x97""3 steps MIX"),
           9.0f, gw::kDim2);
-    hint (hintStomp3, juce::String::fromUTF8 ("HOLD 3 s (or right-click to latch) \xc2\xb7 C = bypass \xc2\xb7 A+B = save (CW) \xc2\xb7 B+C = recall (CCW)"),
+    hint (hintStomp3, juce::String::fromUTF8 ("HOLD 1.2 s (or right-click to latch) \xc2\xb7 C = bypass \xc2\xb7 A+B = save (CW) \xc2\xb7 B+C = recall (CCW)"),
           9.0f, gw::kDim2);
 
     // ---- output gate + internal switches (all under the cover) ---------------
@@ -571,13 +571,14 @@ void WtfAudioProcessorEditor::recordTap (bool lfo2, double pressMs)
 // the first tap of a tempo triple looked identical while it waited. Now the
 // LENGTH of one press decides, and it decides on release:
 //
-//   flick (< 333 ms)     A, B  -> 3 taps set that LFO's tempo
-//                        C     -> 3 taps step MIX 0/25/50/75/100
-//   press (333 ms .. 3 s)   A -> fuzz off      B -> 567 off
-//                           C -> envelope follower + filter off
+//   flick (< 400 ms)       A, B -> 3 taps set that LFO's tempo
+//                          C    -> 3 taps step MIX 0/25/50/75/100
+//   press (400 ms .. 1.2 s)  A -> fuzz off      B -> 567 off
+//                            C -> envelope follower + filter off
+//   hold (past 1.2 s)        layers, bypass, preset combos
 //
-// A tap is a flick, a kill is the deliberate press in between, a hold is
-// three full seconds. Nothing overlaps, so nothing has to be guessed at.
+// A tap is a flick, a kill is the deliberate press in between, a hold is a
+// second and a bit. Nothing overlaps, so nothing has to be guessed at.
 //
 // Holds are separate and continuous:
 //   hold A        Layer X          hold A+B    preset SAVE   (ring runs CW)
@@ -606,7 +607,7 @@ void WtfAudioProcessorEditor::stepMixQuarter()
     p->endChangeGesture();
 }
 
-// v0.50: a medium press (0.33 s .. 3 s) kills that stomp's circuit. It also
+// v0.50: a medium press (0.4 s .. 1.2 s) kills that stomp's circuit. It also
 // wipes any burst the stomp had open, so a stray flick followed by a kill
 // cannot leave half a tempo gesture waiting to fire.
 void WtfAudioProcessorEditor::stompHeldPress (int which)
@@ -749,7 +750,7 @@ void WtfAudioProcessorEditor::serviceStomps()
         burstDeadline[i] = 0.0;
     }
 
-    // ---- 2. combos, which need a real three-second hold --------------------
+    // ---- 2. combos, which need a real 1.2-second hold ----------------------
     // A latch (right-click) satisfies a stomp's own hold instantly, but the
     // MASK still has to settle: otherwise latching A then B would fire the
     // A+B save combo before you ever got to C, and Layer Z would be
@@ -1178,7 +1179,7 @@ void WtfAudioProcessorEditor::timerCallback()
     // a job (A blinks the tempo, B shows bypass), and what Jason wanted lit up
     // was the stomp's own ring. So the LEDs are back to exactly what they did
     // before v0.47, untouched, and the ring carries the hold instead: it fills
-    // an arc while the three seconds count down, then goes RED once the hold
+    // an arc while the hold counts down, then goes RED once the hold
     // has taken and you can lift your foot.
     {
         const double nowH = nowMs();
