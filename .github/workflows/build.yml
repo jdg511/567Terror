@@ -1,9 +1,12 @@
 name: Build plugins (Windows / Linux / macOS)
 
+# Two workflows used to fire on a tag and both tried to publish the same
+# GitHub release; whichever lost the race failed the run with a red X even
+# though every binary had built. Tags belong to build-plugins.yml, which is
+# the one that packages and publishes. This one is the per-push smoke test.
 on:
   push:
     branches: [ main ]
-    tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
   workflow_dispatch: {}
