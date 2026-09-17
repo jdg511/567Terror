@@ -1,9 +1,72 @@
-# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.49)
+# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.50)
 
 > Renamed at v0.45. "Glitchwave 567" turned out to be an existing product, so
 > the internal name is now **WTF**, which the product name supplies for free:
 > **W**here **T**he **F**uzz Meets The Funk. Entries below v0.45 still say
 > Glitchwave; that is history, not a mistake.
+
+## v0.50 -- one press, judged by its length. And the RING carries the hold
+
+### Circuit kills moved off the double tap onto a MEDIUM PRESS
+
+The double tap is gone. A press now says what it is by how long it lasts,
+and it is judged on RELEASE:
+
+| press | what it means |
+|---|---|
+| under 333 ms, a flick | A / B x3 = that LFO's tap tempo, C x3 = step MIX |
+| **333 ms .. 3 s** | **A = fuzz off, B = 567 off, C = env follower + filter off** |
+| past 3 s | hold: A = Layer X, B = Layer Y, A+B+C = Layer Z, C = bypass |
+
+The old scheme had to wait out a window before it would commit, because a
+single tap and the first tap of a tempo triple look identical at the moment
+they happen. Nothing has to be guessed at now: a tap is a flick, a kill is
+the deliberate press in between, a hold is three full seconds.
+
+**Judged on release, not at the 333 ms mark.** If it fired the moment the
+timer passed, holding A for three seconds to reach Layer X would kill the
+fuzz on the way there, every time. On release the duration is already known,
+so past 3 s the release fires nothing at all: the hold did its own job while
+your foot was down.
+
+A medium press also wipes that stomp's open burst, so a stray flick followed
+by a kill cannot leave half a tempo gesture waiting to fire. In preset mode
+a slow press still picks the slot, same as a flick.
+
+### C steps MIX on the 3rd tap, not the 4th
+
+Tap 2 used to be reserved for the double-tap kill. That gesture is gone, so
+the step lands a tap sooner.
+
+### The hold indicator moved from the LED to the STOMP RING
+
+v0.47 put it on the LEDs, which was the wrong widget: each of those LEDs
+already has a job (A blinks the tempo, B shows bypass), and what was wanted
+lit up was the stomp's own ring. So the LEDs are back to exactly what they
+did before v0.47, untouched, and the ring carries it instead:
+
+- yellow while your foot is down, with an arc filling clockwise around it as
+  the three seconds count down, so you can see how much longer to stand there
+- **RED**, with a red glow, once the hold has taken and you can lift off
+- a right-click latch satisfies the hold instantly and goes straight to red
+
+### Verified
+
+- 0.7 s press on C toggles the envelope filter: the LPF knob dims to the
+  disabled 0.55 alpha (mean red 241 to 161) and comes back on the next press,
+  while FREQ, which belongs to the 567, never moves. That confirms the v0.49
+  grouping as well.
+- Holding A: ring yellow with a fifth of the arc at 0.6 s, solid RED at 3.8 s,
+  LEDs normal throughout (docs/ui/v050_r3.png, v050_r4.png).
+- Three flicks on C stepped MIX one notch, 50 % to 75 %.
+
+> The test harness was the reason none of this could be verified before. It
+> was only system-DPI-aware, so with the plugin window on a second monitor at
+> a different DPI, Windows virtualised its coordinates: GetWindowRect and
+> SetCursorPos disagreed by about 100 px and every synthetic click landed a
+> row above where it was aimed, on the internal strip. Switching the harness
+> to PER_MONITOR_AWARE_V2 fixed it. The plugin was never at fault.
+
 
 ## v0.49 -- Starve is 9 V in Preset A, LPF and RES belong to the envelope
 

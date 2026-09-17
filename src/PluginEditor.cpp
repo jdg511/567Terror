@@ -171,7 +171,8 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
     };
     // v0.45: every tap goes through the burst engine as well as the tempo
     // chain, so one tap can kill the fuzz while three still set the rate.
-    tapStompBtn.onTap     = [this] { recordTap (tapPressLfo2, tapPressMs); stompTapped (0); };
+    tapStompBtn.onTap         = [this] { recordTap (tapPressLfo2, tapPressMs); stompTapped (0); };
+    tapStompBtn.onMediumPress = [this] { stompHeldPress (0); };
     tapStompBtn.onRelease = [this] { tapPressMs = 0.0; updateKnobModes(); };
     addAndMakeVisible (tapStompBtn);
 
@@ -184,7 +185,8 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
         lastTapFlashMs    = bypassPressMs;
         updateKnobModes();
     };
-    bypassBtn.onTap     = [this] { recordTap (true, bypassPressMs); stompTapped (1); };
+    bypassBtn.onTap         = [this] { recordTap (true, bypassPressMs); stompTapped (1); };
+    bypassBtn.onMediumPress = [this] { stompHeldPress (1); };
     bypassBtn.onRelease = [this] { bypassPressMs = 0.0; updateKnobModes(); };
     addAndMakeVisible (bypassBtn);
     bypassLed.setColour (gw::kGreen);
@@ -192,7 +194,8 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
 
     // ---- stomp C (v0.45) -----------------------------------------------------
     stompCBtn.onPress   = [this] { updateKnobModes(); };
-    stompCBtn.onTap     = [this] { stompTapped (2); };
+    stompCBtn.onTap         = [this] { stompTapped (2); };
+    stompCBtn.onMediumPress = [this] { stompHeldPress (2); };
     stompCBtn.onRelease = [this] { updateKnobModes(); };
     addAndMakeVisible (stompCBtn);
     stompCLed.setColour (gw::kCyan);
@@ -220,9 +223,9 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
           9.0f, gw::kDim2);
     // v0.45: the stomp strip carries three lines now. One tap, three taps and
     // a hold each mean something different, and that will not fit on two.
-    hint (hintStomp1, juce::String::fromUTF8 ("DOUBLE TAP: A = fuzz off \xc2\xb7 B = 567 off \xc2\xb7 C = env filter off"),
+    hint (hintStomp1, juce::String::fromUTF8 ("PRESS 1/3 s: A = fuzz off \xc2\xb7 B = 567 off \xc2\xb7 C = env filter off"),
           9.0f, gw::kDim);
-    hint (hintStomp2, juce::String::fromUTF8 ("A \xc3\x97""3 = LFO 1 rate \xc2\xb7 B \xc3\x97""3 = LFO 2 rate \xc2\xb7 C \xc3\x97""4+ steps MIX 0/25/50/75/100"),
+    hint (hintStomp2, juce::String::fromUTF8 ("QUICK TAPS: A \xc3\x97""3 = LFO 1 rate \xc2\xb7 B \xc3\x97""3 = LFO 2 rate \xc2\xb7 C \xc3\x97""3 steps MIX"),
           9.0f, gw::kDim2);
     hint (hintStomp3, juce::String::fromUTF8 ("HOLD 3 s (or right-click to latch) \xc2\xb7 C = bypass \xc2\xb7 A+B = save (CW) \xc2\xb7 B+C = recall (CCW)"),
           9.0f, gw::kDim2);
@@ -563,14 +566,18 @@ void WtfAudioProcessorEditor::recordTap (bool lfo2, double pressMs)
 // ---------------------------------------------------------------------------
 // v0.45  THREE-STOMP GESTURE ENGINE
 //
-// The whole trick is that a single tap and the first tap of a tempo triple
-// look identical at the moment they happen. So nothing is decided on the tap
-// itself: each stomp accumulates a BURST, and the burst is judged once it has
-// been quiet for kBurstGapMs.
+// v0.50 reworked this. The circuit kills used to be a double tap, which meant
+// waiting out a window before the pedal would commit, and a single tap and
+// the first tap of a tempo triple looked identical while it waited. Now the
+// LENGTH of one press decides, and it decides on release:
 //
-//   A   1 tap  -> fuzz circuit on/off        3+ taps -> LFO 1 tap tempo
-//   B   1 tap  -> 567 circuit on/off         3+ taps -> LFO 2 tap tempo
-//   C   1 tap  -> envelope filter on/off     4+ taps -> step MIX 0/25/50/75/100
+//   flick (< 333 ms)     A, B  -> 3 taps set that LFO's tempo
+//                        C     -> 3 taps step MIX 0/25/50/75/100
+//   press (333 ms .. 3 s)   A -> fuzz off      B -> 567 off
+//                           C -> envelope follower + filter off
+//
+// A tap is a flick, a kill is the deliberate press in between, a hold is
+// three full seconds. Nothing overlaps, so nothing has to be guessed at.
 //
 // Holds are separate and continuous:
 //   hold A        Layer X          hold A+B    preset SAVE   (ring runs CW)
@@ -587,7 +594,7 @@ void WtfAudioProcessorEditor::toggleBool (const char* paramId)
     }
 }
 
-// C's 4th tap onward walks MIX round 0 / 25 / 50 / 75 / 100 and wraps.
+// C's 3rd tap onward walks MIX round 0 / 25 / 50 / 75 / 100 and wraps.
 void WtfAudioProcessorEditor::stepMixQuarter()
 {
     auto* p = processor.apvts.getParameter ("dry");
@@ -597,6 +604,28 @@ void WtfAudioProcessorEditor::stepMixQuarter()
     p->beginChangeGesture();
     p->setValueNotifyingHost ((float) next * 0.25f);
     p->endChangeGesture();
+}
+
+// v0.50: a medium press (0.33 s .. 3 s) kills that stomp's circuit. It also
+// wipes any burst the stomp had open, so a stray flick followed by a kill
+// cannot leave half a tempo gesture waiting to fire.
+void WtfAudioProcessorEditor::stompHeldPress (int which)
+{
+    // In preset mode the stomps choose a slot, and a slow press still means
+    // "this one". Hand it to the same path a flick takes.
+    if (stompMode != StompMode::Normal) { stompTapped (which); return; }
+
+    burstLive[which]     = false;
+    burstN[which]        = 0;
+    burstDeadline[which] = 0.0;
+
+    switch (which)
+    {
+        case 0: toggleBool ("fuzzon");    break;   // A
+        case 1: toggleBool ("dec567on");  break;   // B
+        case 2: toggleBool ("envfilton"); break;   // C
+        default: break;
+    }
 }
 
 void WtfAudioProcessorEditor::stompTapped (int which)
@@ -649,8 +678,10 @@ void WtfAudioProcessorEditor::stompTapped (int which)
         burstDeadline[which] = now + gap * kTapWinScale;
     }
 
-    // C steps MIX from the 4th tap on, live, one step per tap.
-    if (which == 2 && burstN[2] >= 4)
+    // v0.50: C steps MIX from the 3rd tap on, live, one step per tap. It used
+    // to be the 4th, because tap 2 was still reserved for the double-tap
+    // circuit kill; that gesture is gone, so the step lands a tap sooner.
+    if (which == 2 && burstN[2] >= 3)
         stepMixQuarter();
 }
 
@@ -705,25 +736,17 @@ void WtfAudioProcessorEditor::serviceStomps()
     const double now = nowMs();
 
     // ---- 1. close out any burst whose window has run out --------------------
-    // Two taps and then silence = toggle that stomp's circuit. Three or more
-    // = it was a tempo (or MIX) gesture and has already done its job.
+    // v0.50: nothing fires here any more. Tempo and MIX steps act live on the
+    // tap that earns them, and the circuit kills moved onto the medium press,
+    // so two taps and silence now mean exactly nothing. A stale burst just
+    // gets cleared so the next flick starts a fresh count.
     for (int i = 0; i < 3; ++i)
     {
         if (! burstLive[i] || burstDeadline[i] <= 0.0 || now <= burstDeadline[i])
             continue;
-        const int n = burstN[i];
         burstLive[i]     = false;
         burstN[i]        = 0;
         burstDeadline[i] = 0.0;
-        if (n != 2)
-            continue;
-        switch (i)
-        {
-            case 0: toggleBool ("fuzzon");    break;
-            case 1: toggleBool ("dec567on");  break;
-            case 2: toggleBool ("envfilton"); break;
-            default: break;
-        }
     }
 
     // ---- 2. combos, which need a real three-second hold --------------------
@@ -1150,50 +1173,25 @@ void WtfAudioProcessorEditor::timerCallback()
     if (auto* pb = processor.apvts.getParameter ("bypass"))
         bypassLed.setLevel (pb->getValue() >= 0.5f ? 0.0f : 1.0f);
 
-    // ---- v0.47 HOLD indication ---------------------------------------------
-    // A stomp's LED goes RED the moment its three-second hold registers (or
-    // the moment you right-click to latch it), so you know the hold has taken
-    // and can lift your foot. Amber-dim while the hold is still counting down,
-    // which doubles as a progress cue. Normal colour otherwise.
-    //
-    // This runs LAST of the LED logic so it wins over the per-stomp defaults,
-    // but it stands down while a preset ring is spinning: the ring is the more
-    // important message at that moment, and the holds have already been
-    // released by then anyway.
-    if (stompMode == StompMode::Normal)
+    // ---- v0.50 HOLD indication, on the CIRCLE ------------------------------
+    // v0.47 put this on the LEDs. Wrong widget: each of those LEDs already has
+    // a job (A blinks the tempo, B shows bypass), and what Jason wanted lit up
+    // was the stomp's own ring. So the LEDs are back to exactly what they did
+    // before v0.47, untouched, and the ring carries the hold instead: it fills
+    // an arc while the three seconds count down, then goes RED once the hold
+    // has taken and you can lift your foot.
     {
         const double nowH = nowMs();
         TapHoldButton* btn[3] = { &tapStompBtn, &bypassBtn, &stompCBtn };
-        LedIndicator*  led[3] = { &tapLed,      &bypassLed, &stompCLed };
-        const juce::Colour home[3] = { gw::kYellow, gw::kGreen, gw::kCyan };
-
         for (int i = 0; i < 3; ++i)
         {
-            const bool isDown    = btn[i]->isDown();
             const bool isLatched = btn[i]->isLatched();
-            const bool held      = isLatched
-                                 || (isDown && downSinceMs[i] > 0.0
-                                     && nowH - downSinceMs[i] >= kHoldMs);
-
-            if (held)
-            {
-                led[i]->setColour (gw::kRed);      // hold is IN
-                led[i]->setLevel (1.0f);
-            }
-            else if (isDown)
-            {
-                // counting toward the hold: amber, brightening as it fills
-                const double t = downSinceMs[i] > 0.0
-                                   ? juce::jlimit (0.0, 1.0,
-                                                   (nowH - downSinceMs[i]) / kHoldMs)
-                                   : 0.0;
-                led[i]->setColour (gw::kYellow);
-                led[i]->setLevel (0.20f + 0.65f * (float) t);
-            }
-            else
-            {
-                led[i]->setColour (home[i]);       // back to normal
-            }
+            const bool isDown    = btn[i]->isDown();
+            const double t = (isDown && downSinceMs[i] > 0.0)
+                               ? juce::jlimit (0.0, 1.0,
+                                               (nowH - downSinceMs[i]) / kHoldMs)
+                               : 0.0;
+            btn[i]->setHoldState ((float) t, isLatched || (isDown && t >= 1.0));
         }
     }
 

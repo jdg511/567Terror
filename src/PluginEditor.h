@@ -254,10 +254,25 @@ private:
 // (< 750 ms, not consumed). cancelPressActions() consumes the current press
 // (no tap) — used when a knob turns the hold into a layer-shift gesture.
 // ---------------------------------------------------------------------------
+// v0.50 STOMP GESTURE TIMING. One press decides for itself what it was, by
+// how long it lasted:
+//
+//       0 .. 333 ms    a flick         tap tempo / MIX steps
+//     333 ms .. 3 s    a real press    kill that stomp's circuit
+//          past 3 s    a hold          layers, bypass, preset combos
+//
+// No window to wait out and no tap counting, so the pedal cannot guess
+// wrong. Shared by the button, which classifies the press, and the editor,
+// which acts on what comes out.
+static constexpr double kStompMediumMs = 333.0;    // past this, it is a kill
+static constexpr double kStompHoldMs   = 3000.0;   // past this, it is a hold
+
 class TapHoldButton : public juce::Component, private juce::Timer
 {
 public:
     std::function<void()> onTap, onHoldTick;
+    // v0.50: held past kStompMediumMs and let go before kStompHoldMs.
+    std::function<void()> onMediumPress;
     std::function<void()> onPress;     // fires on the press itself (mouse down)
     std::function<void()> onRelease;   // always fires on release (after onTap)
 
@@ -283,6 +298,20 @@ public:
         if (indicated != b) { indicated = b; repaint(); }
     }
 
+    // v0.50: the CIRCLE carries the hold state, not the LED. The editor
+    // pushes this in every frame: progress 0..1 while the three seconds
+    // count down, taken once the hold has registered.
+    void setHoldState (float progress, bool taken) noexcept
+    {
+        progress = juce::jlimit (0.0f, 1.0f, progress);
+        if (taken != holdTaken || std::fabs (progress - holdProgress) > 0.02f)
+        {
+            holdProgress = progress;
+            holdTaken    = taken;
+            repaint();
+        }
+    }
+
     void cancelPressActions() noexcept
     {
         consumed = true;      // suppress the tap and any further hold ticks
@@ -299,6 +328,7 @@ public:
             repaint();
             return;
         }
+        pressMs = juce::Time::getMillisecondCounterHiRes();
         pressed = true;
         holdStarted = false;
         consumed = false;
@@ -313,8 +343,20 @@ public:
     {
         if (rightPress) { rightPress = false; return; }
         stopTimer();
-        if (pressed && ! holdStarted && ! consumed && onTap)
-            onTap();
+        // v0.50: the press classifies itself by how long it lasted. A flick
+        // is a tap. Anything held past kStompMediumMs and let go before
+        // kStompHoldMs is a circuit kill: deliberate, and impossible to
+        // confuse with either neighbour. Past kStompHoldMs the hold already
+        // did its job while your foot was down, so the release fires nothing
+        // -- which is the whole reason this is decided on RELEASE and not the
+        // moment the timer passes 333 ms. Otherwise holding A for three
+        // seconds to reach Layer X would kill the fuzz on the way there.
+        const double pressDur = juce::Time::getMillisecondCounterHiRes() - pressMs;
+        if (pressed && ! consumed)
+        {
+            if      (pressDur < kStompMediumMs) { if (onTap)         onTap(); }
+            else if (pressDur < kStompHoldMs)   { if (onMediumPress) onMediumPress(); }
+        }
         pressed = false;
         holdStarted = false;
         consumed = false;
@@ -331,9 +373,15 @@ public:
         const float a = isEnabled() ? 1.0f : 0.35f;
         const bool held = pressed || latched || indicated;
 
-        if (latched)   // latched = "foot stays on it": strong glow
+        // v0.50: the RING is the hold indicator, not the LED. Yellow while
+        // your foot is down and the three seconds are still counting, RED
+        // once the hold has taken so you know you can lift off. A right-click
+        // latch satisfies the hold instantly and goes straight to red.
+        const juce::Colour ringCol = holdTaken ? gw::kRed : gw::kYellow;
+
+        if (latched || holdTaken)   // foot stays on it: strong glow
         {
-            g.setColour (gw::kYellow.withAlpha (0.35f * a));
+            g.setColour (ringCol.withAlpha (0.35f * a));
             g.fillEllipse (btn.expanded (5.0f));
         }
         juce::ColourGradient grad (juce::Colour (0xff1a1a24),
@@ -343,8 +391,23 @@ public:
                                    btn.getRight(), btn.getBottom(), true);
         g.setGradientFill (grad);
         g.fillEllipse (btn);
-        g.setColour ((held ? gw::kYellow : juce::Colour (0xff4b5364)).withMultipliedAlpha (a));
+        g.setColour ((held ? ringCol : juce::Colour (0xff4b5364)).withMultipliedAlpha (a));
         g.drawEllipse (btn, held ? 2.5f : 1.5f);
+
+        // the three seconds, drawn as an arc filling clockwise from the top.
+        // It is the only thing that makes a 3 s hold bearable: you can see
+        // how much longer to stand there.
+        if (held && ! holdTaken && holdProgress > 0.02f)
+        {
+            const float rr = btn.getWidth() * 0.5f + 4.0f;
+            juce::Path arc;
+            arc.addCentredArc (btn.getCentreX(), btn.getCentreY(), rr, rr, 0.0f,
+                               0.0f,
+                               juce::MathConstants<float>::twoPi * holdProgress,
+                               true);
+            g.setColour (gw::kYellow.withAlpha (0.85f * a));
+            g.strokePath (arc, juce::PathStrokeType (2.0f));
+        }
     }
 
 private:
@@ -358,6 +421,9 @@ private:
 
     bool pressed = false, holdStarted = false, consumed = false;
     bool latched = false, rightPress = false, indicated = false;
+    double pressMs = 0.0;                        // v0.50 press classifier
+    float  holdProgress = 0.0f;                  // v0.50 ring fill 0..1
+    bool   holdTaken = false;                    // v0.50 ring goes RED
 };
 
 // ---------------------------------------------------------------------------
@@ -1833,7 +1899,7 @@ private:
     // stomp latches it, and a latch counts as an instantly-satisfied hold, so
     // in the sim you right-click your way to a combo instead of trying to pin
     // three switches with one mouse.
-    static constexpr double kHoldMs      = 3000.0;  // a real hold is 3 s
+    static constexpr double kHoldMs      = kStompHoldMs;   // a real hold is 3 s
     static constexpr double kMaskSettle  = 1200.0;  // let the combo finish forming
     static constexpr double kTapWinMin   = 220.0;   // floor on the derived window
     static constexpr double kTapWinMax   = 1400.0;  // ceiling on it
@@ -1856,6 +1922,7 @@ private:
     bool      comboFired     = false;   // one action per hold, not one per tick
 
     void  stompTapped (int which);      // 0=A 1=B 2=C
+    void  stompHeldPress (int which);   // v0.50 medium press = circuit kill
     void  serviceStomps();              // called from the timer
     void  toggleBool (const char* paramId);
     void  stepMixQuarter();

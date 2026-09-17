@@ -1,70 +1,47 @@
 # WTF -- backlog
 
-Things decided but not yet built. Nothing in here has been compiled.
+Things decided but not yet built.
 
 ---
 
-## v0.50 (next) -- rework the stomp gestures
+## Open
 
-Jason, 2026-09-17. **Do not build until told.**
+### The Pico firmware needs the v0.50 press classifier
 
-### 1. Circuit kills move from a double tap to a MEDIUM PRESS
+v0.50 changed what a stomp press means in the plugin: under 333 ms is a
+flick, 333 ms to 3 s kills that stomp's circuit, past 3 s is a hold. The
+firmware still reads the stomps the old way, so the sim and the pedal now
+disagree about the same gesture. The firmware reads them on GP16/GP17 (plus
+a third pin once stomp C is on the board) and needs the same duration test,
+fired on release.
 
-A double tap is no longer how you kill a circuit. Instead: **one press, held
-longer than 1/3 second and released before the 3 second hold takes.**
+### Is 1/3 of a second long enough?
 
-| stomp | medium press (0.33 s .. 3 s) |
-|---|---|
-| A | fuzz on/off |
-| B | 567 on/off |
-| C | envelope follower + filter on/off |
+Shipped at 333 ms because that is what was asked for. A tempo tap on a real
+switch runs 80 to 200 ms, so there is margin, but a boot lingering on a soft
+switch can sit at 300 ms without meaning to, and that would kill the fuzz
+mid-song. If it misfires under a foot, 400 to 500 ms is the obvious next
+stop and still nowhere near the 3 second hold. The constant is
+`kStompMediumMs` at the top of `src/PluginEditor.h`, one number.
 
-The point is certainty. A tap-tempo tap is a flick, a layer hold is three
-full seconds, and a circuit kill is the deliberate press in between. No
-window to wait out, no counting, no chance of the pedal guessing wrong.
+### Stomp C's LED has no job
 
-**It must fire on RELEASE, not at the 0.33 s mark.** If it fired the moment
-the timer passed, then holding A for three seconds to reach Layer X would
-kill the fuzz on the way there every single time. Firing on release means
-the press duration is already known: 0.33 s to 3 s toggles the circuit,
-past 3 s is a hold and toggles nothing.
+A's LED blinks the tempo and B's shows bypass. C's has been dark since it
+was added. Not a bug, just an unused indicator, and it was left alone in
+v0.50 on purpose (the LEDs were reverted to their pre-v0.47 behaviour).
+Bypass state, env-filter state or the envelope's own level would all suit it.
 
-### 2. Stomp C steps MIX on 3 presses, not 4
+### Hardware, not software
 
-Currently C x4+ steps MIX 0/25/50/75/100. Make it **x3**, and step on the
-third press the way the tempo taps fire on theirs.
+- Size the pad between the JFET and the Bazz Fuss on the breadboard.
+- Consider running the LM567 at 5 V off an LDO with R16 pulled up to VA.
+  Pin 8's absolute max (15 V) is independent of V+, so the chip can sit at
+  its datasheet sweet spot while the Q node still swings to the full rail.
+- Test LM567 unit-to-unit variance before the next fab run.
 
-### 3. What this frees up
+---
 
-The double tap has no job left, so the burst counter only has to tell a
-tempo/MIX gesture (3 short taps) from nothing. `n == 2` stops being a
-special case, which takes a whole branch out of `serviceStomps()`.
+## Done
 
-### Unchanged
-
-- A x3 = LFO 1 tap tempo, B x3 = LFO 2 tap tempo
-- Hold 3 s: A = Layer X, B = Layer Y, A+B+C = Layer Z, C = bypass
-- A+B = preset save (CW ring), B+C = preset recall (CCW ring)
-- Right-click still latches a stomp instantly in the plugin
-
-### Two things to decide when we build it
-
-1. **Is 1/3 second long enough?** A tempo tap on a real switch is usually
-   80 to 200 ms, so 333 ms leaves decent margin. But a boot lingering on a
-   soft switch can sit there 300 ms without meaning to, and that would kill
-   the fuzz mid-song. Suggest building it at 333 ms since that is what you
-   asked for, then trying it with a foot; if it misfires, 400 to 500 ms is
-   the obvious next stop and still nowhere near the 3 s hold.
-2. **The same change belongs in the Pico firmware**, not just the plugin,
-   or the sim and the pedal stop agreeing. The firmware reads the two (soon
-   three) stomps on GP16/GP17 and would need the same press-duration
-   classifier.
-
-### Files this touches
-
-- `src/PluginEditor.cpp` -- `stompTapped()`, `serviceStomps()`, the
-  `onTap` / `onPress` / `onRelease` lambdas for the three stomps
-- `src/PluginEditor.h` -- gesture constants (`kTapWinMin`, `kTapWinMax`,
-  `kTapWinScale` mostly retire; add a medium-press floor), and the hint
-  line text
-- `docs/MODS.md` -- changelog entry
+- **v0.50** stomp gesture rework: circuit kills on a medium press, C steps
+  MIX on 3 taps, hold indication moved from the LEDs to the stomp ring.
