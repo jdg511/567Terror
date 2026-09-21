@@ -1,6 +1,22 @@
 # Glitchwave 567 / "Where The Fuzz Meets The Funk" - PCBWay ordering guide
-**rev 0.5, 2026-09-11.** Supersedes rev 0.2 (2026-07-29). Previous copy kept as
-`README_PCBWAY.bak_20260911.md`.
+**rev 0.6, 2026-09-21 (Rev 8: third stomp).** Supersedes rev 0.5 (2026-09-11). Previous
+copy kept as `README_PCBWAY.bak_20260921.md`.
+
+### Rev 8 changes (2026-09-21)
+- CONTROL: third stomp switch **SW3** (same Alpha SF12011F-0102-20R-M-011) added at board
+  centre x=69.00, y=96.00. SW1/SW2 moved outboard to x=23.28 / x=114.72 (1.800 in pitch,
+  A-to-C 3.600 in). LED4/LED5 (TEMPO/BYPASS) follow to x=23.28 / x=114.72; C7 bulk cap
+  nudged +1.5 mm east. Stomp silk labels now "A"/"B"/"C" (matches the plugin's naming).
+  New net STOMP3 rides the previously spare J1/J10 pin 15.
+- MAIN: R175 (10k pullup to 3V3) + C125 (100n) added for STOMP3, routed J10.15 -> GP22
+  (Pico pad 29, was spare). R175 sits between RV1/RV2 (silk ref hidden - too tight; see
+  centroid), C125 sits south of the Pico at (39.5, 112.6).
+- Schematic fix found during Rev 8: the CONTROL schematic had GND on the stomps' pin 3
+  (N.C.) and no-connect on pin 1 (N.O.) - inverted vs the PCB and the active-LOW firmware.
+  Schematic corrected to match the PCB (GND on pin 1); PCB copper was already right.
+- Enclosure drill template: still quarantined and STALE; a new one needs THREE D12.2 stomp
+  holes on one line at centreline +/- 45.72 mm (B dead centre), checked against
+  ENCLOSURE_FIT before drilling.
 
 Two boards, one enclosure (Hammond 1590XX). Order both as **4-layer, full turnkey
 assembly**. Both boards are silkscreened
@@ -8,16 +24,16 @@ assembly**. Both boards are silkscreened
 
 ## Upload this
 
-`Glitchwave567_PCBWay_Release_20260911.zip` in this folder. It contains:
+`Glitchwave567_PCBWay_Release_20260921.zip` in this folder. It contains:
 
 ```
-Gerbers/MAIN_board/       16 files, plotted 2026-09-11 by review/tools/make_fab.ps1
+Gerbers/MAIN_board/       16 files, plotted 2026-09-21 (kicad MCP, make_fab.ps1 settings)
 Gerbers/CONTROL_board/    16 files, same run
-BOM/PCBWay_BOM_main.csv   96 lines / 297 designators (incl. 2 DNP rows)
-BOM/PCBWay_BOM_ctrl.csv   11 lines /  22 designators
+BOM/PCBWay_BOM_main.csv   96 lines / 299 designators (incl. 2 DNP rows)
+BOM/PCBWay_BOM_ctrl.csv   11 lines /  23 designators
 BOM/BOM.xlsx              the master sheet the CSVs are generated from
-Centroid/Centroid_main.csv  297 placement rows
-Centroid/Centroid_ctrl.csv   22 placement rows
+Centroid/Centroid_main.csv  299 placement rows
+Centroid/Centroid_ctrl.csv   23 placement rows
 README_PCBWAY.md          this file
 KiCad_Source/             schematics, boards, project footprint library
 ```
