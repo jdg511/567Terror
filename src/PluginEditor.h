@@ -649,17 +649,17 @@ public:
         g.setColour (gw::kBtnEdge);
         g.drawRoundedRectangle (r.reduced (0.5f), 6.0f, 1.0f);
 
-        g.setColour (volts < 7.46f ? gw::kYellow : gw::kGreen);
+        g.setColour (volts < 7.99f ? gw::kYellow : gw::kGreen);
         g.setFont (gw::mono (13.0f, 500));
         g.drawText (juce::String (volts, 1) + " V", getLocalBounds().reduced (14, 0),
                     juce::Justification::centredLeft);
         g.setColour (gw::kDim);
         g.setFont (gw::mono (9.5f, 400));
-        g.drawText ("VA - D105 - D107", getLocalBounds().reduced (14, 0),
+        g.drawText ("LM2937-8.0 LDO", getLocalBounds().reduced (14, 0),
                     juce::Justification::centredRight);
     }
 private:
-    float volts = 7.5f;
+    float volts = 8.0f;
 };
 
 // ---------------------------------------------------------------------------
@@ -680,7 +680,7 @@ public:
         // V567 on this line: those two ARE the pedal's supply rails, and
         // STARVE is otherwise invisible unless you are sitting on Layer Z.
         juce::String vdirt { "9.0 V" };
-        juce::String v567  { "7.5 V" };
+        juce::String v567  { "8.0 V" };
         bool starved = false;
 
         bool operator!= (const Summary& o) const

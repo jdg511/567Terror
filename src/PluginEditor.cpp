@@ -1235,8 +1235,9 @@ void WtfAudioProcessorEditor::timerCallback()
         {
             s.vdirt   = sp->getCurrentValueAsText();
             s.starved = sp->getValue() > 0.005f;
-            // v0.53: the LM567 rail follows VA through its two diodes
-            const float v567 = juce::jmax (0.0f, 9.0f - 8.0f * sp->getValue() - 1.5f);
+            // v0.54: the LM567 rail is a LM2937-8.0 fixed LDO at 8.0 V; it holds flat
+            // until VA sags to within ~0.1 V of it, then follows VA down
+            const float v567 = juce::jlimit (0.0f, 8.0f, 9.0f - 8.0f * sp->getValue() - 0.1f);
             s.v567 = juce::String (v567, 1) + " V";
             railRead.setVolts (v567);
         }
