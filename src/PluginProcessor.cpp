@@ -674,7 +674,8 @@ void WtfAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         for (int i = offset; i < offset + chunk; ++i)
         {
             gateEnv += gateEnvCoeff * (std::fabs (liveIn[i]) - gateEnv);
-            mod.tick (std::fabs (mono[i]), std::fabs (cv1[i]), std::fabs (cv2[i]));
+            // v0.57: envelope follower reads ONLY liveIn, the untouched copy of the audio as it enters the pedal (input + player 1).
+            mod.tick (std::fabs (liveIn[i]), std::fabs (cv1[i]), std::fabs (cv2[i]));
         }
 
         // gate: volume fades after HOLD below THRESH; FREQ/LPF dragged down with
