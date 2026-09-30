@@ -46,13 +46,14 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
     // ---- the six knobs (v0.24: all layer-switched, no section buttons) ------
     setupKnob (freqKnob, freqLabel, "FREQ", true,  gw::kYellow);
     setupKnob (lpfKnob,  lpfLabel,  "LPF",  true,  gw::kYellow);
-    setupKnob (mixKnob,  mixLabel,  "MIX",  true,  gw::kYellow);
+    setupKnob (mixKnob,  mixLabel,  "VOL",  true,  gw::kYellow);
     setupKnob (lfo1RateKnob, lfo1RateLabel, "RATE", false, gw::kCyan);
     setupKnob (lfo2RateKnob, lfo2RateLabel, "RATE", false, gw::kMagenta);
     setupKnob (envGainKnob,  envGainLabel,  "GAIN", false, gw::kGreen);
     freqAtt     = std::make_unique<SliderAttachment> (apvts, "freq",     freqKnob);
     lpfAtt      = std::make_unique<SliderAttachment> (apvts, "fizz",     lpfKnob);
-    mixAtt      = std::make_unique<SliderAttachment> (apvts, "dry",      mixKnob);
+    // v0.61: the third knob is VOL on the default layer (v0.45 moved MIX to layer X but this first attach still said "dry", so a fresh start had VOL wired to MIX until a layer was visited)
+    mixAtt      = std::make_unique<SliderAttachment> (apvts, "vol",      mixKnob);
     lfo1RateAtt = std::make_unique<SliderAttachment> (apvts, "lfo1rate", lfo1RateKnob);
     lfo2RateAtt = std::make_unique<SliderAttachment> (apvts, "lfo2rate", lfo2RateKnob);
     envGainAtt  = std::make_unique<SliderAttachment> (apvts, "envgain",  envGainKnob);

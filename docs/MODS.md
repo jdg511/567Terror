@@ -1,9 +1,17 @@
-# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.60)
+# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.61)
 
 > Renamed at v0.45. "Glitchwave 567" turned out to be an existing product, so
 > the internal name is now **WTF**, which the product name supplies for free:
 > **W**here **T**he **F**uzz Meets The Funk. Entries below v0.45 still say
 > Glitchwave; that is history, not a mistake.
+
+## v0.61 -- the VOL knob was wired to MIX on a fresh start
+
+Symptom: VOL looked stuck, turning it to zero still played the signal clear as day, and turning it up mixed the fuzz in.
+
+Cause: v0.45 moved MIX to Layer X and made the third knob VOL on the default layer, but the editor constructor still attached that knob to the `dry` (MIX) parameter. Because the editor starts on the default layer, the layer switch code saw "already default" and never re-attached it. The knob only became VOL after visiting another layer (hold a stomp) and coming back. At the default MIX of D100 / FX25, zero on the MIX knob is dry only (clear audio), and turning it up fades the dry out while the 567 comes in.
+
+Fix: the constructor now attaches the third knob to `vol`, and its first label reads VOL. No DSP change.
 
 ## v0.52 to v0.60 -- power model, raw-input follower, and CV jacks that match the hardware
 
