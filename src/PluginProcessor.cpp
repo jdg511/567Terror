@@ -77,7 +77,7 @@ WtfAudioProcessor::WtfAudioProcessor()
     : AudioProcessor (BusesProperties()
                           .withInput  ("Input",     juce::AudioChannelSet::stereo(), true)
                           .withOutput ("Output",    juce::AudioChannelSet::stereo(), true)
-                          .withInput  ("Sidechain", juce::AudioChannelSet::stereo(), true)),
+                          .withInput  ("Sidechain", juce::AudioChannelSet::stereo(), false)),   // v0.60: off until the DAW routes it = CV jacks unplugged
       apvts (*this, nullptr, "PARAMS", createParameterLayout())
 {
     raw.freq     = apvts.getRawParameterValue ("freq");
@@ -123,16 +123,6 @@ WtfAudioProcessor::WtfAudioProcessor()
     demoFormats.registerBasicFormats();
     apvts.addParameterListener ("democlip", this);
     loadDemoClip ((int) raw.democlip->load());
-
-    // v0.58: audio players 2 and 3 (they feed CV1 and CV2)
-    for (int i = 0; i < 2; ++i)
-    {
-        const juce::String n (i + 1);
-        cv[i].clipRaw = apvts.getRawParameterValue ("cvclip" + n);
-        cv[i].volRaw  = apvts.getRawParameterValue ("cvvol"  + n);
-        apvts.addParameterListener ("cvclip" + n, this);
-        loadCvClip (i, (int) cv[i].clipRaw->load());
-    }
 
     // v0.45: the pedal boots on Preset A. Nothing is saved yet at this point,
     // so A is the factory state: every knob at noon, all three circuits on.
@@ -189,8 +179,7 @@ void WtfAudioProcessor::loadFactoryPresetA()
         auto* rp = dynamic_cast<juce::RangedAudioParameter*> (p);
         if (rp == nullptr) continue;
         const juce::String id = rp->paramID;
-        if (id == "democlip" || id == "demovol" || id == "preset3"
-            || id.startsWith ("cvclip") || id.startsWith ("cvvol"))
+        if (id == "democlip" || id == "demovol" || id == "preset3")
             continue;
 
         float target;
@@ -232,8 +221,6 @@ void WtfAudioProcessor::loadFactoryPresetA()
 WtfAudioProcessor::~WtfAudioProcessor()
 {
     apvts.removeParameterListener ("democlip", this);
-    apvts.removeParameterListener ("cvclip1", this);
-    apvts.removeParameterListener ("cvclip2", this);
     cancelPendingUpdate();
 }
 
@@ -269,24 +256,10 @@ void WtfAudioProcessor::setDemoPlaying (bool shouldPlay) noexcept
     demoPlaying.store (shouldPlay, std::memory_order_relaxed);
 }
 
-void WtfAudioProcessor::setCvPlaying (int i, bool shouldPlay) noexcept
-{
-    auto& v = cv[i & 1];
-    if (shouldPlay)
-        v.player.restart();
-    v.playing.store (shouldPlay, std::memory_order_relaxed);
-}
-
 // may arrive on the audio thread, so it only flags and bounces to the message
 // thread; decoding an Ogg is never done under the audio callback
 void WtfAudioProcessor::parameterChanged (const juce::String& paramID, float newValue)
 {
-    if (paramID == "cvclip1" || paramID == "cvclip2")
-    {
-        cv[paramID == "cvclip2" ? 1 : 0].pendingClip.store ((int) newValue, std::memory_order_relaxed);
-        triggerAsyncUpdate();
-        return;
-    }
     if (paramID == "democlip")
     {
         pendingDemoClip.store ((int) newValue, std::memory_order_relaxed);
@@ -296,23 +269,7 @@ void WtfAudioProcessor::parameterChanged (const juce::String& paramID, float new
 
 void WtfAudioProcessor::handleAsyncUpdate()
 {
-    for (int i = 0; i < 2; ++i)
-        loadCvClip (i, cv[i].pendingClip.load (std::memory_order_relaxed));
     loadDemoClip (pendingDemoClip.load (std::memory_order_relaxed));
-}
-
-void WtfAudioProcessor::loadCvClip (int i, int index)
-{
-    auto& v = cv[i & 1];
-    index = juce::jlimit (0, DemoData::namedResourceListSize - 1, index);
-    if (index == v.loadedClip)
-        return;
-
-    int size = 0;
-    if (const char* data = DemoData::getNamedResource (DemoData::namedResourceList[index], size))
-        if (v.player.loadFromMemory (data, size, demoFormats,
-                                     DemoData::originalFilenames[index]))
-            v.loadedClip = index;
 }
 
 void WtfAudioProcessor::loadDemoClip (int index)
@@ -519,15 +476,6 @@ WtfAudioProcessor::createParameterLayout()
         demoClipNames(), 0));
     layout.add (std::make_unique<PF> (juce::ParameterID { "demovol", 1 }, "Demo Level",
         juce::NormalisableRange<float> (-24.0f, 12.0f, 0.1f), 0.0f, db1));
-    // v0.58: audio players 2 and 3 (feed CV1 / CV2), same clip list
-    layout.add (std::make_unique<PC> (juce::ParameterID { "cvclip1", 1 }, "CV1 Player Clip",
-        demoClipNames(), 0));
-    layout.add (std::make_unique<PF> (juce::ParameterID { "cvvol1", 1 }, "CV1 Player Level",
-        juce::NormalisableRange<float> (-24.0f, 12.0f, 0.1f), 0.0f, db1));
-    layout.add (std::make_unique<PC> (juce::ParameterID { "cvclip2", 1 }, "CV2 Player Clip",
-        demoClipNames(), 0));
-    layout.add (std::make_unique<PF> (juce::ParameterID { "cvvol2", 1 }, "CV2 Player Level",
-        juce::NormalisableRange<float> (-24.0f, 12.0f, 0.1f), 0.0f, db1));
     layout.add (std::make_unique<PF> (juce::ParameterID { "starve", 1 }, "Starve",
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.0f,
         Att().withStringFromValueFunction ([] (float v, int)
@@ -563,13 +511,6 @@ void WtfAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     demoPlayer.prepare (sampleRate);
     demoGainCur = juce::Decibels::decibelsToGain (raw.demovol->load());
     demoEnv     = 0.0f;
-    for (auto& v : cv)
-    {
-        v.buf.setSize (1, samplesPerBlock);
-        v.player.prepare (sampleRate);
-        v.gainCur = juce::Decibels::decibelsToGain (v.volRaw->load());
-        v.env     = 0.0f;
-    }
 
     hostRate     = sampleRate;
     gateEnvCoeff = 1.0f - std::exp (-1.0f / (0.010f * (float) sampleRate));
@@ -659,9 +600,11 @@ void WtfAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     // ---- CV sources: sidechain L / R --------------------------------------------
     cvBuffer.clear();
+    bool scPlugged = false;   // v0.60: sidechain bus active == CV jacks plugged in
     if (getBusCount (true) > 1)
     {
         auto sc = getBusBuffer (buffer, true, 1);
+        scPlugged = sc.getNumChannels() > 0;
         if (sc.getNumChannels() > 0)
             cvBuffer.copyFrom (0, 0, sc, 0, 0, numSamples);
         if (sc.getNumChannels() > 1)
@@ -669,31 +612,6 @@ void WtfAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         else if (sc.getNumChannels() == 1)
             cvBuffer.copyFrom (1, 0, sc, 0, 0, numSamples);
     }
-    // ---- v0.58 audio players 2 and 3 play INTO the CV inputs ----------------------
-    // Added on top of whatever the DAW sends down the sidechain, so the CV path
-    // (rectify, smooth, jack-detect VCA on the LFO depth) treats them exactly like
-    // a patched-in signal. Start/stop fades so nothing clicks.
-    for (int i = 0; i < 2; ++i)
-    {
-        auto& v = cv[i];
-        const bool  want      = v.playing.load (std::memory_order_relaxed);
-        const float envTarget = want ? 1.0f : 0.0f;
-
-        if (want || v.env > 0.0f)
-        {
-            const int nd = juce::jmin (numSamples, v.buf.getNumSamples());
-            float* d = v.buf.getWritePointer (0);
-            v.player.process (d, nd, true, true);
-
-            const float gTarget = juce::Decibels::decibelsToGain (v.volRaw->load());
-            v.buf.applyGainRamp (0, 0, nd, v.gainCur * v.env, gTarget * envTarget);
-            juce::FloatVectorOperations::add (cvBuffer.getWritePointer (i), d, nd);
-
-            v.gainCur = gTarget;
-            v.env     = envTarget;
-        }
-    }
-
     const float* cv1 = cvBuffer.getReadPointer (0);
     const float* cv2 = cvBuffer.getReadPointer (1);
     const float* liveIn = monoBuffer.getReadPointer (1);
@@ -717,6 +635,7 @@ void WtfAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     mp.lfo2Shape   = (int) kShapeMap[juce::jlimit (0, 15, (int) raw.lfo2shape->load())];
     mp.lfo2Target  = mapTarget (kLfo2Map, raw.lfo2target->load());
     mp.envTarget   = mapTarget (kEnvMap, raw.envtarget->load());
+    mp.cv1Plugged  = mp.cv2Plugged = scPlugged;
     // filter Mode Off also disables the envelope follower section
     mp.envGain     = lpfModeIdx == 0 ? 0.0f : raw.envgain->load();
     mp.envDriveUp  = raw.envdrive->load() < 0.5f;

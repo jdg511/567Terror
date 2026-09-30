@@ -1076,75 +1076,6 @@ private:
 };
 
 // ---------------------------------------------------------------------------
-// v0.58: compact strip for audio players 2 and 3, which feed CV1 / CV2
-class CvPlayerPanel : public juce::Component
-{
-public:
-    juce::Slider* volKnob = nullptr;
-    juce::String  title, subtitle;
-    bool   playing     = false;
-    double clipSeconds = 0.0;
-
-    void paint (juce::Graphics& g) override
-    {
-        auto r = getLocalBounds().toFloat();
-        g.setColour (gw::kPanelBg);
-        g.fillRoundedRectangle (r, 12.0f);
-        g.setColour (gw::kHairline);
-        g.drawRoundedRectangle (r.reduced (0.5f), 12.0f, 1.0f);
-
-        g.setColour (gw::kText);
-        g.setFont (gw::barlow (11.5f, true, 0.16f));
-        g.drawText (title, 14, 8, 700, 16, juce::Justification::centredLeft);
-
-        g.setColour (gw::kDim);
-        g.setFont (gw::mono (9.0f, 400, 0.03f));
-        g.drawText (subtitle, 14, 26, 860, 12, juce::Justification::centredLeft);
-
-        g.setColour (gw::kHairline);
-        g.fillRect (14, 44, 800, 1);
-
-        {   // running LED
-            auto led = juce::Rectangle<float> (628.0f, 63.0f, 11.0f, 11.0f);
-            const auto c = playing ? gw::kGreen : gw::kChipOff;
-            if (playing)
-            {
-                g.setColour (c.withAlpha (0.35f));
-                g.fillEllipse (led.expanded (5.0f));
-            }
-            g.setColour (juce::Colour (0xff0a0c10).interpolatedWith (c, playing ? 1.0f : 0.55f));
-            g.fillEllipse (led);
-        }
-        g.setColour (playing ? gw::kGreen : gw::kDim2);
-        g.setFont (gw::mono (10.0f, 500));
-        g.drawText (playing ? "LOOPING" : "STOPPED", 648, 62, 140, 14,
-                    juce::Justification::centredLeft);
-
-        if (clipSeconds > 0.0)
-        {
-            g.setColour (gw::kGrey);
-            g.setFont (gw::mono (9.0f, 400));
-            g.drawText (juce::String (clipSeconds, 1) + " s loop", 648, 77, 140, 12,
-                        juce::Justification::centredLeft);
-        }
-
-        g.setColour (gw::kDim);
-        g.setFont (gw::barlow (9.5f, true, 0.16f));
-        g.drawText ("LEVEL", 810, 38, 110, 12, juce::Justification::centredRight);
-
-        if (volKnob != nullptr)
-        {
-            const double dv = volKnob->getValue();
-            juce::String v = (dv > 0.0 ? "+" : "") + juce::String (dv, 1);
-            v = v.replace ("-", juce::String::fromUTF8 ("\xe2\x88\x92")) + " dB";
-            g.setColour (gw::kText);
-            g.setFont (gw::mono (12.0f, 400));
-            g.drawText (v, 810, 56, 110, 14, juce::Justification::centredRight);
-        }
-    }
-};
-
-// ---------------------------------------------------------------------------
 class DemoPanel : public juce::Component
 {
 public:
@@ -2069,12 +2000,6 @@ private:
     DemoTransportButton demoBtn;
     juce::Slider        demoVolKnob;
     std::unique_ptr<SliderAttachment> demoVolAtt;
-    // v0.58 audio players 2 and 3 (CV1 / CV2)
-    CvPlayerPanel       cvPanel[2];
-    DemoSelector        cvSel[2];
-    DemoTransportButton cvBtn[2];
-    juce::Slider        cvVolKnob[2];
-    std::unique_ptr<SliderAttachment> cvVolAtt[2];
 
     // hints (v0.39: ship them ON)
     bool showHints = true;

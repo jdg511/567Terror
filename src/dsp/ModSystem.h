@@ -77,6 +77,11 @@ public:
         // v0.45 Mu-Tron III ballistics, now on the Layer Z knobs. Defaults are
         // the REAL numbers off the Musitronics circuit -- see MuTron below.
         float envAttackMs = 1.551f;   // noon on the ATTACK knob
+    // v0.60: jack-detect, like the real pedal. Plugged (sidechain bus active) means
+    // NO fallback even when the signal is silent; unplugged means CV1 leaves the LFO1
+    // depth wide open and the envelope follower listens to the main input.
+    bool  cv1Plugged = false;
+    bool  cv2Plugged = false;
         float envDecayMs  = 158.7f;   // noon on the DECAY knob
     };
 
@@ -218,8 +223,8 @@ public:
         //   stage 2: the VTL5C3 itself, which has its own 2.5 ms / 35 ms lag
         // Cascading them is what makes the attack feel soft-but-quick instead
         // of clicky, and what puts the little tail on the end of the decay.
-        // v0.59: the follower listens to CV2 (sidechain 2 + audio player 3) instead of the main input. If nothing has been on CV2 for 3 s (jack-detect, same rule as the CV VCAs) it falls back to the main input so an empty CV2 does not leave the follower dead.
-        const float envSrc = cv2SilentSec < 3.0f ? cv2Abs : inputAbs;
+        // v0.60: with CV2 plugged in the follower listens to CV2 ONLY (silent CV2 = dead follower, no fallback, like the real pedal). Unplugged, it listens to the main input.
+        const float envSrc = params.cv2Plugged ? cv2Abs : inputAbs;
         inEnv  += (envSrc > inEnv ? envAtkCoeff : envRelCoeff) * (envSrc - inEnv);
         vacEnv += (inEnv > vacEnv ? vacOnCoeff : vacOffCoeff) * (inEnv - vacEnv);
         cv1Env += cvCoeff * (cv1Abs - cv1Env);
@@ -236,9 +241,7 @@ public:
         KnobSet out = base;
 
         // ---- CV "jack detect" + depth VCAs (hardwired CV1->LFO1, CV2->LFO2) --
-        if (cv1Env > 0.001f) cv1SilentSec = 0.0f; else cv1SilentSec += dt;
-        if (cv2Env > 0.001f) cv2SilentSec = 0.0f; else cv2SilentSec += dt;
-        const float cv1Vca = cv1SilentSec < 3.0f ? clampf (cv1Env * 2.0f, 0.0f, 1.0f) : 1.0f;
+        const float cv1Vca = params.cv1Plugged ? clampf (cv1Env * 2.0f, 0.0f, 1.0f) : 1.0f;
         const float cv2Vca = 1.0f;   // v0.59: CV2 no longer rides LFO 2 depth, it is the envelope follower source
 
         float lfo1RateEff  = params.lfo1RateHz;
