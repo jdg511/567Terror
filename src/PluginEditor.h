@@ -1,10 +1,10 @@
-#pragma once
+﻿#pragma once
 
 #include "PluginProcessor.h"
 #include <BinaryData.h>
 
 // ===========================================================================
-// v0.34 "Terror" — Jason's glitch-art restyle from the Claude Design project
+// v0.34 "Terror" â€” Jason's glitch-art restyle from the Claude Design project
 // (docs/ui/WTF - v0.34 Terror.dc.html). GRAPHICS ONLY: the whole
 // X/Y/Z/A layer machine, tap tempo, latches and gate behaviour are v0.32.
 // ===========================================================================
@@ -153,7 +153,7 @@ public:
 };
 
 // ---------------------------------------------------------------------------
-// Simple digital PPM: instant attack, timed fall — design meter colours.
+// Simple digital PPM: instant attack, timed fall â€” design meter colours.
 // ---------------------------------------------------------------------------
 class PPMMeter : public juce::Component
 {
@@ -207,7 +207,7 @@ private:
 };
 
 // ---------------------------------------------------------------------------
-// A single LED with variable brightness (0..1) and colour — like the real thing.
+// A single LED with variable brightness (0..1) and colour â€” like the real thing.
 // ---------------------------------------------------------------------------
 class LedIndicator : public juce::Component
 {
@@ -252,7 +252,7 @@ private:
 // ---------------------------------------------------------------------------
 // Hardware-style momentary stomp (v0.19 timing): TAP fires onTap on release
 // (< 750 ms, not consumed). cancelPressActions() consumes the current press
-// (no tap) — used when a knob turns the hold into a layer-shift gesture.
+// (no tap) â€” used when a knob turns the hold into a layer-shift gesture.
 // ---------------------------------------------------------------------------
 // v0.50 STOMP GESTURE TIMING. One press decides for itself what it was, by
 // how long it lasted:
@@ -288,7 +288,7 @@ public:
     bool isDown() const noexcept { return pressed; }
 
     // v0.28 sim aid: RIGHT-CLICK latches the stomp "held" until the next
-    // right-click — a pure-mouse stand-in for a held footswitch, immune to
+    // right-click â€” a pure-mouse stand-in for a held footswitch, immune to
     // whatever eats lone modifier keys on the host machine.
     bool isLatched() const noexcept { return latched; }
 
@@ -493,7 +493,7 @@ private:
 };
 
 // ---------------------------------------------------------------------------
-// A row of NeoPixel swatches showing which choice is selected (display only —
+// A row of NeoPixel swatches showing which choice is selected (display only â€”
 // the selector knobs do the choosing, exactly as in v0.32).
 // ---------------------------------------------------------------------------
 class SwatchRuler : public juce::Component
@@ -544,7 +544,7 @@ private:
 };
 
 // ---------------------------------------------------------------------------
-// "Sine / Wobble" — a mono label whose two halves carry different colours.
+// "Sine / Wobble" â€” a mono label whose two halves carry different colours.
 // ---------------------------------------------------------------------------
 class TwoToneLabel : public juce::Component
 {
@@ -649,17 +649,17 @@ public:
         g.setColour (gw::kBtnEdge);
         g.drawRoundedRectangle (r.reduced (0.5f), 6.0f, 1.0f);
 
-        g.setColour (volts < 6.65f ? gw::kYellow : gw::kGreen);
+        g.setColour (volts < 7.95f ? gw::kYellow : gw::kGreen);
         g.setFont (gw::mono (13.0f, 500));
         g.drawText (juce::String (volts, 1) + " V", getLocalBounds().reduced (14, 0),
                     juce::Justification::centredLeft);
         g.setColour (gw::kDim);
         g.setFont (gw::mono (9.5f, 400));
-        g.drawText ("78L09 + D105", getLocalBounds().reduced (14, 0),
+        g.drawText ("LM2937-8.0", getLocalBounds().reduced (14, 0),
                     juce::Justification::centredRight);
     }
 private:
-    float volts = 6.7f;
+    float volts = 8.0f;
 };
 
 // ---------------------------------------------------------------------------
@@ -680,7 +680,7 @@ public:
         // V567 on this line: those two ARE the pedal's supply rails, and
         // STARVE is otherwise invisible unless you are sitting on Layer Z.
         juce::String vdirt { "9.0 V" };
-        juce::String v567  { "6.7 V" };
+        juce::String v567  { "8.0 V" };
         bool starved = false;
 
         bool operator!= (const Summary& o) const
@@ -789,7 +789,7 @@ private:
 };
 
 // ---------------------------------------------------------------------------
-// Dim veil behind the open cover — clicking it closes the cover.
+// Dim veil behind the open cover â€” clicking it closes the cover.
 // ---------------------------------------------------------------------------
 class CoverDim : public juce::Component
 {
@@ -1150,7 +1150,7 @@ public:
 };
 
 // ---------------------------------------------------------------------------
-// "Where the Fuzz Meets the Funk" — chromatic-aberration name with the
+// "Where the Fuzz Meets the Funk" â€” chromatic-aberration name with the
 // occasional horizontal tear. v0.35: the brand/version line below it is gone
 // (version now lives in the standalone's Scale and Feedback window) and the
 // name grew to fill the freed space.
@@ -1190,7 +1190,7 @@ public:
             return;
         }
 
-        // v0.35: a properly glitchy jiggle — smear trails, four slices torn
+        // v0.35: a properly glitchy jiggle â€” smear trails, four slices torn
         // in different directions with jumping RGB split, plus dropouts
         auto& rr = juce::Random::getSystemRandom();
 
@@ -1249,7 +1249,7 @@ public:
     std::function<juce::Image()> grabFace;
 
     // v0.35 test-panel triggers: fire any glitch immediately (same visuals
-    // the schedule produces — visual only, audio untouched)
+    // the schedule produces â€” visual only, audio untouched)
     void triggerBars()     { pendLight = true; }
     void triggerMajor()    { pendMajor = true; }
     void triggerSmear()    { pendSmall = true; }
@@ -1279,7 +1279,7 @@ public:
         float target = 0.0f;
         bool  wantSmear = false;
         {
-            // small/medium tear RIGHT — every 6:06.006 (Jason), 550 ms
+            // small/medium tear RIGHT â€” every 6:06.006 (Jason), 550 ms
             double p = std::fmod (t, 366006.0) - 365456.0;
             if (manSmall >= 0.0)
             {
@@ -1315,7 +1315,7 @@ public:
             repaint (0, 410, getWidth(), 16);
         }
 
-        // major glitch v2 — every 33:33 (or triggered), 1.3 s: datamosh
+        // major glitch v2 â€” every 33:33 (or triggered), 1.3 s: datamosh
         // ripple -> rainbow pixel-sort melt -> comb/colour-band tear ->
         // liquid hue-wash, then snap back (Jason's reference art)
         double mw = -1.0;
@@ -1336,7 +1336,7 @@ public:
             repaint();
         }
 
-        // Med Glitch — every 11:11 (or triggered), 325 ms: the same two-act
+        // Med Glitch â€” every 11:11 (or triggered), 325 ms: the same two-act
         // cut as before, played at double speed (Jason: literally half the
         // time), from the major's reference art
         double dw = -1.0;
@@ -1460,7 +1460,7 @@ private:
 
         if (f < 5)
         {
-            // PHASE 1 — datamosh: wavy row displacement + corrupted blocks
+            // PHASE 1 â€” datamosh: wavy row displacement + corrupted blocks
             const float amp = 18.0f + 60.0f * rf (3);
             const float k   = 0.02f + 0.05f * rf (4);
             const float ph  = rf (5) * 6.283f;
@@ -1473,7 +1473,7 @@ private:
         }
         else if (f < 11)
         {
-            // PHASE 2 — rainbow pixel-sort melt: columns drip downward,
+            // PHASE 2 â€” rainbow pixel-sort melt: columns drip downward,
             // trails stretching longer every frame (video A)
             const float growth = (float) (f - 4) / 6.0f;   // 0..1
             for (int x = 0, i = 0; x < W; x += 6, ++i)
@@ -1494,7 +1494,7 @@ private:
         }
         else if (f < 16)
         {
-            // PHASE 3 — vertical comb + saturated colour bands + black
+            // PHASE 3 â€” vertical comb + saturated colour bands + black
             // diagonal tears (still A)
             for (int x = 0, i = 0; x < W; x += 6, ++i)
             {
@@ -1523,7 +1523,7 @@ private:
         }
         else
         {
-            // PHASE 4 — liquid psychedelic hue-wash (video B), then snap back
+            // PHASE 4 â€” liquid psychedelic hue-wash (video B), then snap back
             const float amp = 50.0f + 40.0f * rf (7);
             for (int y = 0; y < H; y += 4)
             {
@@ -1571,7 +1571,7 @@ private:
         }
     }
 
-    // Med Glitch: 650 ms two-act cut from the same reference art — comb
+    // Med Glitch: 650 ms two-act cut from the same reference art â€” comb
     // strips with sparse rainbow drips, then liquid ripple + hue washes
     void paintMed (juce::Graphics& g)
     {
@@ -1584,7 +1584,7 @@ private:
 
         if (f < 5)
         {
-            // act 1 — vertical comb with sparse rainbow melt streaks
+            // act 1 â€” vertical comb with sparse rainbow melt streaks
             for (int x = 0, i = 0; x < W; x += 8, ++i)
             {
                 const float v = rf (900 + (i % 71));
@@ -1603,7 +1603,7 @@ private:
         }
         else
         {
-            // act 2 — liquid ripple + saturated hue washes, then snap back
+            // act 2 â€” liquid ripple + saturated hue washes, then snap back
             const float amp = 30.0f + 34.0f * rf (13);
             for (int y = 0; y < H; y += 4)
             {
@@ -1885,7 +1885,7 @@ private:
     LayerChips chips;
     TaglineComp tagline;
 
-    // selection rulers + names (display only — knobs do the choosing)
+    // selection rulers + names (display only â€” knobs do the choosing)
     SwatchRuler l1ShapeRuler, l1TargetRuler, l2ShapeRuler, l2TargetRuler;
     SwatchRuler envModeRuler, envTargetRuler, envComboRuler;
     TwoToneLabel l1ShapeName, l1TargetName, l2ShapeName, l2TargetName;
@@ -2012,7 +2012,7 @@ private:
     // v0.35: window scale, driven by the standalone's Scale and Feedback window
     float appliedScale = 1.0f;
 
-    // v0.35: title jiggle — fires ~every 1:11 +/- 12 s of random slack, and
+    // v0.35: title jiggle â€” fires ~every 1:11 +/- 12 s of random slack, and
     // each jiggle's speed shifts +/- 13 %
     double nextTearAt = 0.0, tearStart = -1.0;
     float  tearSpeed  = 1.0f;

@@ -1,4 +1,4 @@
-#include "PluginEditor.h"
+﻿#include "PluginEditor.h"
 #include "ScaleFeedback.h"
 
 namespace
@@ -363,7 +363,7 @@ void WtfAudioProcessorEditor::setupKnob (juce::Slider& s, juce::Label& l,
 }
 
 // ---------------------------------------------------------------------------
-// v0.24 layer machinery — UNCHANGED from v0.32
+// v0.24 layer machinery â€” UNCHANGED from v0.32
 // ---------------------------------------------------------------------------
 bool WtfAudioProcessorEditor::tapStompDown() const
 {
@@ -417,7 +417,7 @@ void WtfAudioProcessorEditor::updateKnobModes()
 
     switch (layer)
     {
-        case 0:   // DEFAULT — the printed panel.
+        case 0:   // DEFAULT â€” the printed panel.
                   // v0.45: the third knob is VOL here now, and MIX moved to
                   // Layer X. Volume is the thing you reach for without thinking
                   // about it, so it belongs on the layer you are already on.
@@ -428,12 +428,12 @@ void WtfAudioProcessorEditor::updateKnobModes()
             lfo2RateAtt = std::make_unique<SliderAttachment> (ap, "lfo2rate", lfo2RateKnob);
             envGainAtt  = std::make_unique<SliderAttachment> (ap, "envgain",  envGainKnob);
             break;
-        case 1:   // LAYER X (hold A) — Gain / Res / Mix + Shape/Shape/Mode
+        case 1:   // LAYER X (hold A) â€” Gain / Res / Mix + Shape/Shape/Mode
             freqAtt = std::make_unique<SliderAttachment> (ap, "dirtgain", freqKnob);
             lpfAtt  = std::make_unique<SliderAttachment> (ap, "lpfq",     lpfKnob);
             mixAtt  = std::make_unique<SliderAttachment> (ap, "dry",      mixKnob);
             break;
-        case 2:   // LAYER Y (hold B) — L1/L2 Depth, DrvRng, Target x3
+        case 2:   // LAYER Y (hold B) â€” L1/L2 Depth, DrvRng, Target x3
             freqAtt = std::make_unique<SliderAttachment> (ap, "lfo1depth", freqKnob);
             lpfAtt  = std::make_unique<SliderAttachment> (ap, "lfo2depth", lpfKnob);
             break;
@@ -1072,7 +1072,7 @@ void WtfAudioProcessorEditor::timerCallback()
                        && lpfModeParam != nullptr && lpfModeParam->getIndex() > 0;
 
     // knob enables per layer. The env-gain knob must stay alive in Y even
-    // with the filter Off — it's how the Mode gets turned back on.
+    // with the filter Off â€” it's how the Mode gets turned back on.
     freqKnob.setEnabled     (true);
     lpfKnob.setEnabled      (layer == 2 || layer == 3 ? true : filterOn);
     mixKnob.setEnabled      (true);
@@ -1091,9 +1091,9 @@ void WtfAudioProcessorEditor::timerCallback()
     refreshReadouts (layer);
 
     // ---- the three section LEDs: live value colour of the active layer -------
-    const bool f2 = ((int) (t / 250.0))   % 2 == 0;   // 2 Hz — Bank A
-    const bool f5 = ((int) (t / 100.0))   % 2 == 0;   // 5 Hz — Bank B
-    const bool f3 = ((int) (t / 166.67))  % 2 == 0;   // 3 Hz — filter mode
+    const bool f2 = ((int) (t / 250.0))   % 2 == 0;   // 2 Hz â€” Bank A
+    const bool f5 = ((int) (t / 100.0))   % 2 == 0;   // 5 Hz â€” Bank B
+    const bool f3 = ((int) (t / 166.67))  % 2 == 0;   // 3 Hz â€” filter mode
     const juce::Colour kWhite { 0xffffffff };
 
     auto expire = [t] (int& ctx, double until)
@@ -1135,7 +1135,7 @@ void WtfAudioProcessorEditor::timerCallback()
         led.setLevel (1.0f);
     };
 
-    // LFO 1 — Y shows SHAPE, Z shows TARGET (or depth while the Z depth
+    // LFO 1 â€” Y shows SHAPE, Z shows TARGET (or depth while the Z depth
     // knob is being turned)
     if (layer == 1)      shapeShow (lfo1Led, lfo1ShapeParam);
     else if (layer == 2) (lfo1Ctx == kCtxDepth ? depthShow (lfo1Led, "lfo1depth")
@@ -1162,7 +1162,7 @@ void WtfAudioProcessorEditor::timerCallback()
         lfo2Led.setLevel ((processor.readVis (1) + 1.0f) * 0.5f);
     }
 
-    // ENV — Y shows MODE, Z shows TARGET (or DRV/RNG combo while the Z Mix
+    // ENV â€” Y shows MODE, Z shows TARGET (or DRV/RNG combo while the Z Mix
     // knob is being turned)
     if (layer == 1)      modeShow (envLed);
     else if (layer == 2) (envCtx == kCtxCombo ? comboShow (envLed)
@@ -1235,9 +1235,9 @@ void WtfAudioProcessorEditor::timerCallback()
         {
             s.vdirt   = sp->getCurrentValueAsText();
             s.starved = sp->getValue() > 0.005f;
-            // v0.54b: real board = VA -> L78L09 (1.6 V dropout) -> D105 (0.7 V) -> LM567.
-            // At the 9 V adapter the 78L09 is in dropout, so this reads about 6.7 V.
-            const float v567 = juce::jlimit (0.0f, 8.3f, juce::jmin (9.0f, 9.0f - 8.0f * sp->getValue() - 1.6f) - 0.7f);
+            // v0.54b: planned board = VA -> LM2937-8.0 (0.15 V dropout) -> LM567.
+            // At a 9 V adapter this holds 8.0 V; STARVE sags it below.
+            const float v567 = juce::jlimit (0.0f, 8.0f, juce::jmin (8.0f, 9.0f - 8.0f * sp->getValue() - 0.15f));
             s.v567 = juce::String (v567, 1) + " V";
             railRead.setVolts (v567);
         }
@@ -1245,7 +1245,7 @@ void WtfAudioProcessorEditor::timerCallback()
         strip.setSummary (s);
     }
 
-    // switches can also move under host automation — keep the rows honest
+    // switches can also move under host automation â€” keep the rows honest
     jfetRow.refresh();
     c41Row.refresh();
     c42Row.refresh();
@@ -1269,7 +1269,7 @@ void WtfAudioProcessorEditor::timerCallback()
     fx.tick (t);
     holdHint.tick (t);
 
-    // v0.35 title jiggle: once every ~1:11, never on an exact schedule —
+    // v0.35 title jiggle: once every ~1:11, never on an exact schedule â€”
     // roughly every 1:11 +/- 12 s of random slack, and each jiggle runs at a
     // speed randomly shifted +/- 13 %.
     {

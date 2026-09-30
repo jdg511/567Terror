@@ -1,5 +1,5 @@
-// ============================================================================
-//  Wtf567.h — behavioral circuit simulation of the WTF pedal
+﻿// ============================================================================
+//  Wtf567.h â€” behavioral circuit simulation of the WTF pedal
 //
 //  Portable C++ (no JUCE dependency) so the same code runs in the plugin and
 //  in the offline test harness. All voltages are stored as "delta volts"
@@ -70,9 +70,9 @@ struct Tunables
     // ~0.7 V) sits between that regulator and the LM567. At a 9 V adapter the
     // 78L09 is already in dropout, so the chip sees about 6.7 V, not 8.3 V.
     // STARVE sags VA and this rail follows it down one-for-one.
-    float reg78OutV      = 9.0f;    // L78L09 regulated output
-    float reg78DropV     = 1.6f;    // L78L09 dropout at ~15 mA
-    float d105DropV      = 0.70f;   // 1N4148W forward drop at ~15 mA
+    float regOutV        = 8.0f;    // LM2937-8.0 regulated output (v0.56 hardware plan)
+    float regDropV       = 0.15f;   // LM2937 dropout at ~15 mA (0.11 typ, 0.25 max)
+    float d105DropV      = 0.0f;    // D105 removed in the LM2937 plan
     // Rev 7 moves the J201 Fetzer Valve in FRONT of the Bazz Fuss and hangs
     // its drain on VDIRT, so STARVE reaches it. It runs at natural gain --
     // no pad, no degeneration trim -- which for a J201 Fetzer is roughly
@@ -96,7 +96,7 @@ namespace detail
     inline float clampConst (float v, float lo, float hi) noexcept
     { return v < lo ? lo : (v > hi ? hi : v); }
 
-    // TL074 on 9V single supply: output can swing ~±3.1V around VREF.
+    // TL074 on 9V single supply: output can swing ~Â±3.1V around VREF.
     // v0.53: the swing is VREF (half the supply) minus ~1.4 V of headroom, so
     // it shrinks when STARVE sags the whole supply.
     inline float opampClip (float v, float rail = 3.1f) noexcept
@@ -243,7 +243,7 @@ public:
         float lpfQ        = 0.4f;  // 0..1 -> Q 0.25 .. 8 (log)
         int   lpfMode     = 1;     // 0 = Off (bypass), 1 = LP, 2 = BP, 3 = HP, 4 = Notch
         int   lpfRangeHi  = 0;     // 0 = Lo range, 1 = Hi range
-        float dry         = 0.5f;  // MIX crossfade — 0 = dry only, 0.5 = both, 1 = FX only
+        float dry         = 0.5f;  // MIX crossfade â€” 0 = dry only, 0.5 = both, 1 = FX only
         float vol         = 0.5f;  // VOL1 pot position 0..1 (A100k), master level
         float gain        = 0.5f;  // v0.44: dirt GAIN 0..1 -> x0.1 (-20 dB) .. x10
                                    // (fuzz wall). 0.5 = unity, dead centre.
@@ -354,7 +354,7 @@ public:
         // it stops locking at all.
         opRail   = std::max (vEff * 0.5f - 1.4f, 0.02f);
         vRefEff  = vEff * 0.5f;
-        v567Eff  = std::max (std::min (tune.reg78OutV, std::max (vEff - tune.reg78DropV, 0.0f)) - tune.d105DropV, 0.0f);
+        v567Eff  = std::max (std::min (tune.regOutV, std::max (vEff - tune.regDropV, 0.0f)) - tune.d105DropV, 0.0f);
         starveA           = smoothed.starve;
         smoothed.gain += potSmoothCoeff * (target.gain - smoothed.gain);
 
@@ -396,12 +396,12 @@ public:
         const float sVco  = (vcoPhase < 0.5)                     ? 1.0f : -1.0f;
         const float sVcoQ = (vcoPhase < 0.25 || vcoPhase >= 0.75) ? 1.0f : -1.0f;
 
-        // phase detectors (XOR-style on ±1 squares)
+        // phase detectors (XOR-style on Â±1 squares)
         loopFilter.process (sIn * sVco);              // -> pulls the VCO
         const float quad = ofilFilter.process (sIn * sVcoQ); // -> lock detector
 
         // output comparator with hysteresis; with no OFIL cap it chatters at
-        // audio rate — this chatter is the pedal's voice
+        // audio rate â€” this chatter is the pedal's voice
         // v0.53: a starved LM567 gets deaf below 4.75 V and dead near 2.5 V
         const float deaf   = std::clamp ((4.75f - v567Eff) / 2.25f, 0.0f, 1.0f);
         const float onLvl  = tune.detOnLevel + deaf * (1.05f - tune.detOnLevel);
@@ -514,7 +514,7 @@ public:
 
 private:
     // ------------------------------------------------------------------------
-    // v0.9 dirt models — each maps to a genuinely tiny hardware circuit:
+    // v0.9 dirt models â€” each maps to a genuinely tiny hardware circuit:
     //   0 Electra:      1 Si transistor + 2 clipping diodes (hard-ish crunch)
     //   1 Fuzz Face Ge: 2 Ge transistors, bias sag -> woolly, sputtery
     //   2 Bazz Fuss:    1 transistor + 1 diode, gated "velcro" fuzz
@@ -580,7 +580,7 @@ private:
             }
         }
         dirtPrevY = y;
-        y = dirtDC.process (y);       // asymmetric clipping makes DC — block it
+        y = dirtDC.process (y);       // asymmetric clipping makes DC â€” block it
         return dirtLP.process (y);    // per-model top-end voicing
     }
 
@@ -588,7 +588,7 @@ private:
     {
         // ---- v0.3 extended FREQ: 0.1 Hz .. 18 kHz, log --------------------------
         // (the stock RT/CT network gave 304-1148 Hz; this is Jason's wishlist
-        //  range — hardware will need switched timing caps to match)
+        //  range â€” hardware will need switched timing caps to match)
         // v0.32: FREQ range 0.2 Hz .. 6 kHz (was 0.1 Hz .. 18 kHz)
         f0 = std::min (0.2f * std::pow (30000.0f, smoothed.freq), 0.4f * fs);
 
