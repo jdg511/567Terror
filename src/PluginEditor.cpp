@@ -296,9 +296,11 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
     {
         const juce::String n (i + 1);
         cvPanel[i].title    = "AUDIO PLAYER " + juce::String (i + 2) + "  /  FEEDS CV " + n
-                              + (i == 0 ? "  (LFO 1 DEPTH)" : "  (LFO 2 DEPTH)");
+                              + (i == 0 ? "  (LFO 1 DEPTH)" : "  (ENVELOPE FOLLOWER SOURCE)");
         cvPanel[i].subtitle = "Same clips as player 1  /  added to sidechain input " + n
                               + " on top of whatever the DAW sends  /  loops until you stop it";
+        if (i == 1)
+            cvPanel[i].subtitle = "Same clips as player 1  /  sidechain input 2 + this player  /  the ENVELOPE FOLLOWER listens to this, not the main input (main input if silent 3 s)";
 
         cvSel[i].attach (choice (i == 0 ? "cvclip1" : "cvclip2"));
         cvSel[i].onChange = [this, i] { cvPanel[i].repaint(); };
