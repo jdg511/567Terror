@@ -1,4 +1,4 @@
-﻿#include "PluginEditor.h"
+#include "PluginEditor.h"
 #include "ScaleFeedback.h"
 
 namespace
@@ -291,6 +291,42 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
     demoPanel.addAndMakeVisible (demoVolKnob);
     addAndMakeVisible (demoPanel);
 
+    // ---- v0.58 audio players 2 and 3: same clips, feeding CV1 / CV2 -------------
+    for (int i = 0; i < 2; ++i)
+    {
+        const juce::String n (i + 1);
+        cvPanel[i].title    = "AUDIO PLAYER " + juce::String (i + 2) + "  /  FEEDS CV " + n
+                              + (i == 0 ? "  (LFO 1 DEPTH)" : "  (LFO 2 DEPTH)");
+        cvPanel[i].subtitle = "Same clips as player 1  /  added to sidechain input " + n
+                              + " on top of whatever the DAW sends  /  loops until you stop it";
+
+        cvSel[i].attach (choice (i == 0 ? "cvclip1" : "cvclip2"));
+        cvSel[i].onChange = [this, i] { cvPanel[i].repaint(); };
+
+        cvVolKnob[i].setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+        cvVolKnob[i].setTextBoxStyle (juce::Slider::NoTextBox, false, 0, 0);
+        cvVolKnob[i].setVelocityModeParameters (1.0, 1, 0.0, false);
+        cvVolKnob[i].setRotaryParameters (gw::kAngle0, gw::kAngle1, true);
+        cvVolKnob[i].setColour (juce::Slider::rotarySliderFillColourId, gw::kCyan);
+        cvVolKnob[i].onValueChange = [this, i] { cvPanel[i].repaint(); };
+        cvVolAtt[i] = std::make_unique<SliderAttachment> (apvts, "cvvol" + n, cvVolKnob[i]);
+
+        cvBtn[i].onToggle = [this, i]
+        {
+            const bool next = ! processor.isCvPlaying (i);
+            processor.setCvPlaying (i, next);
+            cvBtn[i].setPlaying (next);
+            cvPanel[i].playing = next;
+            cvPanel[i].repaint();
+        };
+
+        cvPanel[i].volKnob = &cvVolKnob[i];
+        cvPanel[i].addAndMakeVisible (cvSel[i]);
+        cvPanel[i].addAndMakeVisible (cvBtn[i]);
+        cvPanel[i].addAndMakeVisible (cvVolKnob[i]);
+        addAndMakeVisible (cvPanel[i]);
+    }
+
     strip.onOpen = [this] { setGateOpen (true); };
     addAndMakeVisible (strip);
 
@@ -329,7 +365,7 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
     addMouseListener (&holdHint, true);
 
     startTimerHz (60);
-    setSize (1060, 800);   // v0.40: face art is 640 tall, demo strip lives below it
+    setSize (1060, 1000);   // v0.40: face art is 640 tall, demo strip lives below it
     // v0.35: defaults to x1 every launch; the standalone's "Scale and
     // Feedback" window (Options menu) offers x0.5 / x1 / x1.5 / x2 live.
     appliedScale = processor.uiScale.load (std::memory_order_relaxed);
@@ -1263,6 +1299,19 @@ void WtfAudioProcessorEditor::timerCallback()
             demoPanel.repaint();
         }
         demoSel.refresh();
+        for (int i = 0; i < 2; ++i)
+        {
+            const bool cp = processor.isCvPlaying (i);
+            cvBtn[i].setPlaying (cp);
+            const double cs = processor.getCvClipSeconds (i);
+            if (cp != cvPanel[i].playing || std::fabs (cs - cvPanel[i].clipSeconds) > 0.05)
+            {
+                cvPanel[i].playing     = cp;
+                cvPanel[i].clipSeconds = cs;
+                cvPanel[i].repaint();
+            }
+            cvSel[i].refresh();
+        }
     }
 
     // ---- decoration ----------------------------------------------------------
@@ -1563,4 +1612,11 @@ void WtfAudioProcessorEditor::resized()
     demoSel.setBounds     (14,  56, 430, 38);   // panel-local from here down
     demoBtn.setBounds    (458,  56, 150, 38);
     demoVolKnob.setBounds (920, 46,  76, 76);
+    for (int i = 0; i < 2; ++i)   // v0.58 CV players, stacked under player 1
+    {
+        cvPanel[i].setBounds (12, 796 + i * 102, 1036, 96);
+        cvSel[i].setBounds (14, 52, 430, 34);
+        cvBtn[i].setBounds (458, 52, 150, 34);
+        cvVolKnob[i].setBounds (930, 26, 60, 60);
+    }
 }

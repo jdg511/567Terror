@@ -87,12 +87,24 @@ public:
     // message thread only (takes the player's lock briefly)
     double getDemoClipSeconds() const noexcept { return demoPlayer.getLengthSeconds(); }
 
+    // ---- v0.58 audio players 2 and 3 ----------------------------------------
+    // Same embedded clips as player 1, but they play INTO the CV inputs: player
+    // 2 is added to CV1 (sidechain 1), player 3 to CV2 (sidechain 2). Clip and
+    // level are parameters (cvclip1/2, cvvol1/2); start/stop is transport.
+    void setCvPlaying (int i, bool shouldPlay) noexcept;
+    bool isCvPlaying (int i) const noexcept
+    {
+        return cv[i & 1].playing.load (std::memory_order_relaxed);
+    }
+    double getCvClipSeconds (int i) const noexcept { return cv[i & 1].player.getLengthSeconds(); }
+
 private:
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
     void parameterChanged (const juce::String& paramID, float newValue) override;
     void handleAsyncUpdate() override;      // message thread: decode the clip
     void loadDemoClip (int index);
+    void loadCvClip (int i, int index);
 
     static constexpr int kModChunk = 32;  // host samples between mod updates
 
@@ -112,6 +124,20 @@ private:
     int   loadedDemoClip = -1;            // message thread only
     float demoGainCur    = 1.0f;          // audio thread only: zipper-free level
     float demoEnv        = 0.0f;          // audio thread only: start/stop fade
+
+    // v0.58 CV players (audio players 2 and 3)
+    struct CvVoice
+    {
+        AudioFilePlayer          player;
+        juce::AudioBuffer<float> buf;
+        std::atomic<bool>        playing { false };
+        std::atomic<int>         pendingClip { 0 };
+        int    loadedClip = -1;          // message thread only
+        float  gainCur    = 1.0f;        // audio thread only
+        float  env        = 0.0f;        // audio thread only: start/stop fade
+        std::atomic<float>* clipRaw {};
+        std::atomic<float>* volRaw  {};
+    } cv[2];
 
     std::atomic<float> meterPeaks[2] { { 0.f }, { 0.f } };
     std::atomic<float> visVals[6] { { 0.f }, { 0.f }, { 0.f }, { 0.f }, { 0.f }, { 0.f } };
