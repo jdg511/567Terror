@@ -174,6 +174,8 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
     tapStompBtn.onTap         = [this] { recordTap (tapPressLfo2, tapPressMs); stompTapped (0); };
     tapStompBtn.onMediumPress = [this] { stompHeldPress (0); };
     tapStompBtn.onRelease = [this] { tapPressMs = 0.0; updateKnobModes(); };
+    for (auto* b : { &tapStompBtn, &bypassBtn, &stompCBtn })
+        b->clickPicksInsteadOfUnlatch = [this] { return stompMode != StompMode::Normal; };
     addAndMakeVisible (tapStompBtn);
 
     // ---- stomp B -------------------------------------------------------------
@@ -215,7 +217,7 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
     };
     hint (hintChips,  juce::String::fromUTF8 ("HOLD A \xe2\x86\x92 X \xc2\xb7 HOLD B \xe2\x86\x92 Y \xc2\xb7 HOLD A+B+C \xe2\x86\x92 Z"),
           10.2f, gw::kDim2);
-    hint (hintLayers, juce::String::fromUTF8 ("Hold 1.2 s or right-click to latch \xc2\xb7 the RING turns RED when the hold takes."),
+    hint (hintLayers, juce::String::fromUTF8 ("Hold 1.2 s or right-click to latch, click again to release \xc2\xb7 the RING turns RED when the hold takes."),
           8.5f, gw::kDim2);
     hint (hintLfo1,   juce::String::fromUTF8 ("Y \xc2\xb7 FREQ knob = depth \xc2\xb7 LED: wave / depth %"),
           9.0f, gw::kDim2);
@@ -227,7 +229,7 @@ WtfAudioProcessorEditor::WtfAudioProcessorEditor (WtfAudioProcessor& p)
           9.0f, gw::kDim);
     hint (hintStomp2, juce::String::fromUTF8 ("QUICK TAPS: A \xc3\x97""3 = LFO 1 rate \xc2\xb7 B \xc3\x97""3 = LFO 2 rate \xc2\xb7 C \xc3\x97""3 steps MIX"),
           9.0f, gw::kDim2);
-    hint (hintStomp3, juce::String::fromUTF8 ("HOLD 1.2 s (or right-click to latch) \xc2\xb7 C = bypass \xc2\xb7 A+B = save (CW) \xc2\xb7 B+C = recall (CCW)"),
+    hint (hintStomp3, juce::String::fromUTF8 ("HOLD 1.2 s (or right-click) to latch, click again to release \xc2\xb7 C = bypass \xc2\xb7 A+B = save (CW) \xc2\xb7 B+C = recall (CCW)"),
           9.0f, gw::kDim2);
 
     // ---- output gate + internal switches (all under the cover) ---------------
@@ -725,6 +727,7 @@ void WtfAudioProcessorEditor::pickPresetSlot (int slot)
         p->endChangeGesture();
     }
     stompMode = StompMode::Normal;
+    releaseAllStomps();      // v0.52: saved or recalled, so the latches let go
 }
 
 void WtfAudioProcessorEditor::applyFactoryPresetA()
@@ -787,10 +790,10 @@ void WtfAudioProcessorEditor::serviceStomps()
             comboFired = true;
             switch (mask)
             {
-                case 3:  enterStompMode (StompMode::PresetSave);
-                         releaseAllStomps();                      break;  // A+B
-                case 6:  enterStompMode (StompMode::PresetRecall);
-                         releaseAllStomps();                      break;  // B+C
+                // v0.52: the latches STAY on while the mode is up. They drop
+                // when a slot is picked (or the mode times out).
+                case 3:  enterStompMode (StompMode::PresetSave);   break;  // A+B
+                case 6:  enterStompMode (StompMode::PresetRecall); break;  // B+C
                 case 4:  toggleBool ("bypass");
                          releaseAllStomps();                      break;  // C
                 default: break;   // 1, 2 and 7 are layers, held continuously
@@ -799,8 +802,11 @@ void WtfAudioProcessorEditor::serviceStomps()
     }
 
     // ---- 3. a preset mode gives up after 8 s rather than trapping you -------
-    if (stompMode != StompMode::Normal && now - stompModeMs > 8000.0)
+    if (stompMode != StompMode::Normal && now - stompModeMs > 30000.0)
+    {
         stompMode = StompMode::Normal;
+        releaseAllStomps();
+    }
 }
 
 void WtfAudioProcessorEditor::setGateOpen (bool shouldBeOpen)

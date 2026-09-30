@@ -281,6 +281,9 @@ public:
     std::function<void()> onMediumPress;
     std::function<void()> onPress;     // fires on the press itself (mouse down)
     std::function<void()> onRelease;   // always fires on release (after onTap)
+    // v0.52: while a preset save/recall mode is up, a click on a latched stomp
+    // must pick its slot instead of unlatching it.
+    std::function<bool()> clickPicksInsteadOfUnlatch;
 
     bool isDown() const noexcept { return pressed; }
 
@@ -334,6 +337,17 @@ public:
             repaint();
             return;
         }
+        // v0.52: a latched stomp (right-click OR a full 1.2 s hold) stays
+        // latched until it is clicked again. That click only unlatches; it is
+        // not a tap. Exception: in preset save/recall mode the click chooses
+        // the slot (and the preset pick then drops every latch).
+        if (latched && ! (clickPicksInsteadOfUnlatch && clickPicksInsteadOfUnlatch()))
+        {
+            latched = false;
+            swallowPress = true;
+            repaint();
+            return;
+        }
         pressMs = juce::Time::getMillisecondCounterHiRes();
         pressed = true;
         holdStarted = false;
@@ -348,6 +362,7 @@ public:
     void mouseUp (const juce::MouseEvent&) override
     {
         if (rightPress) { rightPress = false; return; }
+        if (swallowPress) { swallowPress = false; return; }
         stopTimer();
         // v0.50: the press classifies itself by how long it lasted. A flick
         // is a tap. Anything held past kStompMediumMs and let go before
@@ -362,6 +377,7 @@ public:
         {
             if      (pressDur < kStompMediumMs) { if (onTap)         onTap(); }
             else if (pressDur < kStompHoldMs)   { if (onMediumPress) onMediumPress(); }
+            else                                { latched = true; }   // v0.52: a full hold latches
         }
         pressed = false;
         holdStarted = false;
@@ -426,7 +442,7 @@ private:
     }
 
     bool pressed = false, holdStarted = false, consumed = false;
-    bool latched = false, rightPress = false, indicated = false;
+    bool latched = false, rightPress = false, swallowPress = false, indicated = false;
     double pressMs = 0.0;                        // v0.50 press classifier
     float  holdProgress = 0.0f;                  // v0.50 ring fill 0..1
     bool   holdTaken = false;                    // v0.50 ring goes RED
