@@ -8,19 +8,22 @@ builds: **Illicit Apothecary**.
 ## Project plan status
 
 * Step 1 (done): faithful sim of the stock schematic.
-* **Step 2 (this, v0.2): mods — LFO stack + envelope follower, 3 audio file players,
-  sidechain/CV control of every knob. See `docs/MODS.md` for the full manual.**
-* Step 3 (later): PCB files for PCBWay.
+* Step 2 (done, current plugin v0.60): mods. LFO stack, Mu-Tron style envelope follower,
+  stomp gestures, STARVE power model, and two CV inputs. See `docs/MODS.md`.
+* Step 3 (next, separate session): redo the hardware from the plugin. Start with
+  `docs/HARDWARE_HANDOFF_v0.60.md`. PCBWay files come after that.
 
-## v0.2 mods in one paragraph
+## Where the plugin is now (v0.60) in one paragraph
 
-LFO 1 (rate/depth/shape/target dropdown) wobbles any knob — its rate is bent by LFO 2
-("LFO modulated by another LFO"), and an envelope follower pushes FREQ with your playing
-dynamics (Env→Freq knob, bipolar). Three file players: PLAY toggles play/stop, Player 1
-routes into the circuit like live input (with a Level knob), Players 2 and 3 are CV
-sources. CV 1 = Sidechain Left + Player 2; CV 2 = Sidechain Right + Player 3. Each CV bus
-has a target dropdown (any knob or the mod controls) plus mini Strength and Slew knobs —
-and CV 2 can also target CV 1's Strength and Slew. Knobs stay live; CV adds on top.
+Product name **Where The Fuzz Meets The Funk** (internal short name WTF). The LM567 rail is
+modeled as a fixed LM2937-8.0 (hardware still has a 78L09 until the hardware session swaps it).
+The envelope follower listens to the raw input as it enters the pedal. There is one audio file
+player (Player 1, feeds the circuit like live input). CV 1 and CV 2 are true jack-detect inputs
+fed from the host sidechain (left = CV 1, right = CV 2, mono feeds both, bus off by default):
+CV 1 rides LFO 1 depth, CV 2 is the audio the envelope follower follows. Plugged means no
+fallback, even when silent. The old "assign CV to any knob" dropdowns, strength and slew knobs,
+and Players 2 and 3 were dropped because the hardware will not have them. Signal flow drawing:
+`docs/WTF_signal_flow_v0.60.drawio`.
 
 ## Downloads (Windows / Linux / macOS)
 

@@ -1,5 +1,10 @@
 # Glitchwave 567 — Circuit-to-DSP Mapping Notes
 
+> Status note (v0.60): this file describes the original v0.1 mapping and is partly out of date.
+> Current behavior is in `docs/MODS.md` (see the v0.52 to v0.60 section). Notably the LM567 rail
+> is now a fixed LM2937-8.0 (8.0 V, 0.15 V dropout) instead of straight VCC, and the model names
+> in `src/dsp/` are `Wtf567.h` and `ModSystem.h`, not `Glitchwave567.h`.
+
 This document explains how each part of the schematic (Glitchwave567 rev 1.0, EasyEDA) is
 modeled in `src/dsp/Glitchwave567.h`, and which behaviors are assumptions that Jason should
 verify against the real pedal.

@@ -33,15 +33,18 @@ Bypass state, env-filter state or the envelope's own level would all suit it.
 
 ### Hardware, not software
 
+The hardware is being redone in a separate session from the plugin. The spec is
+`docs/HARDWARE_HANDOFF_v0.60.md`. Headline items:
+
+- LM567 rail: swap U18 (78L09) for a SOT-223 LM2937-8.0, delete D105, add the 10 uF output cap. The plugin has modeled this since v0.56. Replaces the old "5 V off an LDO" idea.
+- CV 1 and CV 2 switched jacks: CV 1 to the LFO 1 depth VCA, CV 2 to the envelope follower input (normalled to DRY_CLEAN). No fallback when plugged.
 - Size the pad between the JFET and the Bazz Fuss on the breadboard.
-- Consider running the LM567 at 5 V off an LDO with R16 pulled up to VA.
-  Pin 8's absolute max (15 V) is independent of V+, so the chip can sit at
-  its datasheet sweet spot while the Q node still swings to the full rail.
 - Test LM567 unit-to-unit variance before the next fab run.
 
 ---
 
 ## Done
 
+- **v0.56 to v0.60** LM2937-8.0 rail in the sim, follower on the raw input, CV jacks as true jack-detect (CV 1 to LFO 1 depth, CV 2 to the follower), players 2 and 3 removed.
 - **v0.50** stomp gesture rework: circuit kills on a medium press, C steps
   MIX on 3 taps, hold indication moved from the LEDs to the stomp ring.

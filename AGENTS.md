@@ -9,3 +9,12 @@ Every control knob that is in the sim can be controlled by sidechain audio conne
 3. Once I mod the Glitchwave 567 to be what I want, generate the files needed to have PCBWay make the pcbs for me and arrange the gerber files to have the pots and stomp switches to be placed in a geometrically pleasing  patterns, with the stomp switches closest to the user and the 1/4" jacks and 9v jack placed on the back wall just like many other pedals. I will most likely have two or more side 1/4" jacks for control voltages to come in or out
 
 4.  The name of the Pedal will be "Where The Fuzz Meets The Funk" and The Vendor/Creator Will be Illicit Apothecary. It is classified as a Filter effect.
+
+## Current decisions (plugin v0.60, supersede the brief above where they differ)
+
+- The sim only does what the real hardware can do. The "assign each CV to any knob" dropdown, the strength and slew mini knobs, and audio players 2 and 3 are dropped.
+- Only Audio Player 1 exists. It feeds the circuit like live input.
+- CV 1 (sidechain left) rides LFO 1 depth. CV 2 (sidechain right) is the audio the envelope follower follows. A mono sidechain feeds both. The sidechain bus is off by default, which counts as unplugged.
+- CV jacks are true jack-detect: plugged means no fallback even when silent. Unplugged: LFO 1 depth full, follower listens to the raw input as it enters the pedal.
+- The LM567 rail is modeled as a fixed LM2937-8.0 (8.0 V, 0.15 V dropout). The hardware swap from the 78L09 is not done yet.
+- Hardware will be redone in a separate session based on the plugin. Start with `docs/HARDWARE_HANDOFF_v0.60.md`.

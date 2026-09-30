@@ -1,9 +1,49 @@
-# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.51)
+# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.60)
 
 > Renamed at v0.45. "Glitchwave 567" turned out to be an existing product, so
 > the internal name is now **WTF**, which the product name supplies for free:
 > **W**here **T**he **F**uzz Meets The Funk. Entries below v0.45 still say
 > Glitchwave; that is history, not a mistake.
+
+## v0.52 to v0.60 -- power model, raw-input follower, and CV jacks that match the hardware
+
+Jason declared v0.60 correct. This is the net result; v0.58 and v0.59 were
+intermediate steps that v0.60 replaced.
+
+| ver | what |
+|---|---|
+| v0.52 | stomp latches persist until a preset is saved or recalled; a 1.2 s hold latches, click again to release |
+| v0.53 | STARVE sags every rail (op-amp headroom, LM567 rail, mixer reference); LM567 goes deaf below 4.75 V |
+| v0.54 | LM567 rail from a fixed LM2937-8.0 LDO, STARVE sags the whole supply |
+| v0.55 | rail modeled as the real hardware (VA -> L78L09 -> D105), replacing the LDO assumption |
+| v0.56 | rail modeled as LM2937-8.0 again, now as the planned hardware change: 8.0 V out, 0.15 V dropout, no D105. Rail readout label says LM2937-8.0. Hardware NOT changed |
+| v0.57 | envelope follower explicitly fed from the raw input copy, never the circuit working buffer |
+| v0.58 | (superseded) audio players 2 and 3 as CV sources |
+| v0.59 | (superseded) follower on CV2 with a 3 s silence fallback |
+| v0.60 | final: players 2 and 3 removed; CV jacks are true jack-detect; follower follows CV2 when plugged |
+
+### LM567 rail
+
+A linear regulator cannot exceed its input minus dropout, and the LM567 absolute
+maximum is 9 V, so the closest safe fixed part is 8.0 V. 8.5 V parts are out of
+stock. The LM2937 was chosen for its reverse-polarity protection and needs a 10 uF
+output cap (ESR 10 mOhm to 3 Ohm). In the sim: rail = min(8.0, VA - 0.15); the
+detector is deaf below 4.75 V.
+
+### Envelope follower source
+
+- Unplugged CV2: the follower rectifies the raw input as it enters the pedal. Earlier behavior read like a slow tremolo at the LM567 frequency; the follower now never sees anything after the input.
+- Plugged CV2: the follower rectifies CV2 only. Silent CV2 means a dead follower.
+- Envelope numbers unchanged: cap 1.551 ms attack, 158.7 ms decay; vactrol 2.5 ms on, 35 ms off.
+
+### CV jacks (replaces the v0.2 CV bus section and the v0.13 CV note below)
+
+- Sidechain bus: stereo, left = CV 1, right = CV 2, mono feeds both. The bus is disabled by default, so an unrouted DAW track is "unplugged". Enable and route the sidechain in the host to plug in.
+- CV 1 plugged: LFO 1 depth is multiplied by clamp(2 x smoothed level, 0, 1); silent = 0. Unplugged: depth full.
+- CV 2 no longer drives LFO 2 depth.
+- No fallback when plugged, matching the real jack-detect behavior.
+- The standalone has no sidechain, so it always behaves unplugged. Players 2 and 3 and the per-CV target, strength and slew controls no longer exist.
+- Hardware handoff for all of this: `docs/HARDWARE_HANDOFF_v0.60.md`.
 
 ## v0.51 -- 1.2 second hold, 400 ms kill, and every format on every OS
 
@@ -1242,7 +1282,7 @@ Control plate:
   Rate/Depth and Env Gain), amber rate LED.
 * **Envelope follower:** GAIN knob + TARGET LEDs + DRIVE Up/Down + MODE
   Off/LP/BP/HP + RANGE Lo/Hi. Mode Off = filter bypassed, whole block greys out.
-* **CV jacks (v0.13):** CV 1 (sidechain L) is **hardwired to LFO 1's DEPTH** as a
+* **CV jacks (v0.13, superseded at v0.60: CV 2 now feeds the envelope follower, not LFO 2 depth):** CV 1 (sidechain L) is **hardwired to LFO 1's DEPTH** as a
   VCA; CV 2 (sidechain R) to **LFO 2's DEPTH**. No target selectors, no strength
   knobs — sidechain level breathes the LFO's depth, the DEPTH knob sets the max.
   LFOs never grey out. Like a normalled jack: no signal for ~3 s = "unplugged"
@@ -1446,7 +1486,7 @@ you have the stock pedal. The mods are layered on top.
 * **Env→Freq** knob is bipolar (−1…+1): positive = playing harder pushes the 567's lock
   frequency up, negative = down. This is the "frequency controlled by input velocity/volume".
 
-### CV buses (sidechain + players)
+### CV buses (sidechain + players) [SUPERSEDED at v0.60, see the v0.52 to v0.60 section at the top]
 * **CV 1** source = Sidechain In 1 **+** Player 2 (summed).
 * **CV 2** source = Sidechain In 2 **+** Player 3 (summed).
 * Each CV bus: audio → rectify → smooth (Slew knob, 1–1000 ms) → 0..1 control signal.
