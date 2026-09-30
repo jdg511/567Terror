@@ -65,10 +65,14 @@ struct Tunables
     // lower rail costs the wet path a slice of its swing -- that is the
     // audible price of getting inside the datasheet, and it is modelled.
     // v0.53: STARVE reaches here too now: it sags VA, and this rail follows.
-    // v0.54: the diodes are gone. An LM2937-8.0 fixed LDO (8.0 V) feeds the chip,
-    // so the rail is flat 8.25 V until VA sags to within ldoDropV of it.
-    float v567RailV      = 8.0f;    // fixed LDO output (LM2937-8.0) (was VA - D105 - D107 = 7.5 V)
-    float ldoDropV       = 0.10f;   // LM2937 dropout at the chip's ~15 mA
+    // v0.54b: modelled on the REAL board. VA (fixed 9 V in the sim) feeds an
+    // L78L09 (dropout ~1.6 V at the chip's ~15 mA), and D105 (one 1N4148W,
+    // ~0.7 V) sits between that regulator and the LM567. At a 9 V adapter the
+    // 78L09 is already in dropout, so the chip sees about 6.7 V, not 8.3 V.
+    // STARVE sags VA and this rail follows it down one-for-one.
+    float reg78OutV      = 9.0f;    // L78L09 regulated output
+    float reg78DropV     = 1.6f;    // L78L09 dropout at ~15 mA
+    float d105DropV      = 0.70f;   // 1N4148W forward drop at ~15 mA
     // Rev 7 moves the J201 Fetzer Valve in FRONT of the Bazz Fuss and hangs
     // its drain on VDIRT, so STARVE reaches it. It runs at natural gain --
     // no pad, no degeneration trim -- which for a J201 Fetzer is roughly
@@ -350,7 +354,7 @@ public:
         // it stops locking at all.
         opRail   = std::max (vEff * 0.5f - 1.4f, 0.02f);
         vRefEff  = vEff * 0.5f;
-        v567Eff  = std::min (tune.v567RailV, std::max (vEff - tune.ldoDropV, 0.0f));
+        v567Eff  = std::max (std::min (tune.reg78OutV, std::max (vEff - tune.reg78DropV, 0.0f)) - tune.d105DropV, 0.0f);
         starveA           = smoothed.starve;
         smoothed.gain += potSmoothCoeff * (target.gain - smoothed.gain);
 

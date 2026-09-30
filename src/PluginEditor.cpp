@@ -1235,9 +1235,9 @@ void WtfAudioProcessorEditor::timerCallback()
         {
             s.vdirt   = sp->getCurrentValueAsText();
             s.starved = sp->getValue() > 0.005f;
-            // v0.54: the LM567 rail is a LM2937-8.0 fixed LDO at 8.0 V; it holds flat
-            // until VA sags to within ~0.1 V of it, then follows VA down
-            const float v567 = juce::jlimit (0.0f, 8.0f, 9.0f - 8.0f * sp->getValue() - 0.1f);
+            // v0.54b: real board = VA -> L78L09 (1.6 V dropout) -> D105 (0.7 V) -> LM567.
+            // At the 9 V adapter the 78L09 is in dropout, so this reads about 6.7 V.
+            const float v567 = juce::jlimit (0.0f, 8.3f, juce::jmin (9.0f, 9.0f - 8.0f * sp->getValue() - 1.6f) - 0.7f);
             s.v567 = juce::String (v567, 1) + " V";
             railRead.setVolts (v567);
         }
