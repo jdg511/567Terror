@@ -636,6 +636,11 @@ private:
 class RailReadout : public juce::Component
 {
 public:
+    // v0.53: live, because STARVE sags the LM567 rail with the rest of VA.
+    void setVolts (float v)
+    {
+        if (std::fabs (v - volts) > 0.04f) { volts = v; repaint(); }
+    }
     void paint (juce::Graphics& g) override
     {
         auto r = getLocalBounds().toFloat();
@@ -644,15 +649,17 @@ public:
         g.setColour (gw::kBtnEdge);
         g.drawRoundedRectangle (r.reduced (0.5f), 6.0f, 1.0f);
 
-        g.setColour (gw::kGreen);
+        g.setColour (volts < 7.46f ? gw::kYellow : gw::kGreen);
         g.setFont (gw::mono (13.0f, 500));
-        g.drawText ("7.5 V", getLocalBounds().reduced (14, 0),
+        g.drawText (juce::String (volts, 1) + " V", getLocalBounds().reduced (14, 0),
                     juce::Justification::centredLeft);
         g.setColour (gw::kDim);
         g.setFont (gw::mono (9.5f, 400));
         g.drawText ("VA - D105 - D107", getLocalBounds().reduced (14, 0),
                     juce::Justification::centredRight);
     }
+private:
+    float volts = 7.5f;
 };
 
 // ---------------------------------------------------------------------------
@@ -673,13 +680,14 @@ public:
         // V567 on this line: those two ARE the pedal's supply rails, and
         // STARVE is otherwise invisible unless you are sitting on Layer Z.
         juce::String vdirt { "9.0 V" };
+        juce::String v567  { "7.5 V" };
         bool starved = false;
 
         bool operator!= (const Summary& o) const
         {
             return gate != o.gate || jfet != o.jfet || hints != o.hints
                 || c41 != o.c41 || c42 != o.c42
-                || vdirt != o.vdirt || starved != o.starved;
+                || vdirt != o.vdirt || v567 != o.v567 || starved != o.starved;
         }
     };
 
@@ -754,7 +762,7 @@ public:
             put ("   VDIRT ", gw::kDim);
             put (summary.vdirt, summary.starved ? gw::kYellow : gw::kText);
             put ("   V567 ", gw::kDim);
-            put ("7.5 V", gw::kText);
+            put (summary.v567, summary.starved ? gw::kYellow : gw::kText);
             put ("   HINTS ", gw::kDim);
             put (summary.hints ? "ON" : "OFF", summary.hints ? gw::kYellow : gw::kDim2);
         }

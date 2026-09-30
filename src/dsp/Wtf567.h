@@ -64,7 +64,7 @@ struct Tunables
     // ~2.2 ohm). R16 pulls the Q node up to THIS rail, not to VA, so the
     // lower rail costs the wet path a slice of its swing -- that is the
     // audible price of getting inside the datasheet, and it is modelled.
-    // STARVE does not reach here: rev 7 starves VDIRT, not VA.
+    // v0.53: STARVE reaches here too now: it sags VA, and this rail follows.
     float v567RailV      = 7.5f;    // VA 9.0 V - D105 - D107
     // Rev 7 moves the J201 Fetzer Valve in FRONT of the Bazz Fuss and hangs
     // its drain on VDIRT, so STARVE reaches it. It runs at natural gain --
@@ -90,10 +90,12 @@ namespace detail
     { return v < lo ? lo : (v > hi ? hi : v); }
 
     // TL074 on 9V single supply: output can swing ~±3.1V around VREF.
-    inline float opampClip (float v) noexcept
+    // v0.53: the swing is VREF (half the supply) minus ~1.4 V of headroom, so
+    // it shrinks when STARVE sags the whole supply.
+    inline float opampClip (float v, float rail = 3.1f) noexcept
     {
-        constexpr float rail = 3.1f;
         // smooth bounded saturator, hard-ish knee (k = 8)
+        rail = rail < 0.02f ? 0.02f : rail;
         const float x = v / rail;
         const float x2 = x * x;
         const float x4 = x2 * x2;
@@ -338,6 +340,14 @@ public:
         constexpr float kFloorV = 1.0f;    // absolute rail floor, fully collapsed
         const float vEff  = target.supplyV - smoothed.starve * (target.supplyV - kFloorV);
         railC             = vEff / 9.0f;               // clip ceiling re: 9 V FS
+        // v0.53: STARVE now sags EVERY rail, not just VDIRT. VA falls, so the
+        // TL074s lose headroom (VREF = VA/2, minus ~1.4 V), the LM567 rail
+        // (VA through the two diodes) falls with it, and the mixer reference
+        // moves. Below the chip's 4.75 V minimum it gets deaf, and near 2.5 V
+        // it stops locking at all.
+        opRail   = std::max (vEff * 0.5f - 1.4f, 0.02f);
+        vRefEff  = vEff * 0.5f;
+        v567Eff  = std::max (vEff - (target.supplyV - tune.v567RailV), 0.0f);
         starveA           = smoothed.starve;
         smoothed.gain += potSmoothCoeff * (target.gain - smoothed.gain);
 
@@ -352,13 +362,13 @@ public:
         float v = inFS * tune.jackVoltsPerFS;          // volts at the jack
         v = inputDCBlock.process (v);                  // C1/R3 DC block (R1/R2 ~ unity)
         v = inHP2.process (inHP1.process (v));         // v0.10: 24 dB/oct low-cut @ 40 Hz
-        const float vDry = detail::opampClip (v);      // buffer output == DRY tap
+        const float vDry = detail::opampClip (v, opRail);      // buffer output == DRY tap
 
         // ==== Stage 2: gain stage (U1.3), +46.6 dB, clips to the rails =======
         const float trim = std::exp2 (tune.fixedTrimDb * 0.166096f); // 10^(dB/20)
         const float v567src = vDry * trim;             // trim feeds only this branch
         float vGain = v567src + 213.6f * gainShelfHP.process (v567src);
-        vGain = detail::opampClip (vGain);
+        vGain = detail::opampClip (vGain, opRail);
 
         // ==== Stage 3: LM567 PLL =============================================
         // input pin: AC coupled + noise floor, then the input limiter/comparator
@@ -385,7 +395,11 @@ public:
 
         // output comparator with hysteresis; with no OFIL cap it chatters at
         // audio rate — this chatter is the pedal's voice
-        if (!detected) { if (quad > tune.detOnLevel)  detected = true;  }
+        // v0.53: a starved LM567 gets deaf below 4.75 V and dead near 2.5 V
+        const float deaf   = std::clamp ((4.75f - v567Eff) / 2.25f, 0.0f, 1.0f);
+        const float onLvl  = tune.detOnLevel + deaf * (1.05f - tune.detOnLevel);
+        if (deaf >= 1.0f) detected = false;
+        if (!detected) { if (quad > onLvl)  detected = true;  }
         else           { if (quad < tune.detOffLevel) detected = false; }
 
         // ==== Q open-collector node with R16 100k pull-up ====================
@@ -428,11 +442,11 @@ public:
         // a branch leaves the other one running -- that is the whole reason
         // the branches are parallel rather than in series.
         const float wetG = target.decoderOn ? wetGain : 0.0f;
-        const float vMix = detail::opampClip (-(wetG * vQ + dryGain * vDirt));
+        const float vMix = detail::opampClip (-(wetG * vQ + dryGain * vDirt), opRail);
 
         // ==== Stage 5: envelope filter (single LP/BP/HP, Off = bypass) ======
         const float vOut = (target.lpfMode > 0)
-                               ? detail::opampClip (fizzLPF.process (vMix))
+                               ? detail::opampClip (fizzLPF.process (vMix), opRail)
                                : vMix;
 
         // ==== v0.41 output chain: voicing -> rail clip =======================
@@ -620,8 +634,8 @@ private:
         // roughly 15% of its total swing. The MIX law absorbs it.
         const float rLoad = 500000.0f;
         const float g16 = 1.0f / 100000.0f, gL = 1.0f / rLoad;
-        qHighV = (tune.v567RailV * g16 + 4.5f * gL) / (g16 + gL) - 4.5f;
-        qLowV  = 0.15f - 4.5f;                                  // hard saturation low
+        qHighV = (v567Eff * g16 + vRefEff * gL) / (g16 + gL) - vRefEff;
+        qLowV  = 0.15f - vRefEff;                                  // hard saturation low
 
         const float tauRise = (100000.0f * rLoad / (100000.0f + rLoad)) * tune.qNodeStrayC;
         qRiseCoeff = 1.0f - std::exp (-1.0f / (std::max (tauRise, 1e-7f) * fs));
@@ -658,6 +672,7 @@ private:
 
     // dirt state (v0.9)
     float dirtG = 2.0f, sagEnv = 0.0f, sagCoeff = 0.001f, dirtPrevY = 0.0f;
+    float opRail = 3.1f, vRefEff = 4.5f, v567Eff = 7.5f;   // v0.53 starved rails
     float railC = 1.0f, starveA = 0.0f;   // v0.21 effective rail / starve
     detail::Rng       rng;
 

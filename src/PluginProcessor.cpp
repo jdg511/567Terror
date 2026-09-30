@@ -482,7 +482,7 @@ WtfAudioProcessor::createParameterLayout()
             {
                 // secret: rail sags LINEARLY from the supply down to 1 V (v0.39)
                 // v0.49: read it out in VOLTS. Rev 7 is a single 9 V rail, so
-                // the number on the panel is the actual VDIRT the fuzz is
+                // the number on the panel is the actual VA (every rail follows it, v0.53) the fuzz is
                 // running on: 9.0 V at 0 %, 1.0 V fully starved. "50 %" told
                 // you how far the knob had turned; "5.0 V" tells you what the
                 // circuit is living on, which is the thing you are listening

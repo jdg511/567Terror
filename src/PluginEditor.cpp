@@ -1235,6 +1235,10 @@ void WtfAudioProcessorEditor::timerCallback()
         {
             s.vdirt   = sp->getCurrentValueAsText();
             s.starved = sp->getValue() > 0.005f;
+            // v0.53: the LM567 rail follows VA through its two diodes
+            const float v567 = juce::jmax (0.0f, 9.0f - 8.0f * sp->getValue() - 1.5f);
+            s.v567 = juce::String (v567, 1) + " V";
+            railRead.setVolts (v567);
         }
         s.hints  = showHints;
         strip.setSummary (s);
