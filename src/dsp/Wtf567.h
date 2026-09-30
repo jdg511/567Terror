@@ -245,7 +245,7 @@ public:
         int   lpfRangeHi  = 0;     // 0 = Lo range, 1 = Hi range
         float dry         = 0.5f;  // MIX crossfade â€” 0 = dry only, 0.5 = both, 1 = FX only
         float vol         = 0.5f;  // VOL1 pot position 0..1 (A100k), master level
-        float gain        = 0.5f;  // v0.44: dirt GAIN 0..1 -> x0.1 (-20 dB) .. x10
+        float gain        = 0.150515f;  // v0.62: dirt GAIN 0..1 -> x0.5 (-6 dB) .. x50 (+34 dB); default x1
                                    // (fuzz wall). 0.5 = unity, dead centre.
         int   dirtType    = 0;     // v0.9: 0 Electra, 1 Fuzz Face Ge, 2 Bazz Fuss,
                                    //       3 Op-Amp OD, 4 Octave Fuzz (always on, dry path only)
@@ -607,7 +607,10 @@ private:
         if (force || loopHz != loopHzCur) { loopFilter.setCutoff (loopHz, fs); loopHzCur = loopHz; }
         if (force || ofilHz != ofilHzCur) { ofilFilter.setCutoff (ofilHz, fs); ofilHzCur = ofilHz; }
 
-        // ---- v0.44 dirt: GAIN 0..1 -> x0.1 .. x10 (log), per-model voicing ----
+        // ---- v0.62 dirt: GAIN 0..1 -> x0.5 .. x50 (log), per-model voicing ----
+        // v0.62: Jason widened the range to x0.5 .. x50. Still two decades, but
+        // no longer reciprocal, so noon is the geometric mean x5 and UNITY (x1)
+        // sits at 0.1505 of the knob. The comment block below is the v0.44 logic.
         // Two decades, +/-20 dB about unity, and because the ends are
         // reciprocal (max = 1/min) UNITY lands exactly at the knob's centre:
         // 0.1 * 100^0.5 = 1.0. That is the rule for any log knob -- noon sits
@@ -619,7 +622,7 @@ private:
         // because the fuss is long past its clip point by then; what those
         // extra decades really cost is resolution, since cramming 80 dB into
         // 300 degrees of rotation makes every small move a big jump.
-        dirtG = 0.1f * std::pow (100.0f, smoothed.gain);
+        dirtG = 0.5f * std::pow (100.0f, smoothed.gain);   // v0.62: x0.5 .. x50
         dirtLP.setCutoff (target.dirtType == 1 ? 3500.0f
                         : target.dirtType == 3 ? 6000.0f : 9000.0f, fs);
 

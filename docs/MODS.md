@@ -1,9 +1,13 @@
-# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.61)
+# WTF (Where The Fuzz Meets The Funk) -- Step 2 Mods (v0.2 .. v0.62)
 
 > Renamed at v0.45. "Glitchwave 567" turned out to be an existing product, so
 > the internal name is now **WTF**, which the product name supplies for free:
 > **W**here **T**he **F**uzz Meets The Funk. Entries below v0.45 still say
 > Glitchwave; that is history, not a mistake.
+
+## v0.62 -- GAIN range is x0.5 to x50
+
+The dirt GAIN knob (Layer X, first knob) now runs x0.5 .. x50 (-6 dB to +34 dB), still a log taper over two decades. The old x0.1 .. x10 range had unity at noon because the ends were reciprocal. The new ends are not, so noon is now the geometric mean, x5, and unity (x1) sits at 15% of the knob. The default stays at x1 (knob position 0.1505) so a fresh start sounds the same as before. Saved presets and DAW sessions that stored a GAIN knob position will sound different, because the same knob position now means a different multiplier. Formula: `dirtG = 0.5 * 100^gain`.
 
 ## v0.61 -- the VOL knob was wired to MIX on a fresh start
 

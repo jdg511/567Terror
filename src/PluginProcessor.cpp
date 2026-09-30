@@ -320,16 +320,17 @@ WtfAudioProcessor::createParameterLayout()
         juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.9f, pct));   // 90 %
 
     // ---- always-on Bazz Fuss dirt in the dry path (v0.12: hardwired) --------------
-    // v0.44: the GAIN range is x0.1 .. x10, two decades, +/-20 dB about unity.
+    // v0.62: the GAIN range is x0.5 .. x50 (-6 dB .. +34 dB), two decades. Default x1 = 0.1505.
+    // (v0.44 was x0.1 .. x10 with unity at noon; the notes below describe that version.)
     // The ends are reciprocal, which is what puts UNITY at the knob's exact
     // centre (noon on a log knob is the geometric mean of the two ends), and
     // two decades keeps the resolution usable instead of cramming 80 dB into
     // 300 degrees of rotation. Default 0.5 = x1.00.
     layout.add (std::make_unique<PF> (juce::ParameterID { "dirtgain", 1 }, "Gain",
-        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.5f,
+        juce::NormalisableRange<float> (0.0f, 1.0f, 0.0f), 0.150515f,   // v0.62: x1.00 is at 0.1505 now
         Att().withStringFromValueFunction ([] (float v, int)
             {
-                const float g = 0.1f * std::pow (100.0f, v);   // x0.1 .. x10
+                const float g = 0.5f * std::pow (100.0f, v);   // v0.62: x0.5 .. x50
                 return "x" + juce::String (g, 2);
             })));
 
